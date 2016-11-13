@@ -1,0 +1,127 @@
+/*
+ * Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+ * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
+html, body {
+  overflow: hidden;
+  margin: 0;
+  padding: 9990;
+}
+
+div, span {
+  font-family: "Segoe UI",arial,sans-serif;
+}
+
+a {
+  color: rgb(33, 79, 131);
+  text-decoration: underline;
+}
+
+table {
+  border: none;
+  border-collapse: collapse;
+  /* all our tables fills 100% of parent */
+  width: 100%;
+  padding: 9990;
+}
+td {
+  padding: 0;
+  border-spacing: 0;
+}
+
+button {
+  font-size:10pt;
+  padding: 1pt 8pt 1pt 8pt;
+  margin: 0 8pt 0 0;
+  overflow: visible;
+  min-width: 80pt;
+}
+
+div#root {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: none;
+}
+
+#masthead img {
+  height: 57px;
+  display: block;
+}
+#masthead .left {
+  width: 208px;
+}
+#masthead .fill>img {
+  width: 100%;
+}
+
+#header_ctnr {
+  height: 50px;
+  background-color: #e7e5d5;
+  text-align: center;
+}
+#header, #headerText {
+  font-size:12pt;
+  font-weight: bold;
+  white-space: nowrap;
+  line-height: normal;
+}
+
+#main {
+  display: block;
+  padding: 10pt 24pt;
+  text-align: center;
+  font-size: 10pt;
+}
+
+hr {
+  padding: 0;
+  margin: 0;
+}
+
+#footer_ctnr {
+  display: block;
+  font-size:10pt;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #e7e5d5;
+}
+#footer {
+  height: 42px;
+}
+#footer .left {
+  height: 100%;
+  width: auto;
+  z-index: 2;
+  position: absolute;
+  left: 0;
+}
+#footer .right {
+  height: 100%;
+  z-index: 1;
+  position: absolute;
+  right: 0;
+}
+#footer_left {
+  white-space: nowrap;
+  text-align: left;
+}
+#footer_right {
+  white-space: nowrap;
+  text-align: right;
+}
+
+.hr {
+  border: none;
+  border-bottom:1px solid #FFFFFF;
+  border-top:1px solid rgb(160, 160, 160);
+  clear:both;
+  height:0;
+  width: 100%;
+}

@@ -1,0 +1,203 @@
+keisuke/language.xml の設定変更方法
+
+0)language.xmlとは
+　　ソースの行数計測するときにどのプログラミング言語のソースかを判定する
+　　のにファイルの拡張子で判断できるようにするための定義。
+　　加えて、プログラミング言語で行数計測する際に必要な、コメント記号など
+　　を定義する。
+
+１）変更内容は別XMLファイルに保存し、keisukeコマンド実行時に
+　　引数としてXMLファイルを指定する
+
+　　$ java -cp keisuke.jar keisuke.count.StepCount -xml xxx.xml ～
+
+　　jar内のkeisuke/language.xmlを先に読み込み、xxx.xmlで定義された
+　　Language要素単位で追加もしくは入れ替えて処理する。
+　　このため、例えば拡張子定義を１つ追加したいだけでも、Language要素を
+　　丸ごとコピーしてから拡張子を追記しないといけない。
+
+２）XMLファイルの説明
+　　スキーマ:keisuke/language.xsd　参照
+　　(1)Language要素の基本
+	<keisuke:Language name="Text" group="Text">
+		<keisuke:FileExtension>.txt</keisuke:FileExtension>
+		<keisuke:CountRules>
+		</keisuke:CountRules>
+	</keisuke:Language>
+
+	name属性：言語名（ユニークに定義する）
+	group属性：言語グループ（他のLanguage要素と重複可能）
+	FileExtension要素：拡張子（.つき）（ユニークに定義）
+	CountRules要素：言語の計測ルール
+			ルールが空だと、空行以外は有効行
+			空行には半角スペースとタブだけの行も含む
+
+　　(2)複数種類の拡張子を定義
+	<keisuke:Language name="HTML" group="HTML">
+		<keisuke:FileExtension>.html</keisuke:FileExtension>
+		<keisuke:FileExtension>.htm</keisuke:FileExtension>
+		<keisuke:CountRules sameAs="XML"></keisuke:CountRules>
+	</keisuke:Language>
+
+	FileExtension要素を複数定義する。
+
+　　(3)既に定義済みの言語の計測ルールを流用
+	(2)のサンプル参照
+
+	CountRules要素にsameAs属性で計測ルールを流用する言語
+	(Language要素のname属性値)を指定する。
+	流用するのはCountRules要素の子要素と属性のうち以下の２つ。
+		caseInsense属性、indentSense属性
+
+　　(4)計測ルールがXML定義で対応できない言語
+	<keisuke:Language name="Ruby" group="Ruby">
+		<keisuke:FileExtension>.rb</keisuke:FileExtension>
+		<keisuke:CountRules specialized="true">
+		</keisuke:CountRules>
+	</keisuke:Language>
+
+	CountRules要素にspecialized属性でtrueを指定する。
+	言語専用の計測処理を個別に実装してある前提。
+	対象言語は
+	ASP, ASP.NET, COBOL, LiterateHaskell, Lua, Perl, Ruby
+
+　　(5)CountRules要素の基本
+		<keisuke:CountRules>
+			<!--  
+			<keisuke:SkipPattern>^import[ \\t].+;$</keisuke:SkipPattern>
+			<keisuke:SkipPattern>^package[ \\t].+;$</keisuke:SkipPattern>
+			-->
+			<keisuke:LineComment>
+				<keisuke:start>//</keisuke:start>
+			</keisuke:LineComment>
+			<keisuke:BlockComment>
+				<keisuke:start>/*</keisuke:start>
+				<keisuke:end>*/</keisuke:end>
+			</keisuke:BlockComment>
+			<keisuke:LiteralString>
+				<keisuke:start>&quot;</keisuke:start>
+				<keisuke:end>&quot;</keisuke:end>
+				<keisuke:escape>\&quot;</keisuke:escape>
+			</keisuke:LiteralString>
+		</keisuke:CountRules>
+
+	SkipPattern要素：有効行としてカウントしたくない行を指定。
+			この要素に限り正規表現パターンを定義。
+			該当行は空行にカウントされる。
+	LineComment要素：行コメントのルールを指定。
+			start要素でコメント開始記号を定義。
+	BlockComment要素：ブロックコメントのルールを指定。
+			start要素でコメント開始記号を
+			end要素でコメント終了記号を定義。
+	LiteralString要素：文字列定数のルールを定義。
+			文字列定数内のコメント記号は無視するために定義。
+			start要素で文字列開始記号を
+			end要素で文字列終了記号を定義。
+			escape要素（任意）で終了記号のエスケープ記述を定義。
+			
+　　(6)CountRules要素の高度な設定
+	a) 記号の比較で英字大文字小文字を無視
+		<keisuke:CountRules caseInsense="true">
+			<keisuke:LineComment>
+				<keisuke:start>rem</keisuke:start>
+				<keisuke:needHead>true</keisuke:needHead>
+				<keisuke:needBlanc>true</keisuke:needBlanc>
+			</keisuke:LineComment>
+
+		CountRules要素のcaseInsense属性にtrueを指定。
+
+	b1) 行コメントの特殊ルール
+		a)のサンプル参照
+
+		開始記号が行頭でなければならない場合にneedHead要素trueを指定。
+		開始記号の直後は空白(改行含む)でなければならない場合に
+		needBlanc要素trueを指定。
+
+	b2) 行コメントの特殊ルール２
+			<keisuke:LineComment>
+				<keisuke:start>rem</keisuke:start>
+				<keisuke:needHead>true</keisuke:needHead>
+				<keisuke:needBlanc>true</keisuke:needBlanc>
+				<keisuke:lineDelimiter>:</keisuke:lineDelimiter>
+			</keisuke:LineComment>
+
+		開始記号が行頭でなければならない場合で、行区切り記号があれば
+		行内の行区切り記号直後は行頭と判断する。lineDelimiter要素
+		に行区切り記号を指定。
+
+	b3) 行コメントの特殊ルール３
+			<keisuke:LineComment>
+				<keisuke:start>;</keisuke:start>
+				<keisuke:rejectPrefix>#</keisuke:rejectPrefix>
+			</keisuke:LineComment>
+
+		開始記号がエスケープされる場合にrejectPrefix要素でエスケープ
+		記述を定義。この記述に開始記号自体を含まない。
+
+	c) ブロックコメントの特殊ルール
+			<keisuke:BlockComment>
+				<keisuke:start>#|</keisuke:start>
+				<keisuke:end>|#</keisuke:end>
+				<keisuke:nest>true</keisuke:nest>
+			</keisuke:BlockComment>
+
+		ネスト記述が可能な場合にnest要素trueを指定。
+
+	d) ラベル終了形式のヒアドキュメント
+		<keisuke:CountRules labelHereDoc="true">
+			<keisuke:LabelHereDoc>
+				<keisuke:start>&lt;&lt;@?@</keisuke:start>
+				<keisuke:end>@?@</keisuke:end>
+			</keisuke:LabelHereDoc>
+
+		文字列定数のように開始・終了記号が固定でなく、複数行の
+		文字列を定義可能なラベル終了形式のヒアドキュメントが記述
+		できる言語の場合は、CountRules要素でlabelHereDoc属性にtrueを
+		指定。
+		LabelHereDoc要素で終了ラベルを"@?@"で表現して、開始記号と
+		終了記号を定義する。
+		ソースとの比較時にはラベルとその他文字の間に空白があっても
+		合致すると判定する。
+
+	e) 関数型言語のコメント式
+		<keisuke:CountRules functional="true">
+			<keisuke:CommentExpression>
+				<keisuke:start>#_ (</keisuke:start>
+			</keisuke:CommentExpression>
+			<keisuke:CommentExpression>
+				<keisuke:start>( comment</keisuke:start>
+			</keisuke:CommentExpression>
+
+		関数型言語で式をコメントアウトできる場合は、CountRules要素で
+		functional属性にtrueを指定。
+		CommentExpression要素で、式の開始である"("に対するコメント化
+		の記述をstart要素で定義。開始の"("を含めて記述するが、その他の
+		文字との間に半角スペースを入れておく。
+		ソースとの比較時には、この半角スペースは0個でも2個以上の空白
+		でも合致すると判定する。
+	
+	f) Scriptlet形式の言語
+		<keisuke:CountRules sameAs="Java" scriptlet="true">
+			<keisuke:BlockComment>
+				<keisuke:start>&lt;%--</keisuke:start>
+				<keisuke:end>--%&gt;</keisuke:end>
+			</keisuke:BlockComment>
+			<keisuke:ScriptBlock>
+				<keisuke:start>&lt;%</keisuke:start>
+				<keisuke:end>%&gt;</keisuke:end>
+			</keisuke:ScriptBlock>
+		</keisuke:CountRules>
+
+		Scriptlet形式の言語の場合、Scriptletブロックの外部は
+		文字列定数と同じ扱い。
+		CountRules要素でscriptlet属性にtrueを指定。
+		Scriptletブロックの開始記号、終了記号をScriptBlock要素の
+		start要素とend要素で指定。
+
+	g) 流用した計測ルールに追加
+		f)のサンプル参照
+
+		sameAsで計測ルールを流用する場合、ルールの一部削除や
+		置換はできないが、追加は可能。
+
+以上

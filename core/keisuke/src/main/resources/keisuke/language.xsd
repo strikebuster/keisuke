@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://keisuke/language" elementFormDefault="qualified" xmlns:keisuke="http://keisuke/language">
+
+
+
+
+
+
+
+
+
+
+    <complexType name="BlockComment">
+    	<sequence>
+    		<element name="start" type="string" maxOccurs="1" minOccurs="1"></element>
+    		<element name="end" type="string" maxOccurs="1" minOccurs="1"></element>
+    		<element name="nest" type="boolean" maxOccurs="1" minOccurs="0"></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="LineComment">
+    	<sequence>
+    		<element name="start" type="string" maxOccurs="1"
+    			minOccurs="1">
+    		</element>
+    		<element name="needHead" type="boolean" maxOccurs="1"
+    			minOccurs="0">
+    		</element>
+    		<element name="needBlanc" type="boolean" maxOccurs="1"
+    			minOccurs="0">
+    		</element>
+    		<element name="lineDelimiter" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="escape" type="string" maxOccurs="1"
+    			minOccurs="0">
+    		</element>
+    	</sequence>
+    </complexType>
+
+    <simpleType name="SkipPattern">
+    	<restriction base="string"></restriction>
+    </simpleType>
+
+    <simpleType name="FileExtension">
+    	<restriction base="string"></restriction>
+    </simpleType>
+
+    <complexType name="LiteralString">
+    	<sequence>
+    		<element name="start" type="string" maxOccurs="1" minOccurs="1"></element>
+    		<element name="end" type="string" maxOccurs="1" minOccurs="1"></element>
+    		<element name="escape" type="string" maxOccurs="1" minOccurs="0"></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="ScriptBlock">
+    	<sequence>
+    		<element name="start" type="string" maxOccurs="1" minOccurs="1"></element>
+    		<element name="end" type="string" maxOccurs="1" minOccurs="1"></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="LabelHereDoc">
+    	<sequence>
+    		<element name="start" type="string" maxOccurs="1" minOccurs="1"></element>
+    		<element name="end" type="string" maxOccurs="1" minOccurs="1"></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="CommentExpression">
+    	<sequence>
+    		<element name="start" type="string" maxOccurs="1" minOccurs="1"></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="CountRules">
+    	<sequence>
+    		<element name="SkipPattern" type="keisuke:SkipPattern"
+    			maxOccurs="unbounded" minOccurs="0">
+    		</element>
+    		<element name="LineComment" type="keisuke:LineComment"
+    			maxOccurs="unbounded" minOccurs="0">
+    		</element>
+    		<element name="BlockComment" type="keisuke:BlockComment"
+    			maxOccurs="unbounded" minOccurs="0">
+    		</element>
+    		<element name="CommentExpression"
+    			type="keisuke:CommentExpression" maxOccurs="unbounded"
+    			minOccurs="0">
+    		</element>
+    		<element name="LiteralString" type="keisuke:LiteralString"
+    			maxOccurs="unbounded" minOccurs="0">
+    		</element>
+    		<element name="LabelHereDoc" type="keisuke:LabelHereDoc"
+    			maxOccurs="unbounded" minOccurs="0">
+    		</element>
+    		<element name="ScriptBlock" type="keisuke:ScriptBlock"
+    			maxOccurs="unbounded" minOccurs="0">
+    		</element>
+    	</sequence>
+    	<attribute name="unsupported" type="boolean" default="false"></attribute>
+    	<attribute name="specialized" type="boolean" default="false"></attribute>
+    	<attribute name="functional" type="boolean" default="false"></attribute>
+    	<attribute name="labelHereDoc" type="boolean" default="false"></attribute>
+    	<attribute name="caseInsense" type="boolean" default="false"></attribute>
+    	<attribute name="indentSense" type="boolean" default="false"></attribute>
+    	<attribute name="scriptlet" type="boolean" default="false"></attribute>
+    	<attribute name="sameAs" type="string"></attribute>
+    </complexType>
+
+
+    <complexType name="Language">
+    	<sequence>
+    		<element name="FileExtension" type="keisuke:FileExtension"
+    			maxOccurs="unbounded" minOccurs="1">
+    		</element>
+    		<element name="CountRules" type="keisuke:CountRules"
+    			maxOccurs="1" minOccurs="0">
+    		</element>
+    	</sequence>
+    	<attribute name="name" type="string"></attribute>
+    	<attribute name="group" type="string"></attribute>
+    </complexType>
+    
+    <complexType name="LanguageDefinitions">
+    	<sequence>
+    		<element name="Language" type="keisuke:Language" maxOccurs="unbounded" minOccurs="0"></element>
+    	</sequence>
+    </complexType>
+
+
+    <element name="LanguageDefinitions" type="keisuke:LanguageDefinitions"></element>
+</schema>

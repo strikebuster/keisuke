@@ -1,0 +1,4 @@
+output	test/out/diff_arg03.txt
+xml	test/data/ktestl2.xml
+format	html
+encoding	EUC-JP

@@ -1,0 +1,4 @@
+showDirectory	true
+xml	test/data/ktestl2.xml
+format	xml
+encoding	EUC-JP

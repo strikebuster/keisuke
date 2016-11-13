@@ -1,0 +1,43 @@
+【追加ファイルのファイル本数と増加行数】
+言語 , 本数 , 合計 , 増加 , 減少
+HTML , 0 , 0 , 0 , 0
+JSP , 2 , 40 , 40 , 0
+Java , 0 , 0 , 0 , 0
+JavaScript , 0 , 0 , 0 , 0
+XHTML , 4 , 240 , 240 , 0
+XML , 0 , 0 , 0 , 0
+XMLSchema , 0 , 0 , 0 , 0
+properties , 0 , 0 , 0 , 0
+【修正ファイルのファイル本数と修正行数】
+言語 , 本数 , 合計 , 増加 , 減少
+HTML , 1 , 2 , 1 , -1
+JSP , 0 , 0 , 0 , 0
+Java , 2 , 10 , 5 , -5
+JavaScript , 2 , 9 , 4 , -5
+XHTML , 1 , 4 , 3 , -1
+XML , 3 , 14 , 7 , -7
+XMLSchema , 0 , 0 , 0 , 0
+properties , 0 , 0 , 0 , 0
+【廃止ファイルのファイル本数と削除行数】
+言語 , 本数 , 合計 , 増加 , 減少
+HTML , 0 , 0 , 0 , 0
+JSP , 0 , 0 , 0 , 0
+Java , 0 , 0 , 0 , 0
+JavaScript , 0 , 0 , 0 , 0
+XHTML , 0 , 0 , 0 , 0
+XML , 0 , 0 , 0 , 0
+XMLSchema , 0 , 0 , 0 , 0
+properties , 0 , 0 , 0 , 0
+【修正なしファイルのファイル本数】
+言語 , 本数
+HTML , 0
+JSP , 0
+Java , 37
+JavaScript , 0
+XHTML , 3
+XML , 30
+XMLSchema , 1
+properties , 8
+【計測対象外ファイルのファイル本数】
+言語 , 本数
+ALL , 6

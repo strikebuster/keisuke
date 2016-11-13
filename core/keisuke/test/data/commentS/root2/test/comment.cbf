@@ -1,0 +1,29 @@
+*> hoge1 zzz コメントに追記しても差分に出ない確認１
+      *> hoge２
+  identification division.
+   xxx 有効行２
+   xxx 有効行３ *> 有効行の後ろにコメントhoge　zzzzzz コメントに追記しても差分に出ない確認2
+　　　123456 有効行４　zzz 修正行２
+
+                
+	xxx 有効行５　＆　上は空行１、２
+>>D debug1＝コメント行
+    >>D debug2
+>>d debug3 zzz コメントに追記しても差分に出ない確認3 & 下に空行２行追加しても出ない確認４
+
+	
+>>Diamond not debug 有効行６
+*>hoge3
+*hoge MFの独自コメント行4 zzz コメントに追記しても差分に出ない確認５
+$hoge MFの特殊行＝コメント5
+/hoge MFのコメント6
+D hoge MFのデバッグ＝コメント7
+d	hoge MFのデバッグ＝コメント8
+Donald Duck 有効行7
+
+move " *> " to a zzz 修正行3
+move " "" *> ""  " to a zzz 修正行4
+move " ' *> " to a  zzz 修正行5
+move ' *> ' to a  zzz 修正行6
+move ' '' *> '' ' to a  zzz 修正行7
+move ' " *> ' to a  zzz 修正行8

@@ -1,0 +1,58 @@
+<html>
+<head>
+<title>変更ステップ数</title>
+<script type="text/javascript">
+function switchDir(dirId){
+  var trList = document.getElementsByTagName('tr');
+  for(var i=0;i<trList.length;i++){
+    var className = trList[i].className;
+    if(className != null && className.indexOf(dirId) == 0){
+      if(trList[i].style.display == 'none'){
+        if(className == dirId){
+          trList[i].style.display = '';
+        }
+      } else {
+        trList[i].style.display = 'none';
+      }
+    }
+  }
+}
+
+function showAll(){
+  var trList = document.getElementsByTagName('tr');
+  for(var i=0;i<trList.length;i++){
+    if(trList[i].className != ''){
+      trList[i].style.display = '';
+    }
+  }
+}
+
+function hideAll(){
+  var trList = document.getElementsByTagName('tr');
+  for(var i=0;i<trList.length;i++){
+    if(trList[i].className != ''){
+      trList[i].style.display = 'none';
+    }
+  }
+}
+</script>
+</head>
+<body>
+実行時刻：2016/11/13 12:11:00
+<input type="button" onclick="showAll();" value="すべて展開"><input type="button" onclick="hideAll();" value="すべて収納"><table border="1" width="100%">
+<tr><th width="80%">名前</th><th width="10%">状態</th><th width="10%">追加行数</th><th>削除行数</th></tr>
+<tr><td><a href="javascript:switchDir('664792509_1965237677')">src/</a></td><td>変更</td><td style="text-align: right;">6</td><td style="text-align: right;">43</td></tr>
+<tr class="664792509_1965237677" style="display: none;"><td>&nbsp;<a href="javascript:switchDir('664792509_1965237677_188523822')">jp/</a></td><td>変更</td><td style="text-align: right;">1</td><td style="text-align: right;">1</td></tr>
+<tr class="664792509_1965237677_188523822" style="display: none;"><td>&nbsp;&nbsp;<a href="javascript:switchDir('664792509_1965237677_188523822_1170727939')">sf/</a></td><td>削除</td><td style="text-align: right;">0</td><td style="text-align: right;">0</td></tr>
+<tr class="664792509_1965237677_188523822_1170727939" style="display: none;"><td>&nbsp;&nbsp;&nbsp;hoge.txt</td><td>削除</td><td style="text-align: right;">0</td><td style="text-align: right;">0</td></tr>
+<tr class="664792509_1965237677_188523822" style="display: none;"><td>&nbsp;&nbsp;FileObj.java</td><td>変更</td><td style="text-align: right;">1</td><td style="text-align: right;">1</td></tr>
+<tr class="664792509_1965237677" style="display: none;"><td>&nbsp;JavaCutter.java</td><td>変更</td><td style="text-align: right;">1</td><td style="text-align: right;">0</td></tr>
+<tr class="664792509_1965237677" style="display: none;"><td>&nbsp;Status.java</td><td>新規</td><td style="text-align: right;">4</td><td style="text-align: right;">0</td></tr>
+<tr class="664792509_1965237677" style="display: none;"><td>&nbsp;StringUtil.java</td><td>削除</td><td style="text-align: right;">0</td><td style="text-align: right;">42</td></tr>
+<tr><td><a href="javascript:switchDir('664792509_690339675')">test/</a></td><td>変更</td><td style="text-align: right;">0</td><td style="text-align: right;">0</td></tr>
+<tr class="664792509_690339675" style="display: none;"><td>&nbsp;Utils</td><td>サポート対象外</td><td style="text-align: right;">0</td><td style="text-align: right;">0</td></tr>
+<tr class="664792509_690339675" style="display: none;"><td>&nbsp;Utils.java</td><td>変更なし</td><td style="text-align: right;">0</td><td style="text-align: right;">0</td></tr>
+<tr class="664792509_690339675" style="display: none;"><td>&nbsp;Utils.txt</td><td>変更なし</td><td style="text-align: right;">0</td><td style="text-align: right;">0</td></tr>
+</table>
+</body>
+</html>

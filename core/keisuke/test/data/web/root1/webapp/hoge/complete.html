@@ -1,0 +1,230 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<!--
+    Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+    ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+-->
+
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=7"/>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <title> </title>
+  <script type="text/javascript" src="runtime.js"></script>
+<script type="text/javascript" src="host.js"></script>
+<script type="text/javascript" src="l10n.js"></script>
+<script type="text/javascript" src="layout.js"></script>
+<script type="text/javascript" src="rtutils.js"></script>
+  <script type="text/javascript">
+addOnloadCallback( function () {
+
+    getElement("closeBtn").onclick = function () {
+        host.notify("next")
+    }
+
+    getElement("backBtn").onclick = function () {
+        host.notify("back")
+    }
+
+    getElement("restartBrowserCtrl").onclick = function () {
+        host.notify("restartBrowser", this.checked ? 1 : 0)
+    }
+})
+
+function showBackButton(v) {
+    getElement("backBtn").style.visibility = v ? 'visible' : 'hidden';
+}
+
+function showSecurity(v) {
+    getElement("securityCtnr").style.display = v ? 'block' : 'none';
+}
+
+function showRestartBrowser(v) {
+    getElement("restartBrowserCtnr").style.display = v ? 'block' : 'none';
+}
+
+function setRestartBrowser(v) {
+    getElement("restartBrowserCtrl").checked = v
+}
+
+function showVerify(v) {
+    getElement("noteVerify").style.display = v ? 'block' : 'none';
+}
+
+// list of the supported sponsors
+var sponsors = {
+    "SP1":  {header: "headerGoogle", sponsor: null},
+    "SP4":  {header: "headerYahoo", sponsor: null},
+    "SP8":  {header: "headerBing", sponsor: null},
+    "SP9":  {header: "headerBing", sponsor: null},
+    "SP10": {header: null, sponsor: "sponsorCarbo"},
+    "SP11": {header: null, sponsor: "sponsorMcAfee"},
+    "SP12": {header: null, sponsor: "sponsorAsk"},
+    "SP13": {header: null, sponsor: "sponsorAsk"},
+    "SP14": {header: null, sponsor: "sponsorAsk"},
+    "SP15": {header: null, sponsor: "sponsorAsk"},
+	
+    /* generic sponsor */
+    "Generic": {header: null, sponsor: "sponsorGeneric"}, 
+
+    /* default */
+    "": {header: "headerJava", sponsor: null}
+}
+
+function selectSponsor(sp) {
+    if (!sponsors.hasOwnProperty(sp)) {
+        log.info("handle sponsor '" + sp + "' as generic");
+        sp = "Generic";
+    }
+    var sponsor = sponsors[sp];
+
+    var header2show = sponsor["header"];
+    var sponsor2show = sponsor["sponsor"];
+    // if the header is not specified, show the default one
+    if (header2show === null) {
+        header2show = sponsors[""].header;
+    }
+
+    // hide header/sponsor for others sponsors
+    require("Arrays").values(sponsors).forEach(function (sponsor) {
+        var spHeader = sponsor.header;
+        if (spHeader !== header2show && spHeader) {
+            getElement(spHeader).style.display = 'none';
+        }
+        var spSponsor = sponsor.sponsor;
+        if (spSponsor !== sponsor2show && spSponsor) {
+            getElement(spSponsor).style.display = 'none';
+        }
+    })
+
+    // show header/sponsor for the sponsor specified
+    getElement(header2show).style.display = 'inline';
+    if (sponsor2show) {
+        getElement(sponsor2show).style.display = 'block';
+    }
+}
+
+
+urls = {
+    updateLink: "http://java.com/autoupdate",
+    securityLink: "http://java.com/securityminvalue/"
+}
+
+</script>
+  <link rel="stylesheet" type="text/css" href="common.css"></link>
+  <style media="screen" type="text/css"
+>.segment {
+  margin-bottom:8pt;
+}
+
+.sponsor {
+  font-size:11pt;
+  font-weight: bold;
+  margin-bottom:8pt;
+}
+
+.hidden{
+  display:none;
+}
+
+#headerText {
+  margin-left:6pt;
+}
+#headerCtnr {
+  width:auto;
+}
+
+</style>
+</head>
+<body role="dialog">
+﻿<div id="root">
+
+<table id="masthead">
+<tr>
+  <td class="left"><img alt="" src="masthead_left.png"/></td>
+  <td class="fill"><img alt="" src="masthead_fill.png"/></td>
+</tr>
+</table>
+
+<table>
+
+<tr><td id="header_ctnr"><span id="header"></span></td></tr>
+
+<tr><td id="main"></td></tr>
+
+</table>
+
+<div id="footer_ctnr">
+  <div class="hr"></div>
+  <div id="footer">
+    <table class="left">
+      <tr><td>
+      <div id="footer_left"></div>
+      </td></tr>
+    </table>
+    <table class="right">
+      <tr><td>
+      <div id="footer_right"></div>
+      </td></tr>
+  </table>
+  </div>
+</div>
+
+</div>
+﻿<div id="header.src">
+  <table id="headerCtnr"><tr>
+    <td><img alt="" src="check.png"/></td>
+    <td>
+      <span id="headerText">
+        <span id="headerJava"></span>
+        <!-- headers for sponsors -->
+        <span id="headerGoogle" class="hidden"></span>
+        <span id="headerYahoo" class="hidden"></span>
+        <span id="headerBing" class="hidden"></span>
+      </span>
+    </td>
+  </tr></table>
+</div>
+
+
+<div id="main.src">
+  <div id="sponsorCarbo" class="sponsor hidden"></div>
+  <div id="sponsorMcAfee" class="sponsor hidden"></div>
+  <div id="sponsorAsk" class="sponsor hidden"></div>
+  <div id="sponsorGeneric" class="sponsor hidden"></div>
+
+  <div class="segment">
+    <div id="noteOnUpdates"></div>
+    <div id="updateLink"></div>
+  </div>
+
+  <div id="securityCtnr" class="segment">
+    <div id="securityNote"></div>
+    <div id="securityLink"></div>
+  </div>
+
+  <!-- browsers: the default is "verify" -->
+  <div id="noteVerify" class="segment" style="display: none;"></div>
+  <div id="restartBrowserCtnr" class="segment hidden">
+    <input type="checkbox" id="restartBrowserCtrl">
+      <label for ="restartBrowserCtrl" id="restartBrowser"></label>
+    </input>
+  </div>
+
+</div>
+
+<div id="footer_right.src">
+  <button id="backBtn"></button>
+  <button id="closeBtn"></button>
+  <button id="jibakuBtn"></button>
+</div>
+
+</body>
+<script>
+  try {
+    initLayout();
+  } catch(e) {
+  }
+</script>
+</html>

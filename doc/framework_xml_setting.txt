@@ -1,0 +1,54 @@
+keisuke/framework.xml の設定変更方法
+
+0)framework.xmlとは
+　　ソースを集計するときの分類をファイルの拡張子でなく、ソースのパスを使って
+　　判断できるようにするための定義。
+　　例えば、フレームワークなどで規定する機能・役割毎にディレクトリやファイルの
+　　ネーミングが決まっていれば、機能・役割毎に分類して集計するために使う。
+
+１）変更内容は別XMLファイルに保存し、keisukeコマンド実行時に
+　　引数としてXMLファイルを指定する
+
+　　$ java -cp keisuke.jar keisuke.count.StepCount -xml xxx.xml ～
+
+　　jar内のkeisuke/framework.xmlは読み込まず、xxx.xmlで定義された
+　　Framework要素を処理する。
+
+
+２）XMLファイルの説明
+　　スキーマ:keisuke/framework.xsd　参照
+　　(1)Framework要素の基本
+	<keisuke:Framework name="Struts" group="Struts">
+		<keisuke:SpecificType name="HTML" group="Web">
+			<keisuke:PathPattern>.*/webapp/.*\.html?$</keisuke:PathPattern>
+		</keisuke:SpecificType>
+	</keisuke:Framework>
+
+	name属性：framework名（ユニークに定義する）
+	group属性：frameworkグループ（他のFramework要素と重複可能）：未使用属性
+	SpecificType要素：ソース分類タイプ
+		name属性：分類タイプ名（Framework内でユニークに定義する）
+		group属性：分類タイプグループ（Framework内でも重複可能）：未使用属性
+	PathPattern要素：ソース分類タイプの判定ルール
+			ソースファイルのパス名を元に判定するルールを正規表現で指定
+
+　　(2)Framework要素のname属性
+	Keisukeのコマンド(CountReport,DiffReport)の引数で指定されるものになる。
+	例）CountReport -classify fw:struts
+	
+	"fw:"がFrameworkで分類する指定で次の"struts"がFrameworkのname属性を指す。
+	Framework名は大文字小文字を無視して比較する。
+
+　　(3)SpecificType要素のname属性
+	ソース分類タイプ毎にステップ数を集計してレポート出力する際に、
+	分類タイプのラベルとして出力される。
+	レポートでの出力順は、XMLでの定義順となる。
+
+　　(4)PathPattern要素
+	１つのソースファイルに対し、順番に分類タイプのPathPatternでパターン
+	マッチングして、最初にマッチした分類タイプと判断する。
+	比較の順番はXMLでの定義順ではなく、PathPatternに定義された文字列長
+	の長い順に比較する。パターンに包含関係がある場合、より狭い対象に合致
+	するパターンの文字列長が長くなるように留意すること。
+
+以上

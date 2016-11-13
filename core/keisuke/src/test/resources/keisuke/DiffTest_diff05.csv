@@ -1,0 +1,43 @@
+【追加ファイルのファイル本数と増加行数】
+LANG , ADD , DEL , SUM , FILE
+html , 0 , 0 , 0 , 0
+java , 0 , 0 , 0 , 0
+js , 0 , 0 , 0 , 0
+jsp , 40 , 0 , 40 , 2
+properties , 0 , 0 , 0 , 0
+xhtml , 240 , 0 , 240 , 4
+xml , 0 , 0 , 0 , 0
+xsd , 0 , 0 , 0 , 0
+【修正ファイルのファイル本数と修正行数】
+LANG , ADD , DEL , SUM , FILE
+html , 1 , -1 , 2 , 1
+java , 5 , -5 , 10 , 2
+js , 4 , -5 , 9 , 2
+jsp , 0 , 0 , 0 , 0
+properties , 0 , 0 , 0 , 0
+xhtml , 3 , -1 , 4 , 1
+xml , 7 , -7 , 14 , 3
+xsd , 0 , 0 , 0 , 0
+【廃止ファイルのファイル本数と削除行数】
+LANG , ADD , DEL , SUM , FILE
+html , 0 , 0 , 0 , 0
+java , 0 , 0 , 0 , 0
+js , 0 , 0 , 0 , 0
+jsp , 0 , 0 , 0 , 0
+properties , 0 , 0 , 0 , 0
+xhtml , 0 , 0 , 0 , 0
+xml , 0 , 0 , 0 , 0
+xsd , 0 , 0 , 0 , 0
+【修正なしファイルのファイル本数】
+LANG , FILE
+html , 0
+java , 37
+js , 0
+jsp , 0
+properties , 8
+xhtml , 3
+xml , 30
+xsd , 1
+【計測対象外ファイルのファイル本数】
+LANG , FILE
+ALL , 6

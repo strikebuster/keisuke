@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://keisuke/framework" elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:keisuke="http://keisuke/framework">
+
+    <simpleType name="PathPattern">
+    	<restriction base="string"></restriction>
+    </simpleType>
+
+    <complexType name="SpecificType">
+    	<sequence>
+    		<element name="PathPattern" type="keisuke:PathPattern"
+    			maxOccurs="unbounded" minOccurs="1">
+    		</element>
+    	</sequence>
+    	<attribute name="name" type="string"></attribute>
+    	<attribute name="group" type="string"></attribute>
+    </complexType>
+
+    <complexType name="Framework">
+    	<sequence>
+    		<element name="SpecificType" type="keisuke:SpecificType" maxOccurs="unbounded" minOccurs="1"></element>
+    	</sequence>
+    	<attribute name="name" type="string"></attribute>
+    	<attribute name="group" type="string"></attribute>
+    </complexType>
+
+    <element name="FrameworkDefinitions"
+    	type="keisuke:FrameworkDefinitions">
+    </element>
+    
+    <complexType name="FrameworkDefinitions">
+    	<sequence>
+    		<element name="Framework" type="keisuke:Framework" maxOccurs="unbounded" minOccurs="1"></element>
+    	</sequence>
+    </complexType>
+</schema>

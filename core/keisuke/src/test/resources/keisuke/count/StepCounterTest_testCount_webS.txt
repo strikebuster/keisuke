@@ -1,0 +1,9 @@
+/root1S/csinline.aspx,ASP.NET,,39,2,2,43
+/root1S/csscript.aspx,ASP.NET,,39,2,2,43
+/root1S/jsinline.asp,ASP,,19,1,4,24
+/root1S/jsscript.asp,ASP,,19,1,4,24
+/root1S/vbinline.asp,ASP,,15,1,2,18
+/root1S/vbinline.aspx,ASP.NET,,23,0,2,25
+/root1S/vbscript.asp,ASP,,15,1,2,18
+/root1S/vbscript.aspx,ASP.NET,,37,5,2,44
+/root1S/web.php,PHP,,30,3,2,35

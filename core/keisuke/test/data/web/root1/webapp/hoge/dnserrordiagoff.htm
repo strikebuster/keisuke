@@ -1,0 +1,35 @@
+﻿<!DOCTYPE HTML>
+<html>
+
+    <head>
+        <link rel="stylesheet" type="text/css" href="NewErrorPageTemplate.css" >
+
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>このページは表示できません</title>
+
+        <script src="errorPageStrings.js" language="javascript" type="text/javascript">
+        </script>
+        <script src="httpErrorPagesScripts.js" language="javascript" type="text/javascript">
+        </script>
+    </head>
+
+    <body onLoad="javascript:getInfo();">
+        <div id="contentContainer" class="mainContent">
+            <div id="mainTitle" class="title">このページは表示できません</div>
+            <div class="taskSection" id="taskSection">
+                <ul id="cantDisplayTasks" class="tasks">
+                    <li id="task1-1">Web アドレス <span id="webpage" class="webpageURL"></span> が正しいか確かめてください。</li>
+                    <li id="task1-2">検索エンジンでそのページを探してください。</li>
+                    <li id="task1-3">数分待ってから、ページを最新の情報に更新してください。</li>
+                </ul>
+                <ul id="notConnectedTasks" class="tasks" style="display:none">
+                    <li id="task2-1">すべてのネットワーク ケーブルが接続されているか確かめてください。</li>
+                    <li id="task2-2">機内モードがオフになっていることを確認してください。</li>
+                    <li id="task2-3">ワイヤレスのスイッチがオンになっているか確かめてください。</li>
+                    <li id="task2-4">モバイル ブロードバンドに接続できるかどうか確かめてください。</li>
+                    <li id="task2-5">ルーターを再起動してください。</li>
+                </ul>
+            </div>
+        </div>
+    </body>
+</html>

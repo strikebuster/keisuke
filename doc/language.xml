@@ -1,0 +1,691 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<keisuke:LanguageDefinitions xmlns:keisuke="http://keisuke/language" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://keisuke/language language.xsd ">
+	<keisuke:Language name="Unknown" group="Unknown">
+		<keisuke:FileExtension></keisuke:FileExtension>
+		<keisuke:CountRules unsupported="true"></keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="Text" group="Text">
+		<keisuke:FileExtension>.txt</keisuke:FileExtension>
+		<keisuke:CountRules>
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="CSV" group="Text">
+		<keisuke:FileExtension>.csv</keisuke:FileExtension>
+		<keisuke:CountRules sameAs="Text">
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="Java" group="Java">
+		<keisuke:FileExtension>.java</keisuke:FileExtension>
+		<keisuke:CountRules>
+			<!--  
+			<keisuke:SkipPattern>^import[ \\t].+;$</keisuke:SkipPattern>
+			<keisuke:SkipPattern>^package[ \\t].+;$</keisuke:SkipPattern>
+			-->
+			<keisuke:LineComment>
+				<keisuke:start>//</keisuke:start>
+			</keisuke:LineComment>
+			<keisuke:BlockComment>
+				<keisuke:start>/*</keisuke:start>
+				<keisuke:end>*/</keisuke:end>
+			</keisuke:BlockComment>
+			<keisuke:LiteralString>
+				<keisuke:start>&quot;</keisuke:start>
+				<keisuke:end>&quot;</keisuke:end>
+				<keisuke:escape>\&quot;</keisuke:escape>
+			</keisuke:LiteralString></keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="properties" group="Java">
+		<keisuke:FileExtension>.properties</keisuke:FileExtension>
+		<keisuke:CountRules>
+			<keisuke:LineComment>
+				<keisuke:start>#</keisuke:start>
+			</keisuke:LineComment>
+			<keisuke:LineComment>
+				<keisuke:start>!</keisuke:start>
+			</keisuke:LineComment>
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="C" group="C">
+		<keisuke:FileExtension>.c</keisuke:FileExtension>
+		<keisuke:FileExtension>.m</keisuke:FileExtension>
+		<keisuke:FileExtension>.pc</keisuke:FileExtension>
+		<keisuke:CountRules sameAs="Java">
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="C++" group="C">
+		<keisuke:FileExtension>.cpp</keisuke:FileExtension>
+		<keisuke:FileExtension>.cxx</keisuke:FileExtension>
+		<keisuke:FileExtension>.cc</keisuke:FileExtension>
+		<keisuke:FileExtension>.mm</keisuke:FileExtension>
+		<keisuke:CountRules sameAs="Java">
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="h" group="C">
+		<keisuke:FileExtension>.h</keisuke:FileExtension>
+		<keisuke:FileExtension>.hpp</keisuke:FileExtension>
+		<keisuke:FileExtension>.hxx</keisuke:FileExtension>
+		<keisuke:CountRules sameAs="Java">
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="Pascal" group="Delphi">
+		<keisuke:FileExtension>.pas</keisuke:FileExtension>
+		<keisuke:CountRules>
+			<keisuke:LineComment>
+				<keisuke:start>//</keisuke:start>
+			</keisuke:LineComment>
+			<keisuke:BlockComment>
+				<keisuke:start>(*</keisuke:start>
+				<keisuke:end>*)</keisuke:end>
+			</keisuke:BlockComment>
+			<keisuke:BlockComment>
+				<keisuke:start>{</keisuke:start>
+				<keisuke:end>}</keisuke:end>
+			</keisuke:BlockComment>
+			<keisuke:LiteralString>
+				<keisuke:start>&apos;</keisuke:start>
+				<keisuke:end>&apos;</keisuke:end>
+				<keisuke:escape>&apos;&apos;</keisuke:escape>
+			</keisuke:LiteralString></keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="Delphi" group="Delphi">
+		<keisuke:FileExtension>.dpr</keisuke:FileExtension>
+		<keisuke:FileExtension>.dfm</keisuke:FileExtension>
+		<keisuke:CountRules sameAs="Text">
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="VB" group="VisualBasic">
+		<keisuke:FileExtension>.bas</keisuke:FileExtension>
+		<keisuke:FileExtension>.cls</keisuke:FileExtension>
+		<keisuke:CountRules caseInsense="true">
+			<keisuke:LineComment>
+				<keisuke:start>&apos;</keisuke:start>
+			</keisuke:LineComment>
+			<keisuke:LineComment>
+				<keisuke:start>rem</keisuke:start>
+				<keisuke:needBlanc>true</keisuke:needBlanc>
+			</keisuke:LineComment>
+			<keisuke:LiteralString>
+				<keisuke:start>&quot;</keisuke:start>
+				<keisuke:end>&quot;</keisuke:end>
+				<keisuke:escape>&quot;&quot;</keisuke:escape>
+			</keisuke:LiteralString>
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="VBForm" group="VisualBasic">
+		<keisuke:FileExtension>.frm</keisuke:FileExtension>
+		<keisuke:CountRules sameAs="Text">
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="VBScript" group="VBScript">
+		<keisuke:FileExtension>.vbs</keisuke:FileExtension>
+		<keisuke:CountRules caseInsense="true">
+			<keisuke:LineComment>
+				<keisuke:start>&apos;</keisuke:start>
+			</keisuke:LineComment>
+			<keisuke:LineComment>
+				<keisuke:start>rem</keisuke:start>
+				<keisuke:needHead>true</keisuke:needHead>
+				<keisuke:needBlanc>true</keisuke:needBlanc>
+				<keisuke:lineDelimiter>:</keisuke:lineDelimiter>
+			</keisuke:LineComment>
+			<keisuke:LiteralString>
+				<keisuke:start>&quot;</keisuke:start>
+				<keisuke:end>&quot;</keisuke:end>
+				<keisuke:escape>&quot;&quot;</keisuke:escape>
+			</keisuke:LiteralString>
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="VB.NET" group=".NET">
+		<keisuke:FileExtension>.vb</keisuke:FileExtension>
+		<keisuke:CountRules sameAs="VB">
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="C#" group=".NET">
+		<keisuke:FileExtension>.cs</keisuke:FileExtension>
+		<keisuke:CountRules sameAs="Java">
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="ASP.NET" group=".NET">
+		<keisuke:FileExtension>.aspx</keisuke:FileExtension>
+		<keisuke:FileExtension>.asax</keisuke:FileExtension>
+		<keisuke:FileExtension>.ascx</keisuke:FileExtension>
+		<keisuke:FileExtension>.asmx</keisuke:FileExtension>
+		<keisuke:CountRules specialized="true"></keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="ASP" group="ASP">
+		<keisuke:FileExtension>.asp</keisuke:FileExtension>
+		<keisuke:FileExtension>.asa</keisuke:FileExtension>
+		<keisuke:CountRules specialized="true"></keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="JSP" group="JSP">
+		<keisuke:FileExtension>.jsp</keisuke:FileExtension>
+		<keisuke:CountRules sameAs="Java" scriptlet="true">
+			<keisuke:BlockComment>
+				<keisuke:start>&lt;%--</keisuke:start>
+				<keisuke:end>--%&gt;</keisuke:end>
+			</keisuke:BlockComment>
+			<keisuke:ScriptBlock>
+				<keisuke:start>&lt;%</keisuke:start>
+				<keisuke:end>%&gt;</keisuke:end>
+			</keisuke:ScriptBlock>
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="JavaScript" group="JavaScript">
+		<keisuke:FileExtension>.js</keisuke:FileExtension>
+		<keisuke:CountRules sameAs="Java">		
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="JSON" group="JSON">
+		<keisuke:FileExtension>.json</keisuke:FileExtension>
+		<keisuke:CountRules sameAs="Java">
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="MXML" group="Flex">
+		<keisuke:FileExtension>.mxml</keisuke:FileExtension>
+		<keisuke:CountRules sameAs="XML"></keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="ActionScript" group="Flex">
+		<keisuke:FileExtension>.as</keisuke:FileExtension>
+		<keisuke:CountRules sameAs="Java">
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="PHP" group="PHP">
+		<keisuke:FileExtension>.php</keisuke:FileExtension>
+		<keisuke:FileExtension>.php3</keisuke:FileExtension>
+		<keisuke:CountRules labelHereDoc="true" caseInsense="true" scriptlet="true">
+			<keisuke:LineComment>
+				<keisuke:start>#</keisuke:start>
+			</keisuke:LineComment>
+			<keisuke:LineComment>
+				<keisuke:start>//</keisuke:start>
+			</keisuke:LineComment>
+			<keisuke:BlockComment>
+				<keisuke:start>/*</keisuke:start>
+				<keisuke:end>*/</keisuke:end>
+			</keisuke:BlockComment>
+			<keisuke:BlockComment>
+				<keisuke:start>&lt;%--</keisuke:start>
+				<keisuke:end>--%&gt;</keisuke:end>
+			</keisuke:BlockComment>
+			<keisuke:LiteralString>
+				<keisuke:start>&apos;</keisuke:start>
+				<keisuke:end>&apos;</keisuke:end>
+				<keisuke:escape>\&apos;</keisuke:escape>
+			</keisuke:LiteralString>
+			<keisuke:LiteralString>
+				<keisuke:start>&quot;</keisuke:start>
+				<keisuke:end>&quot;</keisuke:end>
+				<keisuke:escape>\&quot;</keisuke:escape>
+			</keisuke:LiteralString>
+			<keisuke:LabelHereDoc>
+				<keisuke:start>&lt;&lt;&lt;@?@</keisuke:start>
+				<keisuke:end>@?@</keisuke:end>
+			</keisuke:LabelHereDoc>
+			<keisuke:ScriptBlock>
+				<keisuke:start>&lt;%</keisuke:start>
+				<keisuke:end>%&gt;</keisuke:end>
+			</keisuke:ScriptBlock>
+			<keisuke:ScriptBlock>
+				<keisuke:start>&lt;?</keisuke:start>
+				<keisuke:end>?&gt;</keisuke:end>
+			</keisuke:ScriptBlock>
+			<keisuke:ScriptBlock>
+				<keisuke:start>&lt;script language=&quot;php&quot;&gt;</keisuke:start>
+				<keisuke:end>&lt;/script&gt;</keisuke:end>
+			</keisuke:ScriptBlock>
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="XHTML" group="XHTML">
+		<keisuke:FileExtension>.xhtml</keisuke:FileExtension>
+		<keisuke:CountRules sameAs="XML"></keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="HTML" group="HTML">
+		<keisuke:FileExtension>.html</keisuke:FileExtension>
+		<keisuke:FileExtension>.htm</keisuke:FileExtension>
+		<keisuke:CountRules sameAs="XML"></keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="CSS" group="HTML">
+		<keisuke:FileExtension>.css</keisuke:FileExtension>
+		<keisuke:CountRules>
+			<keisuke:BlockComment>
+				<keisuke:start>/*</keisuke:start>
+				<keisuke:end>*/</keisuke:end>
+			</keisuke:BlockComment></keisuke:CountRules>
+	</keisuke:Language>	
+	<keisuke:Language name="XML" group="XML">
+		<keisuke:FileExtension>.xml</keisuke:FileExtension>
+		<keisuke:CountRules>
+			<keisuke:BlockComment>
+				<keisuke:start>&lt;!--</keisuke:start>
+				<keisuke:end>--&gt;</keisuke:end>
+			</keisuke:BlockComment></keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="XMLSchema" group="XML">
+		<keisuke:FileExtension>.xsd</keisuke:FileExtension>
+		<keisuke:CountRules sameAs="XML"></keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="XSLT" group="XML">
+		<keisuke:FileExtension>.xsl</keisuke:FileExtension>
+		<keisuke:CountRules sameAs="XML"></keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="DTD" group="XML">
+		<keisuke:FileExtension>.dtd</keisuke:FileExtension>
+		<keisuke:CountRules sameAs="XML"></keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="RELAX_NG" group="XML">
+		<keisuke:FileExtension>.rng</keisuke:FileExtension>
+		<keisuke:FileExtension>.rnc</keisuke:FileExtension>
+		<keisuke:CountRules sameAs="XML"></keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="TLD" group="XML">
+		<keisuke:FileExtension>.tld</keisuke:FileExtension>
+		<keisuke:CountRules sameAs="XML"></keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="CFML" group="ColdFusion">
+		<keisuke:FileExtension>.cfml</keisuke:FileExtension>
+		<keisuke:FileExtension>.cfm</keisuke:FileExtension>
+		<keisuke:CountRules>
+			<keisuke:BlockComment>
+				<keisuke:start>&lt;!---</keisuke:start>
+				<keisuke:end>---&gt;</keisuke:end>
+			</keisuke:BlockComment></keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="Velocity" group="Velocity">
+		<keisuke:FileExtension>.vm</keisuke:FileExtension>
+		<keisuke:CountRules>
+			<keisuke:LineComment>
+				<keisuke:start>##</keisuke:start>
+			</keisuke:LineComment>
+			<keisuke:BlockComment>
+				<keisuke:start>#*</keisuke:start>
+				<keisuke:end>*#</keisuke:end>
+			</keisuke:BlockComment>
+			<keisuke:LiteralString>
+				<keisuke:start>&apos;</keisuke:start>
+				<keisuke:end>&apos;</keisuke:end>
+			</keisuke:LiteralString>
+			<keisuke:LiteralString>
+				<keisuke:start>&quot;</keisuke:start>
+				<keisuke:end>&quot;</keisuke:end>
+			</keisuke:LiteralString></keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="Ruby" group="Ruby">
+		<keisuke:FileExtension>.rb</keisuke:FileExtension>
+		<keisuke:CountRules specialized="true">
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="EmbeddedRuby" group="Ruby">
+		<keisuke:FileExtension>.erb</keisuke:FileExtension>
+		<keisuke:CountRules specialized="true">
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="Perl" group="Perl">
+		<keisuke:FileExtension>.pl</keisuke:FileExtension>
+		<keisuke:FileExtension>.pm</keisuke:FileExtension>
+		<keisuke:CountRules specialized="true">
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="Python" group="Python">
+		<keisuke:FileExtension>.py</keisuke:FileExtension>
+		<keisuke:CountRules indentSense="true">
+			<keisuke:LineComment>
+				<keisuke:start>#</keisuke:start>
+			</keisuke:LineComment>
+			<keisuke:BlockComment>
+				<keisuke:start>&apos;&apos;&apos;</keisuke:start>
+				<keisuke:end>&apos;&apos;&apos;</keisuke:end>
+			</keisuke:BlockComment>
+			<keisuke:BlockComment>
+				<keisuke:start>&quot;&quot;&quot;</keisuke:start>
+				<keisuke:end>&quot;&quot;&quot;</keisuke:end>
+			</keisuke:BlockComment>
+			<keisuke:LiteralString>
+				<keisuke:start>&apos;</keisuke:start>
+				<keisuke:end>&apos;</keisuke:end>
+				<keisuke:escape>\&apos;</keisuke:escape>
+			</keisuke:LiteralString>
+			<keisuke:LiteralString>
+				<keisuke:start>&quot;</keisuke:start>
+				<keisuke:end>&quot;</keisuke:end>
+				<keisuke:escape>\&quot;</keisuke:escape>
+			</keisuke:LiteralString>
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="Groovy" group="Groovy">
+		<keisuke:FileExtension>.groovy</keisuke:FileExtension>
+		<keisuke:CountRules sameAs="Java">
+			<keisuke:LineComment>
+				<keisuke:start>#!</keisuke:start>
+				<keisuke:needHead>true</keisuke:needHead>
+			</keisuke:LineComment>
+			<keisuke:LiteralString>
+				<keisuke:start>&apos;</keisuke:start>
+				<keisuke:end>&apos;</keisuke:end>
+				<keisuke:escape>\&apos;</keisuke:escape>
+			</keisuke:LiteralString>
+			<keisuke:LiteralString>
+				<keisuke:start>&quot;&quot;&quot;</keisuke:start>
+				<keisuke:end>&quot;&quot;&quot;</keisuke:end>
+			</keisuke:LiteralString>
+			<keisuke:LiteralString>
+				<keisuke:start>&apos;&apos;&apos;</keisuke:start>
+				<keisuke:end>&apos;&apos;&apos;</keisuke:end>
+			</keisuke:LiteralString>
+			<keisuke:LiteralString>
+				<keisuke:start>/</keisuke:start>
+				<keisuke:end>/</keisuke:end>
+				<keisuke:escape>\/</keisuke:escape>
+			</keisuke:LiteralString>
+			<keisuke:LiteralString>
+				<keisuke:start>$/</keisuke:start>
+				<keisuke:end>/$</keisuke:end>
+				<keisuke:escape>$/$</keisuke:escape>
+			</keisuke:LiteralString>
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="Scala" group="Scala">
+		<keisuke:FileExtension>.scala</keisuke:FileExtension>
+		<keisuke:CountRules>
+			<keisuke:LineComment>
+				<keisuke:start>//</keisuke:start>
+			</keisuke:LineComment>
+			<keisuke:BlockComment>
+				<keisuke:start>/*</keisuke:start>
+				<keisuke:end>*/</keisuke:end>
+				<keisuke:nest>true</keisuke:nest>
+			</keisuke:BlockComment>
+			<keisuke:LiteralString>
+				<keisuke:start>&quot;</keisuke:start>
+				<keisuke:end>&quot;</keisuke:end>
+				<keisuke:escape>\&quot;</keisuke:escape>
+			</keisuke:LiteralString>
+			<keisuke:LiteralString>
+				<keisuke:start>&quot;&quot;&quot;</keisuke:start>
+				<keisuke:end>&quot;&quot;&quot;</keisuke:end>
+			</keisuke:LiteralString>
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="Lua" group="Lua">
+		<keisuke:FileExtension>.lua</keisuke:FileExtension>
+		<keisuke:CountRules specialized="true">
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="Shell" group="Shell">
+		<keisuke:FileExtension>.sh</keisuke:FileExtension>
+		<keisuke:FileExtension>.csh</keisuke:FileExtension>
+		<keisuke:FileExtension>.ksh</keisuke:FileExtension>
+		<keisuke:FileExtension>.bash</keisuke:FileExtension>
+		<keisuke:CountRules labelHereDoc="true" sameAs="Makefile">
+			<keisuke:LabelHereDoc>
+				<keisuke:start>&lt;&lt;@?@</keisuke:start>
+				<keisuke:end>@?@</keisuke:end>
+			</keisuke:LabelHereDoc>
+			<keisuke:LabelHereDoc>
+				<keisuke:start>&lt;&lt;-@?@</keisuke:start>
+				<keisuke:end>@?@</keisuke:end>
+			</keisuke:LabelHereDoc>
+			</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="TCL" group="TCL">
+		<keisuke:FileExtension>.tcl</keisuke:FileExtension>
+		<keisuke:CountRules sameAs="Makefile">
+			<keisuke:LiteralString>
+				<keisuke:start>{</keisuke:start>
+				<keisuke:end>}</keisuke:end>
+				<keisuke:escape>\}</keisuke:escape>
+			</keisuke:LiteralString>
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="Makefile" group="Makefile">
+		<keisuke:FileExtension>.makefile</keisuke:FileExtension>
+		<keisuke:CountRules>
+			<keisuke:LineComment>
+				<keisuke:start>#</keisuke:start>
+			</keisuke:LineComment>
+			<keisuke:LiteralString>
+				<keisuke:start>&quot;</keisuke:start>
+				<keisuke:end>&quot;</keisuke:end>
+				<keisuke:escape>\&quot;</keisuke:escape>
+			</keisuke:LiteralString>
+			<keisuke:LiteralString>
+				<keisuke:start>&apos;</keisuke:start>
+				<keisuke:end>&apos;</keisuke:end>
+			</keisuke:LiteralString>
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="BAT" group="BAT">
+		<keisuke:FileExtension>.bat</keisuke:FileExtension>
+		<keisuke:CountRules caseInsense="true">
+			<keisuke:LineComment>
+				<keisuke:start>rem</keisuke:start>
+				<keisuke:needHead>true</keisuke:needHead>
+				<keisuke:needBlanc>true</keisuke:needBlanc>
+			</keisuke:LineComment>
+			<keisuke:LiteralString>
+				<keisuke:start>&quot;</keisuke:start>
+				<keisuke:end>&quot;</keisuke:end>
+				<keisuke:escape>&quot;&quot;</keisuke:escape>
+			</keisuke:LiteralString>
+			<keisuke:LiteralString>
+				<keisuke:start>&apos;</keisuke:start>
+				<keisuke:end>&apos;</keisuke:end>
+				<keisuke:escape>&apos;&apos;</keisuke:escape>
+			</keisuke:LiteralString>
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="ini" group="ini">
+		<keisuke:FileExtension>.ini</keisuke:FileExtension>
+		<keisuke:CountRules>
+			<keisuke:LineComment>
+				<keisuke:start>;</keisuke:start>
+			</keisuke:LineComment>
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="SQL" group="SQL">
+		<keisuke:FileExtension>.sql</keisuke:FileExtension>
+		<keisuke:CountRules caseInsense="true">
+			<keisuke:LineComment>
+				<keisuke:start>--</keisuke:start>
+			</keisuke:LineComment>
+			<keisuke:LineComment>
+				<keisuke:start>#</keisuke:start>
+			</keisuke:LineComment>
+			<keisuke:LineComment>
+				<keisuke:start>//</keisuke:start>
+			</keisuke:LineComment>
+			<keisuke:LineComment>
+				<keisuke:start>rem</keisuke:start>
+				<keisuke:needBlanc>true</keisuke:needBlanc>
+			</keisuke:LineComment>
+			<keisuke:BlockComment>
+				<keisuke:start>/*</keisuke:start>
+				<keisuke:end>*/</keisuke:end>
+			</keisuke:BlockComment>
+			<keisuke:LiteralString>
+				<keisuke:start>&apos;</keisuke:start>
+				<keisuke:end>&apos;</keisuke:end>
+				<keisuke:escape>&apos;&apos;</keisuke:escape>
+			</keisuke:LiteralString>
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="COBOL" group="COBOL">
+		<keisuke:FileExtension>.cob</keisuke:FileExtension>
+		<keisuke:FileExtension>.cbl</keisuke:FileExtension>
+		<keisuke:FileExtension>.cpy</keisuke:FileExtension>
+		<keisuke:FileExtension>.cbf</keisuke:FileExtension>
+		<keisuke:FileExtension>.pco</keisuke:FileExtension>
+		<keisuke:CountRules specialized="true">
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="Fortran" group="Fortran">
+		<keisuke:FileExtension>.f</keisuke:FileExtension>
+		<keisuke:FileExtension>.for</keisuke:FileExtension>
+		<keisuke:FileExtension>.ftn</keisuke:FileExtension>
+		<keisuke:CountRules caseInsense="true">
+			<keisuke:LineComment>
+				<keisuke:start>*</keisuke:start>
+				<keisuke:needHead>true</keisuke:needHead>
+			</keisuke:LineComment>
+			<keisuke:LineComment>
+				<keisuke:start>C</keisuke:start>
+				<keisuke:needHead>true</keisuke:needHead>
+				<keisuke:needBlanc>true</keisuke:needBlanc>
+			</keisuke:LineComment>
+			<keisuke:BlockComment>
+				<keisuke:start>&quot;</keisuke:start>
+				<keisuke:end>&quot;</keisuke:end>
+			</keisuke:BlockComment>
+			<keisuke:LiteralString>
+				<keisuke:start>&quot;</keisuke:start>
+				<keisuke:end>&quot;</keisuke:end>
+				<keisuke:escape>&quot;&quot;</keisuke:escape>
+			</keisuke:LiteralString>
+			<keisuke:LiteralString>
+				<keisuke:start>&apos;</keisuke:start>
+				<keisuke:end>&apos;</keisuke:end>
+				<keisuke:escape>&apos;&apos;</keisuke:escape>
+			</keisuke:LiteralString>
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="Fortran90" group="Fortran">
+		<keisuke:FileExtension>.f90</keisuke:FileExtension>
+		<keisuke:FileExtension>.f95</keisuke:FileExtension>
+		<keisuke:CountRules caseInsense="true">
+			<keisuke:LineComment>
+				<keisuke:start>!</keisuke:start>
+			</keisuke:LineComment>
+			<keisuke:BlockComment>
+				<keisuke:start>&quot;</keisuke:start>
+				<keisuke:end>&quot;</keisuke:end>
+			</keisuke:BlockComment>
+			<keisuke:LiteralString>
+				<keisuke:start>&quot;</keisuke:start>
+				<keisuke:end>&quot;</keisuke:end>
+				<keisuke:escape>&quot;&quot;</keisuke:escape>
+			</keisuke:LiteralString>
+			<keisuke:LiteralString>
+				<keisuke:start>&apos;</keisuke:start>
+				<keisuke:end>&apos;</keisuke:end>
+				<keisuke:escape>&apos;&apos;</keisuke:escape>
+			</keisuke:LiteralString>
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="Smalltalk" group="Smalltalk">
+		<keisuke:FileExtension>.st</keisuke:FileExtension>
+		<keisuke:CountRules>
+			<keisuke:BlockComment>
+				<keisuke:start>&quot;</keisuke:start>
+				<keisuke:end>&quot;</keisuke:end>
+			</keisuke:BlockComment>
+			<keisuke:LiteralString>
+				<keisuke:start>&apos;</keisuke:start>
+				<keisuke:end>&apos;</keisuke:end>
+				<keisuke:escape>\&apos;</keisuke:escape>
+			</keisuke:LiteralString>
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="R" group="R">
+		<keisuke:FileExtension>.r</keisuke:FileExtension>
+		<keisuke:CountRules>
+			<keisuke:LineComment>
+				<keisuke:start>#</keisuke:start>
+			</keisuke:LineComment>
+			<keisuke:LiteralString>
+				<keisuke:start>&quot;</keisuke:start>
+				<keisuke:end>&quot;</keisuke:end>
+			</keisuke:LiteralString>
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="Lisp" group="Lisp">
+		<keisuke:FileExtension>.lisp</keisuke:FileExtension>
+		<keisuke:FileExtension>.lsp</keisuke:FileExtension>
+		<keisuke:FileExtension>.l</keisuke:FileExtension>
+		<keisuke:FileExtension>.cl</keisuke:FileExtension>
+		<keisuke:FileExtension>.el</keisuke:FileExtension>
+		<keisuke:CountRules>
+			<keisuke:LineComment>
+				<keisuke:start>;</keisuke:start>
+			</keisuke:LineComment>
+			<keisuke:BlockComment>
+				<keisuke:start>#|</keisuke:start>
+				<keisuke:end>|#</keisuke:end>
+				<keisuke:nest>true</keisuke:nest>
+			</keisuke:BlockComment>
+			<keisuke:LiteralString>
+				<keisuke:start>&quot;</keisuke:start>
+				<keisuke:end>&quot;</keisuke:end>
+				<keisuke:escape>\&quot;</keisuke:escape>
+			</keisuke:LiteralString>
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="Scheme" group="Scheme">
+		<keisuke:FileExtension>.scheme</keisuke:FileExtension>
+		<keisuke:FileExtension>.scm</keisuke:FileExtension>
+		<keisuke:FileExtension>.sch</keisuke:FileExtension>
+		<keisuke:FileExtension>.ss</keisuke:FileExtension>
+		<keisuke:FileExtension>.sps</keisuke:FileExtension>
+		<keisuke:FileExtension>.sls</keisuke:FileExtension>
+		<keisuke:CountRules functional="true">
+			<keisuke:LineComment>
+				<keisuke:start>;</keisuke:start>
+				<keisuke:escape>#;</keisuke:escape>
+			</keisuke:LineComment>
+			<keisuke:BlockComment>
+				<keisuke:start>#|</keisuke:start>
+				<keisuke:end>|#</keisuke:end>
+				<keisuke:nest>true</keisuke:nest>
+			</keisuke:BlockComment>
+			<keisuke:CommentExpression>
+				<keisuke:start>#; (</keisuke:start>
+			</keisuke:CommentExpression>
+			<keisuke:LiteralString>
+				<keisuke:start>&quot;</keisuke:start>
+				<keisuke:end>&quot;</keisuke:end>
+				<keisuke:escape>\&quot;</keisuke:escape>
+			</keisuke:LiteralString>
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="Clojure" group="Clojure">
+		<keisuke:FileExtension>.clojure</keisuke:FileExtension>
+		<keisuke:FileExtension>.clj</keisuke:FileExtension>
+		<keisuke:CountRules functional="true">
+			<keisuke:LineComment>
+				<keisuke:start>;</keisuke:start>
+			</keisuke:LineComment>
+			<keisuke:CommentExpression>
+				<keisuke:start>#_ (</keisuke:start>
+			</keisuke:CommentExpression>
+			<keisuke:CommentExpression>
+				<keisuke:start>( comment</keisuke:start>
+			</keisuke:CommentExpression>
+			<keisuke:LiteralString>
+				<keisuke:start>&quot;</keisuke:start>
+				<keisuke:end>&quot;</keisuke:end>
+				<keisuke:escape>\&quot;</keisuke:escape>
+			</keisuke:LiteralString>
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="Haskell" group="Haskell">
+		<keisuke:FileExtension>.haskell</keisuke:FileExtension>
+		<keisuke:FileExtension>.hs</keisuke:FileExtension>
+		<keisuke:CountRules indentSense="true">
+			<keisuke:LineComment>
+				<keisuke:start>--</keisuke:start>
+			</keisuke:LineComment>
+			<keisuke:BlockComment>
+				<keisuke:start>{-</keisuke:start>
+				<keisuke:end>-}</keisuke:end>
+				<keisuke:nest>true</keisuke:nest>
+			</keisuke:BlockComment>
+			<keisuke:LiteralString>
+				<keisuke:start>&quot;</keisuke:start>
+				<keisuke:end>&quot;</keisuke:end>
+			</keisuke:LiteralString>
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="LiterateHaskell" group="Haskell">
+		<keisuke:FileExtension>.lhs</keisuke:FileExtension>
+		<keisuke:CountRules specialized="true">
+		</keisuke:CountRules>
+	</keisuke:Language>
+</keisuke:LanguageDefinitions>

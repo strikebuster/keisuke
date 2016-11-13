@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<keisuke:LanguageDefinitions xmlns:keisuke="http://keisuke/language" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://keisuke/language language.xsd ">
+	<keisuke:Language name="Java*" group="Java#">
+		<keisuke:FileExtension>.java</keisuke:FileExtension>
+	</keisuke:Language>
+	<keisuke:Language name="properties*" group="Java#">
+		<keisuke:FileExtension>.properties</keisuke:FileExtension>
+	</keisuke:Language>
+	<keisuke:Language name="JavaScript*" group="JavaScript#">
+		<keisuke:FileExtension>.js</keisuke:FileExtension>
+	</keisuke:Language>
+	<keisuke:Language name="HTML*" group="HTML#">
+		<keisuke:FileExtension>.html</keisuke:FileExtension>
+		<keisuke:FileExtension>.htm</keisuke:FileExtension>
+	</keisuke:Language>
+	<keisuke:Language name="CSS*" group="HTML#">
+		<keisuke:FileExtension>.css</keisuke:FileExtension>
+	</keisuke:Language>
+	<keisuke:Language name="XHTML*" group="XHTML#">
+		<keisuke:FileExtension>.xhtml</keisuke:FileExtension>
+	</keisuke:Language>
+	<keisuke:Language name="XML*" group="XML#">
+		<keisuke:FileExtension>.xml</keisuke:FileExtension>
+	</keisuke:Language>
+	<keisuke:Language name="XMLSchema*" group="XML#">
+		<keisuke:FileExtension>.xsd</keisuke:FileExtension>
+	</keisuke:Language>
+	<keisuke:Language name="JSP*" group="JSP#">
+		<keisuke:FileExtension>.jsp</keisuke:FileExtension>
+	</keisuke:Language>
+</keisuke:LanguageDefinitions>

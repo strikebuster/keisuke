@@ -1,0 +1,27 @@
+*> hoge1
+      *> hoge２
+IDENTIFICATION DIVISION.
+   xxx 有効行２
+   xxx 有効行３ *> 有効行の後ろにコメントhoge
+　　　123456 有効行４
+
+                
+	xxx 有効行５　＆　上は空行１、２
+>>D debug1＝コメント行
+    >>D debug2
+>>d debug3
+>>Diamond not debug 有効行６
+*>hoge3
+*hoge MFの独自コメント行4
+$hoge MFの特殊行＝コメント5
+/hoge MFのコメント6
+D hoge MFのデバッグ＝コメント7
+d	hoge MFのデバッグ＝コメント8
+Donald Duck 有効行7
+
+move " *> " to a
+move " "" *> ""  " to a
+move " ' *> " to a
+move ' *> ' to a
+move ' '' *> '' ' to a
+move ' " *> ' to a

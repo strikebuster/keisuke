@@ -1,0 +1,15 @@
+Running at：2016/11/13 12:11:00
+--
+root2/[MODIFIED] +6 -43
+ src/[MODIFIED] +6 -43
+  jp/[MODIFIED] +1 -1
+   sf/[DROPED] +0 -0
+    hoge.txt[DROPED] +0 -0
+   FileObj.java[MODIFIED] +1 -1
+  JavaCutter.java[MODIFIED] +1 -0
+  Status.java[ADDED] +4 -0
+  StringUtil.java[DROPED] +0 -42
+ test/[UNCHANGED] +0 -0
+  Utils[UNSUPPORTED] +0 -0
+  Utils.java[UNCHANGED] +0 -0
+  Utils.txt[UNCHANGED] +0 -0
