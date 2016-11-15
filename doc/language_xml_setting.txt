@@ -1,6 +1,6 @@
 keisuke/language.xml の設定変更方法
 
-0)language.xmlとは
+０）language.xmlとは
 　　ソースの行数計測するときにどのプログラミング言語のソースかを判定する
 　　のにファイルの拡張子で判断できるようにするための定義。
 　　加えて、プログラミング言語で行数計測する際に必要な、コメント記号など
@@ -14,7 +14,7 @@ keisuke/language.xml の設定変更方法
 　　jar内のkeisuke/language.xmlを先に読み込み、xxx.xmlで定義された
 　　Language要素単位で追加もしくは入れ替えて処理する。
 　　このため、例えば拡張子定義を１つ追加したいだけでも、Language要素を
-　　丸ごとコピーしてから拡張子を追記しないといけない。
+　　丸ごとコピーしてから拡張子を追記する必要がある。
 
 ２）XMLファイルの説明
 　　スキーマ:keisuke/language.xsd　参照
@@ -27,7 +27,7 @@ keisuke/language.xml の設定変更方法
 
 	name属性：言語名（ユニークに定義する）
 	group属性：言語グループ（他のLanguage要素と重複可能）
-	FileExtension要素：拡張子（.つき）（ユニークに定義）
+	FileExtension要素：拡張子（.つき）（ユニークに定義する）
 	CountRules要素：言語の計測ルール
 			ルールが空だと、空行以外は有効行
 			空行には半角スペースとタブだけの行も含む
@@ -48,6 +48,8 @@ keisuke/language.xml の設定変更方法
 	(Language要素のname属性値)を指定する。
 	流用するのはCountRules要素の子要素と属性のうち以下の２つ。
 		caseInsense属性、indentSense属性
+	流用元で定義した上記2つ以外のCountRules要素の属性は無視される
+	ため、同じ定義であっても記述する必要がある。
 
 　　(4)計測ルールがXML定義で対応できない言語
 	<keisuke:Language name="Ruby" group="Ruby">
@@ -59,7 +61,7 @@ keisuke/language.xml の設定変更方法
 	CountRules要素にspecialized属性でtrueを指定する。
 	言語専用の計測処理を個別に実装してある前提。
 	対象言語は
-	ASP, ASP.NET, COBOL, LiterateHaskell, Lua, Perl, Ruby
+	ASP, ASP.NET, COBOL, EmbeddedRuby, LiterateHaskell, Lua, Perl, Ruby
 
 　　(5)CountRules要素の基本
 		<keisuke:CountRules>
@@ -97,6 +99,7 @@ keisuke/language.xml の設定変更方法
 			
 　　(6)CountRules要素の高度な設定
 	a) 記号の比較で英字大文字小文字を無視
+	　　<keisuke:Language name="BAT" group="BAT">
 		<keisuke:CountRules caseInsense="true">
 			<keisuke:LineComment>
 				<keisuke:start>rem</keisuke:start>
@@ -114,6 +117,8 @@ keisuke/language.xml の設定変更方法
 		needBlanc要素trueを指定。
 
 	b2) 行コメントの特殊ルール２
+	　　<keisuke:Language name="VBScript" group="VBScript">
+		<keisuke:CountRules caseInsense="true">
 			<keisuke:LineComment>
 				<keisuke:start>rem</keisuke:start>
 				<keisuke:needHead>true</keisuke:needHead>
@@ -123,27 +128,32 @@ keisuke/language.xml の設定変更方法
 
 		開始記号が行頭でなければならない場合で、行区切り記号があれば
 		行内の行区切り記号直後は行頭と判断する。lineDelimiter要素
-		に行区切り記号を指定。
+		に行区切り記号(相当)を指定。
 
 	b3) 行コメントの特殊ルール３
+	　　<keisuke:Language name="Scheme" group="Scheme">
+		<keisuke:CountRules functional="true">
 			<keisuke:LineComment>
 				<keisuke:start>;</keisuke:start>
-				<keisuke:rejectPrefix>#</keisuke:rejectPrefix>
+				<keisuke:escape>#;</keisuke:escape>
 			</keisuke:LineComment>
 
-		開始記号がエスケープされる場合にrejectPrefix要素でエスケープ
-		記述を定義。この記述に開始記号自体を含まない。
+		開始記号がエスケープされる場合にescape要素でエスケープ
+		記述を定義。
 
 	c) ブロックコメントの特殊ルール
+	　　<keisuke:Language name="Scala" group="Scala">
+		<keisuke:CountRules>
 			<keisuke:BlockComment>
-				<keisuke:start>#|</keisuke:start>
-				<keisuke:end>|#</keisuke:end>
+				<keisuke:start>/*</keisuke:start>
+				<keisuke:end>*/</keisuke:end>
 				<keisuke:nest>true</keisuke:nest>
 			</keisuke:BlockComment>
 
 		ネスト記述が可能な場合にnest要素trueを指定。
 
 	d) ラベル終了形式のヒアドキュメント
+	　　<keisuke:Language name="Shell" group="Shell">
 		<keisuke:CountRules labelHereDoc="true">
 			<keisuke:LabelHereDoc>
 				<keisuke:start>&lt;&lt;@?@</keisuke:start>
@@ -159,7 +169,18 @@ keisuke/language.xml の設定変更方法
 		ソースとの比較時にはラベルとその他文字の間に空白があっても
 		合致すると判定する。
 
-	e) 関数型言語のコメント式
+	e) インデントで行ブロックを定義する言語
+	　　<keisuke:Language name="Python" group="Python">
+		<keisuke:CountRules indentSense="true">
+
+		インデントの深さで行ブロックを定義する言語の場合は、
+		CountRules要素でindentSense属性にtrueを指定。
+		インデントの違い（行頭の半角スペースやタブの個数）を
+		差分行数計測のときに変更と判断するため。
+		タブ１つは半角スペース8個に換算して判定する。
+
+	f) 関数型言語のコメント式
+	　　<keisuke:Language name="Clojure" group="Clojure">
 		<keisuke:CountRules functional="true">
 			<keisuke:CommentExpression>
 				<keisuke:start>#_ (</keisuke:start>
@@ -172,11 +193,12 @@ keisuke/language.xml の設定変更方法
 		functional属性にtrueを指定。
 		CommentExpression要素で、式の開始である"("に対するコメント化
 		の記述をstart要素で定義。開始の"("を含めて記述するが、その他の
-		文字との間に半角スペースを入れておく。
-		ソースとの比較時には、この半角スペースは0個でも2個以上の空白
-		でも合致すると判定する。
+		文字との間に半角スペースを入れる。
+		ソースとの比較時には、この半角スペースは0個以上の空白と合致
+		すると判定する。
 	
-	f) Scriptlet形式の言語
+	g) Scriptlet形式の言語
+	　　<keisuke:Language name="JSP" group="JSP">
 		<keisuke:CountRules sameAs="Java" scriptlet="true">
 			<keisuke:BlockComment>
 				<keisuke:start>&lt;%--</keisuke:start>
@@ -194,8 +216,8 @@ keisuke/language.xml の設定変更方法
 		Scriptletブロックの開始記号、終了記号をScriptBlock要素の
 		start要素とend要素で指定。
 
-	g) 流用した計測ルールに追加
-		f)のサンプル参照
+	h) 流用した計測ルールに追加
+		g)のサンプル参照
 
 		sameAsで計測ルールを流用する場合、ルールの一部削除や
 		置換はできないが、追加は可能。
