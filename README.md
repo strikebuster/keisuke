@@ -64,6 +64,10 @@ StepCounterをベースにソースコードの行数計測をする機能もあ
 
 - - -
 ### 更新履歴
+###### Version 1.0.1(2016/11/19)
+* 設定xmlの更新  
+・language.xmlにTypeScript定義追加  
+・framework.xmlから不要な種類を削除  
 ###### Version 1.0.0(2016/11/13)
 * 初期バージョン  
 

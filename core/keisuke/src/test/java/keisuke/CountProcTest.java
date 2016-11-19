@@ -105,7 +105,7 @@ public class CountProcTest {
 		System.out.println("## testCountProc_error05 ##");
 		URL expected = this.getClass().getResource("CountTest_error05.csv");	
 		CountMainProc cproc = new CountMainProc();
-		String args[] = {"-class", "fw:ow", "-xml", "test/data/ktestl.xml", "test/data/count01.csv"};
+		String args[] = {"-class", "fw:rails", "-xml", "test/data/ktestl.xml", "test/data/count01.csv"};
 		cproc.main(args);
 		TestUtil.assertEquals(expected, cproc.reportOutput);
 	}
@@ -205,7 +205,7 @@ public class CountProcTest {
 		System.out.println("## testCountProc_count20 ##");
 		URL expected = this.getClass().getResource("CountTest_count20.csv");	
 		CountMainProc cproc = new CountMainProc();
-		String args[] = {"-class", "fw:ow", "test/data/count01.csv"};
+		String args[] = {"-class", "fw:ow", "-xml", "test/data/ktestf2.xml", "test/data/count01.csv"};
 		cproc.main(args);
 		TestUtil.assertEquals(expected, cproc.reportOutput);
 	}
@@ -226,7 +226,7 @@ public class CountProcTest {
 		System.out.println("## testCountProc_count22 ##");
 		URL expected = this.getClass().getResource("CountTest_count22.csv");	
 		CountMainProc cproc = new CountMainProc();
-		String args[] = {"-class", "fw:o3w", "test/data/count01.csv"};
+		String args[] = {"-class", "fw:o3w", "-xml", "test/data/ktestf2.xml", "test/data/count01.csv"};
 		cproc.main(args);
 		TestUtil.assertEquals(expected, cproc.reportOutput);
 	}

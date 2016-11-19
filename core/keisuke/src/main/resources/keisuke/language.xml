@@ -175,6 +175,11 @@
 		<keisuke:CountRules sameAs="Java">		
 		</keisuke:CountRules>
 	</keisuke:Language>
+	<keisuke:Language name="TypeScript" group="JavaScript">
+		<keisuke:FileExtension>.ts</keisuke:FileExtension>
+		<keisuke:CountRules sameAs="Java">		
+	</keisuke:CountRules>
+	</keisuke:Language>
 	<keisuke:Language name="JSON" group="JSON">
 		<keisuke:FileExtension>.json</keisuke:FileExtension>
 		<keisuke:CountRules sameAs="Java">

@@ -1,59 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <keisuke:FrameworkDefinitions xmlns:keisuke="http://keisuke/framework" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://keisuke/framework framework.xsd ">
-  <keisuke:Framework name="OW" group="ObjectWorks">
-    <keisuke:SpecificType name="HTML" group="Web">
-      <keisuke:PathPattern>.*/webapp/.*\.html?$</keisuke:PathPattern>
-    </keisuke:SpecificType>
-    <keisuke:SpecificType name="CSS" group="Web">
-    	<keisuke:PathPattern>.*/webapp/.*\.css$</keisuke:PathPattern>
-    </keisuke:SpecificType>
-    <keisuke:SpecificType name="JavaScript" group="Web">
-    	<keisuke:PathPattern>.*/webapp/.*\.js$</keisuke:PathPattern>
-    </keisuke:SpecificType>
-    <keisuke:SpecificType name="JSP" group="SpringMVC">
-    	<keisuke:PathPattern>.*/webapp/.*\.jsp$</keisuke:PathPattern>
-    </keisuke:SpecificType>
-    <keisuke:SpecificType name="XHTML" group="JSF">
-    	<keisuke:PathPattern>.*/webapp/.*\.xhtml$</keisuke:PathPattern>
-    </keisuke:SpecificType>
-    <keisuke:SpecificType name="生成XML" group="JSF">
-    	<keisuke:PathPattern>.*/webapp/.*/.*pages\.xml$</keisuke:PathPattern>
-    </keisuke:SpecificType>
-    <keisuke:SpecificType name="生成Java" group="OW">
-    	<keisuke:PathPattern>.*/java/.*/.*(ActionBase|Logic|Service|Dto)\.java$</keisuke:PathPattern>
-    </keisuke:SpecificType>
-    <keisuke:SpecificType name="Java" group="OW">
-    	<keisuke:PathPattern>.*/java/.*/.*\.java$</keisuke:PathPattern>
-    </keisuke:SpecificType>
-    <keisuke:SpecificType name="DAO層Java" group="JPA/MyBatis">
-    	<keisuke:PathPattern>.*/java/.*/(.*Dao|entity/.*)\.java$</keisuke:PathPattern>
-    </keisuke:SpecificType>
-    <keisuke:SpecificType name="MyBatis" group="MyBatis">
-    	<keisuke:PathPattern>.*/resources/.*/.*SqlClient\.xml$</keisuke:PathPattern>
-    </keisuke:SpecificType>
-  </keisuke:Framework>
-
-  <keisuke:Framework name="O3W" group="ObjectWorks">
-    <keisuke:SpecificType name="HTML" group="Web">
-      <keisuke:PathPattern>.*/webapp/.*\.html?$</keisuke:PathPattern>
-    </keisuke:SpecificType>
-    <keisuke:SpecificType name="CSS" group="Web">
-    	<keisuke:PathPattern>.*/webapp/.*\.css$</keisuke:PathPattern>
-    </keisuke:SpecificType>
-    <keisuke:SpecificType name="JavaScript" group="Web">
-    	<keisuke:PathPattern>.*/webapp/.*\.js$</keisuke:PathPattern>
-    </keisuke:SpecificType>
-    <keisuke:SpecificType name="JSP" group="O3W">
-    	<keisuke:PathPattern>.*/webapp/.*\.jsp$</keisuke:PathPattern>
-    </keisuke:SpecificType>
-    <keisuke:SpecificType name="生成XML" group="O3W">
-    	<keisuke:PathPattern>.*/WEB-INF/.*_Def/.*\.xml$</keisuke:PathPattern>
-    </keisuke:SpecificType>
-    <keisuke:SpecificType name="Java" group="O3W">
-    	<keisuke:PathPattern>.*/java/.*/.*\.java$</keisuke:PathPattern>
-    </keisuke:SpecificType>
-  </keisuke:Framework>
-
   <keisuke:Framework name="Struts" group="Struts">
     <keisuke:SpecificType name="HTML" group="Web">
       <keisuke:PathPattern>.*/webapp/.*\.html?$</keisuke:PathPattern>

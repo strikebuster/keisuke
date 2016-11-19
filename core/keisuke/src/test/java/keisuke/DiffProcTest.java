@@ -136,7 +136,7 @@ public class DiffProcTest {
 		thrownEx.expect(RuntimeException.class);
 		thrownEx.expectMessage("FileNotFoundException");
 		DiffMainProc dproc = new DiffMainProc();
-		String args[] = {"-class", "fw:ow", "-xml", "test/data/nofile.xml", "test/data/diff01.txt"};
+		String args[] = {"-class", "fw:struts", "-xml", "test/data/nofile.xml", "test/data/diff01.txt"};
 		dproc.main(args);
 		//TestUtil.assertEquals(expected, dproc.reportOutput);
 	}
@@ -146,7 +146,7 @@ public class DiffProcTest {
 		System.out.println("## testDiffProc_error06 ##");
 		URL expected = this.getClass().getResource("DiffTest_error06.csv");
 		DiffMainProc dproc = new DiffMainProc();
-		String args[] = {"-class", "fw:ow", "-xml", "test/data/ktestl.xml", "test/data/diff01.txt"};
+		String args[] = {"-class", "fw:rails", "-xml", "test/data/ktestl.xml", "test/data/diff01.txt"};
 		dproc.main(args);
 		TestUtil.assertEquals(expected, dproc.reportOutput);
 	}
@@ -258,7 +258,7 @@ public class DiffProcTest {
 		System.out.println("## testDiffProc_diff20 ##");
 		URL expected = this.getClass().getResource("DiffTest_diff20.csv");
 		DiffMainProc dproc = new DiffMainProc();
-		String args[] = {"-class", "fw:ow", "test/data/diff01.txt"};
+		String args[] = {"-class", "fw:ow", "-xml", "test/data/ktestf2.xml", "test/data/diff01.txt"};
 		dproc.main(args);
 		TestUtil.assertEquals(expected, dproc.reportOutput);
 	}
@@ -278,7 +278,7 @@ public class DiffProcTest {
 		System.out.println("## testDiffProc_diff22 ##");
 		URL expected = this.getClass().getResource("DiffTest_diff22.csv");
 		DiffMainProc dproc = new DiffMainProc();
-		String args[] = {"-class", "fw:o3w", "test/data/diff01.txt"};
+		String args[] = {"-class", "fw:o3w", "-xml", "test/data/ktestf2.xml", "test/data/diff01.txt"};
 		dproc.main(args);
 		TestUtil.assertEquals(expected, dproc.reportOutput);
 	}

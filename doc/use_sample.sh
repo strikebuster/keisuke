@@ -17,12 +17,16 @@ SRCENCODE="UTF-8"
 
 # ＝＝＝計助内部設定＝＝＝
 # KeisukeのJarパッケージ
-JARFILE="keisuke-1.0.0-jar-with-dependencies.jar"
+JARFILE="keisuke-1.0.1-jar-with-dependencies.jar"
+# Keisuke計測時の追加指定
+OPTXML=
+#OPTXML=-xml xxx.xml
 # Keisuke集計時の分類指定
-#CLASSIFY="-classify extension"
-CLASSIFY="-classify language"
-#CLASSIFY="-classify group"
-#CLASSIFY="-classify fw:xxx"
+#CLASSIFY="-classify extension ${OPTXML}"
+CLASSIFY="-classify language ${OPTXML}"
+#CLASSIFY="-classify group ${OPTXML}"
+#CLASSIFY="-classify fw:struts"
+#CLASSIFY="-classify fw:zzz -xml zzz.xml"
 
 # ＝＝＝(1)新規/改修後のソースのカウント＝＝＝
 # 計測結果I/Fファイル
@@ -31,7 +35,7 @@ IFFILE01="_count.csv"
 OUTFILE01="01_新規改修後全PGM規模.csv"
 
 # StepCount実行
-java -cp ${JARFILE} keisuke.count.StepCount -format csv -output ${IFFILE01} -encoding ${SRCENCODE} -showDirectory ${SRCROOT}
+java -cp ${JARFILE} keisuke.count.StepCount -format csv -output ${IFFILE01} -encoding ${SRCENCODE} -showDirectory ${SRCROOT} ${OPTXML}
 
 # 計測結果集計
 java -cp ${JARFILE} keisuke.CountReport ${CLASSIFY} ${IFFILE01} > ${OUTFILE01}
@@ -53,7 +57,7 @@ MODFILE02="_diff_modify.txt"
 OUTFILE02="02_改修差分PGM規模.csv"
 
 # DiffCount実行
-java -cp ${JARFILE} keisuke.count.DiffCount -format text -output ${IFFILE02} -encoding ${SRCENCODE} ${SRCROOT} ${OLDSRCROOT}
+java -cp ${JARFILE} keisuke.count.DiffCount -format text -output ${IFFILE02} -encoding ${SRCENCODE} ${SRCROOT} ${OLDSRCROOT} ${OPTXML}
 
 # 差分計測結果集計
 java -cp ${JARFILE} keisuke.DiffReport ${CLASSIFY} ${IFFILE02} -aout ${ADDFILE02} -mout ${MODFILE02} > ${OUTFILE02}
@@ -91,7 +95,7 @@ IFFILE04="_count_old.csv"
 OUTFILE04="04_リグレッション規模.csv"
 
 #  StepCount実行
-java -cp ${JARFILE} keisuke.count.StepCount -format csv -output ${IFFILE04} -encoding ${SRCENCODE} -showDirectory ${OLDSRCROOT}
+java -cp ${JARFILE} keisuke.count.StepCount -format csv -output ${IFFILE04} -encoding ${SRCENCODE} -showDirectory ${OLDSRCROOT} ${OPTXML}
 
 # 計測結果集計
 java -cp ${JARFILE} keisuke.CountReport ${CLASSIFY} ${IFFILE04} > ${OUTFILE04}
