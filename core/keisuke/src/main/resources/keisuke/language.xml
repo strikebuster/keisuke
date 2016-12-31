@@ -159,6 +159,7 @@
 	</keisuke:Language>
 	<keisuke:Language name="JSP" group="JSP">
 		<keisuke:FileExtension>.jsp</keisuke:FileExtension>
+		<keisuke:FileExtension>.jspf</keisuke:FileExtension>
 		<keisuke:CountRules sameAs="Java" scriptlet="true">
 			<keisuke:BlockComment>
 				<keisuke:start>&lt;%--</keisuke:start>
@@ -249,7 +250,7 @@
 		<keisuke:FileExtension>.htm</keisuke:FileExtension>
 		<keisuke:CountRules sameAs="XML"></keisuke:CountRules>
 	</keisuke:Language>
-	<keisuke:Language name="CSS" group="HTML">
+	<keisuke:Language name="CSS" group="CSS">
 		<keisuke:FileExtension>.css</keisuke:FileExtension>
 		<keisuke:CountRules>
 			<keisuke:BlockComment>
@@ -257,6 +258,42 @@
 				<keisuke:end>*/</keisuke:end>
 			</keisuke:BlockComment></keisuke:CountRules>
 	</keisuke:Language>	
+	<keisuke:Language name="LESS" group="CSS">
+		<keisuke:FileExtension>.less</keisuke:FileExtension>
+		<keisuke:CountRules sameAs="CSS">
+		    <keisuke:LineComment>
+				<keisuke:start>//</keisuke:start>
+			</keisuke:LineComment>
+		</keisuke:CountRules>
+	</keisuke:Language>	
+	<keisuke:Language name="SCSS" group="CSS">
+		<keisuke:FileExtension>.scss</keisuke:FileExtension>
+		<keisuke:CountRules sameAs="LESS"></keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="Sass" group="CSS">
+		<keisuke:FileExtension>.sass</keisuke:FileExtension>
+		<keisuke:CountRules indentSense="true">
+		    <keisuke:LineComment>
+				<keisuke:start>//</keisuke:start>
+			</keisuke:LineComment>
+			<keisuke:BlockComment>
+				<keisuke:start>/*</keisuke:start>
+				<keisuke:end>*/</keisuke:end>
+			</keisuke:BlockComment></keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="Stylus" group="CSS">
+		<keisuke:FileExtension>.styl</keisuke:FileExtension>
+		<keisuke:FileExtension>.stylus</keisuke:FileExtension>
+		<keisuke:CountRules sameAs="LESS"></keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="PCSS" group="CSS">
+		<keisuke:FileExtension>.pcss</keisuke:FileExtension>
+		<keisuke:CountRules sameAs="LESS"></keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="Tass" group="CSS">
+		<keisuke:FileExtension>.tass</keisuke:FileExtension>
+		<keisuke:CountRules sameAs="CSS"></keisuke:CountRules>
+	</keisuke:Language>
 	<keisuke:Language name="XML" group="XML">
 		<keisuke:FileExtension>.xml</keisuke:FileExtension>
 		<keisuke:CountRules>
@@ -284,6 +321,10 @@
 	</keisuke:Language>
 	<keisuke:Language name="TLD" group="XML">
 		<keisuke:FileExtension>.tld</keisuke:FileExtension>
+		<keisuke:CountRules sameAs="XML"></keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="JRXML" group="JasperReports">
+		<keisuke:FileExtension>.jrxml</keisuke:FileExtension>
 		<keisuke:CountRules sameAs="XML"></keisuke:CountRules>
 	</keisuke:Language>
 	<keisuke:Language name="CFML" group="ColdFusion">

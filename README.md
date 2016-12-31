@@ -64,10 +64,18 @@ StepCounterをベースにソースコードの行数計測をする機能もあ
 
 - - -
 ### 更新履歴
+###### Version 1.0.2(2016/12/31)
+* 計測対象の追加(JRXML,SCSS,他)  
+・language.xmlに以下の定義追加  
+　　JSPの拡張子に.jspfを追加  
+　　LESS,SCSS,Sass,Stylus,PCSS,Tassを追加  
+　　JRXMLを追加  
+
 ###### Version 1.0.1(2016/11/19)
 * 設定xmlの更新  
 ・language.xmlにTypeScript定義追加  
 ・framework.xmlから不要な種類を削除  
+
 ###### Version 1.0.0(2016/11/13)
 * 初期バージョン  
 

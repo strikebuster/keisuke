@@ -1,6 +1,5 @@
 /core/keisuke/target/*
 !/core/keisuke/target/keisuke-*.jar
-!/core/keisuke/target/
 /core/keisuke/test/data/cobol
 /core/keisuke/test/data/ow
 /core/keisuke/test/out
