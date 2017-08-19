@@ -16,27 +16,27 @@ import keisuke.count.XmlDefinedStepCounterFactory;
 
 /**
  * 差分のカウント処理を行います。
- *
- * keisuke: パッケージ変更とオリジナルのバグFIXとロジック整理
- *          Xml定義の対応と、そのためにメソッドのstatic廃止
  */
 public class DiffCounter {
 
-	//private String xmlFileName = null;
 	private XmlDefinedStepCounterFactory factory = null;
-	private DiffStatusText diffStatusText = null;
-	
-	public DiffCounter(String xmlfile, DiffStatusText dstext) {
-		
+	private DiffStatusText registeredDiffStatusText = null;
+
+	/**
+	 * 言語定義XMLファイルと差分変更ステータスの表示文言定義を指定するコンストラクター
+	 * @param xmlfile 言語ルールのカスタマイズ定義XMLファイル名
+	 * @param diffStatusText 差分変更ステータスの表示文言定義インスタンス
+	 */
+	public DiffCounter(final String xmlfile, final DiffStatusText diffStatusText) {
+
 		// 言語カウンターのファクトリ生成
 		this.factory = new XmlDefinedStepCounterFactory();
 		if (xmlfile != null) {
-			//this.xmlFileName = xmlfile;
 			this.factory.appendCustomizeXml(xmlfile);
 		}
-		this.diffStatusText = dstext;
+		this.registeredDiffStatusText = diffStatusText;
 	}
-	
+
 	/**
 	 * 2つのディレクトリ配下のソースコードの差分をカウントします。
 	 *
@@ -44,9 +44,9 @@ public class DiffCounter {
 	 * @param newRoot 変更後のソースツリーのルートディレクトリ
 	 * @return カウント結果
 	 */
-	public DiffFolderResult count(File oldRoot, File newRoot) {
+	public DiffFolderResult count(final File oldRoot, final File newRoot) {
 
-		DiffFolderResult root = new DiffFolderResult(null, this.diffStatusText);
+		DiffFolderResult root = new DiffFolderResult(null, this.registeredDiffStatusText);
 		root.setName(newRoot.getName());
 
 		diffFolder(root, oldRoot, newRoot);
@@ -54,8 +54,8 @@ public class DiffCounter {
 		return root;
 	}
 
-	private void diffFolder(DiffFolderResult parent, File oldFolder,
-			File newFolder) {
+	private void diffFolder(final DiffFolderResult parent, final File oldFolder,
+			final File newFolder) {
 		File[] oldFiles = null;
 		if (oldFolder != null) {
 			oldFiles = oldFolder.listFiles();
@@ -102,7 +102,7 @@ public class DiffCounter {
 				}
 				oldName = oldFile.getName();
 				//System.out.println("[DEBUG] OLD node : " + parent.getPath() + "/" + oldName);
-				if (FileNameCompare.compare(newName, oldName) == 0) { // 一致	
+				if (FileNameCompare.compare(newName, oldName) == 0) { // 一致
 					found = true;
 					oldidx++;
 					break;
@@ -116,55 +116,53 @@ public class DiffCounter {
 					parent.addChild(result);
 					// ディレクトリの場合は再帰的に処理
 					if (oldFile.isDirectory()) {
-						//diffFolder((DiffFolderResult)result, oldFile, new File(newFolder, oldName));
-						diffFolder((DiffFolderResult)result, oldFile, null);
+						diffFolder((DiffFolderResult) result, oldFile, null);
 					}
 				}
 				oldidx++;
 			}
-			if (found == false) {
+			if (!found) {
 				// oldになかったので「新規」
 				//System.out.println("[DEBUG] NEW is ADDED");
-				result = createDiffResult(parent, null, newFile, 
+				result = createDiffResult(parent, null, newFile,
 						Util.getFileEncoding(newFile), DiffStatus.ADDED);
 				parent.addChild(result);
 			} else {
 				// oldにあったので「変更」だが、ファイルとディレクトリの組み合わせ確認
 				//System.out.println("[DEBUG] NEW == OLD");
-				if ( (oldFile.isFile() && newFile.isFile()) || 
-						(oldFile.isDirectory() && newFile.isDirectory()) ) {
-					result = createDiffResult(parent, oldFile, newFile, 
+				if ((oldFile.isFile() && newFile.isFile())
+						|| (oldFile.isDirectory() && newFile.isDirectory())) {
+					result = createDiffResult(parent, oldFile, newFile,
 						Util.getFileEncoding(newFile), DiffStatus.MODIFIED);
 					parent.addChild(result);
 				} else if (newFile.isDirectory()) {
 					// oldがファイルでnewがディレクトリ
-					result = createDiffResult(parent, null, newFile, 
+					result = createDiffResult(parent, null, newFile,
 							Util.getFileEncoding(newFile), DiffStatus.ADDED);
 					parent.addChild(result);
-					
+
 					AbstractDiffResult result2 = createDiffResult(parent, oldFile, null,
 							Util.getFileEncoding(oldFile), DiffStatus.REMOVED);
 					parent.addChild(result2);
 				} else {
-					// newがファイルでoldがディレクトリ	
+					// newがファイルでoldがディレクトリ
 					AbstractDiffResult result2 = createDiffResult(parent, oldFile, null,
 							Util.getFileEncoding(oldFile), DiffStatus.REMOVED);
 					parent.addChild(result2);
-					//diffFolder((DiffFolderResult)result2, oldFile, new File(newFolder, oldName));
-					diffFolder((DiffFolderResult)result2, oldFile, null);
-					
-					result = createDiffResult(parent, null, newFile, 
+					diffFolder((DiffFolderResult) result2, oldFile, null);
+
+					result = createDiffResult(parent, null, newFile,
 							Util.getFileEncoding(newFile), DiffStatus.ADDED);
 					parent.addChild(result);
-						
+
 				}
 			}
 			// ディレクトリの場合は再帰的に処理
 			if (newFile.isDirectory()) {
 				if (found) {
-					diffFolder((DiffFolderResult)result, new File(oldFolder, newName), newFile);
+					diffFolder((DiffFolderResult) result, new File(oldFolder, newName), newFile);
 				} else {
-					diffFolder((DiffFolderResult)result, null, newFile);
+					diffFolder((DiffFolderResult) result, null, newFile);
 				}
 			}
 			newidx++;
@@ -185,78 +183,15 @@ public class DiffCounter {
 			// ディレクトリの場合は再帰的に処理
 			if (oldFile.isDirectory()) {
 				//diffFolder((DiffFolderResult)result, oldFile, new File(newFolder, oldName));
-				diffFolder((DiffFolderResult)result, oldFile, null);
+				diffFolder((DiffFolderResult) result, oldFile, null);
 			}
 			oldidx++;
 		}
-		
-		/* おっしゃるとおり非効率なので、ソートして１回だけループするように上記に変更
-		for (File newFile : newFiles) {
-			if (DiffCounterUtil.isIgnore(newFile)) {
-				continue;
-			}
-
-			boolean found = false;
-
-			for (File oldFile : oldFiles) {
-				if (newFile.getName().equals(oldFile.getName())) {
-					AbstractDiffResult result = createDiffResult(parent,
-							oldFile, newFile, Util.getFileEncoding(newFile),
-							DiffStatus.MODIFIED);
-					if (result != null) {
-						parent.addChild(result);
-					}
-					found = true;
-					break;
-				}
-			}
-
-			// 古いソースツリーに見つからなかった場合は追加
-			if (found == false) {
-				AbstractDiffResult result = createDiffResult(parent, null,
-						newFile, Util.getFileEncoding(newFile), DiffStatus.ADDED);
-				parent.addChild(result);
-			}
-
-			// ディレクトリの場合は再帰的に処理
-			if (newFile.isDirectory()) {
-				List<AbstractDiffResult> list = parent.getChildren();
-				DiffFolderResult newParent = (DiffFolderResult)list.get(
-						list.size() - 1);
-				diffFolder(newParent, new File(oldFolder, newFile.getName()),
-						newFile);
-			} else {
-
-			}
-		}
-
-		// 削除されたフォルダを抽出。二回まわすのは非効率ですが…
-		for (File oldFile : oldFiles) {
-			if (DiffCounterUtil.isIgnore(oldFile)) {
-				continue;
-			}
-
-			boolean found = false;
-
-			for (File newFile : newFiles) {
-				if (oldFile.getName().equals(newFile.getName())) {
-					found = true;
-					break;
-				}
-			}
-
-			if (found == false) {
-				AbstractDiffResult result = createDiffResult(parent, oldFile, null,
-						Util.getFileEncoding(oldFile), DiffStatus.REMOVED);
-				parent.addChild(result);
-			}
-		}
-		*/
 
 	}
 
-	private AbstractDiffResult createDiffResult(DiffFolderResult parent,
-			File oldFile, File newFile, String charset, DiffStatus status) {
+	private AbstractDiffResult createDiffResult(final DiffFolderResult parent,
+			final File oldFile, final File newFile, final String charset, final DiffStatus status) {
 
 		if (newFile != null && newFile.isFile()) {
 			String fileName = newFile.getName();
@@ -269,10 +204,10 @@ public class DiffCounter {
 							charset, status, cutter);
 				} catch (Exception ex) {
 					throw new RuntimeException(ex);
-				} 
+				}
 			} else {
 				// カッターが取得できなかった場合はサポート対象外とする
-				diffResult = new DiffFileResult(parent, this.diffStatusText);
+				diffResult = new DiffFileResult(parent, this.registeredDiffStatusText);
 				diffResult.setName(fileName);
 				diffResult.setDiffStatus(DiffStatus.UNSUPPORTED);
 				diffResult.setAddCount(0);
@@ -295,11 +230,11 @@ public class DiffCounter {
 								charset, status, cutter);
 					} catch (Exception ex) {
 						throw new RuntimeException(ex);
-					} 
+					}
 				}
 			} else {
 					// カッターが取得できなかった場合はサポート対象外とする
-					diffResult = new DiffFileResult(parent, this.diffStatusText);
+					diffResult = new DiffFileResult(parent, this.registeredDiffStatusText);
 					diffResult.setName(fileName);
 					diffResult.setDiffStatus(DiffStatus.UNSUPPORTED);
 					diffResult.setAddCount(0);
@@ -309,13 +244,13 @@ public class DiffCounter {
 			return diffResult;
 
 		} else if (newFile != null && newFile.isDirectory()) {
-			DiffFolderResult diffResult = new DiffFolderResult(parent, this.diffStatusText);
+			DiffFolderResult diffResult = new DiffFolderResult(parent, this.registeredDiffStatusText);
 			diffResult.setName(newFile.getName());
 			diffResult.setDiffStatus(status);
 			return diffResult;
 
 		} else if (oldFile != null && oldFile.isDirectory()) {
-			DiffFolderResult diffResult = new DiffFolderResult(parent, this.diffStatusText);
+			DiffFolderResult diffResult = new DiffFolderResult(parent, this.registeredDiffStatusText);
 			diffResult.setName(oldFile.getName());
 			diffResult.setDiffStatus(status);
 			return diffResult;
@@ -324,11 +259,11 @@ public class DiffCounter {
 		return null;
 	}
 
-	private DiffFileResult createDiffFileResult(DiffFolderResult parent,
-			File oldFile, File newFile, String charset, DiffStatus status,
-			Cutter cutter) throws IOException {
+	private DiffFileResult createDiffFileResult(final DiffFolderResult parent,
+			final File oldFile, final File newFile, final String charset, final DiffStatus status,
+			final Cutter cutter) throws IOException {
 
-		DiffFileResult diffResult = new DiffFileResult(parent, this.diffStatusText);
+		DiffFileResult diffResult = new DiffFileResult(parent, this.registeredDiffStatusText);
 		diffResult.setFileType(cutter.getFileType());
 		// REMOVEDのときは対象はoldFileにする、そうでなければnewFile
 		if (status == DiffStatus.REMOVED) {
@@ -403,6 +338,7 @@ public class DiffCounter {
 			diffResult.setCategory(source.getCategory());
 		} else {
 			// 変更なしの場合だが、ここにはこないはず
+			System.out.println("![WARN] illegal status of createDiffFileResult().");
 		}
 
 		return diffResult;
@@ -413,8 +349,8 @@ public class DiffCounter {
 	 */
 	private static class FileNameCompare {
 		private static boolean ignoreCase = (new File("a")).compareTo(new File("A")) == 0 ? true : false;
-		
-		public static int compare(String s1, String s2) {
+
+		public static int compare(final String s1, final String s2) {
 			if (ignoreCase) {
 				return s1.compareToIgnoreCase(s2);
 			} else {
@@ -422,8 +358,7 @@ public class DiffCounter {
 			}
 		}
 	}
-	
-	
+
 	/**
 	 * 変更行数をカウントするための{@link IDiffHandler}実装クラスです。
 	 */
@@ -438,21 +373,21 @@ public class DiffCounter {
 		/**
 		 * {@inheritDoc}
 		 */
-		public void add(String text) {
+		public void add(final String text) {
 			this.addCount++;
 		}
 
 		/**
 		 * {@inheritDoc}
 		 */
-		public void delete(String text) {
+		public void delete(final String text) {
 			this.delCount++;
 		}
 
 		/**
 		 * {@inheritDoc}
 		 */
-		public void match(String text) {}
+		public void match(final String text) { }
 
 		/**
 		 * 追加行数を取得します。

@@ -6,7 +6,7 @@
 /root10/test/comment2.groovy,Groovy,,38,8,7,53
 /root10/test/comment2.hs,Haskell,,14,3,13,30
 /root10/test/comment2.js,JavaScript,,18,2,8,28
-/root10/test/comment2.lhs,Haskell,,24,8,14,46
+/root10/test/comment2.lhs,Haskell,,25,9,17,51
 /root10/test/comment2.lisp,Lisp,,14,6,11,31
 /root10/test/comment2.lua,Lua,,20,5,10,35
 /root10/test/comment2.pl,Perl,,31,12,18,61

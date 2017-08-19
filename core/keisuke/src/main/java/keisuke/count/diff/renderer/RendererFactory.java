@@ -3,16 +3,20 @@ package keisuke.count.diff.renderer;
 import keisuke.MessageDefine;
 
 /**
- * 
- * keisuke: パッケージの変更
- * Rendererの実装の中のMessageDefineを設定するメソッド追加
- *
+ * 出力形式に応じたRendererの実装クラスを生成するファクトリ
  */
-public class RendererFactory {
+public final class RendererFactory {
 
-	public static Renderer getRenderer(String name) {
+	private RendererFactory() { }
+
+	/**
+	 * 出力形式に応じたRendererの実装インスタンスを返す
+	 * @param name 出力形式名称
+	 * @return 差分計測結果の出力形式に応じたRendererインスタンス
+	 */
+	public static Renderer getRenderer(final String name) {
 		AbstractRenderer render = null;
-		if(name != null){
+		if (name != null) {
 			if (name.equals("text")) {
 				render = new SimpleRenderer();
 
@@ -27,8 +31,14 @@ public class RendererFactory {
 		}
 		return render;
 	}
-	
-	public static Renderer getRenderer(String name, MessageDefine md) {
+
+	/**
+	 * 出力形式に応じたRendererの実装インスタンスを返す
+	 * @param name 出力形式名称
+	 * @param md メッセージ定義インスタンス
+	 * @return 差分計測結果の出力形式に応じたRendererインスタンス
+	 */
+	public static Renderer getRenderer(final String name, final MessageDefine md) {
 		AbstractRenderer render = (AbstractRenderer) getRenderer(name);
 		render.setMessageDefine(md);
 		return render;

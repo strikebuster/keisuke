@@ -1,7 +1,14 @@
 package keisuke;
 
-public class DiffReport {
-	public static void main(String[] args) {
+/**
+ * Command for amounting the result of DiffCount
+ *
+ */
+public final class DiffReport {
+
+	private DiffReport() { }
+
+	public static void main(final String[] args) {
 		IfMainProc proc = new DiffMainProc();
 		proc.main(args);
 	}

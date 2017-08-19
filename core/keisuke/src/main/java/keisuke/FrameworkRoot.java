@@ -3,18 +3,21 @@ package keisuke;
 import java.util.Arrays;
 import java.util.List;
 
-public class FrameworkRoot implements IfXmlParseSubject {
+/**
+ * Root node of framework defining xml.
+ * @author strikebuster
+ *
+ */
+class FrameworkRoot implements IfXmlParseSubject {
 
+	/** {@inheritDoc} */
 	public String getXmlNodeName() {
 		return "FrameworkDifinitions";
 	}
-	
-	public List<String> getXmlNodeAttributes() {
-		return null;
-	}
-	
+
+	/** {@inheritDoc} */
 	public List<String> getXmlChildrenNames() {
 		return Arrays.asList(CommonDefine.XML_NODE_FW);
 	}
-	
+
 }

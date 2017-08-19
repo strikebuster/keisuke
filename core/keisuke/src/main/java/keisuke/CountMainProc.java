@@ -7,59 +7,76 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
-public class CountMainProc extends AbstractMainProc {
-	
+/**
+ * Class of main procedure to account result of StepCount
+ *
+ */
+final class CountMainProc extends AbstractMainProc {
+
+	static final int IDX_PATH = 0;
+	static final int IDX_EXTENSION = 1;
+	static final int IDX_CATEGORY = 2;
+	static final int IDX_EXECSTEP = 3;
+	static final int IDX_EMPTYSTEP = 4;
+	static final int IDX_COMMENTSTEP = 5;
+	static final int IDX_SUMMARYSTEP = 6;
+	static final int IDX_OVER_NUM = 7;
+
 	private Map<String, CountElement> langMap = null;
 	private int ignoreFiles = 0; // 計測対象外ファイル本数
-	
-	public CountMainProc() {
+
+	protected CountMainProc() {
+		super();
 		createBindedFuncs(CommonDefine.COUNTPROC);
 	}
 
-	public void main(String[] args) {
-		this.argMap = this.argFunc.makeMapOfArgs(args);
-		if (this.argMap == null) {
+	@Override
+	public void main(final String[] args) {
+		this.setArgMap(this.commandOption().makeMapOfArgs(args));
+		if (this.argMap() == null) {
 			return;
 		}
-		//debugArgMap(argMap);
-		String pfile = argMap.get(CommonDefine.OPT_PROP);
+		//debugArgMap();
+		String pfile = this.argMap().get(CommonDefine.OPT_PROP);
 		PropertyDefine propDef = new PropertyDefine();
 		if (pfile != null) {
 			propDef.customizePropertyDefine(pfile);
 		}
-		this.columnMap = propDef.getCountProperties();
-		this.messageMap = propDef.getMessageProperties();
-		//debugColMap(columnMap);
-		//debugMsgMap(messageMap);
-		
-		String ctype = this.argMap.get(CommonDefine.OPT_CLASS);
+		this.setColumnMap(propDef.getCountProperties());
+		this.setMessageMap(propDef.getMessageProperties());
+		//this.debugColMap();
+		//this.debugMsgMap();
+
+		String ctype = this.argMap().get(CommonDefine.OPT_CLASS);
 		if (ctype == null ||  !(ctype.equals(CommonDefine.OPTVAL_LANGUAGE)
-				|| ctype.equals(CommonDefine.OPTVAL_LANGGROUP) || ctype.startsWith(CommonDefine.OPTVAL_FW))) {
+				|| ctype.equals(CommonDefine.OPTVAL_LANGGROUP)
+				|| ctype.startsWith(CommonDefine.OPTVAL_FW))) {
 			ctype = CommonDefine.OPTVAL_EXTENSION;
 		}
-		String xfile = this.argMap.get(CommonDefine.OPT_XML);
+		String xfile = this.argMap().get(CommonDefine.OPT_XML);
 		if (xfile != null) {
-			this.classifyType = ClassifyFuncFactory.createClassifyFunc(ctype, xfile);
+			this.setClassifier(ClassifyFuncFactory.createClassifyFunc(ctype, xfile));
 		} else {
-			this.classifyType = ClassifyFuncFactory.createClassifyFunc(ctype);
+			this.setClassifier(ClassifyFuncFactory.createClassifyFunc(ctype));
 		}
-		
-		String infile = this.argMap.get(CountArgFunc.ARG_INPUT);
+
+		String infile = this.argMap().get(CountArgFunc.ARG_INPUT);
 		//if (infile == null) {
 		//	throw new RuntimeException("!! Input file is not specified.");
 		//}
-		
-		prepareLangMap();
-		aggregateCount(infile);
-		reportCount();
-		writeOutput();
+
+		this.prepareLangMap();
+		this.aggregateCount(infile);
+		this.reportCount();
+		this.writeOutput();
 	}
-	
+
 	private void prepareLangMap() {
 		this.langMap = new TreeMap<String, CountElement>();
-		List<String> list = this.classifyType.getClassifyFixedList();
+		List<String> list = this.classifier().getClassifyFixedList();
 		if (list == null || list.size() < 1) {
 			return;
 		}
@@ -67,8 +84,9 @@ public class CountMainProc extends AbstractMainProc {
 			this.langMap.put(key, new CountElement(key));
 		}
 	}
-	
-	private void aggregateCount(String infile) {
+
+	private void aggregateCount(final String infile) {
+
 		BufferedReader reader = null;
 		String line = null;
 		try {
@@ -76,7 +94,8 @@ public class CountMainProc extends AbstractMainProc {
 			if (infile == null) {
 				reader = new BufferedReader(new InputStreamReader(System.in));
 			} else {
-				reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File(infile))));
+				reader = new BufferedReader(new InputStreamReader(
+						new FileInputStream(new File(infile))));
 			}
 			int linectr = 0;
 			while ((line = reader.readLine()) != null) {
@@ -84,9 +103,9 @@ public class CountMainProc extends AbstractMainProc {
 				linectr++;
 				line = line.trim();
 				// 列要素分解
-				String strArray[] = line.split(",");
+				String[] strArray = line.split(",");
 				int salen = strArray.length;
-				int skipcols = 0 ;
+				int skipcols = 0;
 				String strpath = "";
 				//String strext = "";
 				String strcategory = "";
@@ -94,24 +113,25 @@ public class CountMainProc extends AbstractMainProc {
 				String strempstep = "0";
 				String strcomstep = "0";
 				String strsumstep = "0";
-				if (salen > 7) {
+				if (salen > IDX_OVER_NUM) {
 					// StepCounterの出力でカテゴリ文字列内に","が含まれる場合の回避
-					skipcols = salen - 7;
+					skipcols = salen - IDX_OVER_NUM;
 				}
-				if (salen > 6) {
-					strpath = strArray[0];
+				if (salen > IDX_OVER_NUM - 1) {
+					strpath = strArray[IDX_PATH];
 					// 拡張子の取得
 					//strext = strlist[1];
 					//strext = FilenameUtils.getExtension(strpath);
-					strcategory = strArray[2];
-					for  (int i = 0; i < skipcols; i++) {
-						strcategory += "," + strArray[3+i];
+					StringBuilder sb = new StringBuilder(strArray[IDX_CATEGORY]);
+					for  (int i = 1; i <= skipcols; i++) {
+						sb.append(",").append(strArray[IDX_CATEGORY + i]);
 					}
+					strcategory = sb.toString();
 					//System.out.println("[DEBUG] CATEGORY :" + strcategory);
-					strexestep = strArray[3+skipcols];
-					strempstep = strArray[4+skipcols];
-					strcomstep = strArray[5+skipcols];
-					strsumstep = strArray[6+skipcols];
+					strexestep = strArray[IDX_EXECSTEP + skipcols];
+					strempstep = strArray[IDX_EMPTYSTEP + skipcols];
+					strcomstep = strArray[IDX_COMMENTSTEP + skipcols];
+					strsumstep = strArray[IDX_SUMMARYSTEP + skipcols];
 				} else {
 					//System.out.println("[DEBUG] ignore line : " + line);
 					this.ignoreFiles++;
@@ -123,16 +143,16 @@ public class CountMainProc extends AbstractMainProc {
 				int numcom = -1;
 				int numall = -1;
 				try {
-					if (! strexestep.isEmpty()) {
+					if (!strexestep.isEmpty()) {
 						numexe = Integer.parseInt(strexestep);
 					}
-					if (! strempstep.isEmpty()) {
+					if (!strempstep.isEmpty()) {
 						numemp = Integer.parseInt(strempstep);
 					}
-					if (! strcomstep.isEmpty()) {
+					if (!strcomstep.isEmpty()) {
 						numcom = Integer.parseInt(strcomstep);
 					}
-					if (! strsumstep.isEmpty()) {
+					if (!strsumstep.isEmpty()) {
 						numall = Integer.parseInt(strsumstep);
 					}
 				} catch (NumberFormatException e) {
@@ -145,10 +165,10 @@ public class CountMainProc extends AbstractMainProc {
 			        continue;
 			    }
 			    // 対象言語分類の取得
-			    String classify = this.classifyType.getClassifyName(strpath);
+			    String classify = this.classifier().getClassifyName(strpath);
 			    CountElement ce = new CountElement(classify, numexe, numemp, numcom, numall);
 			    // 言語種類での集計
-			    if ( this.langMap.containsKey(classify)) {
+			    if (this.langMap.containsKey(classify)) {
 			        CountElement sumce = langMap.get(classify);
 			        sumce.add(ce);
 			        this.langMap.put(classify, sumce);
@@ -162,40 +182,47 @@ public class CountMainProc extends AbstractMainProc {
 			System.err.println("!! Read error : " + infile);
 			throw new RuntimeException(e);
 		} finally {
-			if (reader != null && infile != null) try { reader.close(); } catch (IOException e) { e.printStackTrace(); }
+			if (reader != null && infile != null) {
+				try {
+					reader.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
-	
+
 	private void reportCount() {
-		this.reportFunc.setColumnOrder(this.columnMap);
+		this.reportEditor().setColumnOrder(this.columnMap());
 		StringBuilder sb = new StringBuilder();
 		// 出力グループの表題
-		sb.append(this.messageMap.get(CommonDefine.MSG_COUNT_SUBJECT_HEAD));
+		sb.append(this.messageMap().get(CommonDefine.MSG_COUNT_SUBJECT_HEAD));
 		sb.append("\n");
 		// 列タイトルの出力
-		String line = this.reportFunc.getColumnTitles();
+		String line = this.reportEditor().getColumnTitles();
 		sb.append(line);
 		sb.append("\n");
 		// 言語毎の集計結果の出力
-		for ( String langkey : this.langMap.keySet() ) {
-			CountElement elem = this.langMap.get(langkey);
+		for (Entry<String, CountElement> entry : this.langMap.entrySet()) {
+			String langkey = entry.getKey();
+			CountElement elem = entry.getValue();
 			// 列毎の値を出力
-			String langlabel = this.classifyType.getClassifyNameForReport(langkey);
-			line = this.reportFunc.getColumnValues(langlabel, elem);
+			String langlabel = this.classifier().getClassifyNameForReport(langkey);
+			line = this.reportEditor().getColumnValues(langlabel, elem);
 			sb.append(line);
 			sb.append("\n");
 		}
 		// 出力グループの表題
-		sb.append(this.messageMap.get(CommonDefine.MSG_COUNT_SUBJECT_UNSUPPORT));
+		sb.append(this.messageMap().get(CommonDefine.MSG_COUNT_SUBJECT_UNSUPPORT));
 		sb.append("\n");
-		line = this.reportFunc.getOnlyFilesNumTitles();
+		line = this.reportEditor().getOnlyFilesNumTitles();
 		sb.append(line);
 		sb.append("\n");
 		sb.append("ALL , ");
 		sb.append(this.ignoreFiles);
 		sb.append("\n");
 		// 出力結果の保管
-		this.reportOutput = sb.toString();
+		this.setReportText(sb.toString());
 	}
 
 }

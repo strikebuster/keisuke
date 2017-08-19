@@ -2,33 +2,42 @@ package keisuke.count.diff;
 
 
 /**
- * ファイルの変更状況を示すオブジェクトです。
- * keisuke: パッケージの変更とtype変数追加
- *	type変数はComparatorで利用
- *	親クラスのインスタンス変数のゲッターはFolderも共通にして親で定義に変更
- *  ステータス文言のproperties定義対応のためコンストラクタ引数追加
+ * ファイルの差分変更結果を示すオブジェクトです。
  */
 public class DiffFileResult extends AbstractDiffResult {
-
 
 	private String	fileType;
 	private String	category;
 
-
-	public DiffFileResult(DiffFolderResult parent, DiffStatusText dst) {
-		super(parent, dst);
-		this.type = super.TYPE_FILE; 
-		setFileType("UNDEF");
+	/**
+	 * 親フォルダーを指定するコンストラクタ
+	 * @param parent 親フォルダーの差分計測結果インスタンス
+	 * @param diffStatusText 差分変更ステータスの表示文言定義インスタンス
+	 */
+	public DiffFileResult(final DiffFolderResult parent, final DiffStatusText diffStatusText) {
+		super(parent, diffStatusText);
+		this.setNodeType(TYPE_FILE);
+		this.setFileType("UNDEF");
 	}
 
-	public DiffFileResult(String name, DiffStatus status,
-			DiffFolderResult parent, DiffStatusText dst) {
-		super(name, status, parent, dst);
-		this.type = super.TYPE_FILE; 
-		setFileType("UNDEF");
+	/**
+	 * 自ノードの名称と差分変更ステータス、親フォルダーを指定するコンストラクタ
+	 * @param name ノード名
+	 * @param status 差分変更ステータス値
+	 * @param parent 親フォルダーの差分計測結果インスタンス
+	 * @param diffStatusText 差分変更ステータスの表示文言定義インスタンス
+	 */
+	public DiffFileResult(final String name, final DiffStatus status,
+			final DiffFolderResult parent, final DiffStatusText diffStatusText) {
+		super(name, status, parent, diffStatusText);
+		this.setNodeType(TYPE_FILE);
+		this.setFileType("UNDEF");
 	}
 
-
+	/**
+	 * カテゴリを返す
+	 * @return カテゴリ名
+	 */
 	public String getCategory() {
 		if (category == null) {
 			return "";
@@ -36,48 +45,42 @@ public class DiffFileResult extends AbstractDiffResult {
 		return category;
 	}
 
-	public void setCategory(String category) {
-		this.category = category;
+	/**
+	 * カテゴリを設定する
+	 * @param categorytext カテゴリ名
+	 */
+	public void setCategory(final String categorytext) {
+		this.category = categorytext;
 	}
 
+	/**
+	 * ソースファイルタイプを返す
+	 * @return ソースファイルタイプ
+	 */
 	public String getFileType() {
 		return this.fileType;
 	}
 
-	public void setFileType(String fileType) {
-		this.fileType = fileType;
-	}
-	/*
-	@Override
-	public int getAddCount() {
-		return this.addCount;
-	}
-	
-	public void setAddCount(int addcnt) {
-		this.addCount = addcnt;
+	/**
+	 * ソースファイルタイプを設定する
+	 * @param filetype ソースファイルタイプ
+	 */
+	public void setFileType(final String filetype) {
+		this.fileType = filetype;
 	}
 
+	/** {@inheritDoc} */
 	@Override
-	public int getDelCount() {
-		return this.delCount;
-	}
-	
-	public void setDelCount(int delcnt) {
-		this.delCount = delcnt;
-	}
-	*/
-
-	@Override
-	public String render(int nest) {
+	public String render(final int nest) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < nest; i++) {
 			sb.append(" ");
 		}
-		sb.append(getName());
-		sb.append("[").append(getStatus()).append("]");
-		sb.append(" +").append(getAddCount());
-		sb.append(" -").append(getDelCount());
-		sb.append("\n"); // keisuke: 呼び出し元でなく自身で改行追加
+		sb.append(this.getName());
+		sb.append("[").append(this.getStatus()).append("]");
+		sb.append(" +").append(this.getAddCount());
+		sb.append(" -").append(this.getDelCount());
+		sb.append("\n");
 		return sb.toString();
 	}
 }

@@ -43,4 +43,9 @@ main = do putStrLn "hello"
 
 \end{code}
 
+> -- Birdモード(>)での複数行コメント
+> putStrLn "goodbye" {- 終了
+>　putStrLn "See you again"
+> -}
+
 最後のリテラル

@@ -4,30 +4,49 @@ import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
 
-public class LanguageClassifyFunc extends AbstractLanguageDefine implements IfClassifyFunc {
+/**
+ * Classifier about source languages.
+ *
+ */
+class LanguageClassifyFunc extends AbstractLanguageDefine implements IfClassifyFunc {
 
-	protected String classify = CommonDefine.OPTVAL_LANGUAGE;
-	
-	/** 言語分類（デフォルト）のコンストラクタ */
-	public LanguageClassifyFunc() {
-		this.xmlElemFactory = new XmlElementFactory();
-		init();
+	private String classify = CommonDefine.OPTVAL_LANGUAGE;
+
+	/**
+	 * 言語分類（デフォルト）のコンストラクタ
+	 */
+	protected LanguageClassifyFunc() {
+		super();
+		this.setLanguageDefineFactory(new XmlElementFactory());
+		this.initialize();
 	}
-	
-	/** 言語グループ分類の場合のコンストラクタ */
-	public LanguageClassifyFunc(String str) {
+
+	/**
+	 * 言語グループ分類の場合のコンストラクタ
+	 * @param str 'group'
+	 */
+	protected LanguageClassifyFunc(final String str) {
 		if (str != null && str.equals(CommonDefine.OPTVAL_LANGGROUP)) {
 			this.classify = str;
 		}
-		this.xmlElemFactory = new XmlElementFactory();
-		init();
+		this.setLanguageDefineFactory(new XmlElementFactory());
+		this.initialize();
 	}
-	
-	public String getClassifyName(String strpath) {
+
+	/**
+	 * 言語分類の区分を返す
+	 * @return classifier string 'language' or 'group'
+	 */
+	protected String classifier() {
+		return this.classify;
+	}
+
+	/** {@inheritDoc} */
+	public String getClassifyName(final String strpath) {
 		if (strpath == null) {
 			return null;
 		}
-		if (this.langExtMap == null) {
+		if (this.extensionLanguageMap() == null) {
 			System.err.println("![WARN] there is no language definition map.");
 			return null;
 		}
@@ -39,7 +58,7 @@ public class LanguageClassifyFunc extends AbstractLanguageDefine implements IfCl
 		// 小文字に変換し、ピリオドを付与
 		strext = "." + strext.toLowerCase();
 		// XML定義されていた設定をMapから取得
-		LanguageElement le = this.langExtMap.get(strext);
+		LanguageElement le = this.extensionLanguageMap().get(strext);
 		if (le == null) {
 			return "Unsupport";
 		} else if (this.classify.equals(CommonDefine.OPTVAL_LANGGROUP)) {
@@ -48,11 +67,13 @@ public class LanguageClassifyFunc extends AbstractLanguageDefine implements IfCl
 			return le.getName();
 		}
 	}
-	
-	public String getClassifyNameForReport(String classifyname) {
+
+	/** {@inheritDoc} */
+	public String getClassifyNameForReport(final String classifyname) {
 		return classifyname;
 	}
-	
+
+	/** {@inheritDoc} */
 	public List<String> getClassifyFixedList() {
 		return null;
 	}

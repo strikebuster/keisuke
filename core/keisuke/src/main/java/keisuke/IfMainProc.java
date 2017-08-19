@@ -1,6 +1,14 @@
 package keisuke;
 
-public interface IfMainProc {
-	/** コマンドの主処理 */
-	public void main(String[] args);
+/**
+ * Interface for main procedure of command.
+ * @author strikebuster
+ *
+ */
+interface IfMainProc {
+	/**
+	 * コマンドの主処理
+	 * @param args コマンドライン引数
+	 */
+	void main(String[] args);
 }

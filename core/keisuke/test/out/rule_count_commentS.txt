@@ -1,4 +1,0 @@
-/root1/test/comment.bat,BAT,,5,1,3,9
-/root1/test/comment.cbf,COBOL,,13,3,11,27
-/root1/test/comment.cob,COBOL,,6,4,6,16
-/root1/test/comment.vbs,VBScript,,5,2,1,8

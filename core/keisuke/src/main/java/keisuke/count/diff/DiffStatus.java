@@ -1,10 +1,8 @@
 package keisuke.count.diff;
 
 /**
- * ファイル、ディレクトリの変更状況を示す列挙型です。
- *
- * keisuke: パッケージ変更と列挙子のtoString()オーバーライドをやめて
- * 出力文言はDiffStatusTextクラスで変換するように変更
+ * ファイル、ディレクトリの差分変更ステータス
+ * ステータスの表示文言はDiffStatusTextクラスで変換する
  */
 
 public enum DiffStatus {

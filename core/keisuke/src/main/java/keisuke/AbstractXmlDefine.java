@@ -13,21 +13,36 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+/**
+ * Parsing XML which defines something about keisuke command.
+ * @author strikebuster
+ *
+ */
 public abstract class AbstractXmlDefine {
-	
+
 	private IfXmlParseSubject parseSubject;
-	
+
 	protected AbstractXmlDefine() { }
-	
-	protected void parseXml(String fname, IfXmlParseSubject subject) {
+
+	/**
+	 * XMLファイルを解析して解析ルートXmlParseSubjectに設定する
+	 * @param fname 解析対象のXMLファイル名
+	 * @param subject 対象XMLの解析ルート
+	 */
+	protected void parseXml(final String fname, final IfXmlParseSubject subject) {
 		this.parseSubject = subject;
 		Element root = getDocRoot(fname);
 		// 子ノード要素の処理
 		List<String> children = this.parseSubject.getXmlChildrenNames();
-		parseChildrenNodes(root,children);
+		parseChildrenNodes(root, children);
 	}
-	
-	protected Element getDocRoot(String fname) {
+
+	/**
+	 * XMLファイルのルートElementを返す
+	 * @param fname 解析対象のXMLファイル名
+	 * @return XMLのルートElement
+	 */
+	protected Element getDocRoot(final String fname) {
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder documentBuilder = factory.newDocumentBuilder();
@@ -46,8 +61,13 @@ public abstract class AbstractXmlDefine {
 			throw new RuntimeException(pce);
 		}
 	}
-	
-	protected void parseChildrenNodes(Element parent, List<String> childrenNames) {
+
+	/**
+	 * 解析対象のXML Elementの子ノードを再帰的に解析して設定する
+	 * @param parent 解析対象XMLノードElement
+	 * @param childrenNames 解析対象の子ノード名のList
+	 */
+	protected void parseChildrenNodes(final Element parent, final List<String> childrenNames) {
 		if (parent == null || childrenNames == null || childrenNames.isEmpty()) {
 			return;
 		}
@@ -55,20 +75,22 @@ public abstract class AbstractXmlDefine {
 		// 子ノード要素の取得
 		int childLen = -1;
 		NodeList myChildren = parent.getChildNodes();
-		if (myChildren == null || (childLen = myChildren.getLength()) < 1) {
+		if (myChildren == null) {
 			return;
 		}
-		for(int i=0; i < childLen; i++) {
+		childLen = myChildren.getLength();
+		for (int i = 0; i < childLen; i++) {
 			Node node = myChildren.item(i);
 			//System.out.println("[DEBUG] child Node=" + node.getNodeName());
-			if (! checkElementNode(node)) {
+			if (!checkElementNode(node)) {
 				continue;
 			}
-			Element element = (Element)node;
+			Element element = (Element) node;
 			String nodename = getNameWithoutNS(element.getNodeName());
-			if (! childrenNames.contains(nodename)) {
+			if (!childrenNames.contains(nodename)) {
 				// 解析対象でないので無視
-				//System.out.println("[DEBUG] skip element : " + parent.getNodeName() + "->" + nodename);
+				//System.out.println("[DEBUG] skip element : " + parent.getNodeName()
+				//		+ "->" + nodename);
 				//System.out.println("[DEBUG] because targets are " + childrenNames);
 				continue;
 			}
@@ -76,10 +98,20 @@ public abstract class AbstractXmlDefine {
 			dealChild(nodename, element);
 		}
 	}
-	
+
+	/**
+	 * XMLノードElementを解析して設定する
+	 * @param name 解析対象のXMLノードの定義名
+	 * @param element 解析対象のXMLノードElement
+	 */
 	abstract void dealChild(String name, Element element);
-	
-	protected boolean checkElementNode(Node node) {
+
+	/**
+	 * XMLノードがElementであるかチェックする
+	 * @param node XMLノード
+	 * @return XMLノードがElementであればTRUE
+	 */
+	protected boolean checkElementNode(final Node node) {
 		if (node == null || node.getNodeType() != Node.ELEMENT_NODE) {
 			//System.out.println("![WARN] illegal element: type=" + node.getNodeType()
 			//	+ " name=" + node.getNodeName() + " value=" + node.getNodeValue());
@@ -88,8 +120,13 @@ public abstract class AbstractXmlDefine {
 		}
 		return true;
 	}
-	
-	protected  String getNameWithoutNS(String str) {
+
+	/**
+	 * XMLノードのノード名からNameSpace名を除いた名称を返す
+	 * @param str XMLノード名
+	 * @return ノード名からNameSpace名を除いた名称
+	 */
+	protected  String getNameWithoutNS(final String str) {
 		if (str == null) {
 			return null;
 		}
@@ -99,8 +136,8 @@ public abstract class AbstractXmlDefine {
 		} else if (pos == str.length() - 1) {
 			return "";
 		} else {
-			return str.substring(pos+1);
+			return str.substring(pos + 1);
 		}
 	}
-	
+
 }

@@ -1,9 +1,0 @@
-/src/ejb/src/main/java/jp/co/nri/trial/sample/custsearch/logic/impl/KokyakuSearchLogicImpl.java
-/src/ejb/src/main/java/jp/co/nri/trial/sample/custsearch/logic/impl/TradeSearchLogicImpl.java
-/src/ejb/src/main/resources/mybatis/components.xml
-/src/ejb/src/main/resources/mybatis/mybatis_mapper_configuration.xml
-/src/resources/sql/mybatis/phoneSqlClient.xml
-/src/war/src/main/webapp/js/kss_function_legacy.js
-/src/war/src/main/webapp/js/kss_messages.js
-/src/war/src/main/webapp/error.xhtml
-/src/war/src/main/webapp/index.html

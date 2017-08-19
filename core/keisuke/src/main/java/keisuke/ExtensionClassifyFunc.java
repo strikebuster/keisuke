@@ -4,9 +4,16 @@ import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
 
-public class ExtensionClassifyFunc implements IfClassifyFunc {
+/**
+ * Classifier about file extensions.
+ *
+ */
+class ExtensionClassifyFunc implements IfClassifyFunc {
 
-	public String getClassifyName(String strpath) {
+	protected ExtensionClassifyFunc() { }
+
+	/** {@inheritDoc} */
+	public String getClassifyName(final String strpath) {
 		if (strpath == null) {
 			return null;
 		}
@@ -16,11 +23,13 @@ public class ExtensionClassifyFunc implements IfClassifyFunc {
 		}
 		return strext.toLowerCase();
 	}
-	
-	public String getClassifyNameForReport(String classifyname) {
+
+	/** {@inheritDoc} */
+	public String getClassifyNameForReport(final String classifyname) {
 		return classifyname;
 	}
-	
+
+	/** {@inheritDoc} */
 	public List<String> getClassifyFixedList() {
 		return null;
 	}

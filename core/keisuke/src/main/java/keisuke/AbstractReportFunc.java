@@ -1,27 +1,36 @@
 package keisuke;
 
 import java.util.Map;
+import java.util.Map.Entry;
 
-public abstract class AbstractReportFunc implements IfReportFunc {
-	protected String columnArray[];
-	protected String titleArray[];
-	protected int indexMax = -1;
-	protected String onlyFilesNumTitleArray[] = new String[2];
-	protected String onlyFilesNumColumnArray[] = new String[2];
-	
+/**
+ * Abstract class to make report.
+ * @author strikebuster
+ *
+ */
+abstract class AbstractReportFunc implements IfReportFunc {
+	private String[] columnArray;
+	private String[] titleArray;
+	private int indexMax = -1;
+	private String[] onlyFilesNumTitleArray = new String[2];
+	private String[] onlyFilesNumColumnArray = new String[2];
+
 	protected AbstractReportFunc() { }
-	
-	public void setColumnOrder(Map<String, ReportColumn> map) {
+
+	/** {@inheritDoc} */
+	public void setColumnOrder(final Map<String, ReportColumn> map) {
 		int maplen = map.size();
 		this.columnArray = new String[maplen];
 		this.titleArray = new String[maplen];
 		int maxidx = -1;
-		for ( String key : map.keySet() ) {
+		for (Entry<String, ReportColumn> entry : map.entrySet()) {
 			// 計測結果出力用の列ラベル
-			ReportColumn repcol = map.get(key);
+			String key = entry.getKey();
+			ReportColumn repcol = entry.getValue();
 			int idx = repcol.getIndex();
 			String title = repcol.getTitle();
-			//System.out.println("[DEBUG] set report column : key=" + key + " idx=" + idx + " title=" + title);
+			//System.out.println("[DEBUG] set report column : key=" + key
+			//		+ " idx=" + idx + " title=" + title);
 			if (idx >= 0) {
 				this.columnArray[idx] = key;
 				this.titleArray[idx] = title;
@@ -40,7 +49,8 @@ public abstract class AbstractReportFunc implements IfReportFunc {
 		}
 		this.indexMax = maxidx;
 	}
-	
+
+	/** {@inheritDoc} */
 	public String getColumnTitles() {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i <= this.indexMax; i++) {
@@ -52,8 +62,9 @@ public abstract class AbstractReportFunc implements IfReportFunc {
 		}
 		return sb.toString();
 	}
-	
-	public String getColumnValues(String lang, ICountElement ice) {
+
+	/** {@inheritDoc} */
+	public String getColumnValues(final String lang, final ICountElement ice) {
 		if (ice == null) {
 			System.err.println("![WARN] not instance of ICountElement , but null");
 			return "";
@@ -77,7 +88,8 @@ public abstract class AbstractReportFunc implements IfReportFunc {
 		}
 		return sb.toString();
 	}
-	
+
+	/** {@inheritDoc} */
 	public String getOnlyFilesNumTitles() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(this.onlyFilesNumTitleArray[0]);
@@ -85,8 +97,9 @@ public abstract class AbstractReportFunc implements IfReportFunc {
 		sb.append(this.onlyFilesNumTitleArray[1]);
 		return sb.toString();
 	}
-	
-	public String getOnlyFilesNumColumnValues(String lang, ICountElement ice) {
+
+	/** {@inheritDoc} */
+	public String getOnlyFilesNumColumnValues(final String lang, final ICountElement ice) {
 		if (ice == null) {
 			System.err.println("![WARN] not instance of ICountElement , but null");
 			return "";

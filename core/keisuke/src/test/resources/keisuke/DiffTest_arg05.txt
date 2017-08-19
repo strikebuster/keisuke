@@ -1,4 +1,0 @@
-aout	null
-mout	null
-unchange	xxx
-infile	test/data/diff01.txt

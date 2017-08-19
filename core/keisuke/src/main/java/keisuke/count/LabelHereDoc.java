@@ -4,36 +4,34 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * keisuke:追加クラス
  * ヒアドキュメント形式のリテラル文字列への対応
  */
 public class LabelHereDoc extends LiteralString {
-	
+
 	// ラベル終了リテラル（ヒアドキュメント）用の変数
-	public static String LABEL_MAGIC_WORD = "@?@";
+	public static final String LABEL_MAGIC_WORD = "@?@";
 	private boolean labelEnclose = false;
-	private String label = "";
-	
+	private String labelValue = "";
+
 	/**
 	 * 開始記号と終了記号を指定したコンストラクタ
-	 *
 	 * @param start 開始記号文字列
 	 * @param end   終了記号文字列
 	 */
-	public LabelHereDoc(String start, String end) {
-		setStartString(start); // Override
-		setEndString(end);
+	public LabelHereDoc(final String start, final String end) {
+		super();
+		this.setStartString(start); // Override
+		this.setEndString(end);
 	}
-	
+
 	/**
 	 * リテラルの開始記号を設定します
-	 *
 	 * @param start 開始記号文字列
 	 */
 	@Override
-	public void setStartString(String start){
+	public void setStartString(final String start) {
 		if (start == null) {
-			this.start = "";
+			super.setStartString("");
 			return;
 		}
 		int pos = start.indexOf(LABEL_MAGIC_WORD);
@@ -45,83 +43,80 @@ public class LabelHereDoc extends LiteralString {
 	}
 	/**
 	 * リテラルの開始記号を取得します
-	 *
-	 * @param なし
+	 * @return 開始記号
 	 */
 	@Override
-	public String getStartString(){
+	public String getStartString() {
+		String start = this.startRawString();
 		int pos = -1;
 		if (this.labelEnclose) {
-			pos = this.start.indexOf(LABEL_MAGIC_WORD);
+			pos = start.indexOf(LABEL_MAGIC_WORD);
 		}
 		if (pos > 0) {
 			// 可変部は事前に不明なのでprefixで判定するためにそれだけ返す
-			return this.start.substring(0, pos);
+			return start.substring(0, pos);
 		}
 		return super.getStartString();
 	}
-	
+
 	/**
 	 * リテラルの終了記号を取得します
-	 *
-	 * @param なし
+	 * @return 終了記号
 	 */
 	@Override
-	public String getEndString(){
+	public String getEndString() {
 		if (this.labelEnclose) {
 			// 可変部前後に空白許容も想定しラベル終了リテラルではこのメソッドでなく
 			// getEndRegxString()を使う
-			return this.end.replace(LABEL_MAGIC_WORD, this.label);
+			return this.endRawString().replace(LABEL_MAGIC_WORD, this.labelValue);
 		}
 		return super.getEndString();
 	}
-	
+
 	/**
 	 * リテラルの終了ラベルを設定します
-	 *
 	 * @param label 終了ラベル文字列
 	 */
-	public void setLabelString(String label){
+	public void setLabelString(final String label) {
 		if (label == null || label.length() == 0) {
-			this.label = "";
+			this.labelValue = "";
 		}
-		this.label = label;
+		this.labelValue = label;
 	}
-	
+
 	/**
 	 * リテラルの終了ラベルを取得します
-	 *
 	 * @return 終了ラベル文字列
 	 */
-	public String getLabelString(){
-		return this.label;
+	public String getLabelString() {
+		return this.labelValue;
 	}
-	
-	/** 
+
+	/**
 	 *  ラベル終了のヒアドキュメント形式
 	 *  "@?@"の部分を抽出するPattern用正規表現文字列
 	 *  　　固定部と可変ラベル部の間に空白を許可する言語も想定したパターン化
-	 *  
 	 *  その他
-	 *  "@!@"や"@+@"の部分を抽出するPattern用正規表現文字列
-	 *  親クラスで実装されている
-	 *  
+	 *  　　"@!@"や"@+@"の部分を抽出するPattern用正規表現文字列
+	 *  　　親クラスで実装されている
 	 *  を返す
+	 * @return Pattern用正規表現文字列
 	 */
 	@Override
-	public String getStartRegxString(){
+	public String getStartRegxString() {
+		String start = this.startRawString();
 		int pos;
 		String preStr = "";
 		String postStr = "";
 		StringBuilder sb = new StringBuilder();
 		if (this.labelEnclose) {
 			// prefix[ \t]*(["'`]?\w+["'`]?)[ \t]*postfix
-			pos = this.start.indexOf(LABEL_MAGIC_WORD);
-			preStr = this.start.substring(0,pos);
+			pos = start.indexOf(LABEL_MAGIC_WORD);
+			preStr = start.substring(0, pos);
 			pos += LABEL_MAGIC_WORD.length();
-			if (pos < this.start.length()) {
-				postStr = this.start.substring(pos, this.start.length()); 
-			}	
+			if (pos < start.length()) {
+				postStr = start.substring(pos, start.length());
+			}
 			sb.append(Pattern.quote(preStr));
 			sb.append("[ \\t]*[\"'`]?(\\w+)[\"'`]?");
 			if (postStr.length() > 0) {
@@ -132,39 +127,39 @@ public class LabelHereDoc extends LiteralString {
 		}
 		return super.getStartRegxString();
 	}
-	
-	/** 
+
+	/**
 	 *  ラベル終了のヒアドキュメント形式
 	 *  "@?@"の部分を抽出するPattern用正規表現文字列
 	 *  　　固定部と可変ラベル部の間に空白を許可する言語も想定したパターン化
-	 *  
 	 * その他
-	 *  ％記法の区切り文字までを抽出するPattern用正規表現文字列
-	 *  親クラスで実装されている
-	 *  
+	 *  　　％記法の区切り文字までを抽出するPattern用正規表現文字列
+	 *  　　親クラスで実装されている
 	 *  を返す
+	 * @return Pattern用正規表現文字列
 	 */
 	@Override
-	public String getEndRegxString(){
+	public String getEndRegxString() {
+		String end = this.endRawString();
 		StringBuilder sb = new StringBuilder();
 		if (this.labelEnclose) {
-			// prefix[ \t]*label[ \t]*postfix 
+			// prefix[ \t]*label[ \t]*postfix
 			String preStr = "";
-			int pos = this.end.indexOf(LABEL_MAGIC_WORD);
+			int pos = end.indexOf(LABEL_MAGIC_WORD);
 			if (pos > 0) {
 				// ラベルは行頭なので通常はないはずだが、拡張性のため
-				preStr = this.end.substring(0,pos);
+				preStr = end.substring(0, pos);
 			}
 			String postStr = "";
 			pos += LABEL_MAGIC_WORD.length();
-			if (pos < this.end.length()) {
-				postStr = this.end.substring(pos, this.end.length()); 
+			if (pos < end.length()) {
+				postStr = end.substring(pos, end.length());
 			}
 			if (preStr.length() > 0) {
 				sb.append(Pattern.quote(preStr));
 				sb.append("[ \\t]*");
 			}
-			sb.append(Pattern.quote(this.label));
+			sb.append(Pattern.quote(this.labelValue));
 			if (postStr.length() > 0) {
 				sb.append("[ \\t]*");
 				sb.append(Pattern.quote(postStr));
@@ -173,15 +168,14 @@ public class LabelHereDoc extends LiteralString {
 		}
 		return super.getEndRegxString();
 	}
-	
+
 	/**
 	 * 保持する終了記号が文字列中にあるか探索する
-	 *
-	 * @line　 処理対象文字列
+	 * @param line 処理対象文字列
 	 * @return 開始記号があった場合の開始インデックス、なければ-1
 	 */
 	@Override
-	public int searchEnd(String line) {
+	public int searchEndingMark(final String line) {
 		if (this.labelEnclose) {
 			// ラベル終了リテラル
 			String patternStr = getEndRegxString();
@@ -197,6 +191,6 @@ public class LabelHereDoc extends LiteralString {
 			// リテラル終了していない
 			return -1;
 		}
-		return super.searchEnd(line);
+		return super.searchEndingMark(line);
 	}
 }

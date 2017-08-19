@@ -4,35 +4,57 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Language element node of XML to define language.
+ */
 public class LanguageElement implements IfXmlParseSubject {
 
-	protected String name = null;
-	protected String group = null;
-	protected List<String> extensions = null;
-	
-	public LanguageElement(String lang, String grp) {
+	private String name = null;
+	private String group = null;
+	private List<String> extensions = null;
+
+	/**
+	 * Languageノードに定義されている値を設定するコンストラクタ
+	 * @param lang Language名称
+	 * @param grp Group名称
+	 */
+	protected LanguageElement(final String lang, final String grp) {
 		this.name = lang;
 		this.group = grp;
 		this.extensions = new ArrayList<String>();
 	}
-	
+
+	/** {@inheritDoc} */
 	public String getXmlNodeName() {
 		return CommonDefine.XML_NODE_LANG;
 	}
-	
+
+	/** {@inheritDoc} */
 	public List<String> getXmlChildrenNames() {
 		return Arrays.asList(CommonDefine.XML_NODE_EXT);
 	}
-	
+
+	/**
+	 * 自ノードに定義されているlanguage名称を返す
+	 * @return Language名称
+	 */
 	public String getName() {
 		return this.name;
 	}
-	
+
+	/**
+	 * 自ノードに定義されているlanguageのgroup名称を返す
+	 * @return Group名称
+	 */
 	public String getGroup() {
 		return this.group;
 	}
-	
-	public void addExtension(String ext) {
+
+	/**
+	 * 自ノードに定義されているlanguageのソースファイルの拡張子を設定する
+	 * @param ext ファイル拡張子
+	 */
+	protected void addExtension(final String ext) {
 		String str = ext;
 		if (ext == null) {
 			return;
@@ -41,11 +63,19 @@ public class LanguageElement implements IfXmlParseSubject {
 		}
 		this.extensions.add(str);
 	}
-	
+
+	/**
+	 * 自ノードに定義されているlanguageのソースファイルの拡張子のリストを返す
+	 * @return ファイル拡張子のList
+	 */
 	public List<String> getExtensions() {
 		return this.extensions;
 	}
-	
+
+	/**
+	 * DEBUG用解析経過のログ作成
+	 * @return 解析経過のログ文字列
+	 */
 	public String debug() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("[DEBUG] LanguageElement : name=" + this.name + " group=" + this.group);

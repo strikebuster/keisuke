@@ -1,8 +1,20 @@
 package keisuke;
 
-public class ClassifyFuncFactory {
+/**
+ * Factory to make an instance which implements Classifier.
+ * @author strikebuster
+ *
+ */
+final class ClassifyFuncFactory {
 
-	public static IfClassifyFunc createClassifyFunc(String type) {
+	private ClassifyFuncFactory() { }
+
+	/**
+	 * デフォルトの定義を使って分類定義インスタンスを作成
+	 * @param type classifier
+	 * @return Instance of Classifier
+	 */
+	static IfClassifyFunc createClassifyFunc(final String type) {
 		if (type == null) {
 			return null;
 		} else if (type.equals(CommonDefine.OPTVAL_EXTENSION)) {
@@ -23,8 +35,14 @@ public class ClassifyFuncFactory {
 			return null;
 		}
 	}
-	
-	public static IfClassifyFunc createClassifyFunc(String type, String fname) {
+
+	/**
+	 * 指定のXML定義ファイルを利用して分類定義インスタンスを作成
+	 * @param type classifier
+	 * @param fname xml file name which defines classifier
+	 * @return Instance of Classifier
+	 */
+	static IfClassifyFunc createClassifyFunc(final String type, final String fname) {
 		if (type == null) {
 			return null;
 		} else if (type.equals(CommonDefine.OPTVAL_EXTENSION)) {

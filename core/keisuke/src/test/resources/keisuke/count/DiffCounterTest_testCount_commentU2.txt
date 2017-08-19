@@ -1,10 +1,10 @@
-root20/[変更] +63 -409
+root20/[変更] +63 -410
  src/[変更] +4 -0
   jp/[変更] +4 -0
    sf/[変更] +4 -0
     Comment2.java[変更] +1 -0
     Comment2_org.java[新規] +3 -0
- test/[変更] +59 -409
+ test/[変更] +59 -410
   comment2.R[削除] +0 -20
   comment2.cfm[削除] +0 -23
   comment2.clj[変更] +0 -4
@@ -12,7 +12,7 @@ root20/[変更] +63 -409
   comment2.groovy[削除] +0 -38
   comment2.hs[削除] +0 -14
   comment2.js[変更] +6 -5
-  comment2.lhs[削除] +0 -24
+  comment2.lhs[削除] +0 -25
   comment2.lisp[削除] +0 -14
   comment2.lua[削除] +0 -20
   comment2.pl[削除] +0 -31

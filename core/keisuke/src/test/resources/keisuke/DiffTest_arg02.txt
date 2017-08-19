@@ -1,3 +1,0 @@
-aout	test/out/add02a.txt
-mout	test/out/modify02a.txt
-infile	test/data/dummy.txt

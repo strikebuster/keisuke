@@ -6,30 +6,45 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 
-public class FrameworkClassifyFunc implements IfClassifyFunc {
+/**
+ * Classifier about artifact type on framework.
+ *
+ */
+class FrameworkClassifyFunc implements IfClassifyFunc {
 
-	private final static String xmlfile = "/keisuke/framework.xml";
+	private static final String DEFAULT_FW_XMLFILE = "/keisuke/framework.xml";
 	private String classify = null;
-	public List<FwSpecificElement> fwSpecificList = null;
+	private List<FwSpecificElement> fwSpecificList = null;
 	private List<FwPatternElement> fwPatternList = null;
-	
-	public FrameworkClassifyFunc(String fwname) {
+
+	/**
+	 * Framework定義をしたデフォルトXMLファイルから、Frameworkを識別する名称を指定して
+	 * その定義内容を設定するコンストラクタ
+	 * @param fwname Frameworkを指定する名称
+	 */
+	protected FrameworkClassifyFunc(final String fwname) {
 		this.classify = fwname;
 		try {
-			URL urlfile = this.getClass().getResource(xmlfile);
+			URL urlfile = this.getClass().getResource(DEFAULT_FW_XMLFILE);
 			String uriStr = urlfile.toURI().toString();
-			init(uriStr);
+			initialize(uriStr);
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}
 	}
-	
-	public FrameworkClassifyFunc(String fwname, String fname) {
+
+	/**
+	 * Framework定義をしたXMLファイルを指定し、その中で記述されたFrameworkを識別する
+	 * 名称を指定して、その定義内容を設定するコンストラクタ
+	 * @param fwname Frameworkを指定する名称
+	 * @param fname カスタマイズしたFramework定義のXMLファイル名
+	 */
+	protected FrameworkClassifyFunc(final String fwname, final String fname) {
 		this.classify = fwname;
-		init(fname);
+		initialize(fname);
 	}
-	
-	private void init(String xfile) {
+
+	private void initialize(final String xfile) {
 		XmlFrameworkDefine xmlDef = new XmlFrameworkDefine(xfile);
 		this.fwSpecificList = xmlDef.createFwSpecificList(this.classify);
 		if (this.fwSpecificList == null) {
@@ -39,69 +54,73 @@ public class FrameworkClassifyFunc implements IfClassifyFunc {
 		createFwPatternList();
 		//debugFwPatternList();
 	}
-	
+
 	private void createFwPatternList() {
 		// this.fwSpecificList -> this.fwPatternList
 		this.fwPatternList = new ArrayList<FwPatternElement>();
-		for (FwSpecificElement fse : this.fwSpecificList) {
-			int size = fse.getPatternStrings().size();
+		for (FwSpecificElement fwSpecElem : this.fwSpecificList) {
+			int size = fwSpecElem.getPatternStrings().size();
 			for (int i = 0; i < size; i++) {
-				FwPatternElement fpe = new FwPatternElement(fse, i);
-				this.fwPatternList.add(fpe);
+				FwPatternElement fwPatternElem = new FwPatternElement(fwSpecElem, i);
+				this.fwPatternList.add(fwPatternElem);
 			}
 		}
 		Collections.sort(this.fwPatternList);
 		Collections.reverse(this.fwPatternList);
 	}
-	
-	public String getClassifyName(String strpath) {
+
+	/** {@inheritDoc} */
+	public String getClassifyName(final String strpath) {
+		final int maxNumber = 999;
 		if (strpath == null) {
 			return null;
 		}
-		FwPatternElement fpe = searchFwPatternElement(strpath);
-		if (fpe == null) {
-			return attachNumberingName(999, "Others");
+		FwPatternElement fwPatternElem = searchFwPatternElement(strpath);
+		if (fwPatternElem == null) {
+			return attachNumberingName(maxNumber, "Others");
 		} else {
-			return fpe.getName();
+			return fwPatternElem.getName();
 		}
 	}
-	
-	public String getClassifyNameForReport(String classifyname) {
+
+	/** {@inheritDoc} */
+	public String getClassifyNameForReport(final String classifyname) {
 		return detachNumberingName(classifyname);
 	}
-	
+
+	/** {@inheritDoc} */
 	public List<String> getClassifyFixedList() {
 		if (this.fwSpecificList == null || this.fwSpecificList.isEmpty()) {
 			return null;
 		}
 		List<String> list = new ArrayList<String>();
-		for (FwSpecificElement fse : this.fwSpecificList) {
-			list.add(fse.getName());
+		for (FwSpecificElement fwSpecElem : this.fwSpecificList) {
+			list.add(fwSpecElem.getName());
 		}
 		return list;
 	}
-	
-	private FwPatternElement searchFwPatternElement(String path) {
+
+	private FwPatternElement searchFwPatternElement(final String path) {
 		if (path == null) {
 			return null;
 		}
 		if (this.fwPatternList == null) {
 			return null;
 		}
-		for (FwPatternElement fpe : this.fwPatternList) {
-			Matcher ma = fpe.getPattern().matcher(path);
-			if (ma.matches()) {
-				return fpe;
+		for (FwPatternElement fwPatternElem : this.fwPatternList) {
+			Matcher matcher = fwPatternElem.getPattern().matcher(path);
+			if (matcher.matches()) {
+				return fwPatternElem;
 			}
 		}
 		return null;
 	}
-	
-	private static String attachNumberingName(int num, String name) {
+
+	private static String attachNumberingName(final int num, final String name) {
 		return (String.format("%03d", num) + "#" + name);
 	}
-	
-	private static String detachNumberingName(String numname) {
+
+	private static String detachNumberingName(final String numname) {
 		if (numname == null) {
 			return null;
 		}
@@ -109,28 +128,34 @@ public class FrameworkClassifyFunc implements IfClassifyFunc {
 		if (pos < 0 || pos == numname.length() - 1) {
 			return numname;
 		}
-		return numname.substring(pos+1);
+		return numname.substring(pos + 1);
 	}
-	
+
+	/**
+	 * DEBUG用Framework定義のリスト内容を表示する
+	 */
 	public void debugFwSpecificList() {
 		System.out.println("[DEBUG] fw:" + this.classify + ", fwSpecificList contains ");
 		if (this.fwSpecificList == null) {
 			System.out.println("[DEBUG] null ");
 			return;
 		}
-		for (FwSpecificElement fse : this.fwSpecificList) {
-			System.out.println(fse.debug());
+		for (FwSpecificElement fwSpecElem : this.fwSpecificList) {
+			System.out.println(fwSpecElem.debug());
 		}
 	}
-	
+
+	/**
+	 * DEBUG用Frameworkの成果物タイプパターンの内容を表示する
+	 */
 	public void debugFwPatternList() {
 		System.out.println("[DEBUG] fw:" + this.classify + ", fwPatternList contains ");
 		if (this.fwPatternList == null) {
 			System.out.println("[DEBUG] null ");
 			return;
 		}
-		for (FwPatternElement fpe : this.fwPatternList) {
-			System.out.println(fpe.debug());
+		for (FwPatternElement fwPatternElem : this.fwPatternList) {
+			System.out.println(fwPatternElem.debug());
 		}
 	}
 }

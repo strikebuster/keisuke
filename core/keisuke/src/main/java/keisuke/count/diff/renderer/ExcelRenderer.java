@@ -11,13 +11,13 @@ import keisuke.count.format.ExcelFormatter;
 
 /**
  * 差分カウントの結果をEXCEL形式でレンダリングします。
- * keisuke: パッケージの変更と固定文言のproperties化
  */
 public class ExcelRenderer extends AbstractRenderer {
-	
-	private static final String xlsPrefix = "DiffExcelFormat";
 
-	public byte[] render(DiffFolderResult root) {
+	private static String xlsPrefix = "DiffExcelFormat";
+
+	/** {@inheritDoc} */
+	public byte[] render(final DiffFolderResult result) {
 		try {
 			String xlsTemplate = xlsPrefix + ExcelFormatter.getLocalePostfix() + ".xls";
 			//System.out.println("[DEBUG] xlsTemplate = " + xlsTemplate);
@@ -29,18 +29,18 @@ public class ExcelRenderer extends AbstractRenderer {
 			InputStream in = ExcelRenderer.class.getResourceAsStream(xlsTemplate);
 
 			Map<String, Object> data = new HashMap<String, Object>();
-			data.put("results", DiffCounterUtil.convertToList(root));
-			data.put("totalAdd", root.getAddCount());
-			data.put("totalDel", root.getDelCount());
+			data.put("results", DiffCounterUtil.convertToList(result));
+			data.put("totalAdd", result.getAddCount());
+			data.put("totalDel", result.getDelCount());
 
-			return ExcelFormatter.merge(in, data);
+			return ExcelFormatter.makeExcelData(in, data);
 
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}
 	}
 
-	/**
+	/*
 	 * jXLSを使用してExcelファイルを生成します。
 	 * 引数で与えたテンプレートの入力ストリームはこのメソッド内でクローズされます。
 	 * <p>
@@ -49,7 +49,7 @@ public class ExcelRenderer extends AbstractRenderer {
 	private static byte[] merge(InputStream in, Map<String, Object> data) throws Exception {
 		XLSTransformer transformer = new XLSTransformer();
 		Workbook workbook = transformer.transformXLS(in, data);
-		
+
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		workbook.write(out);
 

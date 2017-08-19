@@ -1,4 +1,0 @@
-aout	null
-mout	null
-infile	test/data/dummy.txt
-properties	test/data/ktest.properties

@@ -1,2 +1,0 @@
-infile	test/data/dummy.csv
-properties	test/data/ktest.properties

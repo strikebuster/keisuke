@@ -13,13 +13,14 @@ import keisuke.count.diff.DiffFolderResult;
  */
 public class SimpleRenderer extends AbstractRenderer {
 
-	public byte[] render(DiffFolderResult root) {
+	/** {@inheritDoc} */
+	public byte[] render(final DiffFolderResult result) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(this.msgdef.getMessage(SCCommonDefine.MSG_DIFF_RND_TIME));
+		sb.append(this.messageDefine().getMessage(SCCommonDefine.MSG_DIFF_RND_TIME));
 		sb.append("：");
 		sb.append(DiffCounterUtil.formatDate(new Date())).append("\n");
 		sb.append("--\n");
-		sb.append(root.toString());
+		sb.append(result.toString());
 
 		return sb.toString().getBytes();
 	}

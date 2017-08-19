@@ -20,19 +20,19 @@ import net.sf.jxls.transformer.XLSTransformer;
 import org.apache.poi.ss.usermodel.Workbook;
 
 /**
- * カウント結果をExcelで出力します。
- * 
+ * ステップ計測結果をExcel形式にフォーマットします。
  */
 public class ExcelFormatter extends AbstractFormatter {
 
-	private static final String xlsPrefix = "ExcelFormatter";
-			
-	public byte[] format(CountResult[] result) {
-		String xlsTemplate = xlsPrefix + getLocalePostfix() + ".xls";
+	private static final String XLS_PREFIX = "ExcelFormatter";
+
+	/** {@inheritDoc} */
+	public byte[] format(final CountResult[] results) {
+		String xlsTemplate = XLS_PREFIX + getLocalePostfix() + ".xls";
 		//System.out.println("[DEBUG] xlsTemplate = " + xlsTemplate);
 		URL url = this.getClass().getResource(xlsTemplate);
 		if (url == null) {
-			xlsTemplate = xlsPrefix + ".xls";
+			xlsTemplate = XLS_PREFIX + ".xls";
 		}
 		//System.out.println("[DEBUG] xlsTemplate = " + xlsTemplate);
 		InputStream in = null;
@@ -43,24 +43,24 @@ public class ExcelFormatter extends AbstractFormatter {
 			CategoryStepDto nonCategory = new CategoryStepDto();
 			nonCategory.setCategory("");
 			boolean useNonCategory = false;
-			for (CountResult resultDto : result) {
+			for (CountResult result : results) {
 				CategoryStepDto categoryDto = null;
-				if (resultDto.getCategory() == null || "".equals(resultDto.getCategory())) {
+				if (result.getCategory() == null || "".equals(result.getCategory())) {
 					categoryDto = nonCategory;
 					useNonCategory = true;
 				} else {
-					categoryDto = getCategoryDto(categories, resultDto.getCategory());
+					categoryDto = getCategoryDto(categories, result.getCategory());
 				}
-				categoryDto.setStep(categoryDto.getStep() + resultDto.getStep());
-				categoryDto.setNone(categoryDto.getNone() + resultDto.getNon());
-				categoryDto.setComment(categoryDto.getComment() + resultDto.getComment());
+				categoryDto.setStep(categoryDto.getStep() + result.getStep());
+				categoryDto.setNone(categoryDto.getNone() + result.getNon());
+				categoryDto.setComment(categoryDto.getComment() + result.getComment());
 			}
 			if (useNonCategory) {
 				categories.add(nonCategory);
 			}
 
 			Collections.sort(categories, new Comparator<CategoryStepDto>() {
-				public int compare(CategoryStepDto o1, CategoryStepDto o2) {
+				public int compare(final CategoryStepDto o1, final CategoryStepDto o2) {
 					if (o1.getCategory().length() == 0
 							&& o2.getCategory().length() == 0) {
 						return 0;
@@ -76,37 +76,47 @@ public class ExcelFormatter extends AbstractFormatter {
 			});
 
 			// カテゴリ・ファイルタイプが無指定の場合はnullから空文字に修正する。(fishplate対応)
-			for (CountResult r : result) {
-				if (r.getCategory() == null) {
-					r.setCategory("");
+			for (CountResult result : results) {
+				if (result.getCategory() == null) {
+					result.setCategory("");
 				}
-				if (r.getFileType() == null) {
-					//r.setFileType("未対応");
-					r.setFileType(getMessageText(SCCommonDefine.MSG_COUNT_FMT_UNDEF));
+				if (result.getFileType() == null) {
+					result.setFileType(getMessageText(SCCommonDefine.MSG_COUNT_FMT_UNDEF));
 				}
 			}
 
 			Map<String, Object> data = new HashMap<String, Object>();
-			data.put("results", result);
+			data.put("results", results);
 			data.put("categories", categories);
 
-			return merge(in, data);
+			return makeExcelData(in, data);
 
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		} finally {
-			if (in != null) try { in.close(); } catch (IOException e) { e.printStackTrace(); }
+			if (in != null) {
+				try {
+					in.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
 	/**
 	 * jXLSを使用してExcelファイルを生成します。
 	 * 引数で与えたテンプレートの入力ストリームはこのメソッド内でクローズされます。
+	 * 生成したEXCELファイルの内容をバイト配列にして返す。
+	 * @param in EXCELテンプレートの入力ストリーム
+	 * @param data テンプレートに差し込むデータ
+	 * @return 作成したEXCELファイルのバイト配列
+	 * @throws Exception 外部ライブラリやStreamの処理で異常があった際に発行
 	 */
-	public static byte[] merge(InputStream in, Map<String, Object> data) throws Exception {
+	public static byte[] makeExcelData(final InputStream in, final Map<String, Object> data) throws Exception {
 		XLSTransformer transformer = new XLSTransformer();
 		Workbook workbook = transformer.transformXLS(in, data);
-		
+
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		workbook.write(out);
 
@@ -114,8 +124,8 @@ public class ExcelFormatter extends AbstractFormatter {
 	}
 
 	private static CategoryStepDto getCategoryDto(
-			List<CategoryStepDto> categoryResult, String category) {
-		for (CategoryStepDto categoryDto : categoryResult) {
+			final List<CategoryStepDto> categoryResults, final String category) {
+		for (CategoryStepDto categoryDto : categoryResults) {
 			if (categoryDto.getCategory().equals(category)) {
 				return categoryDto;
 			}
@@ -123,11 +133,16 @@ public class ExcelFormatter extends AbstractFormatter {
 
 		CategoryStepDto categoryDto = new CategoryStepDto();
 		categoryDto.setCategory(category);
-		categoryResult.add(categoryDto);
+		categoryResults.add(categoryDto);
 
 		return categoryDto;
 	}
-	
+
+	/**
+	 * ロケールに対応するリソースファイル名用の接尾語を返す
+	 * "_"とロケール言語　例）"_ja"
+	 * @return ロケール言語接尾語
+	 */
 	public static String getLocalePostfix() {
 		Locale locale = Locale.getDefault();
 		return "_" + locale.getLanguage();

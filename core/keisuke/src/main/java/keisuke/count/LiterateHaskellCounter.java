@@ -6,38 +6,41 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.regex.Matcher;
-
-import jp.sf.amateras.stepcounter.CountResult;
-import jp.sf.amateras.stepcounter.diffcount.DiffSource;
 
 /**
- * keisuke:追加クラス
  * 	Literate Haskell用のステップカウンタ
  */
 public class LiterateHaskellCounter extends DefaultStepCounter {
 
-		private static String BIRDMARK = ">";
-		
+	private static final String BIRDMARK = ">";
+
 	/**
 	 * コンストラクター
 	 *
 	 */
 	public LiterateHaskellCounter() {
-		scriptletFlag = true;
-		scriptLangs = new ArrayList<ProgramLangRule>();
-		scriptBlocks = new ArrayList<ScriptBlock>();
-		addLineComment(new LineComment("--"));
-		addAreaComment(new AreaComment("{-","-}",AreaComment.ALLOW_NEST));
-		addLiteralString(new LiteralString("\"", "\""));
-		addScriptBlock(new ScriptBlock("\\begin{code}", "\\end{code}"));
-		setIndentOptTrue();
-		setFileType("Haskell");
+		super(true);
+		this.addLineComment(new LineComment("--"));
+		this.addAreaComment(new AreaComment("{-", "-}", AreaComment.ALLOW_NEST));
+		this.addLiteralString(new LiteralString("\"", "\""));
+		this.addScriptBlock(new ScriptBlock("\\begin{code}", "\\end{code}"));
+		this.setUsingIndentBlock(true);
+		this.setFileType("Haskell");
+		this.setCurrentLang((ProgramLangRule) this);
 	}
-	
+
+	/**
+	 * カウントまたは有効行以外をカットします。
+	 * @param ope ステップカウントかコメント除去かの指定値
+	 * @param file カウント対象のファイル
+	 * @param charset ファイルのエンコード
+	 * @return 引数opeで指定した処理の結果を保持するインスタンス
+	 * @throws IOException ファイル読み取りで異常があれば発行
+	 */
 	@Override
-	public CountAndCutSource countOrCut(int ope, File file, String charset) throws IOException {
+	protected CountAndCutSource countOrCut(
+			final int ope, final File file, final String charset) throws IOException {
+
 		String charSetName = charset;
 		if (charSetName == null) {
 			// キャラクタセット無指定の場合は
@@ -46,186 +49,138 @@ public class LiterateHaskellCounter extends DefaultStepCounter {
 		}
 		BufferedReader reader = new BufferedReader(new InputStreamReader(
 				new FileInputStream(file), charSetName));
-		
 		String category = "";
-		boolean ignore = false;
-		long step    = 0;
-		long non     = 0;
-		long comment = 0;
-		CountAndCutSource ccsObj = new CountAndCutSource();
-		StringBuilder sb = new StringBuilder();
-
+		CountAndCutSource ccsObj = new CountAndCutSource(ope);
 		try {
 			String line = null;
 			String indent = "";
-			boolean areaFlag = false;
-			boolean literalFlag = false;
-			boolean programFlag = false;
 			boolean birdmode = false;
-	
-			//System.out.println("[DEBUG] ### Processing file=" + file.getPath() + " ###"); 
-			while((line = reader.readLine()) != null){
-				if(category.length() == 0){
-					Matcher matcher = CATEGORY_PATTERN.matcher(line);
-					if(matcher.find()){
-						category = matcher.group(1);
+
+			//System.out.println("[DEBUG] ### Processing file=" + file.getPath() + " ###");
+			while ((line = reader.readLine()) != null) {
+				if (category.length() == 0) {
+					String str = this.findCategory(line);
+					if (str != null) {
+						category = str;
 					}
 				}
-				if(IGNORE_PATTERN.matcher(line).find()){
-					ignore = true;
-					if (ope == OPE_CUT) {
-						DiffSource ds = new DiffSource(null, ignore, category);
-						ccsObj.setDiffSource(ds);
-					}
+				if (IGNORE_PATTERN.matcher(line).find()) {
+					ccsObj.createIgnoredResult(category);
 					return ccsObj;
 				}
 
-				if (programFlag && currentLang != null && currentLang.indentOpt){
-					indent = saveIndent(line); // インデント保持
+				if ((!this.isScriptletProgram() || this.isInScriptletCode()) && this.isInProgramRule()
+						&& this.currentLang().isUsingIndentBlock()) {
+					indent = this.saveIndent(line); // インデント保持
 				} else {
 					indent = "";
 				}
 				String focusedLine = line.trim();
-				if (checkBlancLine(focusedLine) || checkSkipLine(currentLang, focusedLine)){
+				if (this.checkBlancLine(focusedLine)
+						|| this.checkSkipLine(this.currentLang(), focusedLine)) {
 					// 空白行またはスキップ対象行なので飛ばす
-					non++;
+					ccsObj.increaseBlancStep();
 					continue;
 				}
-				birdmode = false;
-				if (programFlag == false && scriptletFlag) {
+
+				// Scriptlet言語の外部リテラルか確認
+				if (this.isScriptletProgram() && !this.isInScriptletCode()) {
 					// Scriptletの外部
 					// リテラルかBIRDモードのコードか判定
 					if (line.startsWith(BIRDMARK)) {
 						// BIRDモードのソースコード
 						birdmode = true;
-						programFlag = true;
-						currentLang = (ProgramLangRule)this;
+						this.setCurrentLang((ProgramLangRule) this);
+						this.pushNewStatusAsScriptletCodeWith(
+								new BirdMode(), this.currentLang());
+						if (!this.isInSomeRuleOfProgram()) { // 最初のBirdモード
+							this.pushNewStatusAsProgramRule();
+						}
 						// インデント保持、空白行チェックのやり直し
 						focusedLine = line.substring(BIRDMARK.length());
-						if (currentLang.indentOpt){
-							indent = saveIndent(focusedLine); // インデント保持
+						if (this.currentLang().isUsingIndentBlock()) {
+							indent = this.saveIndent(focusedLine); // インデント保持
 						}
 						focusedLine = focusedLine.trim();
-						//System.out.println("[DEBUG] :["+indent+"]"+focusedLine);
-						if (checkBlancLine(focusedLine)) {
+						//System.out.println("[DEBUG] :[" + indent + "]" + focusedLine);
+						if (this.checkBlancLine(focusedLine)) {
 							// 空白行またはスキップ対象行なので飛ばす
-							non++;
-							continue;
+							ccsObj.increaseBlancStep();
 						}
+					} else {
+						// BIRDモードではない
+						focusedLine = this.searchScriptStart(focusedLine).trim();
+						if (focusedLine.length() > 0) {
+							// 有効行が残っている
+							ccsObj.appendExecutableStep(indent + focusedLine + "\n");
+						} else {
+							// ここに来ることはないはず
+							System.out.println("![WARN] illegal status in line=" + line);
+						}
+						continue;
 					}
 				}
-				if (areaFlag == false && literalFlag == false && programFlag == true) {
+
+				// Programコード(Scriptlet)の内部
+				if (this.isInProgramRule()) {
 					// 有効行の処理
-					focusedLine = removeComments(focusedLine).trim();
+					focusedLine = this.removeComments(focusedLine).trim();
 					if (focusedLine.length() > 0) {
 						// 有効行が残っている
-						step++;
-						if (ope == OPE_CUT) {
-							if (birdmode) {
-								sb.append(BIRDMARK);
-							}
-							sb.append(indent + focusedLine + "\n");
-						}
-						//System.out.println("[DEBUG] !"+focusedLine);
+						ccsObj.appendExecutableStep(indent + focusedLine + "\n");
 					} else {
 						// 取り除かれたコメントが含まれていた
-						comment++;
+						ccsObj.increaseCommentStep();
 					}
-					if ( onScriptBlock == null && scriptletFlag ) {
-						programFlag = false;
-					} else if ( onAreaComment != null ) {
-						areaFlag = true;
-					} else if ( onLiteralString != null ) {
-						literalFlag = true;
-					}
-				} else if (areaFlag) {
+				} else if (this.isInCommentRule()) {
 					// 複数行コメントの内部
-					focusedLine = removeAreaCommentUntillEnd(currentLang, focusedLine, LINE_HEAD).trim();
-					if ( onAreaComment == null ) {
-						areaFlag = false;
-					}
+					focusedLine = this.removeAreaCommentUntilEnd(
+							this.currentLang(), focusedLine, LINE_HEAD).trim();
 					if (focusedLine.length() > 0) {
 						// 有効行が残っている
-						step++;
-						if (ope == OPE_CUT) {
-							if (birdmode) {
-								sb.append(BIRDMARK);
-							}
-							sb.append(indent + focusedLine + "\n");
-						}
-						//System.out.println("[DEBUG] @"+focusedLine);
+						ccsObj.appendExecutableStep(indent + focusedLine + "\n");
 					} else {
 						// 取り除かれたコメントが含まれていた
-						comment++;
+						ccsObj.increaseCommentStep();
 					}
-					if ( onScriptBlock == null && scriptletFlag ) {
-						programFlag = false;
-					} else if ( onAreaComment != null ) {
-						areaFlag = true;
-					} else if ( onLiteralString != null ) {
-						literalFlag = true;
-					}
-				} else if (literalFlag) {
+				} else if (this.isInLiteralRule()) {
 					// リテラル文字列の内部
-					focusedLine = searchLiteralStringEnd(currentLang, focusedLine).trim();
-					if ( onLiteralString == null ) {
-						literalFlag = false;
-					}
+					focusedLine = this.searchLiteralStringEnd(this.currentLang(), focusedLine)
+							.trim();
 					if (focusedLine.length() > 0) {
 						// 有効行が残っている
-						step++;
-						if (ope == OPE_CUT) {
-							if (birdmode) {
-								sb.append(BIRDMARK);
-							}
-							sb.append(indent + focusedLine + "\n");
-						}
-						//System.out.println("[DEBUG] $"+focusedLine);
+						ccsObj.appendExecutableStep(indent + focusedLine + "\n");
 					} else {
 						// リテラル内の空行(ここは到達不能なはず）
-						non++;
+						System.out.println("![WARN] blanc in literal. file=" + file.getName()
+								+ " line=" + line);
+						ccsObj.increaseBlancStep();
 					}
-					if ( onScriptBlock == null && scriptletFlag ) {
-						programFlag = false;
-					} else if ( onAreaComment != null ) {
-						areaFlag = true;
-					} else if ( onLiteralString != null ) {
-						literalFlag = true;
-					}					
-				} else if (programFlag == false && scriptletFlag) {
-					// Scriptletの外部、BIRDモードでもない
-					focusedLine = searchScriptStart(focusedLine).trim();
-					if ( onScriptBlock != null && scriptletFlag ) {
-						programFlag = true;
-					}
-					if (focusedLine.length() > 0) {
-						// 有効行が残っている
-						step++;
-						if (ope == OPE_CUT) {
-							sb.append(indent + focusedLine + "\n");
-						}
-						//System.out.print("[DEBUG] &"+focusedLine+"\n");
-					}
-					if ( onScriptBlock == null && scriptletFlag) {
-						programFlag = false;
-					} else if ( onAreaComment != null ) {
-						areaFlag = true;
-					} else if ( onLiteralString != null ) {
-						literalFlag = true;
+				} else {
+					// Scriptlet言語でないのにプログラム外部？？
+					System.out.println("![WARN] Unknown the status of this line. : file="
+							+ file.getPath() + " line=" + line);
+					ccsObj.appendExecutableStep(indent + focusedLine + "\n");
+				}
+				// BIRDモードの場合の行後処理
+				if (birdmode) {
+					birdmode = false;
+					this.popStatusAsScriptletCode();
+					if (this.isInProgramRule()) { // コメントやリテラル処理中ではない
+						this.popStatusAsProgramRule();
 					}
 				}
 			}
 		} finally {
 			reader.close();
 		}
-		if (ope == OPE_COUNT) {
-			CountResult cs = new CountResult(file, file.getName(), getFileType(), category, step, non, comment);
-			ccsObj.setCountResult(cs);
-		} else {
-			String str = sb.toString();
-			DiffSource ds = new DiffSource(str, ignore, category);
-			ccsObj.setDiffSource(ds);
-		}
+		ccsObj.createResult(file, this.getFileType(), category);
 		return ccsObj;
+	}
+
+	private static class BirdMode extends ScriptBlock {
+		protected BirdMode() {
+			super(">", "\n");
+		}
 	}
 }

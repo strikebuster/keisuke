@@ -9,34 +9,40 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
-public class MatchMainProc extends AbstractMainProc {
-	
-	public MatchMainProc() {
+/**
+ * Class of main procedure to extract the matching files from result of StepCount.
+ *
+ */
+final class MatchMainProc extends AbstractMainProc {
+
+	protected MatchMainProc() {
+		super();
 		createBindedFuncs(CommonDefine.MATCHPROC);
 	}
 
-	public void main(String[] args) {
-		this.argMap = this.argFunc.makeMapOfArgs(args);
-		if (this.argMap == null) {
+	@Override
+	public void main(final String[] args) {
+		this.setArgMap(this.commandOption().makeMapOfArgs(args));
+		if (this.argMap() == null) {
 			return;
 		}
-		//debugArgMap(argMap);
+		//this.debugArgMap();
 		// propertiesの設定項目なし＝出力レポートなし
 		// 入力ファイルの確認
-		String mafile = this.argMap.get(MatchArgFunc.ARG_MASTER);
+		String mafile = this.argMap().get(MatchArgFunc.ARG_MASTER);
 		if (mafile == null) {
 			throw new RuntimeException("!! Master file is not specified.");
 		}
-		String trfile = this.argMap.get(MatchArgFunc.ARG_TRANSACTION);
+		String trfile = this.argMap().get(MatchArgFunc.ARG_TRANSACTION);
 		if (trfile == null) {
 			throw new RuntimeException("!! Transaction file is not specified.");
 		}
-		String outfile = this.argMap.get(MatchArgFunc.ARG_OUTPUT);
+		String outfile = this.argMap().get(MatchArgFunc.ARG_OUTPUT);
 		extractMatch(mafile, trfile);
 		writeOutput(outfile);
 	}
-	
-	private void extractMatch(String mafile, String trfile) {
+
+	private void extractMatch(final String mafile, final String trfile) {
 		StringBuilder sb = new StringBuilder();
 		BufferedReader readerMa = null;
 		BufferedReader readerTr = null;
@@ -74,7 +80,7 @@ public class MatchMainProc extends AbstractMainProc {
 					linectrMa++;
 					lineMa = lineMa.trim();
 					// 列要素分解
-					String strArray[] = lineMa.split(",");
+					String[] strArray = lineMa.split(",");
 					String strpath = strArray[0];
 					if (strpath.length() == 0) {
 						// フォーマット不正行
@@ -105,7 +111,7 @@ public class MatchMainProc extends AbstractMainProc {
 			}
 			if (lineTr == null) {
 				// 正常にTRファイル処理終了
-				this.reportOutput = sb.toString();
+				this.setReportText(sb.toString());
 			} else {
 				// TR処理途中で異常終了
 				System.err.println("!! Fatal error occured. no output.");
@@ -116,26 +122,45 @@ public class MatchMainProc extends AbstractMainProc {
 			System.err.println("!! Read error : " + mafile + " or " + trfile);
 			throw new RuntimeException(e);
 		} finally {
-			if (readerMa != null) try { readerMa.close(); } catch (IOException e) { e.printStackTrace(); }
-			if (readerTr != null) try { readerTr.close(); } catch (IOException e) { e.printStackTrace(); }
+			if (readerMa != null) {
+				try {
+					readerMa.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			if (readerTr != null) {
+				try {
+					readerTr.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
-	
-	private void writeOutput(String outfile) {
+
+	private void writeOutput(final String outfile) {
 		if (outfile == null) {
 			super.writeOutput();
 		} else {
 			BufferedWriter writer = null;
 			try {
 				// 出力ファイル
-				writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(outfile))));
-				writer.write(this.reportOutput);
+				writer = new BufferedWriter(new OutputStreamWriter(
+						new FileOutputStream(new File(outfile))));
+				writer.write(this.reportText());
 			} catch (IOException e) {
 				System.err.println("!! Write error : " + outfile);
 				throw new RuntimeException(e);
 			} finally {
-				if (writer != null) try { writer.close(); } catch (IOException e) { e.printStackTrace(); }
-			}		
+				if (writer != null) {
+					try {
+						writer.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
 		}
 	}
 }

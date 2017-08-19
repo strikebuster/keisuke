@@ -12,9 +12,10 @@ import java.util.TreeMap;
 
 /**
  * ユーティリティメソッドを提供します。
- * keisuke: パッケージの変更およびimportクラスのパッケージも変更
  */
-public class DiffCounterUtil {
+public final class DiffCounterUtil {
+
+	private DiffCounterUtil() { }
 
 	/**
 	 * ファイルを無視するかどうかを判定します。
@@ -22,7 +23,7 @@ public class DiffCounterUtil {
 	 * @param file ファイル
 	 * @return 無視する場合true、無視しない場合false
 	 */
-	public static boolean isIgnore(File file) {
+	public static boolean isIgnore(final File file) {
 		String name = file.getName();
 		if (name.equals("CVS")) {
 			return true;
@@ -39,7 +40,7 @@ public class DiffCounterUtil {
 		return false;
 	}
 
-	public static String formatDate(Date date) {
+	public static String formatDate(final Date date) {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		return format.format(date);
 	}
@@ -50,7 +51,7 @@ public class DiffCounterUtil {
 	 * @param source ソース
 	 * @return ソースから空行を削除した文字列
 	 */
-	public static String removeEmptyLines(String source) {
+	public static String removeEmptyLines(final String source) {
 		StringBuilder sb = new StringBuilder();
 		String[] lines = DiffCounterUtil.split(source);
 		for (String line : lines) {
@@ -68,7 +69,7 @@ public class DiffCounterUtil {
 	 * @param source ソース
 	 * @return ソースを行ごとに分割した配列
 	 */
-	public static String[] split(String source) {
+	public static String[] split(final String source) {
 		List<String> lines = new ArrayList<String>();
 		StringBuilder sb = new StringBuilder();
 
@@ -97,7 +98,7 @@ public class DiffCounterUtil {
 	 * @param charset 文字コード
 	 * @return ファイルから読み込んだ文字列
 	 */
-	public static String getSource(File file, String charset) {
+	public static String getSource(final File file, final String charset) {
 		if (file == null) {
 			return "";
 		}
@@ -152,7 +153,7 @@ public class DiffCounterUtil {
 //	}
 
 	public static List<DiffFileResult> convertToList(
-			DiffFolderResult folderResult) {
+			final DiffFolderResult folderResult) {
 		return new ArrayList<DiffFileResult>(
 				convertToMap(folderResult).values());
 	}
@@ -164,16 +165,16 @@ public class DiffCounterUtil {
 	 * @return 差分ファイルのリスト
 	 */
 	private static Map<String, DiffFileResult> convertToMap(
-			DiffFolderResult folderResult) {
+			final DiffFolderResult folderResult) {
 		Map<String, DiffFileResult> map = new TreeMap<String, DiffFileResult>();
 
 		List<AbstractDiffResult> children = folderResult.getChildren();
 		for (AbstractDiffResult child : children) {
 			if (child instanceof DiffFolderResult) {
-				Map<String, DiffFileResult> childMap = convertToMap((DiffFolderResult)child);
+				Map<String, DiffFileResult> childMap = convertToMap((DiffFolderResult) child);
 				map.putAll(childMap);
 			} else if (child instanceof DiffFileResult) {
-				DiffFileResult fileResult = (DiffFileResult)child;
+				DiffFileResult fileResult = (DiffFileResult) child;
 				map.put(fileResult.getPath(), fileResult);
 			}
 		}

@@ -1,6 +1,7 @@
 package keisuke.count;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -19,157 +20,195 @@ import keisuke.count.diff.renderer.Renderer;
 import keisuke.count.diff.renderer.RendererFactory;
 
 /**
- * Diffcountのメイン
- * keisuke: パッケージ変更とオリジナルからクラス名変更(Main -> DiffCount)
+ * コマンドラインから引数で指定した2つのディレクトリ配下のファイルの
+ * 差分行数をカウントする
+ * origin: a part of jp.sf.amateras.stepcounter.diffcount.Main
  */
 public class DiffCount {
 
-	private OutputStream output = System.out;
+	private OutputStream outputStream = System.out;
 
 	private File srcdir = null;
 	private File olddir = null;
-	private String format = null;
+	private String outputFormat = null;
 	//private String encoding = null;
-	// keisuke: xmlオプション追加
 	private String xmlFileName = null;
-	public Map<String, String> argMap = null;
-	public MessageDefine msgDef = null;
+	private Map<String, String> argMap = null;
+	private MessageDefine msgDef = null;
+	private DiffFolderResult diffResult;
 
-	public void setSrcdir(File srcdir) {
-		this.srcdir = srcdir;
+	/**
+	 * 新しい版のソースを格納するディレクトリをセットします
+	 * @param dir 新しい版のディレクトリ
+	 */
+	private void setNewerDirectory(final File dir) {
+		this.srcdir = dir;
 	}
 
-	public void setOlddir(File olddir) {
-		this.olddir = olddir;
+	/**
+	 * 古い版のソースを格納するディレクトリをセットします
+	 * @param dir 古い版のディレクトリ
+	 */
+	private void setOlderDirectory(final File dir) {
+		this.olddir = dir;
 	}
 
-	public void setFormat(String format) {
-		this.format = format;
+	/**
+	 * 結果出力のフォーマットを設定します
+	 * @param format 出力フォーマット
+	 */
+	private void setOutputFormat(final String format) {
+		this.outputFormat = format;
 	}
 
-	public void setOutput(OutputStream output) {
-		this.output = output;
+	/**
+	 * 出力ストリームを設定します
+	 * @param output 出力ストリーム
+	 */
+	private void setOutputStream(final OutputStream output) {
+		this.outputStream = output;
 	}
 
 	/*
-	public void setEncoding(String encoding) {
+	private void setEncoding(String encoding) {
 		this.encoding = encoding;
-	}
+	}s
 	*/
-	
-	/** keisuke: 言語定義XMLファイル名をセット */
-	public void setXmlFileName(String name){
+
+	/**
+	 * 言語定義XMLファイル名をセット
+	 * @param name XMLファイル名
+	 */
+	private void setXmlFileName(final String name) {
 		this.xmlFileName = name;
 	}
 
-	/** 引数の処理 */
-	public void diffProc(String[] args) {
-		
+	/**
+	 * 引数解析結果のマップを返す
+	 * @return 引数解析結果のマップ
+	 */
+	protected Map<String, String> argMap() {
+		return this.argMap;
+	}
+
+	/**
+	 * DiffCountの主処理メソッド
+	 * コマンドライン引数の処理、カウント処理、出力処理を呼び出す
+	 * @param args 引数配列
+	 */
+	protected void diffProc(final String[] args) {
+		// 引数処理
+		// オプション解析
 		DiffCountArgFunc argFunc = new DiffCountArgFunc();
 		this.argMap = argFunc.makeMapOfArgs(args);
 		if (this.argMap == null) {
 			return;
 		}
-		String encoding = this.argMap.get(SCCommonDefine.OPT_ENCODE);
-		String outfile = this.argMap.get(SCCommonDefine.OPT_OUTPUT);
-		String format = this.argMap.get(SCCommonDefine.OPT_FORMAT);
-		String xmlfile = this.argMap.get(SCCommonDefine.OPT_XML);
+		// 引数で指定されたカウント対象を設定
 		String[] argArray = argFunc.makeRestArgArray();
 		if (argArray == null || argArray.length != 2) {
 			System.err.println("!! Just 2 directories must be specified.");
 			argFunc.showUsage();
 			return;
 		}
+		// 対象ディレクトリの設定
 		List<File> fileList = Arrays.asList(new File(argArray[0]), new File(argArray[1]));
 		for (int i = 0; i < fileList.size(); i++) {
-			if(!fileList.get(i).isDirectory()){
+			if (!fileList.get(i).isDirectory()) {
 				System.err.println("!! '" + fileList.get(i).getAbsolutePath() + "' is not directory.");
 				argFunc.showUsage();
 				return;
 			}
 		}
-		setSrcdir(fileList.get(0));
-		setOlddir(fileList.get(1));
+		this.setNewerDirectory(fileList.get(0));
+		this.setOlderDirectory(fileList.get(1));
 
-		if(encoding != null && encoding.length() > 0){
-//			encoding = System.getProperty("file.encoding");
-			Util.setFileEncoding(encoding);
-		}
-
-		setFormat(format);
-
-		// keisuki: xmlオプション追加
-		if (xmlfile != null) {
-			setXmlFileName(xmlfile);
-		}
-		
 		try {
-			if(outfile != null && outfile.length() > 0){
-				setOutput(new PrintStream(new FileOutputStream(new File(outfile))));
-				//setOutput(new FileOutputStream(outfile));
-			}
-			executeCount();
+			// 引数のオプション指定を設定
+			this.setOptions();
+			//カウント処理
+			this.executeCounting();
+			// 出力処理
+			this.writeResult();
 		} catch (Throwable t) {
 			t.printStackTrace();
 		} finally {
-			if (this.output != null && this.output != System.out) try { this.output.close(); } catch (IOException e) { e.printStackTrace(); }
+			if (this.outputStream != null && this.outputStream != System.out) {
+				try {
+					this.outputStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
-	
-	
-	public void executeCount() throws IOException{
+
+	/**
+	 * 引数オプション解析Mapの設定内容からインスタンス変数の値を設定する
+	 * @throws FileNotFoundException 出力先ファイルに異常があると発行
+	 */
+	private void setOptions() throws FileNotFoundException {
+		String encoding = this.argMap.get(SCCommonDefine.OPT_ENCODE);
+		String outfile = this.argMap.get(SCCommonDefine.OPT_OUTPUT);
+		String format = this.argMap.get(SCCommonDefine.OPT_FORMAT);
+		String xmlfile = this.argMap.get(SCCommonDefine.OPT_XML);
+		// 対象ファイルのエンコード指定を設定
+		if (encoding != null && encoding.length() > 0) {
+			Util.setFileEncoding(encoding);
+		}
+		// 出力フォーマットの指定
+		// フォーマッタが設定されていない場合はデフォルトを使用
+		if (format == null || format.length() == 0) {
+			this.setOutputFormat("text");
+		} else {
+			this.setOutputFormat(format);
+		}
+		// カスタマイズしたXML定義ファイル指定
+		if (xmlfile != null) {
+			this.setXmlFileName(xmlfile);
+		}
+		// 出力先の指定
+		if (outfile != null && outfile.length() > 0) {
+			this.setOutputStream(new PrintStream(new FileOutputStream(new File(outfile))));
+		}
+	}
+
+	/**
+	 * 保持しているFile配列に対してカウントを実行します
+	 * @throws IOException 出力時に異常があると発行
+	 */
+	private void executeCounting() throws IOException {
 		String[] prefixes = {"diff.status.", "diff.render."};
 		this.msgDef = new MessageDefine(prefixes);
 		DiffStatusText dstext = new DiffStatusText(this.msgDef);
-		
-		// フォーマッタが設定されていない場合はデフォルトを使用
-		if(this.format == null || this.format.length() == 0){
-			setFormat("text");
-		}
-		Renderer renderer = RendererFactory.getRenderer(this.format, this.msgDef);
-		if(renderer == null){
-			throw new RuntimeException(this.format + " is invalid format!");
-		}
-
 		DiffCounter diffcounter = new DiffCounter(this.xmlFileName, dstext);
-		DiffFolderResult result = diffcounter.count(this.olddir, this.srcdir);
+		this.diffResult = diffcounter.count(this.olddir, this.srcdir);
+	}
 
-		byte[] bytes = renderer.render(result);
-		this.output.write(bytes);
-		this.output.flush();
+	/**
+	 * カウント結果を指定された出力先へ出力フォーマットに変換して書き出す
+	 * @throws IOException 出力時に異常があると発行
+	 */
+	private void writeResult() throws IOException {
+		Renderer renderer = RendererFactory.getRenderer(this.outputFormat, this.msgDef);
+		if (renderer == null) {
+			throw new RuntimeException(this.outputFormat + " is invalid format!");
+		}
+		byte[] bytes = renderer.render(this.diffResult);
+		this.outputStream.write(bytes);
+		this.outputStream.flush();
 		//System.out.println("[DEBUG] " + outputFile.getAbsolutePath() + "にカウント結果を出力しました。");
 	}
 
-	public static void main(String[] args) throws IOException {
-		if(args==null || args.length==0){
+	/**
+	 *コマンドライン起動用メソッド
+	 * @param args コマンドライン引数配列
+	 */
+	public static void main(final String[] args) {
+		if (args == null || args.length == 0) {
 			//System.exit(0);
 			return;
 		}
-		/*
-		String format = null;
-		String output = null;
-		String encoding = null;
-		String xmlfile = null; // keisuke: xmlオプション追加
-		ArrayList<File> fileList = new ArrayList<File>();
-		for(int i=0;i<args.length;i++){
-			if(args[i].startsWith("-format=")){
-				String[] dim = Util.split(args[i],"=");
-				format = dim[1];
-			} else if(args[i].startsWith("-output=")){
-				String[] dim = Util.split(args[i],"=");
-				output = dim[1];
-			} else if(args[i].startsWith("-encoding=")){
-				String[] dim = Util.split(args[i],"=");
-				encoding = dim[1];
-			// keisuke: xmlオプション追加
-			} else if(args[i].startsWith("-xml=")){
-				String[] dim = Util.split(args[i],"=");
-				xmlfile = dim[1];
-			} else {
-				fileList.add(new File(args[i]));
-			}
-		}	
-		*/
 		DiffCount main = new DiffCount();
 		main.diffProc(args);
 	}
