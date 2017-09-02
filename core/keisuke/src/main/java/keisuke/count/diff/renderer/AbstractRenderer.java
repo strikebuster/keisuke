@@ -1,14 +1,15 @@
 package keisuke.count.diff.renderer;
 
-import keisuke.MessageDefine;
+import keisuke.MessageMap;
 import keisuke.count.diff.DiffFolderResult;
+import keisuke.report.property.MessageDefine;
 
 /**
  * 差分計測結果の出力整形をするI/Fを実装する抽象基底クラス
  */
 public abstract class AbstractRenderer implements Renderer {
 
-	private MessageDefine msgdef;
+	private MessageMap msgmap = null;
 
 	public AbstractRenderer() {	}
 
@@ -16,16 +17,19 @@ public abstract class AbstractRenderer implements Renderer {
 	 * メッセージ定義インスタンスを返す
 	 * @return メッセージ定義インスタンス
 	 */
-	protected MessageDefine messageDefine() {
-		return this.msgdef;
+	protected MessageMap messageMap() {
+		return this.msgmap;
 	}
 
 	/**
 	 * メッセージ定義インスタンスを設定する
-	 * @param messageDefine メッセージ定義インスタンス
+	 * @param msgdef メッセージ定義インスタンス
 	 */
-	public void setMessageDefine(final MessageDefine messageDefine) {
-		this.msgdef = messageDefine;
+	public void setMessageMap(final MessageDefine msgdef) {
+		if (msgdef == null) {
+			return;
+		}
+		this.msgmap = msgdef.getMessageMap();
 	}
 
 	/**
@@ -37,10 +41,10 @@ public abstract class AbstractRenderer implements Renderer {
 		if (key == null) {
 			return "";
 		}
-		if (this.msgdef == null) {
-			this.msgdef = new MessageDefine("diff.render.");
+		if (this.msgmap == null) {
+			this.msgmap = new MessageDefine("diff.render.").getMessageMap();
 		}
-		return this.msgdef.getMessage(key);
+		return this.msgmap.get(key);
 	}
 
 	/** {@inheritDoc} */

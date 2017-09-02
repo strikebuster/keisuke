@@ -4,8 +4,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import keisuke.XmlElementFactory;
-import keisuke.XmlLanguageDefine;
+import keisuke.report.classify.language.LanguageDefineFactory;
+import keisuke.report.classify.language.XmlLanguageDefine;
 
 /**
 * Language definitions with attributes of syntacs rules.
@@ -18,7 +18,7 @@ public class XmlLanguageDefineWithRule extends XmlLanguageDefine {
 	 * Language定義（文法ルール版）のXmlElementFactoryを設定するコンストラクタ
 	 * @param factory Language定義用のXmlElementFactoryインスタンス
 	 */
-	public XmlLanguageDefineWithRule(final XmlElementFactory factory) {
+	public XmlLanguageDefineWithRule(final LanguageDefineFactory factory) {
 		super(factory);
 	}
 
@@ -119,12 +119,12 @@ public class XmlLanguageDefineWithRule extends XmlLanguageDefine {
 		NodeList lcdChildren = element.getChildNodes();
 		for (int i = 0; i < lcdChildren.getLength(); i++) {
 			Node node = lcdChildren.item(i);
-			if (!this.checkElementNode(node)) {
+			if (!checkElementNode(node)) {
 				continue;
 			}
 			Element child = (Element) node;
 			//System.out.println("[DEBUG] LineComment's Element=" + child.getNodeName());
-			String nodename = this.getNameWithoutNS(child.getNodeName());
+			String nodename = getNameWithoutNS(child.getNodeName());
 			if (nodename.equals(SCXmlCommonDefine.XML_NODE_START)) {
 				String str = child.getTextContent();
 				linecom.setStart(str);
@@ -161,12 +161,12 @@ public class XmlLanguageDefineWithRule extends XmlLanguageDefine {
 		NodeList bcdChildren = element.getChildNodes();
 		for (int i = 0; i < bcdChildren.getLength(); i++) {
 			Node node = bcdChildren.item(i);
-			if (!this.checkElementNode(node)) {
+			if (!checkElementNode(node)) {
 				continue;
 			}
 			Element child = (Element) node;
 			//System.out.println("[DEBUG] BlockComment's Element=" + child.getNodeName());
-			String nodename = this.getNameWithoutNS(child.getNodeName());
+			String nodename = getNameWithoutNS(child.getNodeName());
 			if (nodename.equals(SCXmlCommonDefine.XML_NODE_START)) {
 				String str = child.getTextContent();
 				blockcom.setStart(str);
@@ -195,12 +195,12 @@ public class XmlLanguageDefineWithRule extends XmlLanguageDefine {
 		NodeList cedChildren = element.getChildNodes();
 		for (int i = 0; i < cedChildren.getLength(); i++) {
 			Node node = cedChildren.item(i);
-			if (!this.checkElementNode(node)) {
+			if (!checkElementNode(node)) {
 				continue;
 			}
 			Element child = (Element) node;
 			//System.out.println("[DEBUG] CommentExpression's Element=" + child.getNodeName());
-			String nodename = this.getNameWithoutNS(child.getNodeName());
+			String nodename = getNameWithoutNS(child.getNodeName());
 			if (nodename.equals(SCXmlCommonDefine.XML_NODE_START)) {
 				String str = child.getTextContent();
 				expr.setStart(str);
@@ -221,12 +221,12 @@ public class XmlLanguageDefineWithRule extends XmlLanguageDefine {
 		NodeList lsdChildren = element.getChildNodes();
 		for (int i = 0; i < lsdChildren.getLength(); i++) {
 			Node node = lsdChildren.item(i);
-			if (!this.checkElementNode(node)) {
+			if (!checkElementNode(node)) {
 				continue;
 			}
 			Element child = (Element) node;
 			//System.out.println("[DEBUG] LiteralString's Element=" + child.getNodeName());
-			String nodename = this.getNameWithoutNS(child.getNodeName());
+			String nodename = getNameWithoutNS(child.getNodeName());
 			if (nodename.equals(SCXmlCommonDefine.XML_NODE_START)) {
 				String str = child.getTextContent();
 				literalstr.setStart(str);
@@ -253,12 +253,12 @@ public class XmlLanguageDefineWithRule extends XmlLanguageDefine {
 		NodeList lhddChildren = element.getChildNodes();
 		for (int i = 0; i < lhddChildren.getLength(); i++) {
 			Node node = lhddChildren.item(i);
-			if (!this.checkElementNode(node)) {
+			if (!checkElementNode(node)) {
 				continue;
 			}
 			Element child = (Element) node;
 			//System.out.println("[DEBUG] LabelHereDoc's Element=" + child.getNodeName());
-			String nodename = this.getNameWithoutNS(child.getNodeName());
+			String nodename = getNameWithoutNS(child.getNodeName());
 			if (nodename.equals(SCXmlCommonDefine.XML_NODE_START)) {
 				String str = child.getTextContent();
 				heredoc.setStart(str);
@@ -282,12 +282,12 @@ public class XmlLanguageDefineWithRule extends XmlLanguageDefine {
 		NodeList sbdChildren = element.getChildNodes();
 		for (int i = 0; i < sbdChildren.getLength(); i++) {
 			Node node = sbdChildren.item(i);
-			if (!this.checkElementNode(node)) {
+			if (!checkElementNode(node)) {
 				continue;
 			}
 			Element child = (Element) node;
 			//System.out.println("[DEBUG] ScriptBlock's Element=" + child.getNodeName());
-			String nodename = this.getNameWithoutNS(child.getNodeName());
+			String nodename = getNameWithoutNS(child.getNodeName());
 			if (nodename.equals(SCXmlCommonDefine.XML_NODE_START)) {
 				String str = child.getTextContent();
 				script.setStart(str);

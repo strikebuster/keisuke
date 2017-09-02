@@ -1,7 +1,8 @@
 package keisuke.count.diff;
 
-import keisuke.CommonDefine;
-import keisuke.MessageDefine;
+import keisuke.MessageMap;
+import keisuke.report.property.MessageDefine;
+import static keisuke.report.property.MessageConstant.*;
 
 /**
  * DiffStatusの差分変更ステータスに対応する表示文言を設定するクラス
@@ -13,33 +14,36 @@ public class DiffStatusText {
 	private String removed;
 	private String unsupported;
 
-	private MessageDefine msgdef;
+	private MessageMap msgmap;
 
 	/**
 	 * コンストラクター
 	 * デフォルトのメッセージ定義を使用すて表示文言を設定する
 	 */
 	public DiffStatusText() {
-		this.msgdef = new MessageDefine("diff.status.");
+		this.msgmap = new MessageDefine("diff.status.").getMessageMap();
 		this.setTexts();
 	}
 
 	/**
 	 * メッセージ定義を指定するコンストラクター
 	 * 指定されたメッセージ定義から表示文言を設定する
-	 * @param md メッセージ定義保持インスタンス
+	 * @param msgdef メッセージ定義保持インスタンス
 	 */
-	public DiffStatusText(final MessageDefine md) {
-		this.msgdef = md;
+	public DiffStatusText(final MessageDefine msgdef) {
+		if (msgdef == null) {
+			return;
+		}
+		this.msgmap = msgdef.getMessageMap();
 		this.setTexts();
 	}
 
 	private void setTexts() {
-		this.none = this.msgdef.getMessage(CommonDefine.MSG_DIFF_STATUS_UNCHANGE);
-		this.added = this.msgdef.getMessage(CommonDefine.MSG_DIFF_STATUS_ADD);
-		this.modified = this.msgdef.getMessage(CommonDefine.MSG_DIFF_STATUS_MODIFY);
-		this.removed = this.msgdef.getMessage(CommonDefine.MSG_DIFF_STATUS_DROP);
-		this.unsupported = this.msgdef.getMessage(CommonDefine.MSG_DIFF_STATUS_UNSUPPORT);
+		this.none = this.msgmap.get(MSG_DIFF_STATUS_UNCHANGE);
+		this.added = this.msgmap.get(MSG_DIFF_STATUS_ADD);
+		this.modified = this.msgmap.get(MSG_DIFF_STATUS_MODIFY);
+		this.removed = this.msgmap.get(MSG_DIFF_STATUS_DROP);
+		this.unsupported = this.msgmap.get(MSG_DIFF_STATUS_UNSUPPORT);
 	}
 
 	/**

@@ -365,10 +365,10 @@ public class DiffCounter {
 	private static class DiffCountHandler implements IDiffHandler {
 
 		/** 追加行数 */
-		private int	addCount	= 0;
+		private int	addCount = 0;
 
 		/** 削除行数 */
-		private int	delCount	= 0;
+		private int	delCount = 0;
 
 		/**
 		 * {@inheritDoc}

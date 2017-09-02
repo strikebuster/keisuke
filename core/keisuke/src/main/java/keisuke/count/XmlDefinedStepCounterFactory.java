@@ -7,8 +7,6 @@ import java.util.Map;
 import org.apache.commons.io.FilenameUtils;
 
 import jp.sf.amateras.stepcounter.StepCounter;
-import keisuke.AbstractLanguageDefine;
-import keisuke.LanguageElement;
 import keisuke.count.xmldefine.BlockCommentDefine;
 import keisuke.count.xmldefine.CommentExpressionDefine;
 import keisuke.count.xmldefine.LabelHereDocDefine;
@@ -17,7 +15,9 @@ import keisuke.count.xmldefine.LanguageElementWithRule;
 import keisuke.count.xmldefine.LineCommentDefine;
 import keisuke.count.xmldefine.LiteralStringDefine;
 import keisuke.count.xmldefine.ScriptBlockDefine;
-import keisuke.count.xmldefine.XmlElementWithRuleFactory;
+import keisuke.report.classify.language.AbstractLanguageDefine;
+import keisuke.report.classify.language.LanguageElement;
+import keisuke.count.xmldefine.LanguageDefineWithRuleFactory;
 
 
 /**
@@ -42,8 +42,16 @@ public class XmlDefinedStepCounterFactory extends AbstractLanguageDefine {
 	 * コンストラクタ
 	 */
 	public XmlDefinedStepCounterFactory() {
-		this.setLanguageDefineFactory(new XmlElementWithRuleFactory());
+		this.makeLanguageDefineFactory();
 		this.initialize();
+	}
+
+	/**
+	 * LanguageDefineWithRuleFactoryを設定する
+	 */
+	@Override
+	public void makeLanguageDefineFactory() {
+		this.setLanguageDefineFactory(new LanguageDefineWithRuleFactory());
 	}
 
 	/**

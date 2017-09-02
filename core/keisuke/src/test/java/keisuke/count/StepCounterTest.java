@@ -1,6 +1,5 @@
 package keisuke.count;
 
-import keisuke.StderrCapture;
 import static keisuke.count.SCTestUtil.*;
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
@@ -10,6 +9,8 @@ import java.util.Locale;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import keisuke.util.StderrCapture;
 
 /**
  * Test class of StepCounter.
@@ -34,7 +35,7 @@ public class StepCounterTest {
 		stepcount.countProc(args);
 
 		//assertThat(contentOf(stepcount.argMap()), is(equalTo(contentOf(expected))));
-		assertThat(stepcount.argMap(), is(nullValue()));
+		assertThat(stepcount.argMapEntity(), is(nullValue()));
 	}
 
 	@Test
@@ -47,7 +48,7 @@ public class StepCounterTest {
 		stepcount.countProc(args);
 
 		//assertThat(contentOf(stepcount.argMap()), is(equalTo(contentOf(expected))));
-		assertThat(stepcount.argMap(), is(nullValue()));
+		assertThat(stepcount.argMapEntity(), is(nullValue()));
 	}
 
 	@Test
@@ -63,12 +64,12 @@ public class StepCounterTest {
 		stepcount.countProc(args);
 
 		final int expectedNumber = 4;
-		assertThat(contentOf(stepcount.argMap()), is(equalTo(contentOf(expected))));
-		assertThat(stepcount.argMap().size(), is(expectedNumber));
-		assertThat(stepcount.argMap(), hasEntry("showDirectory", "true"));
-		assertThat(stepcount.argMap(), hasEntry("xml", "test/data/ktestl2.xml"));
-		assertThat(stepcount.argMap(), hasEntry("format", "xml"));
-		assertThat(stepcount.argMap(), hasEntry("encoding", "EUC-JP"));
+		assertThat(contentOf(stepcount.argMapEntity()), is(equalTo(contentOf(expected))));
+		assertThat(stepcount.argMapEntity().size(), is(expectedNumber));
+		assertThat(stepcount.argMapEntity(), hasEntry("showDirectory", "true"));
+		assertThat(stepcount.argMapEntity(), hasEntry("xml", "test/data/ktestl2.xml"));
+		assertThat(stepcount.argMapEntity(), hasEntry("format", "xml"));
+		assertThat(stepcount.argMapEntity(), hasEntry("encoding", "EUC-JP"));
 
 		String errMessage = capture.getCapturedString();
 		capture.finish();

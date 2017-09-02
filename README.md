@@ -64,6 +64,11 @@ StepCounterをベースにソースコードの行数計測をする機能もあ
 
 - - -
 ### 更新履歴
+###### Version 1.0.4(2017/9/2)
+* 機能変更はなく、内部的な改変  
+・keisukeパッケージ（集計機能）の構成を見直し、keisuke.report以下にパッケージ分割  
+・合わせてクラス構成も見直し  
+
 ###### Version 1.0.3(2017/8/19)
 * 機能変更はなく、内部的な改変  
 ・ビルド方法をMavenからGradleに変更  
@@ -85,6 +90,10 @@ StepCounterをベースにソースコードの行数計測をする機能もあ
 
 ###### Version 1.0.0(2016/11/13)
 * 初期バージョン  
+
+- - -
+### ライセンス
+Licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
 - - -
 ### 免責事項

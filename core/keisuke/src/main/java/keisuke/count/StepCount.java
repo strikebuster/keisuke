@@ -13,6 +13,7 @@ import java.util.Map;
 import jp.sf.amateras.stepcounter.CountResult;
 import jp.sf.amateras.stepcounter.Util;
 import jp.sf.amateras.stepcounter.format.ResultFormatter;
+import keisuke.ArgumentMap;
 import keisuke.count.format.FormatterFactory;
 
 
@@ -28,7 +29,7 @@ public class StepCount {
 	private OutputStream outputStream = System.out;
 	private boolean showDirectory = false;
 	private String xmlFileName = null;
-	private Map<String, String> argMap = null;
+	private ArgumentMap argMap = null;
 	private CountResult[] resultsArray;
 
 	/**
@@ -73,10 +74,13 @@ public class StepCount {
 
 	/**
 	 * 引数解析結果のマップを返す
-	 * @return 引数解析結果のマップ
+	 * @return 引数解析結果のマップの実体Map
 	 */
-	protected Map<String, String> argMap() {
-		return this.argMap;
+	protected Map<String, String> argMapEntity() {
+		if (this.argMap == null) {
+			return null;
+		}
+		return this.argMap.getMap();
 	}
 
 	/**
@@ -87,8 +91,8 @@ public class StepCount {
 	protected void countProc(final String[] args) {
 		// 引数処理
 		// オプション解析
-		StepCountArgFunc argFunc = new StepCountArgFunc();
-		this.argMap = argFunc.makeMapOfArgs(args);
+		StepCountCommandOption argFunc = new StepCountCommandOption();
+		this.argMap = argFunc.makeMapOfOptions(args);
 		if (this.argMap == null) {
 			return;
 		}

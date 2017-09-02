@@ -2,21 +2,22 @@ package keisuke.count.format;
 
 import jp.sf.amateras.stepcounter.CountResult;
 import jp.sf.amateras.stepcounter.format.ResultFormatter;
-import keisuke.MessageDefine;
+import keisuke.MessageMap;
+import keisuke.report.property.MessageDefine;
 
 /**
  * ステップ計測結果を出力形式に整形する
  */
 public abstract class AbstractFormatter implements ResultFormatter {
 
-	private MessageDefine msgdef = null;
+	private MessageMap msgmap;
 
 	/**
 	 * コンストラクター
 	 * メッセージ定義の設定を行う
 	 */
 	public AbstractFormatter() {
-		this.msgdef = new MessageDefine("count.format.");
+		this.msgmap = new MessageDefine("count.format.").getMessageMap();
 	}
 
 	/**
@@ -28,7 +29,7 @@ public abstract class AbstractFormatter implements ResultFormatter {
 		if (key == null) {
 			return "";
 		}
-		return this.msgdef.getMessage(key);
+		return this.msgmap.get(key);
 	}
 
 	/**

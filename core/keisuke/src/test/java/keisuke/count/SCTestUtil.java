@@ -1,6 +1,5 @@
 package keisuke.count;
 
-import keisuke.TestUtil;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,6 +8,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import keisuke.util.TestUtil;
 
 /**
  * Util Class for Test of keisuke.count.* .

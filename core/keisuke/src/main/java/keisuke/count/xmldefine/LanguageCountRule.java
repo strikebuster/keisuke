@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import keisuke.IfXmlParseSubject;
+import keisuke.xmldefine.XmlParseSubject;
 
 /**
  * 言語の解析ルール定義をXMLから取り込むクラス
  */
-public class LanguageCountRule implements IfXmlParseSubject {
+public class LanguageCountRule implements XmlParseSubject {
 
 	private boolean unsupported = false;
 	private boolean specialized = false;

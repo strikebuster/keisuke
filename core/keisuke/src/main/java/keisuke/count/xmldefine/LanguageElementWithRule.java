@@ -3,8 +3,8 @@ package keisuke.count.xmldefine;
 import java.util.Arrays;
 import java.util.List;
 
-import keisuke.CommonDefine;
-import keisuke.LanguageElement;
+import keisuke.report.classify.language.LanguageElement;
+import keisuke.report.classify.language.XmlLanguageConstant;
 
 /**
  * Language element node of XML to define language with counting rules.
@@ -24,7 +24,7 @@ public class LanguageElementWithRule extends LanguageElement {
 	/** {@inheritDoc} */
 	@Override
 	public List<String> getXmlChildrenNames() {
-		return Arrays.asList(CommonDefine.XML_NODE_EXT, SCXmlCommonDefine.XML_NODE_RULE);
+		return Arrays.asList(XmlLanguageConstant.XML_NODE_EXT, SCXmlCommonDefine.XML_NODE_RULE);
 	}
 
 	/**

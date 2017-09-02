@@ -8,7 +8,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import keisuke.StderrCapture;
+import keisuke.util.StderrCapture;
 
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
@@ -41,7 +41,7 @@ public class DiffCounterTest {
 		diffcount.diffProc(args);
 
 		//assertThat(contentOf(diffcount.argMap), is(equalTo(contentOf(expected))));
-		assertThat(diffcount.argMap(), is(nullValue()));
+		assertThat(diffcount.argMapEntity(), is(nullValue()));
 	}
 
 	@Test
@@ -56,7 +56,7 @@ public class DiffCounterTest {
 		diffcount.diffProc(args);
 
 		//assertThat(contentOf(diffcount.argMap), is(equalTo(contentOf(expected))));
-		assertThat(diffcount.argMap(), is(nullValue()));
+		assertThat(diffcount.argMapEntity(), is(nullValue()));
 	}
 
 	@Test
@@ -76,11 +76,11 @@ public class DiffCounterTest {
 
 		final int expectedNumber = 4;
 		//assertThat(contentOf(diffcount.argMap), is(equalTo(contentOf(expected))));
-		assertThat(diffcount.argMap().size(), is(expectedNumber));
-		assertThat(diffcount.argMap(), hasEntry("output", "test/out/diff_arg03.txt"));
-		assertThat(diffcount.argMap(), hasEntry("xml", "test/data/ktestl2.xml"));
-		assertThat(diffcount.argMap(), hasEntry("format", "html"));
-		assertThat(diffcount.argMap(), hasEntry("encoding", "EUC-JP"));
+		assertThat(diffcount.argMapEntity().size(), is(expectedNumber));
+		assertThat(diffcount.argMapEntity(), hasEntry("output", "test/out/diff_arg03.txt"));
+		assertThat(diffcount.argMapEntity(), hasEntry("xml", "test/data/ktestl2.xml"));
+		assertThat(diffcount.argMapEntity(), hasEntry("format", "html"));
+		assertThat(diffcount.argMapEntity(), hasEntry("encoding", "EUC-JP"));
 
 		String errMessage = capture.getCapturedString();
 		capture.finish();

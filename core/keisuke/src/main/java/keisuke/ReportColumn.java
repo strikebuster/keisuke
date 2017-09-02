@@ -2,19 +2,17 @@ package keisuke;
 
 /**
  * Class of attributes for a column of reporting
- * @author strikebuster
- *
  */
-class ReportColumn {
-	private String title = "";
-	private int index = -1;
+public class ReportColumn {
+	private String title = ""; // レポートのカラムタイトル
+	private int index = -1; // レポートのカラム位置の順番
 
 	/**
 	 * レポートカラム属性のコンストラクタ
 	 * @param str カラムタイトル文字列
 	 * @param idx カラム順番
 	 */
-	protected ReportColumn(final String str, final int idx) {
+	public ReportColumn(final String str, final int idx) {
 		if (str != null) {
 			this.title = str;
 		}
@@ -27,7 +25,7 @@ class ReportColumn {
 	 * カラムタイトル文字列を返す
 	 * @return カラムタイトル文字列
 	 */
-	protected String getTitle() {
+	public String getTitle() {
 		return this.title;
 	}
 
@@ -35,7 +33,7 @@ class ReportColumn {
 	 * カラム順番を返す
 	 * @return カラム順番
 	 */
-	protected int getIndex() {
+	public int getIndex() {
 		return this.index;
 	}
 }

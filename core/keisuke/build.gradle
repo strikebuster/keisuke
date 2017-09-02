@@ -12,7 +12,7 @@ def defaultEncoding = 'UTF-8'
 
 group = 'keisuke'
 //name = 'keisuke'
-version = '1.0.3'
+version = '1.0.4'
 //version = '1.0.x-SNAPSHOT'
 
 description = """keisuke"""

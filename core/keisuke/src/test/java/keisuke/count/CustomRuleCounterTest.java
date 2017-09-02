@@ -9,7 +9,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import keisuke.StderrCapture;
+import keisuke.util.StderrCapture;
 
 /**
  * Test class of StepCounter about customized xml rules.

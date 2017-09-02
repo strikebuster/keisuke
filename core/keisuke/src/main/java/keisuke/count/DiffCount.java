@@ -11,13 +11,14 @@ import java.util.List;
 import java.util.Map;
 
 import jp.sf.amateras.stepcounter.Util;
-import keisuke.MessageDefine;
-import keisuke.count.diff.DiffCountArgFunc;
+import keisuke.ArgumentMap;
+import keisuke.count.diff.DiffCountCommandOption;
 import keisuke.count.diff.DiffCounter;
 import keisuke.count.diff.DiffFolderResult;
 import keisuke.count.diff.DiffStatusText;
 import keisuke.count.diff.renderer.Renderer;
 import keisuke.count.diff.renderer.RendererFactory;
+import keisuke.report.property.MessageDefine;
 
 /**
  * コマンドラインから引数で指定した2つのディレクトリ配下のファイルの
@@ -33,7 +34,7 @@ public class DiffCount {
 	private String outputFormat = null;
 	//private String encoding = null;
 	private String xmlFileName = null;
-	private Map<String, String> argMap = null;
+	private ArgumentMap argMap = null;
 	private MessageDefine msgDef = null;
 	private DiffFolderResult diffResult;
 
@@ -85,10 +86,13 @@ public class DiffCount {
 
 	/**
 	 * 引数解析結果のマップを返す
-	 * @return 引数解析結果のマップ
+	 * @return 引数解析結果のマップの実体Map
 	 */
-	protected Map<String, String> argMap() {
-		return this.argMap;
+	protected Map<String, String> argMapEntity() {
+		if (this.argMap == null) {
+			return null;
+		}
+		return this.argMap.getMap();
 	}
 
 	/**
@@ -99,8 +103,8 @@ public class DiffCount {
 	protected void diffProc(final String[] args) {
 		// 引数処理
 		// オプション解析
-		DiffCountArgFunc argFunc = new DiffCountArgFunc();
-		this.argMap = argFunc.makeMapOfArgs(args);
+		DiffCountCommandOption argFunc = new DiffCountCommandOption();
+		this.argMap = argFunc.makeMapOfOptions(args);
 		if (this.argMap == null) {
 			return;
 		}
@@ -191,9 +195,9 @@ public class DiffCount {
 	 */
 	private void writeResult() throws IOException {
 		Renderer renderer = RendererFactory.getRenderer(this.outputFormat, this.msgDef);
-		if (renderer == null) {
-			throw new RuntimeException(this.outputFormat + " is invalid format!");
-		}
+		//if (renderer == null) {
+		//	throw new RuntimeException(this.outputFormat + " is invalid format!");
+		//}
 		byte[] bytes = renderer.render(this.diffResult);
 		this.outputStream.write(bytes);
 		this.outputStream.flush();
