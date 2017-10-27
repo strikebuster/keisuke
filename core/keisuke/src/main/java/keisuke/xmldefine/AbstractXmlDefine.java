@@ -13,6 +13,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import keisuke.util.LogUtil;
+
 /**
  * Parsing XML which defines something about keisuke command.
  */
@@ -46,16 +48,16 @@ public abstract class AbstractXmlDefine {
 			DocumentBuilder documentBuilder = factory.newDocumentBuilder();
 			Document document = documentBuilder.parse(fname);
 			Element root = document.getDocumentElement();
-			//System.out.println("[DEBUG] XML Root：" + root.getNodeName());
+			//LogUtil.debugLog("XML Root：" + root.getNodeName());
 			return root;
 		} catch (IOException ioe) {
-			System.err.println("!! Read error : " + fname);
+			LogUtil.errorLog("Read error : " + fname);
 			throw new RuntimeException(ioe);
 		} catch (SAXException saxe) {
-			System.err.println("!! SAXException : " + fname);
+			LogUtil.errorLog("SAXException : " + fname);
 			throw new RuntimeException(saxe);
 		} catch (ParserConfigurationException pce) {
-			System.err.println("!! XML ParseConfigurationException : " + fname);
+			LogUtil.errorLog("XML ParseConfigurationException : " + fname);
 			throw new RuntimeException(pce);
 		}
 	}
@@ -69,7 +71,7 @@ public abstract class AbstractXmlDefine {
 		if (parent == null || childrenNames == null || childrenNames.isEmpty()) {
 			return;
 		}
-		//System.out.println("[DEBUG] parent Node=" + parent.getNodeName());
+		//LogUtil.debugLog("parent Node=" + parent.getNodeName());
 		// 子ノード要素の取得
 		int childLen = -1;
 		NodeList myChildren = parent.getChildNodes();
@@ -79,7 +81,7 @@ public abstract class AbstractXmlDefine {
 		childLen = myChildren.getLength();
 		for (int i = 0; i < childLen; i++) {
 			Node node = myChildren.item(i);
-			//System.out.println("[DEBUG] child Node=" + node.getNodeName());
+			//LogUtil.debugLog("child Node=" + node.getNodeName());
 			if (!checkElementNode(node)) {
 				continue;
 			}
@@ -87,9 +89,9 @@ public abstract class AbstractXmlDefine {
 			String nodename = getNameWithoutNS(element.getNodeName());
 			if (!childrenNames.contains(nodename)) {
 				// 解析対象でないので無視
-				//System.out.println("[DEBUG] skip element : " + parent.getNodeName()
+				//LogUtil.debugLog("skip element : " + parent.getNodeName()
 				//		+ "->" + nodename);
-				//System.out.println("[DEBUG] because targets are " + childrenNames);
+				//LogUtil.debugLog("because targets are " + childrenNames);
 				continue;
 			}
 			// 解析対象子ノードの処理
@@ -111,7 +113,7 @@ public abstract class AbstractXmlDefine {
 	 */
 	protected static boolean checkElementNode(final Node node) {
 		if (node == null || node.getNodeType() != Node.ELEMENT_NODE) {
-			//System.out.println("![WARN] illegal element: type=" + node.getNodeType()
+			//LogUtil.debugLog("illegal element: type=" + node.getNodeType()
 			//	+ " name=" + node.getNodeName() + " value=" + node.getNodeValue());
 			// TextNode(改行)など
 			return false;

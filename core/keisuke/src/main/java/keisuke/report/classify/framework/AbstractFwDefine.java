@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 
+import keisuke.util.LogUtil;
+
 /**
  * Framework definitions for keisuke.
  * It uses default definition file "/keisuke/framework.xml"
@@ -64,6 +66,7 @@ public abstract class AbstractFwDefine {
 		XmlFrameworkDefine xmlDef = new XmlFrameworkDefine(xfile);
 		this.fwSpecificList = xmlDef.createFwSpecificList(this.classify);
 		if (this.fwSpecificList == null) {
+			LogUtil.warningLog("not found Framework definition for fw:" + this.classify);
 			return;
 		}
 		//this.debugFwSpecificList();
@@ -110,13 +113,13 @@ public abstract class AbstractFwDefine {
 	 * DEBUG用Framework定義のリスト内容を表示する
 	 */
 	protected void debugFwSpecificList() {
-		System.out.println("[DEBUG] fw:" + this.classify + ", fwSpecificList contains ");
+		LogUtil.debugLog("fw:" + this.classify + ", fwSpecificList contains ");
 		if (this.fwSpecificList == null) {
-			System.out.println("[DEBUG] null ");
+			LogUtil.debugLog("null ");
 			return;
 		}
 		for (FwSpecificElement fwSpecElem : this.fwSpecificList) {
-			System.out.println(fwSpecElem.debug());
+			LogUtil.debugLog(fwSpecElem.debug());
 		}
 	}
 
@@ -124,13 +127,13 @@ public abstract class AbstractFwDefine {
 	 * DEBUG用Frameworkの成果物タイプパターンの内容を表示する
 	 */
 	protected void debugFwPatternList() {
-		System.out.println("[DEBUG] fw:" + this.classify + ", fwPatternList contains ");
+		LogUtil.debugLog("fw:" + this.classify + ", fwPatternList contains ");
 		if (this.fwPatternList == null) {
-			System.out.println("[DEBUG] null ");
+			LogUtil.debugLog("null ");
 			return;
 		}
 		for (FwPatternElement fwPatternElem : this.fwPatternList) {
-			System.out.println(fwPatternElem.debug());
+			LogUtil.debugLog(fwPatternElem.debug());
 		}
 	}
 }

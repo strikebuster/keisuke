@@ -1,6 +1,9 @@
 package keisuke.count.diff.renderer;
 
+import keisuke.count.diff.Renderer;
 import keisuke.report.property.MessageDefine;
+
+import static keisuke.count.option.CountOptionConstant.*;
 
 /**
  * 出力形式に応じたRendererの実装クラスを生成するファクトリ
@@ -15,21 +18,21 @@ public final class RendererFactory {
 	 * @return 差分計測結果の出力形式に応じたRendererインスタンス
 	 */
 	public static Renderer getRenderer(final String name) {
-		AbstractRenderer render = null;
+		AbstractRenderer renderer = null;
 		if (name != null) {
-			if (name.equals("text")) {
-				render = new SimpleRenderer();
+			if (name.equals(OPTVAL_TEXT)) {
+				renderer = new TextRenderer();
 
-			} else if (name.equals("html")) {
-				render = new HTMLRenderer();
+			} else if (name.equals(OPTVAL_HTML)) {
+				renderer = new HtmlRenderer();
 
-			} else if (name.equals("excel")) {
-				render = new ExcelRenderer();
+			} else if (name.equals(OPTVAL_EXCEL)) {
+				renderer = new ExcelRenderer();
 			}
 		} else {
-			render = new SimpleRenderer();
+			renderer = new TextRenderer();
 		}
-		return render;
+		return renderer;
 	}
 
 	/**
@@ -39,9 +42,9 @@ public final class RendererFactory {
 	 * @return 差分計測結果の出力形式に応じたRendererインスタンス
 	 */
 	public static Renderer getRenderer(final String name, final MessageDefine msgdef) {
-		AbstractRenderer render = (AbstractRenderer) getRenderer(name);
-		render.setMessageMap(msgdef);
-		return render;
+		AbstractRenderer renderer = (AbstractRenderer) getRenderer(name);
+		renderer.setMessageMap(msgdef);
+		return renderer;
 	}
 
 }

@@ -40,11 +40,11 @@ public abstract class ConfigMap {
 	/**
 	 * DEBUG用 定義内容の表示
 	 */
-	public void debug() {
+	public void debugMap() {
 		for (Entry<String, String> entry : configMap.entrySet()) {
 			String key = entry.getKey();
 			String data = entry.getValue();
-			System.out.println("[DEBUG] " + key + ": " + data);
+			LogUtil.debugLog(key + ": " + data);
 		}
 	}
 }

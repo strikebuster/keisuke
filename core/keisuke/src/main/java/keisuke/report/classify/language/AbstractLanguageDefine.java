@@ -2,6 +2,8 @@ package keisuke.report.classify.language;
 
 import java.net.URL;
 
+import keisuke.util.LogUtil;
+
 /**
  * Language definitions for keisuke.
  * It uses default definition file "/keisuke/language.xml"
@@ -57,10 +59,9 @@ public abstract class AbstractLanguageDefine {
 			this.langDefine = this.langDefineFactory.createXmlLanguageDefine();
 			URL urlfile = this.getClass().getResource(DEFAULT_XMLFILE);
 			String uriStr = urlfile.toURI().toString();
-			//System.out.println("[DEBUG] xml uri=" + uriStr);
-			//System.out.flush();
+			//LogUtil.debugLog("xml uri=" + uriStr);
 			this.extLangMap = this.langDefine.createLanguageMapBy(uriStr);
-			//this.extLangMap.debug();
+			//this.extLangMap.debugMap();
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}
@@ -72,9 +73,15 @@ public abstract class AbstractLanguageDefine {
 	 */
 	public void customizeLanguageDefinitions(final String fname) {
 		LanguageElementMap customMap = this.langDefine.createLanguageMapBy(fname);
-		//customMap.debug();
+		//customMap.debugMap();
 		this.extLangMap.mergeMap(customMap);
-		//this.extLangMap.debug();
+		//this.extLangMap.debugMap();
 	}
 
+	/**
+	 * LogUtilのインポートを正当化するためのダミー
+	 */
+	static void noUsingDummy() {
+		LogUtil.warningLog("This must not be called, because dummy");
+	}
 }

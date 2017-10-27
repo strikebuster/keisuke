@@ -3,7 +3,7 @@ package keisuke.report.classify;
 import java.util.ArrayList;
 import java.util.List;
 
-import keisuke.Classifier;
+import keisuke.report.Classifier;
 import keisuke.report.classify.framework.AbstractFwDefine;
 import keisuke.report.classify.framework.FwPatternElement;
 import keisuke.report.classify.framework.FwSpecificElement;

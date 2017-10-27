@@ -73,12 +73,12 @@ public abstract class AbstractCommandOption implements CommandOption {
 		try {
 			this.commandline = this.parser.parse(this.options, args);
 			if (this.commandline.hasOption("?")) {
-				showUsage();
+				this.showUsage();
 				return null;
 			}
 			map = makeOwnOptionMap();
 		} catch (ParseException e) {
-			showUsage();
+			this.showUsage();
 			return null;
 		}
 		return map;
@@ -95,10 +95,7 @@ public abstract class AbstractCommandOption implements CommandOption {
 	 */
 	protected abstract ArgumentMap makeOwnOptionMap();
 
-	/**
-	 * オプション引数解析後の残りの引数の文字列配列を作成
-	 * @return String[] オプション解析後の残った引数の配列
-	 */
+	/** {@inheritDoc} */
 	public String[] makeRestArgArray() {
 		if (this.commandline == null) {
 			return null;
@@ -106,9 +103,7 @@ public abstract class AbstractCommandOption implements CommandOption {
 		return this.commandline.getArgs();
 	}
 
-	/**
-	 * 使用方法メッセージ
-	 */
+	/** {@inheritDoc} */
     public void showUsage() {
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp(this.usageStr, this.options, true);

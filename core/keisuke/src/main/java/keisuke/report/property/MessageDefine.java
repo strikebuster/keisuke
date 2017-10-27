@@ -7,6 +7,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import keisuke.MessageMap;
+import keisuke.util.LogUtil;
 
 /**
  * Messages to be defined for keisuke command.
@@ -43,7 +44,7 @@ public class MessageDefine {
 		String key = null;
 		int prefixlen = prefixes.length;
         try {
-        	//System.out.println("[DEBUG] Locale = " + Locale.getDefault());
+        	//LogUtil.debugLog(("Locale = " + Locale.getDefault());
             bundle = ResourceBundle.getBundle("keisuke/message");
         } catch (MissingResourceException ex) {
         	throw new RuntimeException("!! Not found message[_xx].properties");
@@ -60,7 +61,7 @@ public class MessageDefine {
     			}
         	}
         } catch (MissingResourceException e) {
-        	System.err.println("!! Not found key(" + key + ") in message[_xx].properties");
+        	LogUtil.errorLog("Not found key(" + key + ") in message[_xx].properties");
         	throw new RuntimeException(e);
         }
 	}

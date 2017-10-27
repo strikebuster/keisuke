@@ -1,6 +1,7 @@
 package keisuke.report.procedure;
 
-import static keisuke.report.option.CommandOptionConstant.*;
+import static keisuke.count.format.FormatConstant.*;
+import static keisuke.report.option.ReportOptionConstant.*;
 import static keisuke.report.property.MessageConstant.*;
 
 import java.io.BufferedReader;
@@ -11,19 +12,20 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map.Entry;
 
-import keisuke.CountResult;
-import keisuke.CountResultMap;
-import keisuke.IllegalFormattedLineException;
-import keisuke.ProcedureType;
-import keisuke.StepCountResult;
+import keisuke.report.CountResultForReport;
+import keisuke.report.CountResultForReportMap;
+import keisuke.report.IllegalFormattedLineException;
+import keisuke.report.ProcedureType;
+import keisuke.report.StepCountResultForReport;
 import keisuke.report.property.PropertyDefine;
+import keisuke.util.LogUtil;
 
 /**
  * Class of main procedure to account result of StepCount
  */
 final class CountMainProc extends AbstractMainProc {
 
-	private CountResultMap resultMap = null;
+	private CountResultForReportMap resultMap = null;
 	private int ignoreFiles = 0; // 計測対象外ファイル本数
 
 	protected CountMainProc() {
@@ -37,7 +39,7 @@ final class CountMainProc extends AbstractMainProc {
 		if (this.argMap() == null) {
 			return;
 		}
-		//this.argMap().debug();
+		//this.argMap().debugMap();
 		String pfile = this.argMap().get(OPT_PROP);
 		PropertyDefine propDef = new PropertyDefine();
 		if (pfile != null) {
@@ -45,8 +47,8 @@ final class CountMainProc extends AbstractMainProc {
 		}
 		this.setColumnMap(propDef.getCountProperties());
 		this.setMessageMap(propDef.getMessageProperties());
-		//this.columnMap().debug();
-		//this.messageMap().debug();
+		//this.columnMap().debugMap();
+		//this.messageMap().debugMap();
 
 		String ctype = this.argMap().get(OPT_CLASS);
 		if (ctype == null ||  !(ctype.equals(OPTVAL_LANGUAGE)
@@ -60,11 +62,7 @@ final class CountMainProc extends AbstractMainProc {
 		} else {
 			this.makeClassifier(ctype);
 		}
-
 		String infile = this.argMap().get(ARG_INPUT);
-		//if (infile == null) {
-		//	throw new RuntimeException("!! Input file is not specified.");
-		//}
 
 		this.prepareResultMap();
 		this.aggregateCount(infile);
@@ -79,13 +77,14 @@ final class CountMainProc extends AbstractMainProc {
 			return;
 		}
 		for (String key : list) {
-			this.resultMap.put(key, new StepCountResult(key));
+			this.resultMap.put(key, new StepCountResultForReport(key));
 		}
 	}
 
 	private void aggregateCount(final String infile) {
 		BufferedReader reader = null;
 		String line = null;
+		String unsupportedLabel = this.messageMap().get(MSG_COUNT_FMT_UNDEF);
 		try {
 			// 入力ファイル：stepcounterのCSV形式出力
 			if (infile == null) {
@@ -100,9 +99,9 @@ final class CountMainProc extends AbstractMainProc {
 				linectr++;
 				line = line.trim();
 				// 行の解析結果をStepCountResultに保持
-				StepCountResult result = null;
+				StepCountResultForReport result = null;
 				try {
-					result = new StepCountResult(line, linectr);
+					result = new StepCountResultForReport(line, unsupportedLabel);
 				} catch (IllegalFormattedLineException e) {
 					this.ignoreFiles++;
 					continue;
@@ -114,7 +113,8 @@ final class CountMainProc extends AbstractMainProc {
 
 			    // 言語種類での集計
 			    if (this.resultMap.containsKey(classify)) {
-			        StepCountResult sumResult = (StepCountResult) this.resultMap.get(classify);
+			        StepCountResultForReport sumResult =
+			        		(StepCountResultForReport) this.resultMap.get(classify);
 			        sumResult.add(result);
 			        this.resultMap.put(classify, sumResult);
 			    } else {
@@ -122,9 +122,9 @@ final class CountMainProc extends AbstractMainProc {
 			    	this.resultMap.put(classify, result);
 			    }
 			}
-			//System.out.println("[DEBUG] Input Lines = " + linectr);
+			//LogUtil.debugLog("Input Lines = " + linectr);
 		} catch (IOException e) {
-			System.err.println("!! Read error : " + infile);
+			LogUtil.errorLog("Read error : " + infile);
 			throw new RuntimeException(e);
 		} finally {
 			if (reader != null && infile != null) {
@@ -148,9 +148,9 @@ final class CountMainProc extends AbstractMainProc {
 		sb.append(line);
 		sb.append("\n");
 		// 言語毎の集計結果の出力
-		for (Entry<String, CountResult> entry : this.resultMap.entrySet()) {
+		for (Entry<String, CountResultForReport> entry : this.resultMap.entrySet()) {
 			String langkey = entry.getKey();
-			StepCountResult result = (StepCountResult) entry.getValue();
+			StepCountResultForReport result = (StepCountResultForReport) entry.getValue();
 			// 列毎の値を出力
 			String langlabel = this.classifier().getClassifyNameForReport(langkey);
 			line = this.reportEditor().makeColumnValuesLineFrom(langlabel, result);

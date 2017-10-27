@@ -13,7 +13,6 @@ import keisuke.util.TestUtil;
 
 /**
  * Util Class for Test of keisuke.count.* .
- * @author strikebuster
  *
  */
 public class SCTestUtil extends TestUtil {

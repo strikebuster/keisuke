@@ -51,5 +51,5 @@ public interface LanguageElementMap {
 	/**
 	 * DEBUG用 定義内容の表示
 	 */
-	void debug();
+	void debugMap();
 }

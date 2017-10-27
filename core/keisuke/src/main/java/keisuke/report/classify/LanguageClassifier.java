@@ -6,9 +6,10 @@ import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
 
-import keisuke.Classifier;
+import keisuke.report.Classifier;
 import keisuke.report.classify.language.AbstractLanguageDefine;
 import keisuke.report.classify.language.LanguageSpecifics;
+import keisuke.util.LogUtil;
 
 /**
  * Classifier about source languages.
@@ -53,7 +54,7 @@ class LanguageClassifier extends AbstractLanguageDefine implements Classifier {
 			return null;
 		}
 		if (this.extensionLanguageMap() == null) {
-			System.err.println("![WARN] there is no language definition map.");
+			LogUtil.warningLog("there is no language definition map.");
 			return null;
 		}
 		// 拡張子の取得

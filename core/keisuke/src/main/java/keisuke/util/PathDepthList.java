@@ -38,7 +38,7 @@ public class PathDepthList {
 	 * @param position depth position where node will be placed in.
 	 */
 	public void setNodeIntoDepth(final String node, final int position) {
-		//System.out.println("[DEBUG] Node = " + node + ", Position = "
+		//LogUtil.debugLog("Node = " + node + ", Position = "
 		//		+ position + " : Depth = " + this.depth());
 		if (node == null || node.isEmpty()) {
 			return;
@@ -61,7 +61,7 @@ public class PathDepthList {
 			this.raise();
 		}
 		this.add(node);
-		//System.out.println("[DEBUG] Depth = " + dirDepth + " : " + this.toString());
+		//LogUtil.debugLog("Depth = " + dirDepth + " : " + this.toString());
 	}
 
 	/**

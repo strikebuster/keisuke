@@ -1,5 +1,6 @@
 package keisuke;
 
+import keisuke.report.ProcedureType;
 import keisuke.report.procedure.MainProcFactory;
 
 /**

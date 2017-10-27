@@ -10,8 +10,10 @@ import java.util.Map;
 import java.util.Properties;
 
 import keisuke.MessageMap;
-import keisuke.ReportColumn;
-import keisuke.ReportColumnMap;
+import keisuke.report.ReportColumn;
+import keisuke.report.ReportColumnMap;
+import keisuke.util.LogUtil;
+
 import static keisuke.report.property.PropertyConstant.*;
 
 /**
@@ -37,7 +39,7 @@ public class PropertyDefine {
 			inputStream = this.getClass().getResourceAsStream(fname);
 			this.defaultProps.load(inputStream);
 		} catch (IOException e) {
-			System.err.println("!! Read error : " + fname);
+			LogUtil.errorLog("Read error : " + fname);
 			throw new RuntimeException(e);
 		} finally {
 			if (inputStream != null) {
@@ -64,7 +66,7 @@ public class PropertyDefine {
 			inputStream = new FileInputStream(new File(fname));
 			this.customProps.load(inputStream);
 		} catch (IOException e) {
-			System.err.println("!! Read error : " + fname);
+			LogUtil.errorLog("Read error : " + fname);
 			throw new RuntimeException(e);
 		} finally {
 			if (inputStream != null) {
@@ -97,7 +99,7 @@ public class PropertyDefine {
 					String[] vals = value.split(",", 2);
 					if (vals.length < 2) {
 						// 書式エラー
-						System.err.println("![WARN] illegal property : " + key + " = " + value);
+						LogUtil.warningLog("illegal property : " + key + " = " + value);
 						continue;
 					}
 					stridx = vals[0];
@@ -113,7 +115,7 @@ public class PropertyDefine {
 					columnMap.put(key, repcol);
 				} catch (NumberFormatException nfex) {
 					// 書式エラー
-					System.err.println("![WARN] illegal property : " + key + " = " + value);
+					LogUtil.warningLog("illegal property : " + key + " = " + value);
 				}
 			}
 		}
@@ -125,7 +127,7 @@ public class PropertyDefine {
 	 */
 	public MessageMap getMessageProperties() {
 		if (this.messageMap == null) {
-			System.err.println("![WARN] not ready for getting messageMap");
+			LogUtil.warningLog("not ready for getting messageMap");
 		}
 		return this.messageMap;
 	}

@@ -2,10 +2,12 @@ package keisuke.report.editor;
 
 import java.util.Map.Entry;
 
-import keisuke.ReportColumn;
-import keisuke.ReportColumnMap;
-import keisuke.CountResult;
-import keisuke.ReportEditor;
+import keisuke.report.CountResultForReport;
+import keisuke.report.ReportColumn;
+import keisuke.report.ReportColumnMap;
+import keisuke.report.ReportEditor;
+import keisuke.util.LogUtil;
+
 import static keisuke.report.property.PropertyConstant.*;
 
 /**
@@ -32,7 +34,7 @@ abstract class AbstractReportEditor implements ReportEditor {
 			ReportColumn repcol = entry.getValue();
 			int idx = repcol.getIndex();
 			String title = repcol.getTitle();
-			//System.out.println("[DEBUG] set report column : key=" + key
+			//LogUtil.debugLog("set report column : key=" + key
 			//		+ " idx=" + idx + " title=" + title);
 			if (idx >= 0) {
 				this.columnArray[idx] = key;
@@ -67,22 +69,25 @@ abstract class AbstractReportEditor implements ReportEditor {
 	}
 
 	/** {@inheritDoc} */
-	public String makeColumnValuesLineFrom(final String lang, final CountResult elem) {
+	public String makeColumnValuesLineFrom(final String lang, final CountResultForReport elem) {
 		if (elem == null) {
-			System.err.println("![WARN] not instance of CountResult , but null");
+			LogUtil.warningLog("not instance of CountResult , but null");
 			return "";
 		}
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i <= this.indexMax; i++) {
 			String key = this.columnArray[i];
-			//System.out.println("[DEBUG] columnArray[" + i + "]=" + key);
+			//LogUtil.debugLog("columnArray[" + i + "]=" + key);
 			if (key == null) {
-				System.err.println("![WARN] columnArray[" + i + "]=null");
+				LogUtil.warningLog("columnArray[" + i + "]=null");
 				continue;
 			} else if (key.equals(CP_LANG) || key.equals(DP_LANG)) {
 				sb.append(lang);
 			} else {
-				int num = elem.getValue(key);
+				long num = elem.getValue(key);
+				if (key.equals(DP_DELSTEP)) {
+					num *= -1;
+				}
 				sb.append(num);
 			}
 			if (i < (this.indexMax)) {
@@ -102,23 +107,26 @@ abstract class AbstractReportEditor implements ReportEditor {
 	}
 
 	/** {@inheritDoc} */
-	public String makeOnlyFilesNumColumnValueLineFrom(final String lang, final CountResult elem) {
+	public String makeOnlyFilesNumColumnValueLineFrom(final String lang, final CountResultForReport elem) {
 		if (elem == null) {
-			System.err.println("![WARN] not instance of CountResult , but null");
+			LogUtil.warningLog("not instance of CountResult , but null");
 			return "";
 		}
 		StringBuilder sb = new StringBuilder();
 		int len = this.onlyFilesNumColumnArray.length;
 		for (int i = 0; i < len; i++) {
 			String key = this.onlyFilesNumColumnArray[i];
-			//System.out.println("[DEBUG] onlyFilesNumColumnArray[" + i + "]=" + key);
+			//LogUtil.debugLog("onlyFilesNumColumnArray[" + i + "]=" + key);
 			if (key == null) {
-				System.err.println("![WARN] onlyFilesNumColumnArray[" + i + "]=null");
+				LogUtil.warningLog("onlyFilesNumColumnArray[" + i + "]=null");
 				continue;
 			} else if (key.equals(CP_LANG) || key.equals(DP_LANG)) {
 				sb.append(lang);
 			} else {
-				int num = elem.getValue(key);
+				long num = elem.getValue(key);
+				if (key.equals(DP_DELSTEP)) {
+					num *= -1;
+				}
 				sb.append(num);
 			}
 			if (i < len - 1) {

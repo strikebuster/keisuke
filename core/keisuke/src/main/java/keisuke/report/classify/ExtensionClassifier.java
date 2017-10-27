@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
 
-import keisuke.Classifier;
+import keisuke.report.Classifier;
 
 /**
  * Classifier about file extensions.

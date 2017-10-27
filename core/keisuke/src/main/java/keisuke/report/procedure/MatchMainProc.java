@@ -9,8 +9,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
-import keisuke.ProcedureType;
-import static keisuke.report.option.CommandOptionConstant.*;
+import keisuke.report.ProcedureType;
+import keisuke.util.LogUtil;
+
+import static keisuke.report.option.ReportOptionConstant.*;
 
 /**
  * Class of main procedure to extract the matching files from result of StepCount.
@@ -28,7 +30,7 @@ final class MatchMainProc extends AbstractMainProc {
 		if (this.argMapEntity() == null) {
 			return;
 		}
-		//this.argMap().debug();
+		//this.argMap().debugMap();
 		// propertiesの設定項目なし＝出力レポートなし
 		// 入力ファイルの確認
 		String mafile = this.argMapEntity().get(ARG_MASTER);
@@ -63,18 +65,18 @@ final class MatchMainProc extends AbstractMainProc {
 				lineTr = lineTr.trim();
 				if (lineTr.length() == 0) {
 					// フォーマット不正行
-			        System.err.println("!! empty line at " + linectrTr + " in " + trfile);
+					LogUtil.warningLog("empty line at " + linectrTr + " in " + trfile);
 			        continue;
 				}
 				int pos = lineTr.indexOf('/', 1); // 先頭の/を除き次の/を探す
 				if (pos < 0) {
 					// フォーマット不正行
-			        System.err.println("!! '/' not found in " + lineTr);
+					LogUtil.warningLog("'/' not found in " + lineTr);
 			        continue;
 				}
 				// TRファイルリストから対象1行のパスを格納
 				String pathTr = lineTr.substring(pos);
-			    //System.out.println("[DEBUG] TR_FILE#" + linectrTr + ": " + pathTr);
+			    //LogUtil.debugLog("TR_FILE#" + linectrTr + ": " + pathTr);
 			    // MAファイルリストの読み込みを進める
 			    String pathMa = null;
 			    while ((lineMa = readerMa.readLine()) != null) {
@@ -86,18 +88,18 @@ final class MatchMainProc extends AbstractMainProc {
 					String strpath = strArray[0];
 					if (strpath.length() == 0) {
 						// フォーマット不正行
-				        System.err.println("!! illegal line at " + linectrMa + " in " + mafile);
+						LogUtil.warningLog("illegal line at " + linectrMa + " in " + mafile);
 				        continue;
 					}
 					int pos2 = strpath.indexOf('/', 1); // 先頭の/を除き次の/を探す
 					if (pos2 < 0) {
 						// フォーマット不正行
-				        System.err.println("!! '/' not found in " + strpath);
+						LogUtil.warningLog("'/' not found in " + strpath);
 				        continue;
 					}
 					// MAファイルリストから対象1行のパスを格納
 					pathMa = strpath.substring(pos2);
-					//System.out.println("[DEBUG] MA_FILE#" + linectrMa + ": " + pathMa);
+					//LogUtil.debugLog("MA_FILE#" + linectrMa + ": " + pathMa);
 					if (pathTr.equals(pathMa)) {
 						break;
 					}
@@ -105,7 +107,7 @@ final class MatchMainProc extends AbstractMainProc {
 			    }
 			    if (pathMa == null) {
 			    	// MAファイルが終了＝一致しなかった
-			    	System.err.println("!! it is not found in master : " + pathTr);
+			    	LogUtil.errorLog("it is not found in master : " + pathTr);
 			    	break;
 			    }
 			    sb.append(lineMa);
@@ -116,12 +118,12 @@ final class MatchMainProc extends AbstractMainProc {
 				this.setReportText(sb.toString());
 			} else {
 				// TR処理途中で異常終了
-				System.err.println("!! Fatal error occured. no output.");
+				LogUtil.errorLog("Fatal error occured. no output.");
 			}
-			//System.out.println("[DEBUG] read TR lines = " + linectrTr);
-			//System.out.println("[DEBUG] read MA lines = " + linectrMa);
+			//LogUtil.debugLog("read TR lines = " + linectrTr);
+			//LogUtil.debugLog("read MA lines = " + linectrMa);
 		} catch (IOException e) {
-			System.err.println("!! Read error : " + mafile + " or " + trfile);
+			LogUtil.errorLog("Read error : " + mafile + " or " + trfile);
 			throw new RuntimeException(e);
 		} finally {
 			if (readerMa != null) {
@@ -152,7 +154,7 @@ final class MatchMainProc extends AbstractMainProc {
 						new FileOutputStream(new File(outfile))));
 				writer.write(this.reportText());
 			} catch (IOException e) {
-				System.err.println("!! Write error : " + outfile);
+				LogUtil.errorLog("Write error : " + outfile);
 				throw new RuntimeException(e);
 			} finally {
 				if (writer != null) {

@@ -4,6 +4,7 @@ import static keisuke.report.classify.language.XmlLanguageConstant.*;
 
 import org.w3c.dom.Element;
 
+import keisuke.util.LogUtil;
 import keisuke.xmldefine.AbstractXmlDefine;
 import keisuke.xmldefine.XmlParseSubject;
 
@@ -65,7 +66,7 @@ public class XmlLanguageDefine extends AbstractXmlDefine {
 		this.extLangMap = this.languageDefineFactory().createLanguageElementMap();
 		XmlParseSubject subj = new LanguageRoot();
 		this.parseXml(fname, subj);
-		//this.extLangMap.debug();
+		//this.extLangMap.debugMap();
 	}
 
 	/** {@inheritDoc} */
@@ -75,7 +76,7 @@ public class XmlLanguageDefine extends AbstractXmlDefine {
 		} else if (name.equals(XML_NODE_EXT)) {
 			this.parseLangExtension(elem);
 		} else {
-			System.err.println("![WARN] illegal element : " + name);
+			LogUtil.warningLog("illegal element : " + name);
 			return;
 		}
 	}
@@ -87,7 +88,7 @@ public class XmlLanguageDefine extends AbstractXmlDefine {
 	protected void parseLanguage(final Element element) {
 		String langName = element.getAttribute(XML_ATTR_NAME);
 		String langGroup = element.getAttribute(XML_ATTR_GROUP);
-		//System.out.println("[DEBUG] Lang=" + langGroup + "." + langName);
+		//LogUtil.debugLog("Lang=" + langGroup + "." + langName);
 		this.currentLangElem = this.languageDefineFactory().createLanguageElement(langName, langGroup);
 		this.parseChildrenNodes(element, this.currentLangElem.getXmlChildrenNames());
 	}
@@ -98,7 +99,7 @@ public class XmlLanguageDefine extends AbstractXmlDefine {
 	 */
 	protected void parseLangExtension(final Element element) {
 		String ext = element.getTextContent();
-		//System.out.println("[DEBUG] Ext=" + ext);
+		//LogUtil.debugLog("Ext=" + ext);
 		this.currentLangElem.addExtension(ext);
 		this.extLangMap.put(ext, this.currentLangElem);
 	}

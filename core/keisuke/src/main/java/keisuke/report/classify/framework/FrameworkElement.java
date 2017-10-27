@@ -80,14 +80,15 @@ class FrameworkElement implements XmlParseSubject {
 	 */
 	protected String debug() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("[DEBUG] FrameworkElement : name=" + this.name + ", group=" + this.group);
-		sb.append("\n");
-		sb.append("[DEBUG] FrameworkElement : specificTypes as follows");
-		sb.append("\n");
+		//sb.append("[DEBUG] ");
+		sb.append("FrameworkElement : name=" + this.name + ", group=" + this.group);
+		sb.append("\n[DEBUG] ");
+		sb.append("FrameworkElement : specificTypes as follows");
+		sb.append("\n[DEBUG] ");
 		for (FwSpecificElement fse : this.specificTypes) {
 			sb.append(fse.debug());
 		}
-		sb.append("\n");
+		//sb.append("\n");
 		return sb.toString();
 	}
 }

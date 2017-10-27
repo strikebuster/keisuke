@@ -5,28 +5,28 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
-import keisuke.CountResult;
-import keisuke.CountResultMap;
+import keisuke.report.CountResultForReport;
+import keisuke.report.CountResultForReportMap;
 
 /**
  * CountResultMapインタフェースを実装するクラス
  * Map<String, CountResult>形式で設定を保持する
  */
-public class CountResultMapImpl implements CountResultMap {
+public class CountResultMapImpl implements CountResultForReportMap {
 
-	private Map<String, CountResult> resultMap = null;
+	private Map<String, CountResultForReport> resultMap = null;
 
 	protected CountResultMapImpl() {
-		this.resultMap = new TreeMap<String, CountResult>();
+		this.resultMap = new TreeMap<String, CountResultForReport>();
 	}
 
 	/** {@inheritDoc} */
-	public CountResult get(final String key) {
+	public CountResultForReport get(final String key) {
 		return this.resultMap.get(key);
 	}
 
 	/** {@inheritDoc} */
-	public void put(final String key, final CountResult result) {
+	public void put(final String key, final CountResultForReport result) {
 		this.resultMap.put(key, result);
 	}
 
@@ -36,7 +36,7 @@ public class CountResultMapImpl implements CountResultMap {
 	}
 
 	/** {@inheritDoc} */
-	public Set<Entry<String, CountResult>> entrySet() {
+	public Set<Entry<String, CountResultForReport>> entrySet() {
 		return this.resultMap.entrySet();
 	}
 

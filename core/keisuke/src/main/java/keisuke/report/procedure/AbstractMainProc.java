@@ -6,16 +6,17 @@ import java.io.OutputStreamWriter;
 import java.util.Map;
 
 import keisuke.ArgumentMap;
-import keisuke.Classifier;
 import keisuke.CommandOption;
 import keisuke.MainProcedure;
 import keisuke.MessageMap;
-import keisuke.ProcedureType;
-import keisuke.ReportColumnMap;
-import keisuke.ReportEditor;
+import keisuke.report.Classifier;
+import keisuke.report.ProcedureType;
+import keisuke.report.ReportColumnMap;
+import keisuke.report.ReportEditor;
 import keisuke.report.classify.ClassifierFactory;
 import keisuke.report.editor.ReportEditorFactory;
-import keisuke.report.option.CommandOptionFactory;
+import keisuke.report.option.ReportOptionFactory;
+import keisuke.util.LogUtil;
 
 /**
  * Abstract class for main procedure of command.
@@ -41,7 +42,7 @@ abstract class AbstractMainProc implements MainProcedure {
 	 */
 	protected final void createBindedFuncs(final ProcedureType type) {
 		this.proctype = type;
-		this.commandOption = CommandOptionFactory.create(this.proctype);
+		this.commandOption = ReportOptionFactory.create(this.proctype);
 		this.reportEditor = ReportEditorFactory.create(this.proctype);
 	}
 
@@ -65,7 +66,7 @@ abstract class AbstractMainProc implements MainProcedure {
 			writer.write(this.reportOutput);
 			writer.flush();
 		} catch (IOException e) {
-			System.err.println("!! Write error : <System.out>");
+			LogUtil.errorLog("Write error : <System.out>");
 			throw new RuntimeException(e);
 		//} finally {
 			//if (writer != null) try { writer.close(); } catch (IOException e) { e.printStackTrace(); }

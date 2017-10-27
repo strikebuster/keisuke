@@ -1,23 +1,25 @@
 package keisuke.count.diff;
 
+import keisuke.DiffStatusEnum;
+import keisuke.DiffStatusLabels;
 
 /**
  * ファイルの差分変更結果を示すオブジェクトです。
  */
-public class DiffFileResult extends AbstractDiffResult {
+public class DiffFileResult extends AbstractDiffResultForCount {
 
-	private String	fileType;
-	private String	category;
+	private String sourceType = "";
+	private String sourceCategory = "";
 
 	/**
 	 * 親フォルダーを指定するコンストラクタ
 	 * @param parent 親フォルダーの差分計測結果インスタンス
-	 * @param diffStatusText 差分変更ステータスの表示文言定義インスタンス
+	 * @param statusLabels 差分変更ステータスの表示文言定義インスタンス
 	 */
-	public DiffFileResult(final DiffFolderResult parent, final DiffStatusText diffStatusText) {
-		super(parent, diffStatusText);
-		this.setNodeType(TYPE_FILE);
-		this.setFileType("UNDEF");
+	public DiffFileResult(final DiffFolderResult parent, final DiffStatusLabels statusLabels) {
+		super(parent, statusLabels);
+		this.setIsFile(true);
+		this.setSourceType("UNDEF");
 	}
 
 	/**
@@ -25,62 +27,48 @@ public class DiffFileResult extends AbstractDiffResult {
 	 * @param name ノード名
 	 * @param status 差分変更ステータス値
 	 * @param parent 親フォルダーの差分計測結果インスタンス
-	 * @param diffStatusText 差分変更ステータスの表示文言定義インスタンス
+	 * @param statusLabels 差分変更ステータスの表示文言定義インスタンス
 	 */
-	public DiffFileResult(final String name, final DiffStatus status,
-			final DiffFolderResult parent, final DiffStatusText diffStatusText) {
-		super(name, status, parent, diffStatusText);
-		this.setNodeType(TYPE_FILE);
-		this.setFileType("UNDEF");
+	public DiffFileResult(final String name, final DiffStatusEnum status,
+			final DiffFolderResult parent, final DiffStatusLabels statusLabels) {
+		super(name, status, parent, statusLabels);
+		this.setIsFile(true);
+		this.setSourceType("UNDEF");
 	}
 
 	/**
 	 * カテゴリを返す
 	 * @return カテゴリ名
 	 */
-	public String getCategory() {
-		if (category == null) {
+	public String sourceCategory() {
+		if (sourceCategory == null) {
 			return "";
 		}
-		return category;
+		return sourceCategory;
 	}
 
 	/**
 	 * カテゴリを設定する
-	 * @param categorytext カテゴリ名
+	 * @param category カテゴリ名
 	 */
-	public void setCategory(final String categorytext) {
-		this.category = categorytext;
+	public void setSourceCategory(final String category) {
+		this.sourceCategory = category;
 	}
 
 	/**
 	 * ソースファイルタイプを返す
 	 * @return ソースファイルタイプ
 	 */
-	public String getFileType() {
-		return this.fileType;
+	public String sourceType() {
+		return this.sourceType;
 	}
 
 	/**
 	 * ソースファイルタイプを設定する
 	 * @param filetype ソースファイルタイプ
 	 */
-	public void setFileType(final String filetype) {
-		this.fileType = filetype;
+	public void setSourceType(final String filetype) {
+		this.sourceType = filetype;
 	}
 
-	/** {@inheritDoc} */
-	@Override
-	public String render(final int nest) {
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < nest; i++) {
-			sb.append(" ");
-		}
-		sb.append(this.getName());
-		sb.append("[").append(this.getStatus()).append("]");
-		sb.append(" +").append(this.getAddCount());
-		sb.append(" -").append(this.getDelCount());
-		sb.append("\n");
-		return sb.toString();
-	}
 }

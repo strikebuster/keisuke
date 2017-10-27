@@ -8,11 +8,11 @@ public enum StepCountEnum {
 	/** Path of a source file */
 	FILE_PATH(0),
 
-	/** Extension of a source file */
-	FILE_EXTENSION(1),
+	/** Type of a source file */
+	SOURCE_TYPE(1),
 
 	/** Category which is written with the rule in a source file */
-	FILE_CATEGORY(2),
+	SOURCE_CATEGORY(2),
 
 	/** Number of executable steps in a source file */
 	EXEC_STEPS(3),

@@ -12,4 +12,15 @@ public interface CommandOption {
 	 */
 	ArgumentMap makeMapOfOptions(String[] args);
 
+	/**
+	 * オプション引数解析後の残りの引数の文字列配列を作成
+	 * @return String[] オプション解析後の残った引数の配列
+	 */
+	String[] makeRestArgArray();
+
+	/**
+	 * 使用方法メッセージ
+	 */
+    void showUsage();
+
 }

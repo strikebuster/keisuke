@@ -1,7 +1,7 @@
 package keisuke.report.procedure;
 
 import keisuke.MainProcedure;
-import keisuke.ProcedureType;
+import keisuke.report.ProcedureType;
 
 /**
  * Factory class to create MainProcedure

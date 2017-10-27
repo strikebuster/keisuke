@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 
 import org.w3c.dom.Element;
 
+import keisuke.util.LogUtil;
 import keisuke.xmldefine.AbstractXmlDefine;
 import keisuke.xmldefine.XmlParseSubject;
 
@@ -31,7 +32,7 @@ public class XmlFrameworkDefine extends AbstractXmlDefine {
 		this.fwMap = new HashMap<String, FrameworkElement>();
 		XmlParseSubject subject = new FrameworkRoot();
 		this.parseXml(fname, subject);
-		//System.out.println("[DEBUG] fwMap");
+		//LogUtil.debugLog("fwMap");
 		//this.debugFwMap();
 	}
 
@@ -44,7 +45,7 @@ public class XmlFrameworkDefine extends AbstractXmlDefine {
 		} else if (name.equals(XML_NODE_PATTERN)) {
 			this.parseFwSpecPattern(elem);
 		} else {
-			System.err.println("![WARN] illegal element : " + name);
+			LogUtil.warningLog("illegal element : " + name);
 			return;
 		}
 	}
@@ -56,7 +57,7 @@ public class XmlFrameworkDefine extends AbstractXmlDefine {
 	private void parseFramework(final Element element) {
 		String fwName = element.getAttribute(XML_ATTR_NAME);
 		String fwGroup = element.getAttribute(XML_ATTR_GROUP);
-		//System.out.println("[DEBUG] Framework=" + fwGroup + "." + fwName);
+		//LogUtil.debugLog("Framework=" + fwGroup + "." + fwName);
 		this.currentFwElem = new FrameworkElement(fwName, fwGroup);
 		this.fwMap.put(fwName, this.currentFwElem);
 		this.indexFwSpec = -1;
@@ -72,7 +73,7 @@ public class XmlFrameworkDefine extends AbstractXmlDefine {
 		String spNameOrder = String.format("%03d", this.indexFwSpec);
 		String spName = spNameOrder + "#" + element.getAttribute(XML_ATTR_NAME);
 		String spGroup = element.getAttribute(XML_ATTR_GROUP);
-		//System.out.println("[DEBUG] Fw SpecificType=" + fwGroup + "." + fwName);
+		//LogUtil.debugLog("Fw SpecificType=" + fwGroup + "." + fwName);
 		this.currentFwSpecElem = new FwSpecificElement(spName, spGroup);
 		this.currentFwElem.addSpecificType(this.currentFwSpecElem);
 		this.parseChildrenNodes(element, this.currentFwSpecElem.getXmlChildrenNames());
@@ -84,7 +85,7 @@ public class XmlFrameworkDefine extends AbstractXmlDefine {
 	 */
 	private void parseFwSpecPattern(final Element element) {
 		String ptnstr = element.getTextContent();
-		//System.out.println("[DEBUG] Fw SpecType Pattern=" + ptnstr);
+		//LogUtil.debugLog("Fw SpecType Pattern=" + ptnstr);
 		this.currentFwSpecElem.addPatternString(ptnstr);
 	}
 
@@ -94,16 +95,16 @@ public class XmlFrameworkDefine extends AbstractXmlDefine {
 	 * @return FwSpecificElementのList
 	 */
 	protected List<FwSpecificElement> createFwSpecificList(final String fw) {
-		//System.out.println("[DEBUG] createFwSpecificList for fw=" + fw);
+		//LogUtil.debugLog("createFwSpecificList for fw=" + fw);
 		if (fw == null) {
 			return null;
 		}
 		for (Entry<String, FrameworkElement> entry : this.fwMap.entrySet()) {
 			//String key = entry.getKey();
-			//System.out.println("[DEBUG] fwMap.get(" + key +")");
+			//LogUtil.debugLog("fwMap.get(" + key +")");
 			FrameworkElement fwElem = entry.getValue();
 			String name = fwElem.getName();
-			//System.out.println("[DEBUG] FrameworkElement name=" + name);
+			//LogUtil.debugLog("FrameworkElement name=" + name);
 			if (name == null) {
 				continue;
 			}
@@ -112,7 +113,6 @@ public class XmlFrameworkDefine extends AbstractXmlDefine {
 				return fwElem.getSpecificTypes();
 			}
 		}
-		System.err.println("![WARN] not found Framework definition for fw:" + fw);
 		return null;
 	}
 
@@ -123,8 +123,8 @@ public class XmlFrameworkDefine extends AbstractXmlDefine {
 		for (Entry<String, FrameworkElement> entry : this.fwMap.entrySet()) {
 			String key = entry.getKey();
 			FrameworkElement data = entry.getValue();
-			System.out.println("[DEBUG] Map Key=" + key);
-			System.out.println(data.debug());
+			LogUtil.debugLog("Map Key=" + key);
+			LogUtil.debugLog(data.debug());
 		}
 	}
 }

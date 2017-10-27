@@ -1,8 +1,7 @@
 package keisuke.count.format;
 
-import jp.sf.amateras.stepcounter.format.JSONFormatter;
-import jp.sf.amateras.stepcounter.format.ResultFormatter;
-import jp.sf.amateras.stepcounter.format.XMLFormatter;
+import keisuke.count.Formatter;
+import static keisuke.count.option.CountOptionConstant.*;
 
 /**
  * フォーマッタのインスタンスを作成するためのファクトリクラス。
@@ -19,31 +18,31 @@ public final class FormatterFactory {
 	 * @param format フォーマット
 	 * @return フォーマッタのインスタンス
 	 */
-	public static ResultFormatter getFormatter(final String format) {
+	public static Formatter getFormatter(final String format) {
 		// nullの場合はデフォルトフォーマット
 		if (format == null) {
-			return new DefaultFormatter();
+			return new TextFormatter();
 		}
 		String name = format.toLowerCase();
 		// CSVフォーマット
-		if (name.equals("csv")) {
+		if (name.equals(OPTVAL_CSV)) {
 			return new CSVFormatter();
 
 		// XMLフォーマット
-		} else if (name.equals("xml")) {
-			return new XMLFormatter();
+		} else if (name.equals(OPTVAL_XML)) {
+			return new XmlFormatter();
 
 		// JSONフォーマット
-		} else if (name.equals("json")) {
-			return new JSONFormatter();
+		} else if (name.equals(OPTVAL_JSON)) {
+			return new JsonFormatter();
 
 		// Excelフォーマット
-		} else if (name.equals("excel")) {
+		} else if (name.equals(OPTVAL_EXCEL)) {
 			return new ExcelFormatter();
 
 		// デフォルトフォーマット
 		} else {
-			return new DefaultFormatter();
+			return new TextFormatter();
 		}
 	}
 

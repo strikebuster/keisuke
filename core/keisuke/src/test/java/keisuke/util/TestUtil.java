@@ -11,7 +11,7 @@ import java.net.URL;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import keisuke.ReportColumn;
+import keisuke.report.ReportColumn;
 
 /**
  * Util Class for Test of keisuke.* .

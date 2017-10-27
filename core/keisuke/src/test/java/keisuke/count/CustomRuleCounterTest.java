@@ -13,7 +13,6 @@ import keisuke.util.StderrCapture;
 
 /**
  * Test class of StepCounter about customized xml rules.
- * @author strikebuster
  *
  */
 public class CustomRuleCounterTest {

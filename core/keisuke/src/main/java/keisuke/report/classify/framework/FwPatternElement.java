@@ -84,11 +84,12 @@ public class FwPatternElement implements Comparable<FwPatternElement> {
 	 */
 	protected String debug() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("[DEBUG] FwPatternElement : name=" + this.name);
-		sb.append("\n");
-		sb.append("[DEBUG] FwPatternElement : patternStringn=" + this.patternString
+		//sb.append("[DEBUG] ");
+		sb.append("FwPatternElement : name=" + this.name);
+		sb.append("\n[DEBUG] ");
+		sb.append("FwPatternElement : patternStringn=" + this.patternString
 					+ " , length=" + this.patternLength);
-		sb.append("\n");
+		//sb.append("\n");
 		return sb.toString();
 	}
 }

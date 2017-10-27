@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import keisuke.util.LogUtil;
 import keisuke.xmldefine.XmlParseSubject;
+import static keisuke.count.xmldefine.XmlLanguageRuleConstant.*;
 
 /**
  * 言語の解析ルール定義をXMLから取り込むクラス
@@ -34,15 +36,14 @@ public class LanguageCountRule implements XmlParseSubject {
 
 	/** {@inheritDoc} */
 	public String getXmlNodeName() {
-		return SCXmlCommonDefine.XML_NODE_RULE;
+		return XML_NODE_RULE;
 	}
 
 	/** {@inheritDoc} */
 	public List<String> getXmlChildrenNames() {
-		return Arrays.asList(SCXmlCommonDefine.XML_NODE_SKIP, SCXmlCommonDefine.XML_NODE_LINECOM,
-				SCXmlCommonDefine.XML_NODE_BLOCKCOM, SCXmlCommonDefine.XML_NODE_COMEXPR,
-				SCXmlCommonDefine.XML_NODE_LITERAL, SCXmlCommonDefine.XML_NODE_HEREDOC,
-				SCXmlCommonDefine.XML_NODE_SCRIPT);
+		return Arrays.asList(XML_NODE_SKIP, XML_NODE_LINECOM, XML_NODE_BLOCKCOM,
+				XML_NODE_COMEXPR, XML_NODE_LITERAL, XML_NODE_HEREDOC,
+				XML_NODE_SCRIPT);
 	}
 
 	/**
@@ -181,7 +182,7 @@ public class LanguageCountRule implements XmlParseSubject {
 			this.skipPatterns = new ArrayList<String>();
 		}
 		this.skipPatterns.add(patternString);
-		//System.out.println("[DEBUG] rule addSkipPattern=" + patternString);
+		//LogUtil.debugLog("rule addSkipPattern=" + patternString);
 	}
 
 	/**
@@ -201,7 +202,7 @@ public class LanguageCountRule implements XmlParseSubject {
 			this.lineComments = new ArrayList<LineCommentDefine>();
 		}
 		this.lineComments.add(lineComment);
-		//System.out.println("[DEBUG] rule addLineComment=" + lineComment);
+		//LogUtil.debugLog("rule addLineComment=" + lineComment);
 	}
 
 	/**
@@ -221,7 +222,7 @@ public class LanguageCountRule implements XmlParseSubject {
 			this.blockComments = new ArrayList<BlockCommentDefine>();
 		}
 		this.blockComments.add(blockComment);
-		//System.out.println("[DEBUG] rule addBlockComment=" + blockComment);
+		//LogUtil.debugLog("rule addBlockComment=" + blockComment);
 	}
 
 	/**
@@ -241,7 +242,7 @@ public class LanguageCountRule implements XmlParseSubject {
 			this.commentExpressions = new ArrayList<CommentExpressionDefine>();
 		}
 		this.commentExpressions.add(commentExpr);
-		//System.out.println("[DEBUG] rule addCommentExpression=" + commentExpr);
+		//LogUtil.debugLog("rule addCommentExpression=" + commentExpr);
 	}
 
 	/**
@@ -261,7 +262,7 @@ public class LanguageCountRule implements XmlParseSubject {
 			this.literalStrings = new ArrayList<LiteralStringDefine>();
 		}
 		this.literalStrings.add(literalString);
-		//System.out.println("[DEBUG] rule addLiteralString=" + literalString);
+		//LogUtil.debugLog("rule addLiteralString=" + literalString);
 	}
 
 	/**
@@ -281,7 +282,7 @@ public class LanguageCountRule implements XmlParseSubject {
 			this.labelHereDocs = new ArrayList<LabelHereDocDefine>();
 		}
 		this.labelHereDocs.add(hereDoc);
-		//System.out.println("[DEBUG] rule addLabelHereDoc=" + hereDoc);
+		//LogUtil.debugLog("rule addLabelHereDoc=" + hereDoc);
 	}
 
 	/**
@@ -301,7 +302,7 @@ public class LanguageCountRule implements XmlParseSubject {
 			this.scriptBlocks = new ArrayList<ScriptBlockDefine>();
 		}
 		this.scriptBlocks.add(scriptletBlock);
-		//System.out.println("[DEBUG] rule addSriptBlock=" + scriptletBlock);
+		//LogUtil.debugLog("rule addSriptBlock=" + scriptletBlock);
 	}
 
 	/**
@@ -336,8 +337,12 @@ public class LanguageCountRule implements XmlParseSubject {
 		if (this.indentSense) {
 			sb.append("[DEBUG] indentSense = true\n");
 		}
-		if (this.sameAs != null && !this.sameAs.isEmpty()) {
-			sb.append("[DEBUG] sameAs = " + this.sameAs + "\n");
+		if (this.sameAs != null) {
+			if (!this.sameAs.isEmpty()) {
+				sb.append("[DEBUG] sameAs = " + this.sameAs + "\n");
+			} else {
+				LogUtil.warningLog("sameAs is defined, but language is missing.");
+			}
 		}
 		sb.append("[DEBUG] LanguageCountRule contains as follows\n");
 		if (this.skipPatterns != null) {

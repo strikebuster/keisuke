@@ -4,26 +4,29 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import keisuke.DiffStatusEnum;
+import keisuke.DiffStatusLabels;
+
 /**
  * ディレクトリの差分変更結果を示すオブジェクトです。
  */
-public class DiffFolderResult extends AbstractDiffResult {
+public class DiffFolderResult extends AbstractDiffResultForCount {
 
 	/*
 	 * インスタンス変数のゲッターはOverride
 	 * ３つのインスタンス変数毎に子供を走査していたのを１度走査し３つの変数値をセットするロジックに変更
 	 */
-	private List<AbstractDiffResult> children = new ArrayList<AbstractDiffResult>();
+	private List<AbstractDiffResultForCount> children = new ArrayList<AbstractDiffResultForCount>();
 	private boolean evaluated = false;
 
 	/**
 	 * 親フォルダーを指定するコンストラクタ
 	 * @param parent 親フォルダーの差分計測結果インスタンス
-	 * @param diffStatusText 差分変更ステータスの表示文言定義インスタンス
+	 * @param statusLabels 差分変更ステータスの表示文言定義インスタンス
 	 */
-	public DiffFolderResult(final DiffFolderResult parent, final DiffStatusText diffStatusText) {
-		super(parent, diffStatusText);
-		this.setNodeType(TYPE_FOLDER);
+	public DiffFolderResult(final DiffFolderResult parent, final DiffStatusLabels statusLabels) {
+		super(parent, statusLabels);
+		this.setIsFile(false);
 	}
 
 	/**
@@ -31,20 +34,19 @@ public class DiffFolderResult extends AbstractDiffResult {
 	 * @param name ノード名
 	 * @param status 差分変更ステータス値
 	 * @param parent 親フォルダーの差分計測結果インスタンス
-	 * @param diffStatusText 差分変更ステータスの表示文言定義インスタンス
+	 * @param statusLabels 差分変更ステータスの表示文言定義インスタンス
 	 */
-	public DiffFolderResult(final String name, final DiffStatus status,
-			final DiffFolderResult parent, final DiffStatusText diffStatusText) {
-		super(name, status, parent, diffStatusText);
-		this.setNodeType(TYPE_FOLDER);
-		this.setDiffStatus(status);
+	public DiffFolderResult(final String name, final DiffStatusEnum status,
+			final DiffFolderResult parent, final DiffStatusLabels statusLabels) {
+		super(name, status, parent, statusLabels);
+		this.setIsFile(false);
 	}
 
 	/**
 	 * 子ノードリストに追加する
 	 * @param child 追加する子ノードの差分計測結果インスタンス
 	 */
-	public void addChild(final AbstractDiffResult child) {
+	public void addChild(final AbstractDiffResultForCount child) {
 		if (child != null) {
 			this.children.add(child);
 		}
@@ -54,7 +56,7 @@ public class DiffFolderResult extends AbstractDiffResult {
 	 * 子ノードリストを返す
 	 * @return 子ノード差分計測結果のリスト
 	 */
-	public List<AbstractDiffResult> getChildren() {
+	public List<AbstractDiffResultForCount> getChildren() {
 		return this.children;
 	}
 
@@ -62,75 +64,57 @@ public class DiffFolderResult extends AbstractDiffResult {
 	 * 子ノードリストをノードタイプ＞ノード名でソートしたリストを返す
 	 * @return ソート済みの子ノード差分計測結果のリスト
 	 */
-	public List<AbstractDiffResult> getSortedChildren() {
-		List<AbstractDiffResult> list = new ArrayList<AbstractDiffResult>(this.getChildren());
+	public List<AbstractDiffResultForCount> getSortedChildren() {
+		List<AbstractDiffResultForCount> list = new ArrayList<AbstractDiffResultForCount>(this.getChildren());
 		Collections.sort(list);
 		return list;
 	}
 
-	// 子要素のスキャンを１度だけにするために追加
-	private void evaluateChildren() {
+	/**
+	 * 子要素をスキャンして下位の変更ステータスと差分行数を評価して
+	 * 自身の変更ステータスと差分行数を設定する
+	 */
+	public void evaluateChildren() {
 		if (this.evaluated) {
 			return;
 		}
 		int addcnt = 0;
 		int delcnt = 0;
-		for (AbstractDiffResult obj : getChildren()) {
-			addcnt += obj.getAddCount();
-			delcnt += obj.getDelCount();
+		for (AbstractDiffResultForCount obj : getChildren()) {
+			addcnt += obj.addedSteps();
+			delcnt += obj.deletedSteps();
 		}
-		this.setAddCount(addcnt);
-		this.setDelCount(delcnt);
-		DiffStatus stat = super.getDiffStatus();
+		this.setSteps(addcnt, delcnt);
+		DiffStatusEnum stat = super.status();
 		if (stat == null) {
 			// rootの場合に仮で設定
-			this.setDiffStatus(DiffStatus.MODIFIED);
+			this.setDiffStatus(DiffStatusEnum.MODIFIED);
 		}
-		if (stat == DiffStatus.MODIFIED && addcnt == 0 && delcnt == 0) {
-			this.setDiffStatus(DiffStatus.NONE);
+		if (stat == DiffStatusEnum.MODIFIED && addcnt == 0 && delcnt == 0) {
+			this.setDiffStatus(DiffStatusEnum.UNCHANGED);
 		}
 		this.evaluated = true;
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public DiffStatus getDiffStatus() {
+	public DiffStatusEnum status() {
 		this.evaluateChildren();
-		return super.getDiffStatus();
+		return super.status();
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public int getAddCount() {
+	public long addedSteps() {
 		this.evaluateChildren();
-		return super.getAddCount();
+		return super.addedSteps();
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public int getDelCount() {
+	public long deletedSteps() {
 		this.evaluateChildren();
-		return super.getDelCount();
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public String render(final int nest) {
-		this.evaluateChildren(); // 子供を評価して自身の値を確定する
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < nest; i++) {
-			sb.append(" ");
-		}
-		sb.append(this.getName()).append("/");
-		sb.append("[").append(super.getStatus()).append("]");
-		sb.append(" +").append(super.getAddCount());
-		sb.append(" -").append(super.getDelCount()).append("\n");
-
-		for (AbstractDiffResult obj : this.getSortedChildren()) {
-			sb.append(obj.render(nest + 1));
-		}
-
-		return sb.toString();
+		return super.deletedSteps();
 	}
 
 }

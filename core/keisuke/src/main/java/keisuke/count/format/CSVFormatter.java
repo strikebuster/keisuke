@@ -1,7 +1,8 @@
 package keisuke.count.format;
 
-import jp.sf.amateras.stepcounter.CountResult;
-import keisuke.count.SCCommonDefine;
+import static keisuke.count.format.FormatConstant.*;
+
+import keisuke.StepCountResult;
 
 /**
  * ステップ計測結果をCSV形式にフォーマットします。
@@ -10,15 +11,15 @@ import keisuke.count.SCCommonDefine;
 public class CSVFormatter extends AbstractFormatter {
 
 	/** {@inheritDoc} */
-	public byte[] format(final CountResult[] results) {
+	public byte[] format(final StepCountResult[] results) {
 		StringBuffer sb = new StringBuffer();
 		for (int i = 0; i < results.length; i++) {
-			CountResult result = results[i];
+			StepCountResult result = results[i];
 			// 未対応の形式をフォーマット
-			if (result.getFileType() == null) {
-				sb.append(result.getFileName());
+			if (result.sourceType() == null) {
+				sb.append(result.filePath());
 				sb.append(",");
-				sb.append(getMessageText(SCCommonDefine.MSG_COUNT_FMT_UNDEF));
+				sb.append(this.getMessageText(MSG_COUNT_FMT_UNDEF));
 				sb.append(",");
 				sb.append(",");
 				sb.append(",");
@@ -27,19 +28,19 @@ public class CSVFormatter extends AbstractFormatter {
 				sb.append("\n");
 			// 正常にカウントされたものをフォーマット
 			} else {
-				sb.append(result.getFileName());
+				sb.append(result.filePath());
 				sb.append(",");
-				sb.append(result.getFileType());
+				sb.append(result.sourceType());
 				sb.append(",");
-				sb.append(result.getCategory());
+				sb.append(result.sourceCategory());
 				sb.append(",");
-				sb.append(result.getStep());
+				sb.append(result.execSteps());
 				sb.append(",");
-				sb.append(result.getNon());
+				sb.append(result.blancSteps());
 				sb.append(",");
-				sb.append(result.getComment());
+				sb.append(result.commentSteps());
 				sb.append(",");
-				sb.append(result.getStep() + result.getNon() + result.getComment());
+				sb.append(result.sumSteps());
 				sb.append("\n");
 			}
 		}

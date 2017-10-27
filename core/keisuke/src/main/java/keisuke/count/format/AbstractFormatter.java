@@ -1,23 +1,24 @@
 package keisuke.count.format;
 
-import jp.sf.amateras.stepcounter.CountResult;
-import jp.sf.amateras.stepcounter.format.ResultFormatter;
 import keisuke.MessageMap;
+import keisuke.StepCountResult;
+import keisuke.count.Formatter;
 import keisuke.report.property.MessageDefine;
+import static keisuke.count.format.FormatConstant.*;
 
 /**
  * ステップ計測結果を出力形式に整形する
  */
-public abstract class AbstractFormatter implements ResultFormatter {
+public abstract class AbstractFormatter implements Formatter {
 
-	private MessageMap msgmap;
+	private MessageMap messageMap;
 
 	/**
 	 * コンストラクター
 	 * メッセージ定義の設定を行う
 	 */
 	public AbstractFormatter() {
-		this.msgmap = new MessageDefine("count.format.").getMessageMap();
+		this.messageMap = new MessageDefine(MSG_COUNT_FMT_PREFIX).getMessageMap();
 	}
 
 	/**
@@ -29,7 +30,7 @@ public abstract class AbstractFormatter implements ResultFormatter {
 		if (key == null) {
 			return "";
 		}
-		return this.msgmap.get(key);
+		return this.messageMap.get(key);
 	}
 
 	/**
@@ -37,5 +38,5 @@ public abstract class AbstractFormatter implements ResultFormatter {
 	 * @param results ステップ計測結果の配列
 	 * @return 出力形式に整形されたバイト配列
 	 */
-	public abstract byte[] format(CountResult[] results);
+	public abstract byte[] format(StepCountResult[] results);
 }

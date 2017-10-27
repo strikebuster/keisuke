@@ -1,6 +1,6 @@
 package keisuke.report.procedure;
 
-import static keisuke.report.option.CommandOptionConstant.*;
+import static keisuke.report.option.ReportOptionConstant.*;
 import static keisuke.report.property.MessageConstant.*;
 
 import java.io.BufferedReader;
@@ -14,16 +14,17 @@ import java.io.OutputStreamWriter;
 import java.util.List;
 import java.util.Map.Entry;
 
-import keisuke.CountResult;
-import keisuke.CountResultMap;
-import keisuke.DiffCountResult;
-import keisuke.DiffCountResultsAssortedStatus;
-import keisuke.IllegalFormattedLineException;
-import keisuke.ProcedureType;
 import keisuke.DiffStatusEnum;
-import keisuke.DiffStatusTexts;
-import keisuke.DiffStatusTextsImpl;
+import keisuke.DiffStatusLabels;
+import keisuke.DiffStatusLabelsImpl;
+import keisuke.report.CountResultForReport;
+import keisuke.report.CountResultForReportMap;
+import keisuke.report.DiffCountResultForReport;
+import keisuke.report.DiffCountResultsAssortedStatus;
+import keisuke.report.IllegalFormattedLineException;
+import keisuke.report.ProcedureType;
 import keisuke.report.property.PropertyDefine;
+import keisuke.util.LogUtil;
 import keisuke.util.PathDepthList;
 
 
@@ -33,8 +34,8 @@ import keisuke.util.PathDepthList;
 final class DiffMainProc extends AbstractMainProc {
 
 	//private String[] statusArray = null;
-	private DiffStatusTexts statusTexts = null;
-	private CountResultMap resultMap = null;
+	private DiffStatusLabels statusText = null;
+	private CountResultForReportMap resultMap = null;
 	private boolean unchangeByLang = true;
 	private int unchangeFiles = 0; // 変更なしファイルの合計本数
 	private int ignoreFiles = 0; // 計測対象外ファイル本数
@@ -54,7 +55,7 @@ final class DiffMainProc extends AbstractMainProc {
 		if (this.argMapEntity() == null) {
 			return;
 		}
-		//this.argMap().debug();
+		//this.argMap().debugMap();
 		String pfile = this.argMapEntity().get(OPT_PROP);
 		PropertyDefine propDef = new PropertyDefine();
 		if (pfile != null) {
@@ -62,8 +63,8 @@ final class DiffMainProc extends AbstractMainProc {
 		}
 		this.setColumnMap(propDef.getDiffProperties());
 		this.setMessageMap(propDef.getMessageProperties());
-		//this.columnMap().debug();
-		//this.messageMap().debug();
+		//this.columnMap().debugMap();
+		//this.messageMap().debugMap();
 
 		String ctype = this.argMapEntity().get(OPT_CLASS);
 		if (ctype == null ||  !(ctype.equals(OPTVAL_LANGUAGE)
@@ -79,9 +80,7 @@ final class DiffMainProc extends AbstractMainProc {
 		}
 
 		String infile = this.argMapEntity().get(ARG_INPUT);
-		//if (infile == null) {
-		//	throw new RuntimeException("!! Input file is not specified.");
-		//}
+
 		String aout = this.argMapEntity().get(OPT_AOUT);
 		if (aout != null) {
 			this.aoutfile = aout;
@@ -95,7 +94,7 @@ final class DiffMainProc extends AbstractMainProc {
 			this.unchangeByLang = false;
 		}
 
-		this.statusTexts = new DiffStatusTextsImpl(this.messageMap());
+		this.statusText = new DiffStatusLabelsImpl(this.messageMap());
 		prepareResultMap();
 		aggregateDiff(infile);
 		reportDiff();
@@ -135,7 +134,7 @@ final class DiffMainProc extends AbstractMainProc {
 				// ファイル1行毎の処理
 				linectr += 1;
 				if (line.equals("--")) {
-					//System.out.println("[DEBUG] skip lines in diffcount output = " + linectr );
+					//LogUtil.debugLog("skip lines in diffcount output = " + linectr );
 					break;
 				}
 			}
@@ -145,9 +144,9 @@ final class DiffMainProc extends AbstractMainProc {
 				// ファイル1行毎の処理
 				linectr++;
 				// 行の解析結果をDiffCountResultに保持
-		        DiffCountResult result = null;
+		        DiffCountResultForReport result = null;
 				try {
-					result = new DiffCountResult(line, linectr);
+					result = new DiffCountResultForReport(line, linectr);
 				} catch (IllegalFormattedLineException e) {
 					continue;
 		        }
@@ -155,7 +154,7 @@ final class DiffMainProc extends AbstractMainProc {
 		        try {
 		        	pathNodeList.setNodeIntoDepth(result.nodeName(), result.depth());
 		        } catch (Exception e) {
-		        	System.out.println("![WARN] illegal path depth = " + line);
+		        	LogUtil.warningLog("illegal path depth = " + line);
 		        }
 		        // ノードがファイルの場合は以下の処理実施
 				if (result.isFile()) {
@@ -164,15 +163,15 @@ final class DiffMainProc extends AbstractMainProc {
 			        // パス文字列作成
 			        String strpath = pathNodeList.toString();
 			        result.setFilePath(strpath);
-			        //System.out.println("[DEBUG] path = " + strpath +
+			        //LogUtil.debugLog("path = " + strpath +
 			        //		" [" + stat + "] (add)" + numadd + " (del)" + numdel);
 
 			        // 変更ステータスで仕分けて対象ファイルの処理
 					DiffStatusEnum diffstat
-							= this.statusTexts.whichDiffStatusIs(result.statusText());
+							= this.statusText.whichDiffStatusIs(result.statusText());
 					result.setDiffStatus(diffstat);
 					if (diffstat == null) {
-						System.out.println("![WARN] unknown status in " + line);
+						LogUtil.warningLog("unknown status in " + line);
 						continue;
 					} else if (diffstat == DiffStatusEnum.ADDED) {
 						if (this.aoutfile != null) {
@@ -194,20 +193,20 @@ final class DiffMainProc extends AbstractMainProc {
 						int nop = 0; // 処理なし
 					} else if (diffstat == DiffStatusEnum.UNCHANGED) { // 変更なし
 						this.unchangeFiles++;
-						//System.out.println("[DEBUG] Unchange: " + line);
+						//LogUtil.debugLog("Unchange: " + line);
 						// 変更なしファイルを言語別集計しないならループ内スキップ
 						if (!this.unchangeByLang) {
-							//System.out.println(
-							//		"[DEBUG] Unchange files not to be classified");
+							//LogUtil.debugLog(
+							//		"Unchange files not to be classified");
 							continue;
 						}
 					} else if (diffstat == DiffStatusEnum.UNSUPPORTED) { // サポート対象外
 						this.ignoreFiles++;
-						//System.out.println("[DEBUG] Unsupport: " + line);
+						//LogUtil.debugLog("Unsupport: " + line);
 						// サポート対象外ファイルをループ内スキップ
 						continue;
 					} else {
-						System.out.println("![WARN] unknown status in " + line);
+						LogUtil.warningLog("unknown status in " + line);
 						continue;
 					}
 
@@ -229,11 +228,11 @@ final class DiffMainProc extends AbstractMainProc {
 			}
 			this.aoutText = sbaout.toString();
 			this.moutText = sbmout.toString();
-			//System.out.println("[DEBUG] Input Lines = " + linectr);
-			//System.out.println("[DEBUG] AOut Lines = " + alinectr);
-			//System.out.println("[DEBUG] MOut Lines = " + mlinectr);
+			//LogUtil.debugLog("Input Lines = " + linectr);
+			//LogUtil.debugLog("AOut Lines = " + alinectr);
+			//LogUtil.debugLog("MOut Lines = " + mlinectr);
 		} catch (IOException e) {
-			System.err.println("!! Read error : " + infile);
+			LogUtil.errorLog("Read error : " + infile);
 			throw new RuntimeException(e);
 		} finally {
 			if (reader != null && infile != null) {
@@ -259,9 +258,9 @@ final class DiffMainProc extends AbstractMainProc {
 		sb.append(line);
 		sb.append("\n");
 		// 言語毎の集計結果の出力
-		for (Entry<String, CountResult> entry : this.resultMap.entrySet()) {
+		for (Entry<String, CountResultForReport> entry : this.resultMap.entrySet()) {
 			String langkey = entry.getKey();
-			DiffCountResult elem
+			DiffCountResultForReport elem
 				= ((DiffCountResultsAssortedStatus) entry.getValue())
 						.sumOfResultFor(DiffStatusEnum.ADDED);
 			// 列毎の値を出力
@@ -279,9 +278,9 @@ final class DiffMainProc extends AbstractMainProc {
 		sb.append(line);
 		sb.append("\n");
 		// 言語毎の集計結果の出力
-		for (Entry<String, CountResult> entry : this.resultMap.entrySet()) {
+		for (Entry<String, CountResultForReport> entry : this.resultMap.entrySet()) {
 			String langkey = entry.getKey();
-			DiffCountResult elem
+			DiffCountResultForReport elem
 				= ((DiffCountResultsAssortedStatus) entry.getValue())
 						.sumOfResultFor(DiffStatusEnum.MODIFIED);
 			// 列毎の値を出力
@@ -300,9 +299,9 @@ final class DiffMainProc extends AbstractMainProc {
 		sb.append(line);
 		sb.append("\n");
 		// 言語毎の集計結果の出力
-		for (Entry<String, CountResult> entry : this.resultMap.entrySet()) {
+		for (Entry<String, CountResultForReport> entry : this.resultMap.entrySet()) {
 			String langkey = entry.getKey();
-			DiffCountResult elem
+			DiffCountResultForReport elem
 				= ((DiffCountResultsAssortedStatus) entry.getValue())
 						.sumOfResultFor(DiffStatusEnum.DROPED);
 			// 列毎の値を出力
@@ -323,9 +322,9 @@ final class DiffMainProc extends AbstractMainProc {
 		// オプションで出力レベルを指定されている
 		if (this.unchangeByLang) {
 			// 言語毎の集計結果の出力 -nochange detail
-			for (Entry<String, CountResult> entry : this.resultMap.entrySet()) {
+			for (Entry<String, CountResultForReport> entry : this.resultMap.entrySet()) {
 				String langkey = entry.getKey();
-				DiffCountResult elem
+				DiffCountResultForReport elem
 					= ((DiffCountResultsAssortedStatus) entry.getValue())
 							.sumOfResultFor(DiffStatusEnum.UNCHANGED);
 				// 列毎の値を出力
@@ -364,7 +363,7 @@ final class DiffMainProc extends AbstractMainProc {
 						new FileOutputStream(new File(this.aoutfile))));
 				writer.write(this.aoutText);
 			} catch (IOException e) {
-				System.err.println("!! Write error : " + this.aoutfile);
+				LogUtil.errorLog("Write error : " + this.aoutfile);
 				throw new RuntimeException(e);
 			} finally {
 				if (writer != null) {
@@ -384,7 +383,7 @@ final class DiffMainProc extends AbstractMainProc {
 						new FileOutputStream(new File(this.moutfile))));
 				writer.write(this.moutText);
 			} catch (IOException e) {
-				System.err.println("!! Write error : " + this.moutfile);
+				LogUtil.errorLog("Write error : " + this.moutfile);
 				throw new RuntimeException(e);
 			} finally {
 				if (writer != null) {

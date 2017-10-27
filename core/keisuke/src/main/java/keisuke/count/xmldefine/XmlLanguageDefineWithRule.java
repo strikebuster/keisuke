@@ -6,6 +6,9 @@ import org.w3c.dom.NodeList;
 
 import keisuke.report.classify.language.LanguageDefineFactory;
 import keisuke.report.classify.language.XmlLanguageDefine;
+import keisuke.util.LogUtil;
+
+import static keisuke.count.xmldefine.XmlLanguageRuleConstant.*;
 
 /**
 * Language definitions with attributes of syntacs rules.
@@ -25,21 +28,21 @@ public class XmlLanguageDefineWithRule extends XmlLanguageDefine {
 	/** {@inheritDoc} */
 	@Override
 	protected void dealChild(final String name, final Element elem) {
-		if (name.equals(SCXmlCommonDefine.XML_NODE_RULE)) {
+		if (name.equals(XML_NODE_RULE)) {
 			this.parseLangCountRule(elem);
-		} else if (name.equals(SCXmlCommonDefine.XML_NODE_SKIP)) {
+		} else if (name.equals(XML_NODE_SKIP)) {
 			this.parseRuleOfSkip(elem);
-		} else if (name.equals(SCXmlCommonDefine.XML_NODE_LINECOM)) {
+		} else if (name.equals(XML_NODE_LINECOM)) {
 			this.parseRuleOfLineComment(elem);
-		} else if (name.equals(SCXmlCommonDefine.XML_NODE_BLOCKCOM)) {
+		} else if (name.equals(XML_NODE_BLOCKCOM)) {
 			this.parseRuleOfBlockComment(elem);
-		} else if (name.equals(SCXmlCommonDefine.XML_NODE_COMEXPR)) {
+		} else if (name.equals(XML_NODE_COMEXPR)) {
 			this.parseRuleOfCommentExpression(elem);
-		} else if (name.equals(SCXmlCommonDefine.XML_NODE_LITERAL)) {
+		} else if (name.equals(XML_NODE_LITERAL)) {
 			this.parseRuleOfLiteralString(elem);
-		} else if (name.equals(SCXmlCommonDefine.XML_NODE_HEREDOC)) {
+		} else if (name.equals(XML_NODE_HEREDOC)) {
 			this.parseRuleOfLabelHereDoc(elem);
-		} else if (name.equals(SCXmlCommonDefine.XML_NODE_SCRIPT)) {
+		} else if (name.equals(XML_NODE_SCRIPT)) {
 			this.parseRuleOfScriptBlock(elem);
 		} else {
 			super.dealChild(name, elem);
@@ -54,48 +57,48 @@ public class XmlLanguageDefineWithRule extends XmlLanguageDefine {
 		this.currentLangRule = new LanguageCountRule();
 		LanguageElementWithRule lewr = (LanguageElementWithRule) this.currentLanguageElement();
 		lewr.setCountRule(this.currentLangRule);
-		//System.out.println("[DEBUG] parse lang=" + lewr.getName());
-		String unstr = element.getAttribute(SCXmlCommonDefine.XML_ATTR_UNSUPPORT);
+		//LogUtil.debugLog("parse lang=" + lewr.getName());
+		String unstr = element.getAttribute(XML_ATTR_UNSUPPORT);
 		if ("true".equals(unstr)) {
 			this.currentLangRule.setUnsupportedTrue();
 			//System.out.println("[DEBUG] unsupported=true");
 			return;
 		}
-		String spstr = element.getAttribute(SCXmlCommonDefine.XML_ATTR_SPECIAL);
+		String spstr = element.getAttribute(XML_ATTR_SPECIAL);
 		if ("true".equals(spstr)) {
 			this.currentLangRule.setSpecializedTrue();
-			//System.out.println("[DEBUG] specialized=true");
+			//LogUtil.debugLog("specialized=true");
 			return;
 		}
-		String funcstr = element.getAttribute(SCXmlCommonDefine.XML_ATTR_FUNCTIONAL);
+		String funcstr = element.getAttribute(XML_ATTR_FUNCTIONAL);
 		if ("true".equals(funcstr)) {
 			this.currentLangRule.setFunctionalTrue();
-			//System.out.println("[DEBUG] functional=true");
+			//LogUtil.debugLog("functional=true");
 		}
-		String herestr = element.getAttribute(SCXmlCommonDefine.XML_ATTR_HEREDOC);
+		String herestr = element.getAttribute(XML_ATTR_HEREDOC);
 		if ("true".equals(herestr)) {
 			this.currentLangRule.setLabelHereDocTrue();
-			//System.out.println("[DEBUG] labelHereDoc=true");
+			//LogUtil.debugLog("labelHereDoc=true");
 		}
-		String samestr = element.getAttribute(SCXmlCommonDefine.XML_ATTR_SAME);
+		String samestr = element.getAttribute(XML_ATTR_SAME);
 		if (samestr != null && !samestr.isEmpty()) {
 			this.currentLangRule.setSameAs(samestr);
-			//System.out.println("[DEBUG] sameAs=" + samestr);
+			//LogUtil.debugLog("sameAs=" + samestr);
 		}
-		String casestr = element.getAttribute(SCXmlCommonDefine.XML_ATTR_CASE);
+		String casestr = element.getAttribute(XML_ATTR_CASE);
 		if ("true".equals(casestr)) {
 			this.currentLangRule.setCaseInsenseTrue();
-			//System.out.println("[DEBUG] caseInsense=true");
+			//LogUtil.debugLog("caseInsense=true");
 		}
-		String indentstr = element.getAttribute(SCXmlCommonDefine.XML_ATTR_INDENT);
+		String indentstr = element.getAttribute(XML_ATTR_INDENT);
 		if ("true".equals(indentstr)) {
 			this.currentLangRule.setIndentSenseTrue();
-			//System.out.println("[DEBUG] indentSense=true");
+			//LogUtil.debugLog("indentSense=true");
 		}
-		String scriptstr = element.getAttribute(SCXmlCommonDefine.XML_ATTR_SCRIPT);
+		String scriptstr = element.getAttribute(XML_ATTR_SCRIPT);
 		if ("true".equals(scriptstr)) {
 			this.currentLangRule.setScriptletTrue();
-			//System.out.println("[DEBUG] scriptlet=true");
+			//LogUtil.debugLog("scriptlet=true");
 		}
 		this.parseChildrenNodes(element, this.currentLangRule.getXmlChildrenNames());
 	}
@@ -106,7 +109,7 @@ public class XmlLanguageDefineWithRule extends XmlLanguageDefine {
 	 */
 	protected void parseRuleOfSkip(final Element element) {
 		String skipstr = element.getTextContent();
-		//System.out.println("[DEBUG] SkipPattern's Element=" + skipstr);
+		//LogUtil.debugLog("SkipPattern's Element=" + skipstr);
 		this.currentLangRule.addSkipPattern(skipstr);
 	}
 
@@ -123,29 +126,29 @@ public class XmlLanguageDefineWithRule extends XmlLanguageDefine {
 				continue;
 			}
 			Element child = (Element) node;
-			//System.out.println("[DEBUG] LineComment's Element=" + child.getNodeName());
+			//LogUtil.debugLog("LineComment's Element=" + child.getNodeName());
 			String nodename = getNameWithoutNS(child.getNodeName());
-			if (nodename.equals(SCXmlCommonDefine.XML_NODE_START)) {
+			if (nodename.equals(XML_NODE_START)) {
 				String str = child.getTextContent();
 				linecom.setStart(str);
-			} else if (nodename.equals(SCXmlCommonDefine.XML_NODE_NEEDHEAD)) {
+			} else if (nodename.equals(XML_NODE_NEEDHEAD)) {
 				String str = child.getTextContent();
 				if ("true".equals(str)) {
 					linecom.setNeedHeadTrue();
 				}
-			} else if (nodename.equals(SCXmlCommonDefine.XML_NODE_NEEDBLANC)) {
+			} else if (nodename.equals(XML_NODE_NEEDBLANC)) {
 				String str = child.getTextContent();
 				if ("true".equals(str)) {
 					linecom.setNeedBlancTrue();
 				}
-			} else if (nodename.equals(SCXmlCommonDefine.XML_NODE_DELIMITER)) {
+			} else if (nodename.equals(XML_NODE_DELIMITER)) {
 				String str = child.getTextContent();
 				linecom.setLineDelimiter(str);
-			} else if (nodename.equals(SCXmlCommonDefine.XML_NODE_ESCAPE)) {
+			} else if (nodename.equals(XML_NODE_ESCAPE)) {
 				String str = child.getTextContent();
 				linecom.setEscape(str);
 			} else {
-				System.err.println("![WARN] illegal element for LineComment : " + nodename);
+				LogUtil.warningLog("illegal element for LineComment : " + nodename);
 				continue;
 			}
 		}
@@ -165,21 +168,21 @@ public class XmlLanguageDefineWithRule extends XmlLanguageDefine {
 				continue;
 			}
 			Element child = (Element) node;
-			//System.out.println("[DEBUG] BlockComment's Element=" + child.getNodeName());
+			//LogUtil.debugLog("BlockComment's Element=" + child.getNodeName());
 			String nodename = getNameWithoutNS(child.getNodeName());
-			if (nodename.equals(SCXmlCommonDefine.XML_NODE_START)) {
+			if (nodename.equals(XML_NODE_START)) {
 				String str = child.getTextContent();
 				blockcom.setStart(str);
-			} else if (nodename.equals(SCXmlCommonDefine.XML_NODE_END)) {
+			} else if (nodename.equals(XML_NODE_END)) {
 				String str = child.getTextContent();
 				blockcom.setEnd(str);
-			} else if (nodename.equals(SCXmlCommonDefine.XML_NODE_NEST)) {
+			} else if (nodename.equals(XML_NODE_NEST)) {
 				String str = child.getTextContent();
 				if ("true".equals(str)) {
 					blockcom.setNestTrue();
 				}
 			} else {
-				System.err.println("![WARN] illegal element for BlockComment : " + nodename);
+				LogUtil.warningLog("illegal element for BlockComment : " + nodename);
 				continue;
 			}
 		}
@@ -199,13 +202,13 @@ public class XmlLanguageDefineWithRule extends XmlLanguageDefine {
 				continue;
 			}
 			Element child = (Element) node;
-			//System.out.println("[DEBUG] CommentExpression's Element=" + child.getNodeName());
+			//LogUtil.debugLog("CommentExpression's Element=" + child.getNodeName());
 			String nodename = getNameWithoutNS(child.getNodeName());
-			if (nodename.equals(SCXmlCommonDefine.XML_NODE_START)) {
+			if (nodename.equals(XML_NODE_START)) {
 				String str = child.getTextContent();
 				expr.setStart(str);
 			} else {
-				System.err.println("![WARN] illegal element for CommentExpression : " + nodename);
+				LogUtil.warningLog("illegal element for CommentExpression : " + nodename);
 				continue;
 			}
 		}
@@ -225,19 +228,19 @@ public class XmlLanguageDefineWithRule extends XmlLanguageDefine {
 				continue;
 			}
 			Element child = (Element) node;
-			//System.out.println("[DEBUG] LiteralString's Element=" + child.getNodeName());
+			//LogUtil.debugLog("LiteralString's Element=" + child.getNodeName());
 			String nodename = getNameWithoutNS(child.getNodeName());
-			if (nodename.equals(SCXmlCommonDefine.XML_NODE_START)) {
+			if (nodename.equals(XML_NODE_START)) {
 				String str = child.getTextContent();
 				literalstr.setStart(str);
-			} else if (nodename.equals(SCXmlCommonDefine.XML_NODE_END)) {
+			} else if (nodename.equals(XML_NODE_END)) {
 				String str = child.getTextContent();
 				literalstr.setEnd(str);
-			} else if (nodename.equals(SCXmlCommonDefine.XML_NODE_ESCAPE)) {
+			} else if (nodename.equals(XML_NODE_ESCAPE)) {
 				String str = child.getTextContent();
 				literalstr.setEscape(str);
 			} else {
-				System.err.println("![WARN] illegal element for LiteralString : " + nodename);
+				LogUtil.warningLog("illegal element for LiteralString : " + nodename);
 				continue;
 			}
 		}
@@ -257,16 +260,16 @@ public class XmlLanguageDefineWithRule extends XmlLanguageDefine {
 				continue;
 			}
 			Element child = (Element) node;
-			//System.out.println("[DEBUG] LabelHereDoc's Element=" + child.getNodeName());
+			//LogUtil.debugLog("LabelHereDoc's Element=" + child.getNodeName());
 			String nodename = getNameWithoutNS(child.getNodeName());
-			if (nodename.equals(SCXmlCommonDefine.XML_NODE_START)) {
+			if (nodename.equals(XML_NODE_START)) {
 				String str = child.getTextContent();
 				heredoc.setStart(str);
-			} else if (nodename.equals(SCXmlCommonDefine.XML_NODE_END)) {
+			} else if (nodename.equals(XML_NODE_END)) {
 				String str = child.getTextContent();
 				heredoc.setEnd(str);
 			} else {
-				System.err.println("![WARN] illegal element for LabelHereDoc : " + nodename);
+				LogUtil.warningLog("illegal element for LabelHereDoc : " + nodename);
 				continue;
 			}
 		}
@@ -286,16 +289,16 @@ public class XmlLanguageDefineWithRule extends XmlLanguageDefine {
 				continue;
 			}
 			Element child = (Element) node;
-			//System.out.println("[DEBUG] ScriptBlock's Element=" + child.getNodeName());
+			//LogUtil.debugLog("ScriptBlock's Element=" + child.getNodeName());
 			String nodename = getNameWithoutNS(child.getNodeName());
-			if (nodename.equals(SCXmlCommonDefine.XML_NODE_START)) {
+			if (nodename.equals(XML_NODE_START)) {
 				String str = child.getTextContent();
 				script.setStart(str);
-			} else if (nodename.equals(SCXmlCommonDefine.XML_NODE_END)) {
+			} else if (nodename.equals(XML_NODE_END)) {
 				String str = child.getTextContent();
 				script.setEnd(str);
 			} else {
-				System.err.println("![WARN] illegal element for ScriptBlock : " + nodename);
+				LogUtil.warningLog("illegal element for ScriptBlock : " + nodename);
 				continue;
 			}
 		}

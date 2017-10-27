@@ -2,7 +2,8 @@ package keisuke.report.classify;
 
 import static keisuke.report.classify.ClassifierConstant.*;
 
-import keisuke.Classifier;
+import keisuke.report.Classifier;
+import keisuke.util.LogUtil;
 
 /**
  * Factory to make an instance of Classifier.
@@ -31,7 +32,7 @@ public final class ClassifierFactory {
 				String fw = type.substring(pos);
 				return new FrameworkClassifier(fw);
 			}
-			System.err.println("!! not specified <name>, expected argument is fw:<name>");
+			LogUtil.errorLog("not specified <name>, expected argument is fw:<name>");
 			return null;
 		} else {
 			return null;
@@ -63,7 +64,7 @@ public final class ClassifierFactory {
 				String fw = type.substring(pos);
 				return new FrameworkClassifier(fw, fname);
 			}
-			System.err.println("!! not specified <name>, expected argument is fw:<name>");
+			LogUtil.errorLog("not specified <name>, expected argument is fw:<name>");
 			return null;
 		} else {
 			return null;

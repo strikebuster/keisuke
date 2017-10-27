@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import keisuke.util.LogUtil;
+
 import java.util.Map.Entry;
 
 /**
@@ -63,18 +65,18 @@ public class LanguageElementMapImpl implements LanguageElementMap {
 	}
 
 	/** {@inheritDoc} */
-	public void debug() {
+	public void debugMap() {
 		System.out.println("[DEBUG] Language Map contains as follows");
 		if (this.langMap == null || this.langMap.isEmpty()) {
-			System.out.println("[DEBUG] map is null.");
+			LogUtil.debugLog("map is null.");
 			return;
 		}
 		List<String> keylist = new ArrayList<String>(this.langMap.keySet());
 		Collections.sort(keylist);
 		for (String key : keylist) {
 			LanguageElement data = this.langMap.get(key);
-			System.out.println("[DEBUG] MapKey ext=" + key);
-			System.out.println(data.debug());
+			LogUtil.debugLog("MapKey ext=" + key);
+			LogUtil.debugLog(data.debug());
 		}
 	}
 

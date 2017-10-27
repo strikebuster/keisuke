@@ -96,13 +96,14 @@ public class FwSpecificElement implements XmlParseSubject {
 	 */
 	protected String debug() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("[DEBUG] FwSpecificElement : name=" + this.name + " group=" + this.group);
-		sb.append("\n");
-		sb.append("[DEBUG] FwSpecificElement : patternStringns=");
+		//sb.append("[DEBUG] ");
+		sb.append("FwSpecificElement : name=" + this.name + " group=" + this.group);
+		sb.append("\n[DEBUG] ");
+		sb.append("FwSpecificElement : patternStringns=");
 		for (String str : this.patternStrings) {
 			sb.append(str + " , ");
 		}
-		sb.append("\n");
+		//sb.append("\n");
 		return sb.toString();
 	}
 }

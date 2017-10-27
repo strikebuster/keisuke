@@ -1,7 +1,7 @@
 package keisuke.report.editor;
 
-import keisuke.ProcedureType;
-import keisuke.ReportEditor;
+import keisuke.report.ProcedureType;
+import keisuke.report.ReportEditor;
 
 /**
  * Factory class to return instance which implements ReportEditor.

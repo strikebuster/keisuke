@@ -4,8 +4,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import keisuke.ReportColumn;
-import keisuke.ReportColumnMap;
+import keisuke.report.ReportColumn;
+import keisuke.report.ReportColumnMap;
+import keisuke.util.LogUtil;
 
 /**
  * ReportColumnMapインタフェースを実装するクラス
@@ -40,13 +41,13 @@ public class ReportColumnMapImpl implements ReportColumnMap {
 	}
 
 	/** {@inheritDoc} */
-	public void debug() {
+	public void debugMap() {
 		for (Entry<String, ReportColumn> entry : this.columnMap.entrySet()) {
 			String key = entry.getKey();
 			ReportColumn repcol = entry.getValue();
 			int idx = repcol.getIndex();
 			String title = repcol.getTitle();
-			System.out.println("[DEBUG] " + key + ": [" + idx + "][" + title + "]");
+			LogUtil.debugLog(key + ": [" + idx + "][" + title + "]");
 		}
 	}
 

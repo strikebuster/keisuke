@@ -8,6 +8,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import keisuke.count.diff.DiffCountProc;
 import keisuke.util.StderrCapture;
 
 import static org.hamcrest.MatcherAssert.*;
@@ -15,7 +16,6 @@ import static org.hamcrest.Matchers.*;
 
 /**
  * Test class of DiffCounter.
- * @author strikebuster
  *
  */
 public class DiffCounterTest {
@@ -37,8 +37,8 @@ public class DiffCounterTest {
 		//URL expected = this.getClass().getResource("dummy.txt");
 
 		String[] args = {"--help", "xxx"};
-		DiffCount diffcount = new DiffCount();
-		diffcount.diffProc(args);
+		DiffCountProc diffcount = new DiffCountProc();
+		diffcount.main(args);
 
 		//assertThat(contentOf(diffcount.argMap), is(equalTo(contentOf(expected))));
 		assertThat(diffcount.argMapEntity(), is(nullValue()));
@@ -52,8 +52,8 @@ public class DiffCounterTest {
 		//URL expected = this.getClass().getResource("dummy.txt");
 
 		String[] args = {"-zzz", newRoot, oldRoot};
-		DiffCount diffcount = new DiffCount();
-		diffcount.diffProc(args);
+		DiffCountProc diffcount = new DiffCountProc();
+		diffcount.main(args);
 
 		//assertThat(contentOf(diffcount.argMap), is(equalTo(contentOf(expected))));
 		assertThat(diffcount.argMapEntity(), is(nullValue()));
@@ -71,8 +71,8 @@ public class DiffCounterTest {
 
 		String[] args = {"-e", "EUC-JP", "-f", "html", "-x", "test/data/ktestl2.xml",
 				"-o", "test/out/diff_arg03.txt", newRoot};
-		DiffCount diffcount = new DiffCount();
-		diffcount.diffProc(args);
+		DiffCountProc diffcount = new DiffCountProc();
+		diffcount.main(args);
 
 		final int expectedNumber = 4;
 		//assertThat(contentOf(diffcount.argMap), is(equalTo(contentOf(expected))));
@@ -97,8 +97,8 @@ public class DiffCounterTest {
 
 		String[] args = {"-e", "UTF-8", "-f", "text",
 				"-o", "test/out/diff_java.txt", newRoot, oldRoot};
-		DiffCount diffcount = new DiffCount();
-		diffcount.diffProc(args);
+		DiffCountProc diffcount = new DiffCountProc();
+		diffcount.main(args);
 
 		File actual = new File("test/out/diff_java.txt");
 		assertThat(contentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)), is(equalTo(contentOf(expected))));
@@ -117,8 +117,8 @@ public class DiffCounterTest {
 
 		String[] args = {"-e", "UTF-8", "-f", "text",
 				"-o", "test/out/diff_java_en.txt", newRoot, oldRoot};
-		DiffCount diffcount = new DiffCount();
-		diffcount.diffProc(args);
+		DiffCountProc diffcount = new DiffCountProc();
+		diffcount.main(args);
 
 		Locale.setDefault(org);
 		File actual = new File("test/out/diff_java_en.txt");
@@ -135,8 +135,8 @@ public class DiffCounterTest {
 
 		String[] args = {"-e", "UTF-8", "-f", "html",
 				"-o", "test/out/diff_java.html", newRoot, oldRoot};
-		DiffCount diffcount = new DiffCount();
-		diffcount.diffProc(args);
+		DiffCountProc diffcount = new DiffCountProc();
+		diffcount.main(args);
 
 		File actual = new File("test/out/diff_java.html");
 		assertThat(htmlToRemoveMutableIdFrom(contentOf(actual, withoutHeadLines(HTML_IGNORE_LINES))),
@@ -156,8 +156,8 @@ public class DiffCounterTest {
 
 		String[] args = {"-e", "UTF-8", "-f", "html",
 				"-o", "test/out/diff_java_en.html", newRoot, oldRoot};
-		DiffCount diffcount = new DiffCount();
-		diffcount.diffProc(args);
+		DiffCountProc diffcount = new DiffCountProc();
+		diffcount.main(args);
 
 		Locale.setDefault(org);
 		File actual = new File("test/out/diff_java_en.html");
@@ -175,8 +175,8 @@ public class DiffCounterTest {
 
 		String[] args = {"-e", "UTF-8", "-f", "excel",
 				"-o", "test/out/diff_java.xls", newRoot, oldRoot};
-		DiffCount diffcount = new DiffCount();
-		diffcount.diffProc(args);
+		DiffCountProc diffcount = new DiffCountProc();
+		diffcount.main(args);
 
 		File actual = new File("test/out/diff_java.xls");
 		assertThat(binaryContentOf(actual), is(equalTo(binaryContentOf(expected))));
@@ -195,8 +195,8 @@ public class DiffCounterTest {
 
 		String[] args = {"-e", "UTF-8", "-f", "excel",
 				"-o", "test/out/diff_java_en.xls", newRoot, oldRoot};
-		DiffCount diffcount = new DiffCount();
-		diffcount.diffProc(args);
+		DiffCountProc diffcount = new DiffCountProc();
+		diffcount.main(args);
 
 		Locale.setDefault(org);
 		File actual = new File("test/out/diff_java_en.xls");
@@ -213,10 +213,27 @@ public class DiffCounterTest {
 
 		String[] args = {"-e", "UTF-8", "-f", "text",
 				"-o", "test/out/diff_java2.txt", newRoot, oldRoot};
-		DiffCount diffcount = new DiffCount();
-		diffcount.diffProc(args);
+		DiffCountProc diffcount = new DiffCountProc();
+		diffcount.main(args);
 
 		File actual = new File("test/out/diff_java2.txt");
+		assertThat(contentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)), is(equalTo(contentOf(expected))));
+	}
+
+	@Test
+	public void countDiffJavaWhenScmDirectoriesExist() throws Exception {
+		System.out.println("## DiffCount ## countDiffJavaWhenScmDirectoriesExist ##");
+		String oldRoot = "test/data/java/root4";
+		String newRoot = "test/data/java/root2";
+		URL expected = this.getClass().getResource(
+				"DiffCounterTest_testCount_java.txt");
+
+		String[] args = {"-e", "UTF-8", "-f", "text",
+				"-o", "test/out/diff_java_scm.txt", newRoot, oldRoot};
+		DiffCountProc diffcount = new DiffCountProc();
+		diffcount.main(args);
+
+		File actual = new File("test/out/diff_java_scm.txt");
 		assertThat(contentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)), is(equalTo(contentOf(expected))));
 	}
 
@@ -230,8 +247,8 @@ public class DiffCounterTest {
 
 		String[] args = {"--encoding", "UTF-8",
 				"--output", "test/out/diff_web.txt", newRoot, oldRoot};
-		DiffCount diffcount = new DiffCount();
-		diffcount.diffProc(args);
+		DiffCountProc diffcount = new DiffCountProc();
+		diffcount.main(args);
 
 		File actual = new File("test/out/diff_web.txt");
 		assertThat(contentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)), is(equalTo(contentOf(expected))));
@@ -247,8 +264,8 @@ public class DiffCounterTest {
 
 		String[] args = {"-encoding", "Windows-31J",
 				"-output", "test/out/diff_webS.txt", newRoot, oldRoot};
-		DiffCount diffcount = new DiffCount();
-		diffcount.diffProc(args);
+		DiffCountProc diffcount = new DiffCountProc();
+		diffcount.main(args);
 
 		File actual = new File("test/out/diff_webS.txt");
 		assertThat(contentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)), is(equalTo(contentOf(expected))));

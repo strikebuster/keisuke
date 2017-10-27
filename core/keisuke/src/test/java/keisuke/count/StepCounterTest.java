@@ -14,7 +14,6 @@ import keisuke.util.StderrCapture;
 
 /**
  * Test class of StepCounter.
- * @author strkebuster
  *
  */
 public class StepCounterTest {
@@ -31,8 +30,8 @@ public class StepCounterTest {
 		//URL expected = this.getClass().getResource("empty.txt");
 
 		String[] args = {"-?", "xxx"};
-		StepCount stepcount = new StepCount();
-		stepcount.countProc(args);
+		StepCountProc stepcount = new StepCountProc();
+		stepcount.main(args);
 
 		//assertThat(contentOf(stepcount.argMap()), is(equalTo(contentOf(expected))));
 		assertThat(stepcount.argMapEntity(), is(nullValue()));
@@ -44,8 +43,8 @@ public class StepCounterTest {
 		//URL expected = this.getClass().getResource("empty.txt");
 
 		String[] args = {"-zzz", "-s", "-e", "EUC-JP"};
-		StepCount stepcount = new StepCount();
-		stepcount.countProc(args);
+		StepCountProc stepcount = new StepCountProc();
+		stepcount.main(args);
 
 		//assertThat(contentOf(stepcount.argMap()), is(equalTo(contentOf(expected))));
 		assertThat(stepcount.argMapEntity(), is(nullValue()));
@@ -60,8 +59,8 @@ public class StepCounterTest {
 		URL expected = this.getClass().getResource("testCount_arg03.txt");
 
 		String[] args = {"-s", "-e", "EUC-JP", "-f", "xml", "-x", "test/data/ktestl2.xml"};
-		StepCount stepcount = new StepCount();
-		stepcount.countProc(args);
+		StepCountProc stepcount = new StepCountProc();
+		stepcount.main(args);
 
 		final int expectedNumber = 4;
 		assertThat(contentOf(stepcount.argMapEntity()), is(equalTo(contentOf(expected))));
@@ -85,8 +84,8 @@ public class StepCounterTest {
 
 		String[] args = {"-showDirectory", "-format", "csv", "-encoding", "UTF-8",
 				"-output", "test/out/count_java.txt", newRoot};
-		StepCount stepcount = new StepCount();
-		stepcount.countProc(args);
+		StepCountProc stepcount = new StepCountProc();
+		stepcount.main(args);
 
 		File actual = new File("test/out/count_java.txt");
 		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
@@ -104,8 +103,8 @@ public class StepCounterTest {
 
 		String[] args = {"-s", "-f", "csv", "-e", "UTF-8",
 				"-o", "test/out/count_java_en.txt", newRoot};
-		StepCount stepcount = new StepCount();
-		stepcount.countProc(args);
+		StepCountProc stepcount = new StepCountProc();
+		stepcount.main(args);
 
 		Locale.setDefault(org);
 		File actual = new File("test/out/count_java_en.txt");
@@ -121,8 +120,8 @@ public class StepCounterTest {
 
 		String[] args = {"-showDirectory", "-encoding", "UTF-8",
 				"-output", "test/out/count_java_text.txt", newRoot};
-		StepCount stepcount = new StepCount();
-		stepcount.countProc(args);
+		StepCountProc stepcount = new StepCountProc();
+		stepcount.main(args);
 		File actual = new File("test/out/count_java_text.txt");
 		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
 	}
@@ -139,8 +138,8 @@ public class StepCounterTest {
 
 		String[] args = {"--showDirectory", "--encoding", "UTF-8",
 				"--output", "test/out/count_java_text_en.txt", newRoot};
-		StepCount stepcount = new StepCount();
-		stepcount.countProc(args);
+		StepCountProc stepcount = new StepCountProc();
+		stepcount.main(args);
 
 		Locale.setDefault(org);
 		File actual = new File("test/out/count_java_text_en.txt");
@@ -156,8 +155,8 @@ public class StepCounterTest {
 
 		String[] args = {"-showDirectory", "-format", "json", "-encoding", "UTF-8",
 				"-output", "test/out/count_java.json", newRoot};
-		StepCount stepcount = new StepCount();
-		stepcount.countProc(args);
+		StepCountProc stepcount = new StepCountProc();
+		stepcount.main(args);
 
 		File actual = new File("test/out/count_java.json");
 		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
@@ -176,8 +175,8 @@ public class StepCounterTest {
 
 		String[] args = {"-s", "--format", "json", "-encoding", "UTF-8",
 				"--output", "test/out/count_java_en.json", newRoot};
-		StepCount stepcount = new StepCount();
-		stepcount.countProc(args);
+		StepCountProc stepcount = new StepCountProc();
+		stepcount.main(args);
 
 		Locale.setDefault(org);
 		File actual = new File("test/out/count_java_en.json");
@@ -193,8 +192,8 @@ public class StepCounterTest {
 
 		String[] args = {"-showDirectory", "-format", "xml", "-encoding", "UTF-8",
 				"-output", "test/out/count_java.xml", newRoot};
-		StepCount stepcount = new StepCount();
-		stepcount.countProc(args);
+		StepCountProc stepcount = new StepCountProc();
+		stepcount.main(args);
 
 		File actual = new File("test/out/count_java.xml");
 		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
@@ -213,8 +212,8 @@ public class StepCounterTest {
 
 		String[] args = {"-showDirectory", "-format", "xml", "-encoding", "UTF-8",
 				"-output", "test/out/count_java_en.xml", newRoot};
-		StepCount stepcount = new StepCount();
-		stepcount.countProc(args);
+		StepCountProc stepcount = new StepCountProc();
+		stepcount.main(args);
 
 		Locale.setDefault(org);
 		File actual = new File("test/out/count_java_en.xml");
@@ -230,8 +229,8 @@ public class StepCounterTest {
 
 		String[] args = {"-showDirectory", "-format", "excel", "-encoding", "UTF-8",
 				"-output", "test/out/count_java.xls", newRoot};
-		StepCount stepcount = new StepCount();
-		stepcount.countProc(args);
+		StepCountProc stepcount = new StepCountProc();
+		stepcount.main(args);
 
 		File actual = new File("test/out/count_java.xls");
 		assertThat(binaryContentOf(actual), is(equalTo(binaryContentOf(expected))));
@@ -249,12 +248,28 @@ public class StepCounterTest {
 
 		String[] args = {"-showDirectory", "-format", "excel", "-encoding", "UTF-8",
 				"-output", "test/out/count_java_en.xls", newRoot};
-		StepCount stepcount = new StepCount();
-		stepcount.countProc(args);
+		StepCountProc stepcount = new StepCountProc();
+		stepcount.main(args);
 
 		Locale.setDefault(org);
 		File actual = new File("test/out/count_java_en.xls");
 		assertThat(binaryContentOf(actual), is(equalTo(binaryContentOf(expected))));
+	}
+
+	@Test
+	public void countJavaUsingCsvFormatWhenScmDirectoriesExist() throws Exception {
+		System.out.println("## StepCount ## countJavaUsingCsvFormatWhenScmDirectoriesExist ##");
+		String newRoot = "test/data/java/root4";
+		URL expected = this.getClass().getResource(
+				"StepCounterTest_testCount_java_scm.txt");
+
+		String[] args = {"-showDirectory", "-format", "csv", "-encoding", "UTF-8",
+				"-output", "test/out/count_java_scm.txt", newRoot};
+		StepCountProc stepcount = new StepCountProc();
+		stepcount.main(args);
+
+		File actual = new File("test/out/count_java_scm.txt");
+		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
 	}
 
 	@Test
