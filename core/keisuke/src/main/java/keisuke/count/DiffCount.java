@@ -1,6 +1,5 @@
 package keisuke.count;
 
-import keisuke.MainProcedure;
 import keisuke.count.diff.DiffCountProc;
 
 /**
@@ -19,8 +18,7 @@ public final class DiffCount {
 		//if (args == null || args.length == 0) {
 		//	System.exit(0);
 		//}
-		MainProcedure proc = (MainProcedure) new DiffCountProc();
-		proc.main(args);
+		new DiffCountProc().main(args);
 	}
 
 }

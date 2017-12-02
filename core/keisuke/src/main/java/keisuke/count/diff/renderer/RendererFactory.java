@@ -19,7 +19,7 @@ public final class RendererFactory {
 	 */
 	public static Renderer getRenderer(final String name) {
 		AbstractRenderer renderer = null;
-		if (name != null) {
+		if (name != null && !name.isEmpty()) {
 			if (name.equals(OPTVAL_TEXT)) {
 				renderer = new TextRenderer();
 
@@ -43,7 +43,9 @@ public final class RendererFactory {
 	 */
 	public static Renderer getRenderer(final String name, final MessageDefine msgdef) {
 		AbstractRenderer renderer = (AbstractRenderer) getRenderer(name);
-		renderer.setMessageMap(msgdef);
+		if (renderer != null && msgdef != null) {
+			renderer.setMessageMap(msgdef);
+		}
 		return renderer;
 	}
 

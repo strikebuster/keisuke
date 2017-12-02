@@ -1,13 +1,10 @@
 package keisuke.report.procedure;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 
 import keisuke.report.ProcedureType;
 import keisuke.util.LogUtil;
@@ -17,9 +14,9 @@ import static keisuke.report.option.ReportOptionConstant.*;
 /**
  * Class of main procedure to extract the matching files from result of StepCount.
  */
-final class MatchMainProc extends AbstractMainProc {
+public final class MatchMainProc extends AbstractReportMainProc {
 
-	protected MatchMainProc() {
+	public MatchMainProc() {
 		super();
 		createBindedFuncs(ProcedureType.MATCH_PROC);
 	}
@@ -27,26 +24,43 @@ final class MatchMainProc extends AbstractMainProc {
 	@Override
 	public void main(final String[] args) {
 		this.setArgMap(this.commandOption().makeMapOfOptions(args));
-		if (this.argMapEntity() == null) {
+		if (this.argMap() == null) {
 			return;
 		}
 		//this.argMap().debugMap();
 		// propertiesの設定項目なし＝出力レポートなし
+
 		// 入力ファイルの確認
-		String mafile = this.argMapEntity().get(ARG_MASTER);
+		String mafile = this.argMap().get(ARG_MASTER);
 		if (mafile == null) {
-			throw new RuntimeException("!! Master file is not specified.");
+			LogUtil.errorLog("Master file is not specified.");
+			throw new IllegalArgumentException("short of arguments");
 		}
-		String trfile = this.argMapEntity().get(ARG_TRANSACTION);
+		String trfile = this.argMap().get(ARG_TRANSACTION);
 		if (trfile == null) {
-			throw new RuntimeException("!! Transaction file is not specified.");
+			LogUtil.errorLog("Transaction file is not specified.");
+			throw new IllegalArgumentException("short of arguments");
 		}
-		String outfile = this.argMapEntity().get(ARG_OUTPUT);
-		extractMatch(mafile, trfile);
-		writeOutput(outfile);
+		String outfileOfArg = this.argMap().get(ARG_OUTPUT);
+		String outfile = this.argMap().get(OPT_OUT);
+		if (outfile == null) {
+			outfile = outfileOfArg;
+		} else if (outfileOfArg != null) {
+			LogUtil.warningLog("ignore the argument '" + outfileOfArg
+					+ "' for output, because '--out' option is given priority.");
+		}
+		if (outfile != null) {
+			this.setOutputFileName(outfile);
+		}
+		this.extractFromMatching(mafile, trfile);
 	}
 
-	private void extractMatch(final String mafile, final String trfile) {
+	public void extractFromMatching(final String mafile, final String trfile) {
+		this.extractMatchedContentFrom(mafile, trfile);
+		this.writeOutput();
+	}
+
+	private void extractMatchedContentFrom(final String mafile, final String trfile) {
 		StringBuilder sb = new StringBuilder();
 		BufferedReader readerMa = null;
 		BufferedReader readerTr = null;
@@ -143,28 +157,4 @@ final class MatchMainProc extends AbstractMainProc {
 		}
 	}
 
-	private void writeOutput(final String outfile) {
-		if (outfile == null) {
-			super.writeOutput();
-		} else {
-			BufferedWriter writer = null;
-			try {
-				// 出力ファイル
-				writer = new BufferedWriter(new OutputStreamWriter(
-						new FileOutputStream(new File(outfile))));
-				writer.write(this.reportText());
-			} catch (IOException e) {
-				LogUtil.errorLog("Write error : " + outfile);
-				throw new RuntimeException(e);
-			} finally {
-				if (writer != null) {
-					try {
-						writer.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-	}
 }

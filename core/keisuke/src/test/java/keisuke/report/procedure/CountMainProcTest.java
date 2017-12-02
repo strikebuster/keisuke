@@ -1,5 +1,6 @@
 package keisuke.report.procedure;
 
+import keisuke.util.StderrCapture;
 import java.net.URL;
 import org.junit.After;
 import org.junit.Before;
@@ -7,12 +8,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import keisuke.util.StderrCapture;
-
-import static org.junit.Assert.assertFalse;
+import static keisuke.report.option.ReportOptionConstant.*;
 import static keisuke.util.TestUtil.*;
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.fail;
 
 /**
  * Test class of CountProc.
@@ -23,6 +23,9 @@ public class CountMainProcTest {
 
 	@After
 	public void tearDown() throws Exception { }
+
+	@Rule
+    public ExpectedException thrownEx = ExpectedException.none();
 
 	@Test
 	public void dealHelpOption() throws Exception {
@@ -44,7 +47,7 @@ public class CountMainProcTest {
 		cproc.main(args);
 
 		assertThat(cproc.argMapEntity().size(), is(1));
-		assertThat(cproc.argMapEntity(), hasEntry("infile", "test/data/dummy.csv"));
+		assertThat(cproc.argMapEntity(), hasEntry(ARG_INPUT, "test/data/dummy.csv"));
 	}
 
 	@Test
@@ -52,57 +55,88 @@ public class CountMainProcTest {
 		System.out.println("## CountProcTest ## arg03 ## dealArgsWhichHavePropOption ##");
 
 		CountMainProc cproc = new CountMainProc();
-		String[] args = {"-prop", "test/data/ktest.properties", "test/data/dummy.csv"};
+		String[] args = {"-p", "test/data/ktest.properties", "test/data/dummy.csv"};
 		cproc.main(args);
 
 		assertThat(cproc.argMapEntity().size(), is(2));
-		assertThat(cproc.argMapEntity(), hasEntry("infile", "test/data/dummy.csv"));
-		assertThat(cproc.argMapEntity(), hasEntry("properties", "test/data/ktest.properties"));
+		assertThat(cproc.argMapEntity(), hasEntry(ARG_INPUT, "test/data/dummy.csv"));
+		assertThat(cproc.argMapEntity(), hasEntry(OPT_PROP, "test/data/ktest.properties"));
 	}
 
-	@Rule
-    public ExpectedException thrownEx = ExpectedException.none();
+	@Test
+	public void dealArgsWhichHaveClassOptionButWrongValue() throws Exception {
+		System.out.println("## CountProcTest ## arg04 ## dealArgsWhichHaveClassOptionButWrongValue ##");
+
+		StderrCapture capture = new StderrCapture();
+		String errMessage = null;
+		Exception firedException = null;
+		String expected = "invalid option value";
+
+		CountMainProc cproc = new CountMainProc();
+		String[] args = {"-" + OPT_CLASS, "xxx", "test/data/dummy.csv"};
+		try {
+			cproc.main(args);
+		} catch (Exception e) {
+			firedException = e;
+		} finally {
+			errMessage = capture.getCapturedString();
+			capture.finish();
+		}
+		assertThat(cproc.argMapEntity().size(), is(2));
+		assertThat(cproc.argMapEntity(), hasEntry(ARG_INPUT, "test/data/dummy.csv"));
+		assertThat(cproc.argMapEntity(), hasEntry(OPT_CLASS, "xxx"));
+		assertThat(errMessage, containsString(expected));
+		if (firedException != null) {
+			assertThat(firedException.getMessage(), containsString(expected));
+		} else {
+			// Not reach here because exception is expected to be occured
+			fail("Should throw Exception : " + expected);
+		}
+	}
 
 	@Test
 	public void dealInfileWhichDoesNotExist() throws Exception {
 		System.out.println("## CountProcTest ## error01 ## dealInfileWhichDoesNotExist ##");
+		String expected = "FileNotFoundException";
 		thrownEx.expect(RuntimeException.class);
-		thrownEx.expectMessage("FileNotFoundException");
+		thrownEx.expectMessage(expected);
 
 		CountMainProc cproc = new CountMainProc();
 		String[] args = {"test/data/nofile.csv"};
 		cproc.main(args);
 
 		// Not reach here because exception is expected to be occured
-		assertFalse(true);
+		fail("Should throw Exception : " + expected);
 	}
 
 	@Test
 	public void dealPropOptionWhichFileDoesNotExist() throws Exception {
 		System.out.println("## CountProcTest ##_error02 ## dealPropOptionWhichFileDoesNotExist ##");
+		String expected = "FileNotFoundException";
 		thrownEx.expect(RuntimeException.class);
-		thrownEx.expectMessage("FileNotFoundException");
+		thrownEx.expectMessage(expected);
 
 		CountMainProc cproc = new CountMainProc();
 		String[] args = {"-prop", "test/data/nofile.properties", "test/data/count01.csv"};
 		cproc.main(args);
 
 		// Not reach here because exception is expected to be occured
-		assertFalse(true);
+		fail("Should throw Exception : " + expected);
 	}
 
 	@Test
 	public void dealXmlOptionWhichFileDoesNotExist() throws Exception {
 		System.out.println("## CountProcTest ## error03 ## dealXmlOptionWhichFileDoesNotExist ##");
+		String expected = "FileNotFoundException";
 		thrownEx.expect(RuntimeException.class);
-		thrownEx.expectMessage("FileNotFoundException");
+		thrownEx.expectMessage(expected);
 
 		CountMainProc cproc = new CountMainProc();
-		String[] args = {"-class", "language", "-xml", "test/data/nofile.xml", "test/data/count01.csv"};
+		String[] args = {"-c", OPTVAL_LANGUAGE, "-x", "test/data/nofile.xml", "test/data/count01.csv"};
 		cproc.main(args);
 
 		// Not reach here because exception is expected to be occured
-		assertFalse(true);
+		fail("Should throw Exception : " + expected);
 	}
 
 	@Test
@@ -112,7 +146,7 @@ public class CountMainProcTest {
 		URL expected = this.getClass().getResource("CountTest_count05.csv");
 
 		CountMainProc cproc = new CountMainProc();
-		String[] args = {"-class", "language", "-xml", "test/data/ktestf.xml", "test/data/count01.csv"};
+		String[] args = {"-class", OPTVAL_LANGUAGE, "-xml", "test/data/ktestf.xml", "test/data/count01.csv"};
 		cproc.main(args);
 
 		assertThat(cproc.reportText(), is(equalTo(contentOf(expected))));
@@ -128,7 +162,8 @@ public class CountMainProcTest {
 		URL expected = this.getClass().getResource("CountTest_error05.csv");
 
 		CountMainProc cproc = new CountMainProc();
-		String[] args = {"-class", "fw:rails", "-xml", "test/data/ktestl.xml", "test/data/count01.csv"};
+		String[] args = {"-" + OPT_CLASS, OPTVAL_FW + "rails", "-" + OPT_XML, "test/data/ktestl.xml",
+				"test/data/count01.csv"};
 		cproc.main(args);
 
 		assertThat(cproc.reportText(), is(equalTo(contentOf(expected))));
@@ -148,7 +183,8 @@ public class CountMainProcTest {
 		URL expected = this.getClass().getResource("CountTest_error05.csv");
 
 		CountMainProc cproc = new CountMainProc();
-		String[] args = {"-class", "fw:spring", "-xml", "test/data/ktestf.xml", "test/data/count01.csv"};
+		String[] args = {"--" + OPT_CLASS, OPTVAL_FW + "spring", "--" + OPT_XML, "test/data/ktestf.xml",
+				"test/data/count01.csv"};
 		cproc.main(args);
 
 		assertThat(cproc.reportText(), is(equalTo(contentOf(expected))));
@@ -188,19 +224,19 @@ public class CountMainProcTest {
 		URL expected = this.getClass().getResource("CountTest_count03.csv");
 
 		CountMainProc cproc = new CountMainProc();
-		String[] args = {"-prop", "test/data/ktest.properties", "test/data/count01.csv"};
+		String[] args = {"--" + OPT_PROP, "test/data/ktest.properties", "test/data/count01.csv"};
 		cproc.main(args);
 
 		assertThat(cproc.reportText(), is(equalTo(contentOf(expected))));
 	}
 
 	@Test
-	public void countUsingDefaultWhenAgrsHaveIllegalClassOption() throws Exception {
-		System.out.println("## CountProcTest ## count04 ## countUsingDefaultWhenAgrsHaveIllegalClassOption ##");
+	public void countUsingClassOfExtension() throws Exception {
+		System.out.println("## CountProcTest ## count04 ## countUsingClassOfExtension ##");
 		URL expected = this.getClass().getResource("CountTest_count01.csv");
 
 		CountMainProc cproc = new CountMainProc();
-		String[] args = {"-class", "xxx", "test/data/count01.csv"};
+		String[] args = {"-" + OPT_CLASS, OPTVAL_EXTENSION, "test/data/count01.csv"};
 		cproc.main(args);
 
 		assertThat(cproc.reportText(), is(equalTo(contentOf(expected))));
@@ -212,7 +248,7 @@ public class CountMainProcTest {
 		URL expected = this.getClass().getResource("CountTest_count05.csv");
 
 		CountMainProc cproc = new CountMainProc();
-		String[] args = {"-class", "language", "test/data/count01.csv"};
+		String[] args = {"-c", OPTVAL_LANGUAGE, "test/data/count01.csv"};
 		cproc.main(args);
 
 		assertThat(cproc.reportText(), is(equalTo(contentOf(expected))));
@@ -224,7 +260,7 @@ public class CountMainProcTest {
 		URL expected = this.getClass().getResource("CountTest_count06.csv");
 
 		CountMainProc cproc = new CountMainProc();
-		String[] args = {"test/data/count01.csv", "-class", "group"};
+		String[] args = {"test/data/count01.csv", "-c", OPTVAL_LANGGROUP};
 		cproc.main(args);
 
 		assertThat(cproc.reportText(), is(equalTo(contentOf(expected))));
@@ -237,7 +273,7 @@ public class CountMainProcTest {
 		URL expected = this.getClass().getResource("CountTest_count07.csv");
 
 		CountMainProc cproc = new CountMainProc();
-		String[] args = {"-class", "language", "-xml", "test/data/ktestl.xml", "test/data/count01.csv"};
+		String[] args = {"-c", OPTVAL_LANGUAGE, "-" + OPT_XML, "test/data/ktestl.xml", "test/data/count01.csv"};
 		cproc.main(args);
 
 		assertThat(cproc.reportText(), is(equalTo(contentOf(expected))));
@@ -250,7 +286,7 @@ public class CountMainProcTest {
 		URL expected = this.getClass().getResource("CountTest_count08.csv");
 
 		CountMainProc cproc = new CountMainProc();
-		String[] args = {"-class", "group", "test/data/count01.csv", "-xml", "test/data/ktestl.xml"};
+		String[] args = {"-c", OPTVAL_LANGGROUP, "test/data/count01.csv", "-x", "test/data/ktestl.xml"};
 		cproc.main(args);
 
 		assertThat(cproc.reportText(), is(equalTo(contentOf(expected))));
@@ -262,7 +298,7 @@ public class CountMainProcTest {
 		URL expected = this.getClass().getResource("CountTest_count20.csv");
 
 		CountMainProc cproc = new CountMainProc();
-		String[] args = {"-class", "fw:ow", "-xml", "test/data/ktestf2.xml", "test/data/count01.csv"};
+		String[] args = {"-c", OPTVAL_FW + "ow", "-x", "test/data/ktestf2.xml", "test/data/count01.csv"};
 		cproc.main(args);
 
 		assertThat(cproc.reportText(), is(equalTo(contentOf(expected))));
@@ -275,7 +311,7 @@ public class CountMainProcTest {
 		URL expected = this.getClass().getResource("CountTest_count21.csv");
 
 		CountMainProc cproc = new CountMainProc();
-		String[] args = {"-class", "fw:ow", "-xml", "test/data/ktestf.xml", "test/data/count01.csv"};
+		String[] args = {"-c", OPTVAL_FW + "ow", "-x", "test/data/ktestf.xml", "test/data/count01.csv"};
 		cproc.main(args);
 
 		assertThat(cproc.reportText(), is(equalTo(contentOf(expected))));
@@ -287,7 +323,7 @@ public class CountMainProcTest {
 		URL expected = this.getClass().getResource("CountTest_count22.csv");
 
 		CountMainProc cproc = new CountMainProc();
-		String[] args = {"-class", "fw:o3w", "-xml", "test/data/ktestf2.xml", "test/data/count01.csv"};
+		String[] args = {"-c", OPTVAL_FW + "o3w", "-x", "test/data/ktestf2.xml", "test/data/count01.csv"};
 		cproc.main(args);
 
 		assertThat(cproc.reportText(), is(equalTo(contentOf(expected))));
@@ -299,7 +335,7 @@ public class CountMainProcTest {
 		URL expected = this.getClass().getResource("CountTest_count23.csv");
 
 		CountMainProc cproc = new CountMainProc();
-		String[] args = {"-class", "fw:spring", "test/data/count01.csv"};
+		String[] args = {"-c", OPTVAL_FW + "spring", "test/data/count01.csv"};
 		cproc.main(args);
 
 		assertThat(cproc.reportText(), is(equalTo(contentOf(expected))));

@@ -14,6 +14,8 @@ public final class ReportOptionConstant {
 	public static final String OPT_PROP = "properties";
 	public static final String OPT_CLASS = "classify";
 	public static final String OPT_XML = "xml";
+	public static final String OPT_IN = "input";
+	public static final String OPT_OUT = "output";
 	public static final String OPTVAL_EXTENSION = ClassifierConstant.CLASSIFY_EXTENSION;
 	public static final String OPTVAL_LANGUAGE = ClassifierConstant.CLASSIFY_LANGUAGE;
 	public static final String OPTVAL_LANGGROUP = ClassifierConstant.CLASSIFY_LANGGROUP;

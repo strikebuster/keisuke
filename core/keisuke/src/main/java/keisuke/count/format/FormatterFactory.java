@@ -20,12 +20,16 @@ public final class FormatterFactory {
 	 */
 	public static Formatter getFormatter(final String format) {
 		// nullの場合はデフォルトフォーマット
-		if (format == null) {
+		if (format == null || format.isEmpty()) {
 			return new TextFormatter();
 		}
 		String name = format.toLowerCase();
+		// TEXTフォーマット
+		if (name.equals(OPTVAL_TEXT)) {
+			return new TextFormatter();
+
 		// CSVフォーマット
-		if (name.equals(OPTVAL_CSV)) {
+		} else if (name.equals(OPTVAL_CSV)) {
 			return new CSVFormatter();
 
 		// XMLフォーマット
@@ -42,7 +46,7 @@ public final class FormatterFactory {
 
 		// デフォルトフォーマット
 		} else {
-			return new TextFormatter();
+			return null;
 		}
 	}
 

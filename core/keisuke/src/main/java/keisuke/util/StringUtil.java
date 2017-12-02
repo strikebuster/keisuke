@@ -8,6 +8,9 @@ import java.util.List;
  */
 public final class StringUtil {
 
+	/** the line separator for this OS */
+    public static final String LINE_SEP = System.getProperty("line.separator");
+    // tab aligns the end of itself on 8 characters width
 	static final int TABWIDTH = 8;
 
 	private StringUtil() { }

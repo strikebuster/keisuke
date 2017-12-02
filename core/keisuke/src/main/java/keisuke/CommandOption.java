@@ -23,4 +23,11 @@ public interface CommandOption {
 	 */
     void showUsage();
 
+    /**
+	 * オプション名に対する値の選択肢を返す
+	 * @param optname オプション名
+	 * @return 選択肢インスタンス
+	 */
+    OptionValues valuesAs(String optname);
+
 }

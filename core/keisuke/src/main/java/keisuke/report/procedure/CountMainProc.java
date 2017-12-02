@@ -17,18 +17,17 @@ import keisuke.report.CountResultForReportMap;
 import keisuke.report.IllegalFormattedLineException;
 import keisuke.report.ProcedureType;
 import keisuke.report.StepCountResultForReport;
-import keisuke.report.property.PropertyDefine;
 import keisuke.util.LogUtil;
 
 /**
  * Class of main procedure to account result of StepCount
  */
-final class CountMainProc extends AbstractMainProc {
+public final class CountMainProc extends AbstractReportMainProc {
 
 	private CountResultForReportMap resultMap = null;
 	private int ignoreFiles = 0; // 計測対象外ファイル本数
 
-	protected CountMainProc() {
+	public CountMainProc() {
 		super();
 		createBindedFuncs(ProcedureType.COUNT_PROC);
 	}
@@ -40,30 +39,24 @@ final class CountMainProc extends AbstractMainProc {
 			return;
 		}
 		//this.argMap().debugMap();
-		String pfile = this.argMap().get(OPT_PROP);
-		PropertyDefine propDef = new PropertyDefine();
-		if (pfile != null) {
-			propDef.customizePropertyDefine(pfile);
-		}
-		this.setColumnMap(propDef.getCountProperties());
-		this.setMessageMap(propDef.getMessageProperties());
-		//this.columnMap().debugMap();
-		//this.messageMap().debugMap();
-
+		this.setSomeFromProperties(this.argMap().get(OPT_PROP));
 		String ctype = this.argMap().get(OPT_CLASS);
-		if (ctype == null ||  !(ctype.equals(OPTVAL_LANGUAGE)
-				|| ctype.equals(OPTVAL_LANGGROUP)
-				|| ctype.startsWith(OPTVAL_FW))) {
+		if (ctype == null) {
 			ctype = OPTVAL_EXTENSION;
+		} else if (!this.commandOption().valuesAs(OPT_CLASS).contains(ctype)) {
+			LogUtil.errorLog("'" + ctype + "' is invalid option value for '" + OPT_CLASS + "'.");
+			throw new IllegalArgumentException("invalid option value");
 		}
-		String xfile = this.argMap().get(OPT_XML);
-		if (xfile != null) {
-			this.makeClassifier(ctype, xfile);
-		} else {
-			this.makeClassifier(ctype);
-		}
-		String infile = this.argMap().get(ARG_INPUT);
+		this.setClassifierFromXml(ctype, this.argMap().get(OPT_XML));
+		this.setOutputFileName(this.argMap().get(OPT_OUT));
+		this.aggregateFrom(this.argMap().get(ARG_INPUT));
+	}
 
+	/**
+	 * 入力ファイルから集計した結果を出力する
+	 * @param infile 入力ファイル名
+	 */
+	public void aggregateFrom(final String infile) {
 		this.prepareResultMap();
 		this.aggregateCount(infile);
 		this.reportCount();

@@ -2,11 +2,9 @@ package keisuke.count;
 
 import static keisuke.count.option.CountOptionConstant.*;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -14,6 +12,7 @@ import java.util.List;
 import keisuke.StepCountResult;
 import keisuke.count.format.FormatterFactory;
 import keisuke.count.option.StepCountOption;
+import keisuke.count.util.FileNameUtil;
 import keisuke.util.LogUtil;
 
 /**
@@ -22,9 +21,10 @@ import keisuke.util.LogUtil;
  */
 public class StepCountProc extends AbstractCountMainProc {
 
-	private File[] filesArray;
-	private Formatter outputFormatter = null;
+	private String[] pathArray;
+	private String formatType = "";
 	private boolean showDirectory = false;
+	private String sortType = "";
 	private StepCountResult[] resultsArray;
 
 	public StepCountProc() {
@@ -33,16 +33,13 @@ public class StepCountProc extends AbstractCountMainProc {
 
 	/** {@inheritDoc} */
 	protected void setFileArguments() throws IllegalArgumentException {
-		if (this.argArray() == null || this.argArray().length == 0) {
-			LogUtil.errorLog("Not specified source path.");
-			throw new IllegalArgumentException();
+		String[] argArray = this.commandOption().makeRestArgArray();
+		if (argArray == null || argArray.length == 0) {
+			LogUtil.errorLog("not specified source path.");
+			throw new IllegalArgumentException("short of arguments");
 		}
 		// 対象ファイルの設定
-		List<File> fileList = new ArrayList<File>();
-		for (int i = 0; i < this.argArray().length; i++) {
-			fileList.add(new File(this.argArray()[i]));
-		}
-		this.setFiles((File[]) fileList.toArray(new File[fileList.size()]));
+		this.pathArray = argArray;
 	}
 
 	/** {@inheritDoc} */
@@ -51,17 +48,32 @@ public class StepCountProc extends AbstractCountMainProc {
 		String outfile = this.argMap().get(OPT_OUTPUT);
 		String format = this.argMap().get(OPT_FORMAT);
 		String show = this.argMap().get(OPT_SHOWDIR);
+		String sort = this.argMap().get(OPT_SORT);
 		String xmlfile = this.argMap().get(OPT_XML);
 		// 対象ファイルのエンコード指定を設定
 		if (encoding != null) {
 			this.setSourceEncoding(encoding);
 		}
 		// 出力フォーマットの指定
-		this.setFormatter(FormatterFactory.getFormatter(format));
+		if (format == null) {
+			format = OPTVAL_TEXT;
+		} else if (!this.commandOption().valuesAs(OPT_FORMAT).contains(format)) {
+			LogUtil.errorLog("'" + format + "' is invalid option value for '" + OPT_FORMAT + "'.");
+			throw new RuntimeException("invalid option value");
+		}
+		this.setFormat(format);
 		// 出力にディレクトリパスを付けるかを設定
 		if ("true".equalsIgnoreCase(show)) {
 			this.setShowDirectory(true);
 		}
+		// ソート順の指定
+		if (sort == null) {
+			sort = OPTVAL_SORT_ON;
+		} else if (!this.commandOption().valuesAs(OPT_SORT).contains(sort)) {
+			LogUtil.errorLog("'" + sort + "' is invalid option value for '" + OPT_SORT + "'.");
+			throw new RuntimeException("invalid option value");
+		}
+		this.setSort(sort);
 		// カスタマイズしたXML定義ファイル指定
 		if (xmlfile != null) {
 			this.setXmlFileName(xmlfile);
@@ -75,28 +87,40 @@ public class StepCountProc extends AbstractCountMainProc {
 	/** {@inheritDoc} */
 	protected void executeCounting() throws IOException {
 		StepCountFunction stepcounter = new StepCountFunction(this.sourceEncoding(), this.xmlFileName());
-		List<StepCountResultForCount> list = stepcounter.countAll(this.filesArray);
+		if (this.sortType.equals(OPTVAL_SORT_OS)) {
+			stepcounter.setSortingOsOrder();
+		}
+		List<StepCountResultForCount> list = stepcounter.countAll(this.pathArray);
 		if (this.showDirectory) {
 			for (StepCountResultForCount result : list) {
-				// 差分ディレクトリ付きのファイル名に上書きします。
-				result.setFilePath(this.pathFromTopOf(result.file()));
+				// 指定したディレクトリからのファイルパスに上書きします。
+				result.setFilePath(result.getSubPathFromBase());
 			}
 		}
-		Collections.sort(list, new Comparator<StepCountResult>() {
-			public int compare(final StepCountResult o1, final StepCountResult o2) {
-				return o1.filePath().compareTo(o2.filePath());
-			}
-		});
+		if (this.sortType.equals(OPTVAL_SORT_ON)) {
+			Collections.sort(list, new Comparator<StepCountResult>() {
+				public int compare(final StepCountResult o1, final StepCountResult o2) {
+					return FileNameUtil.compareInCodeOrder(o1.filePath(), o2.filePath());
+				}
+			});
+		} else if (this.sortType.equals(OPTVAL_SORT_OS)) {
+			Collections.sort(list, new Comparator<StepCountResult>() {
+				public int compare(final StepCountResult o1, final StepCountResult o2) {
+					return FileNameUtil.compareInOsOrder(o1.filePath(), o2.filePath());
+				}
+			});
+		}
 		this.resultsArray = (StepCountResult[]) list.toArray(new StepCountResultForCount[list.size()]);
 	}
 
 	/** {@inheritDoc} */
 	protected void writeResults() throws IOException {
-		// フォーマッタが設定されていない場合はデフォルトを使用
-		if (this.outputFormatter == null) {
-			this.outputFormatter = FormatterFactory.getFormatter("");
+		// フォーマッタを設定
+		Formatter formatter = FormatterFactory.getFormatter(this.formatType);
+		if (formatter == null) {
+			throw new RuntimeException(this.formatType + " is invalid format.");
 		}
-		this.outputStream().write(this.outputFormatter.format(this.resultsArray));
+		this.outputStream().write(formatter.format(this.resultsArray));
 		this.outputStream().flush();
 	}
 
@@ -109,49 +133,19 @@ public class StepCountProc extends AbstractCountMainProc {
 	}
 
 	/**
-	 * カウント対象ファイルをセットします
-	 * @param files 対象Fileの配列
+	 * 結果出力のソート順をセットします
+	 * @param order ソート順
 	 */
-	private void setFiles(final File[] files) {
-		this.filesArray = files;
+	private void setSort(final String order) {
+		this.sortType = order;
 	}
 
 	/**
-	 * 結果出力用のフォーマッタをセットします
-	 * @param formatter 出力フォーマッター
+	 * 結果出力のフォーマットをセットします
+	 * @param format フォーマット名
 	 */
-	private void setFormatter(final Formatter formatter) {
-		this.outputFormatter = formatter;
-	}
-
-	/**
-	 * ディレクトリ付きファイル名の出力形式を取得します。
-	 * @param file 対象のファイルのFileインスタンス
-	 * @return ディレクトリパス付きのファイルパス
-	 * @throws IOException 引数ファイルの操作で異常があった場合に発行
-	 */
-	private String pathFromTopOf(final File file) throws IOException {
-		if (file.isDirectory()) {
-			return file.getName();
-		}
-		if (this.filesArray == null || this.filesArray.length == 0) {
-			return file.getName();
-		}
-		// ファイルの正規パスを取得します。
-		String filePath = file.getCanonicalPath();
-		for (File f : this.filesArray) {
-			String parentPath = f.getCanonicalPath();
-			if (filePath.contains(parentPath)) {
-				// 引数の正規パスにファイルが含まれている場合、
-				// 選択されたディレクトリからのパスとファイル名を返却します。
-				StringBuilder sb = new StringBuilder();
-				sb.append('/');
-				sb.append(f.getName());
-				sb.append(filePath.substring(parentPath.length()).replaceAll("\\\\", "/"));
-				return sb.toString();
-			}
-		}
-		return file.getName();
+	private void setFormat(final String format) {
+		this.formatType = format;
 	}
 
 }

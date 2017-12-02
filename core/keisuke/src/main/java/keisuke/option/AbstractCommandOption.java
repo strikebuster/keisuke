@@ -79,7 +79,7 @@ public abstract class AbstractCommandOption implements CommandOption {
 			map = makeOwnOptionMap();
 		} catch (ParseException e) {
 			this.showUsage();
-			return null;
+			throw new RuntimeException("fail to parse arguments", e);
 		}
 		return map;
 	}

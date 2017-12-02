@@ -1,6 +1,8 @@
 package keisuke.count.diff;
 
+import static keisuke.count.diff.renderer.RendererConstant.MSG_DIFF_RND_PREFIX;
 import static keisuke.count.option.CountOptionConstant.*;
+import static keisuke.report.property.MessageConstant.MSG_DIFF_STATUS_PREFIX;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -10,6 +12,7 @@ import java.io.PrintStream;
 
 import keisuke.DiffStatusLabelsImpl;
 import keisuke.count.AbstractCountMainProc;
+
 import keisuke.count.diff.renderer.RendererFactory;
 import keisuke.count.option.DiffCountOption;
 import keisuke.report.property.MessageDefine;
@@ -21,9 +24,11 @@ import keisuke.util.LogUtil;
  */
 public class DiffCountProc extends AbstractCountMainProc {
 
+	public static final String[] MSG_DIFF_PREFIXES = {MSG_DIFF_STATUS_PREFIX, MSG_DIFF_RND_PREFIX};
+
 	private File srcdir = null;
-	private File olddir = null;
-	private String outputFormat = null;
+	private File oldSrcdir = null;
+	private String formatType = "";
 	private MessageDefine msgDef = null;
 	private DiffFolderResult diffResult;
 
@@ -31,46 +36,30 @@ public class DiffCountProc extends AbstractCountMainProc {
 		this.setCommandOption(new DiffCountOption());
 	}
 
-	/**
-	 * 新しい版のソースを格納するディレクトリをセットします
-	 * @param dir 新しい版のディレクトリ
-	 */
-	private void setNewerDirectory(final File dir) {
-		this.srcdir = dir;
-	}
-
-	/**
-	 * 古い版のソースを格納するディレクトリをセットします
-	 * @param dir 古い版のディレクトリ
-	 */
-	private void setOlderDirectory(final File dir) {
-		this.olddir = dir;
-	}
-
-	/**
-	 * 結果出力のフォーマットを設定します
-	 * @param format 出力フォーマット
-	 */
-	private void setOutputFormat(final String format) {
-		this.outputFormat = format;
-	}
-
 	/** {@inheritDoc} */
 	protected void setFileArguments() throws IllegalArgumentException {
-		if (this.argArray() == null || this.argArray().length != 2) {
-			LogUtil.errorLog("Just 2 directories must be specified.");
-			throw new IllegalArgumentException();
+		String newdir = this.argMap().get(ARG_NEWDIR);
+		if (newdir == null) {
+			LogUtil.errorLog("new directory is not specified.");
+			throw new IllegalArgumentException("short of arguments");
 		}
-		// 対象ディレクトリの設定
-		File[] dirArray = {new File(this.argArray()[0]), new File(this.argArray()[1])};
-		for (int i = 0; i < dirArray.length; i++) {
-			if (!dirArray[i].isDirectory()) {
-				LogUtil.errorLog("'" + dirArray[i].getAbsolutePath() + "' is not directory.");
-				throw new IllegalArgumentException();
-			}
+		File newdirFile = new File(newdir);
+		if (!newdirFile.isDirectory()) {
+			LogUtil.errorLog("'" + newdirFile.getAbsolutePath() + "' is not directory.");
+			throw new IllegalArgumentException("not directory");
 		}
-		this.setNewerDirectory(dirArray[0]);
-		this.setOlderDirectory(dirArray[1]);
+		String olddir = this.argMap().get(ARG_OLDDIR);
+		if (olddir == null) {
+			LogUtil.errorLog("old directory is not specified.");
+			throw new IllegalArgumentException("short of arguments");
+		}
+		File olddirFile = new File(olddir);
+		if (!olddirFile.isDirectory()) {
+			LogUtil.errorLog("'" + olddirFile.getAbsolutePath() + "' is not directory.");
+			throw new IllegalArgumentException("not directory");
+		}
+		this.setNewDirectory(newdirFile);
+		this.setOldDirectory(olddirFile);
 	}
 
 	/** {@inheritDoc} */
@@ -84,12 +73,14 @@ public class DiffCountProc extends AbstractCountMainProc {
 			this.setSourceEncoding(encoding);
 		}
 		// 出力フォーマットの指定
-		// フォーマッタが設定されていない場合はデフォルトを使用
-		if (format == null || format.length() == 0) {
-			this.setOutputFormat("text");
-		} else {
-			this.setOutputFormat(format);
+		// フォーマットを設定
+		if (format == null) {
+			format = OPTVAL_TEXT;
+		} else if (!this.commandOption().valuesAs(OPT_FORMAT).contains(format)) {
+			LogUtil.errorLog("'" + format + "' is invalid option value for '" + OPT_FORMAT + "'.");
+			throw new IllegalArgumentException("invalid option value");
 		}
+		this.setFormat(format);
 		// カスタマイズしたXML定義ファイル指定
 		if (xmlfile != null) {
 			this.setXmlFileName(xmlfile);
@@ -105,23 +96,45 @@ public class DiffCountProc extends AbstractCountMainProc {
 	 * @throws IOException 出力時に異常があると発行
 	 */
 	protected void executeCounting() throws IOException {
-		String[] prefixes = {"diff.status.", "diff.render."};
-		this.msgDef = new MessageDefine(prefixes);
+		this.msgDef = new MessageDefine(MSG_DIFF_PREFIXES);
 		DiffCountFunction diffcounter = new DiffCountFunction(this.sourceEncoding(), this.xmlFileName(),
 				new DiffStatusLabelsImpl(this.msgDef));
-		this.diffResult = diffcounter.countDiffBetween(this.olddir, this.srcdir);
+		this.diffResult = diffcounter.countDiffBetween(this.oldSrcdir, this.srcdir);
 	}
 
 	/** {@inheritDoc} */
 	protected void writeResults() throws IOException {
-		Renderer renderer = RendererFactory.getRenderer(this.outputFormat, this.msgDef);
-		//if (renderer == null) {
-		//	throw new RuntimeException(this.outputFormat + " is invalid format!");
-		//}
+		Renderer renderer = RendererFactory.getRenderer(this.formatType, this.msgDef);
+		if (renderer == null) {
+			throw new RuntimeException("fail to get a formatter");
+		}
 		byte[] bytes = renderer.render(this.diffResult);
 		this.outputStream().write(bytes);
 		this.outputStream().flush();
 		//LogUtil.debugLog(outputFile.getAbsolutePath() + "にカウント結果を出力しました。");
 	}
 
+	/**
+	 * 新しい版のソースを格納するディレクトリをセットします
+	 * @param dir 新しい版のディレクトリ
+	 */
+	private void setNewDirectory(final File dir) {
+		this.srcdir = dir;
+	}
+
+	/**
+	 * 古い版のソースを格納するディレクトリをセットします
+	 * @param dir 古い版のディレクトリ
+	 */
+	private void setOldDirectory(final File dir) {
+		this.oldSrcdir = dir;
+	}
+
+	/**
+	 * 結果出力のフォーマットを設定します
+	 * @param format 出力フォーマット
+	 */
+	private void setFormat(final String format) {
+		this.formatType = format;
+	}
 }

@@ -7,12 +7,14 @@ import java.util.List;
 
 import keisuke.count.language.XmlDefinedStepCounterFactory;
 import keisuke.count.util.FileNameUtil;
+import keisuke.util.LogUtil;
 
 /**
  * 言語定義XMLの内容にしたがって行数カウントする機能をもつクラス
  */
 class StepCountFunction {
 
+	private boolean sortingOsOrder = false;
 	private String encoding = null;
 	private XmlDefinedStepCounterFactory factory = null;
 
@@ -37,14 +39,51 @@ class StepCountFunction {
 	}
 
 	/**
+	 * ファイルリストのソート順を文字列順でなくOSファイル名順に設定する
+	 */
+	void setSortingOsOrder() {
+		this.sortingOsOrder = true;
+	}
+
+	/**
 	 * 指定されたカウント対象File配列に含まれるノード全てをカウントした結果のListを返す
-	 * List要素毎のファイル名はディレクトリパスは含まない
-	 * @param files カウント対象File配列
+	 * List要素毎のファイル名はディレクトリパスは含まないが、
+	 * 指定されたノードを相対パスの基点とできるようにList要素に記録しておく
+	 * @param paths カウント対象パス名の配列
 	 * @return カウント結果List
 	 * @throws IOException カウントのためにファイルを読み取る際に異常があれば発行
 	 */
-	List<StepCountResultForCount> countAll(final File[] files) throws IOException {
-		return this.countEveryNodes(files);
+	List<StepCountResultForCount> countAll(final String[] paths) throws IOException {
+		if (paths == null) {
+			return null;
+		}
+		ArrayList<StepCountResultForCount> list = new ArrayList<StepCountResultForCount>();
+		for (int i = 0; i < paths.length; i++) {
+			String path = paths[i];
+			String fullpath = null;
+			File file = null;
+			try {
+				file = new File(path);
+				fullpath = file.getCanonicalPath().replace('\\', '/');
+			} catch (Exception e) {
+				LogUtil.warningLog("fail to access '" + path + "', so skipping.");
+				continue;
+			}
+			// １ファイル or １ディレクトリずつカウント
+			List<StepCountResultForCount> results = countOneNode(file);
+			for (StepCountResultForCount result : results) {
+				// showDirectory用にパス情報を記録しておく
+				if (file.isDirectory()) {
+					// 基点ディレクトリを記録
+					result.setBaseName(fullpath);
+				} else {
+					// ファイル指定パスを記録
+					result.setSpecifiedPath(path.replace('\\', '/'));
+				}
+				list.add(result);
+			}
+		}
+		return list;
 	}
 
 	/**
@@ -55,8 +94,8 @@ class StepCountFunction {
 	 * @throws IOException カウントのためにファイルを読み取る際に異常があれば発行
 	 */
 	private List<StepCountResultForCount> countEveryNodes(final File[] files) throws IOException {
-		// １ファイル or １ディレクトリずつカウント
 		ArrayList<StepCountResultForCount> list = new ArrayList<StepCountResultForCount>();
+		// １ファイル or １ディレクトリずつカウント
 		for (int i = 0; i < files.length; i++) {
 			List<StepCountResultForCount> results = countOneNode(files[i]);
 			for (StepCountResultForCount result : results) {
@@ -79,7 +118,11 @@ class StepCountFunction {
 			if (FileNameUtil.checkToBeIgnored(file)) {
 				return new ArrayList<StepCountResultForCount>();
 			}
-			return this.countEveryNodes(file.listFiles());
+			if (this.sortingOsOrder) {
+				return this.countEveryNodes(FileNameUtil.sortInOsOrder(file.listFiles()));
+			} else {
+				return this.countEveryNodes(FileNameUtil.sortInCodeOrder(file.listFiles()));
+			}
 		} else {
 			ArrayList<StepCountResultForCount> list = new ArrayList<StepCountResultForCount>();
 			StepCounter counter = this.factory.getCounter(file.getName());

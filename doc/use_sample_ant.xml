@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 計助カウント実行antタスク -->
+<project default="all" basedir="." >
+  <!-- プロパティ設定 -->
+  <!-- ＃＃＃対象ソースに合わせて設定＃＃＃ -->
+  <!-- 新規/改修後ソースのデイレクトリ -->
+  <property name="SRCROOT" value="testdat/src" />
+
+  <!-- 改修前ソースのデイレクトリ -->
+  <!-- 新規で改修前がない場合はこのプロパティはコメントアウト -->
+  <property name="OLDSRCROOT" value="testdat/oldsrc" />
+
+  <!-- ソースのエンコーディング -->
+  <property name="SRCENCODE" value="UTF-8" />
+
+  <!-- ＝＝＝計助内部設定＝＝＝ -->
+  <!-- KeisukeのJarパッケージ -->
+  <property name="JARFILE" value="keisuke-1.2.0-jar-with-dependencies.jar" />
+  <!-- Keisuke計測時の追加指定 -->
+  <property name="OPTXML" value="" />
+  <!-- Keisuke集計時の分類指定 -->
+  <property name="CLASSIFY" value="language" />
+
+  <!-- タスクの定義 -->
+  <taskdef name="StepCountTask" classname="keisuke.ant.StepCountTask"
+    classpath="${JARFILE}" />
+
+  <taskdef name="DiffCountTask" classname="keisuke.ant.DiffCountTask"
+    classpath="${JARFILE}" />
+
+  <taskdef name="CountReportTask" classname="keisuke.ant.CountReportTask"
+    classpath="${JARFILE}" />
+
+  <taskdef name="DiffReportTask" classname="keisuke.ant.DiffReportTask"
+    classpath="${JARFILE}" />
+
+  <taskdef name="MatchExtractTask" classname="keisuke.ant.MatchExtractTask"
+    classpath="${JARFILE}" />
+
+  <!-- 実行ターゲット定義 -->
+
+  <!-- ＝＝＝(1)新規/改修後のソースのカウント＝＝＝ -->
+  <!-- 計測結果I/Fファイル -->
+  <property name="IFFILE01" value="_count.csv" />
+  <!-- 計測結果レポートファイル -->
+  <property name="OUTFILE01" value="01_新規改修後全PGM規模.csv" />
+
+  <target name="CountNew" >
+    <!-- StepCount実行 -->
+    <StepCountTask format="csv" output="${IFFILE01}" encoding="${SRCENCODE}"
+      showDirectory="true" xml="${OPTXML}" >
+      <fileset dir="${SRCROOT}" />
+    </StepCountTask>
+    <!-- 計測結果集計 -->
+    <CountReportTask classify="${CLASSIFY}" input="${IFFILE01}" output="${OUTFILE01}" />
+  </target>
+
+  <!-- ＝＝＝(2)改修前後の差分カウント＝＝＝ -->
+  <!-- 差分計測結果I/Fファイル -->
+  <property name="IFFILE02" value="_diff.txt" />
+  <!-- 差分計測結果から新規ファイルパス抽出結果ファイル -->
+  <property name="ADDFILE02" value="_diff_add.txt" />
+  <!-- 差分計測結果から修正ファイルパス抽出結果ファイル -->
+  <property name="MODFILE02" value="_diff_modify.txt" />
+  <!-- 計測結果レポートファイル -->
+  <property name="OUTFILE02" value="02_改修差分PGM規模.csv" />
+
+  <target name="DiffCount" if="OLDSRCROOT" >
+    <!--DiffCount実行 -->
+    <DiffCountTask format="text" output="${IFFILE02}" encoding="${SRCENCODE}"
+      srcdir="${SRCROOT}" olddir="${OLDSRCROOT}" xml="${OPTXML}" />
+    <!-- 差分計測結果集計 -->
+    <DiffReportTask classify="${CLASSIFY}" input="${IFFILE02}" aout="${ADDFILE02}"
+      mout="${MODFILE02}" output="${OUTFILE02}" />
+  </target>
+
+  <!-- ＝＝＝(3)改修追加PGMのソースのカウント＝＝＝ -->
+  <!-- StepCount計測結果ファイル -->
+  <property name="MAFILE03" value="_count.csv" />
+  <!-- ソート後のStepCount計測結果ファイル -->
+  <property name="MA2FILE03" value="_count_sorted.csv" />
+  <!-- DiffCount差分計測から新規ファイルパス抽出ファイル -->
+  <property name="TRFILE03" value="_diff_add.txt" />
+  <!-- ソート後の新規ファイルパス抽出ファイル -->
+  <property name="TR2FILE03" value="_diff_add_sorted.txt" />
+  <!-- StepCount計測結果から新規ファイルのみ抽出したI/Fファイル -->
+  <property name="IFFILE03" value="_count_add.csv" />
+  <!-- 計測結果レポートファイル -->
+  <property name="OUTFILE03" value="03_改修追加PGM規模.csv" />
+
+  <target name="ExtractAdded" if="OLDSRCROOT" >
+    <!-- 計測結果ファイルをソート -->
+    <exec executable="sort" >
+      <arg line="${MAFILE03} -o ${MA2FILE03}" />
+    </exec>
+    <!-- 新規ファイルパス抽出ファイルをソート -->
+    <exec executable="sort" >
+      <arg line="${TRFILE03} -o ${TR2FILE03}" />
+    </exec>
+    <!-- 新規ファイルのみ計測結果抽出 -->
+    <MatchExtractTask master="${MA2FILE03}" transaction="${TR2FILE03}"
+      output="${IFFILE03}" />
+    <!-- 新規ファイルのみの計測結果集計 -->
+    <CountReportTask classify="${CLASSIFY}" input="${IFFILE03}" output="${OUTFILE03}" />
+  </target>
+
+  <!-- ＝＝＝(4)改修前リグレッション規模のカウント＝＝＝ -->
+  <!-- 計測結果I/Fファイル -->
+  <property name="IFFILE04" value="_count_old.csv" />
+  <!-- 計測結果レポートファイル -->
+  <property name="OUTFILE04" value="04_リグレッション規模.csv" />
+
+  <target name="CountOld" if="OLDSRCROOT" >
+    <!-- StepCount実行 -->
+    <StepCountTask format="csv" output="${IFFILE04}" encoding="${SRCENCODE}"
+      showDirectory="true" xml="${OPTXML}" >
+      <fileset dir="${OLDSRCROOT}">
+        <include name="**/*" />
+      </fileset>
+    </StepCountTask>
+    <!-- 計測結果集計 -->
+    <!--
+    <CountReportTask classify="${CLASSIFY}" input="${IFFILE04}" output="${OUTFILE04}" />
+    -->
+  </target>
+
+  <!-- ＝＝＝(5)改修母体PGMのカウント＝＝＝ -->
+  <!-- StepCount計測結果ファイル -->
+  <property name="MAFILE05" value="_count_old.csv" />
+  <!-- ソート後のStepCount計測結果ファイル -->
+  <property name="MA2FILE05" value="_count_old_sorted.csv" />
+  <!-- DiffCount差分計測から修正ファイルパス抽出ファイル -->
+  <property name="TRFILE05" value="_diff_modify.txt" />
+  <!-- ソート後の修正ファイルパス抽出ファイル -->
+  <property name="TR2FILE05" value="_diff_modify_sorted.txt" />
+  <!-- StepCount計測結果から修正ファイルのみ抽出したI/Fファイル -->
+  <property name="IFFILE05" value="_count_modify_old.csv" />
+  <!-- 計測結果レポートファイル -->
+  <property name="OUTFILE05" value="04_改修母体規模.csv" />
+
+  <target name="ExtractModified" if="OLDSRCROOT" >
+    <!-- 計測結果ファイルをソート -->
+    <exec executable="sort" >
+      <arg line="${MAFILE05} -o ${MA2FILE05}" />
+    </exec>
+    <!-- 修正ファイルパス抽出ファイルをソート -->
+    <exec executable="sort" >
+      <arg line="${TRFILE05} -o ${TR2FILE05}" />
+    </exec>
+    <!-- 修正ファイルのみ計測結果抽出 -->
+    <MatchExtractTask master="${MA2FILE05}" transaction="${TR2FILE05}"
+      output="${IFFILE05}" />
+    <!-- 修正ファイルのみの計測結果集計 -->
+    <CountReportTask classify="${CLASSIFY}" input="${IFFILE05}" output="${OUTFILE05}" />
+  </target>
+
+  <!-- スクリプト実行 -->
+  <target name="all" >
+    <antcall target="CountNew" />
+    <antcall target="DiffCount" />
+    <antcall target="ExtractAdded" />
+    <antcall target="CountOld" />
+    <antcall target="ExtractModified" />
+  </target>
+
+</project>

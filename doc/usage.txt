@@ -1,0 +1,112 @@
+# コマンドラインの使用方法
+
+#
+# StepCount　
+#	行数計測
+#
+java -cp keisuke-x.x.x-jar-with-dependencies.jar keisuke.count.StepCount ファイル|ディレクトリ [オプション]
+#
+usage: StepCount <infile> [<infile2> ..] [-?] [-e <arg>] [-f <arg>] [-o　<arg>]
+       [-s] [-S <arg>] [-x <arg>]
+ <infile> [<infile2> ..]	計測対象ソースコードのファイルまたはデイレクトリ（複数指定可能）
+ -?,--help             コマンドライン引数説明の表示
+ -e,--encoding <arg>   ソースファイルのエンコード指定（Javaで指定するもの）
+ -f,--format <arg>     結果出力時のフォーマット
+			'text'	テキスト形式（未指定時のデフォルト値）
+			'csv'	CSV形式
+			'excel'	Excel形式
+			'xml'	XML形式
+			'json'	JSON形式
+ -o,--output <arg>     計測結果出力ファイル（未指定時は標準出力）
+ -s,--showDirectory    結果に表示するソースファイル名にディレクトリパスを付与する
+ -S,--sort <arg>       結果に表示するソースファイルのソート方法
+			'on'	Unicode順にソート（未指定時のデフォルト値）
+			'os'	OSのファイル名順にソート、Windowsのときは大文字小文字無視
+			'off'	ソートせずに引数の並び順、引数がディレクトリのとき配下のノードは
+				Unicode順になる
+ -x,--xml <arg>        言語定義XMLファイル、指定時は内部デフォルト定義を先に読んでから、
+			指定された定義を上書き追加する
+
+#
+# DiffCount
+#	差分行数計測
+#
+java -cp keisuke-x.x.x-jar-with-dependencies.jar keisuke.count.DiffCount ディレクトリ ディレクトリ [オプション]
+#
+usage: DiffCount <newDir> <oldDir> [-?] [-e <arg>] [-f <arg>] [-o <arg>] [-x <arg>]
+ <newDir>		新リビジョンのソースの格納ディレクトリ
+ <oldDir>		旧リビジョンのソースの格納ディレクトリ
+ -?,--help		コマンドライン引数説明の表示
+ -e,--encoding <arg>   ソースファイルのエンコード指定（Javaで指定するもの）
+ -f,--format <arg>     結果出力時のフォーマット
+			'text'	テキスト形式（未指定時のデフォルト値）
+			'html'	HTML形式
+			'excel'	EXCEL形式
+ -o,--output <arg>     計測結果出力ファイル（未指定時は標準出力）
+ -x,--xml <arg>       　言語定義XMLファイル、指定時は内部デフォルト定義を先に読んでから、
+			指定された定義を上書き追加する
+
+#
+# CountReport
+#	行数計測結果集計
+#
+java -cp keisuke-x.x.x-jar-with-dependencies.jar keisuke.CountReport ファイル [オプション]
+#
+usage: CountReport <infile> [-?] [-c <arg>] [-o <arg>] [-p <arg>] [-x <arg>]
+　<infile>　　　　　　　　　　　　　　集計対象となる行数計測結果ファイル（CSV形式であること）（未指定時は標準入力）
+ -?,--help　　　　　　　　　　　　　コマンドライン引数説明の表示
+ -c,--classify <arg>　　　集計分類の指定
+			'extension'	拡張子
+			'language'	言語
+			'group'		言語グループ
+			'fw:'<name>	<name>で指定するフレームワークでのソース種別
+					<name>はフレームワーク定義XMLで指定されたもの
+ -o,--output <arg>　　　　　集計結果出力ファイル（未指定時は標準出力）
+ -p,--properties <arg>　出力ラベル定義用プロパティ設定ファイル（未指定時は内部デフォルト定義）
+			指定時は内部デフォルト定義は利用しない
+ -x,--xml <arg>       　classify指定がfw:<name>のときはフレームワーク定義XMLを指定し、
+			指定時は内部デフォルト定義を利用しない
+			それ以外のときは言語定義XMLファイルを指定し、
+			指定時は内部デフォルト定義を先に読んでから、指定された定義を上書き追加する
+
+#
+# DiffReport
+#	差分行数計測結果集計
+#
+java -cp keisuke-x.x.x-jar-with-dependencies.jar keisuke.DiffReport ファイル [オプション]
+#
+usage: DiffReport <infile> [-?] [-a <arg>] [-c <arg>] [-m <arg>] [-o
+       <arg>] [-p <arg>] [-u <arg>] [-x <arg>]
+　<infile>　　　　　　　　　　　　　　集計対象となる差分行数計測結果ファイル（TEXT形式であること）（未指定時は標準入力）
+ -?,--help　　　　　　　　　　　　　コマンドライン引数説明の表示
+ -a,--aout <arg>       差分から追加ファイル名を抽出して出力するファイル（未指定時は出力なし）
+ -c,--classify <arg>　　　集計分類の指定
+			'extension'	拡張子
+			'language'	言語
+			'group'		言語グループ
+			'fw:'<name>	<name>で指定するフレームワークでのソース種別
+					<name>はフレームワーク定義XMLで指定されたもの
+ -m,--mout <arg>       差分から変更ファイル名を抽出して出力するファイル（未指定時は出力なし）
+ -o,--output <arg>　　　　　集計結果出力ファイル（未指定時は標準出力）
+ -p,--properties <arg>　出力ラベル定義用プロパティ設定ファイル（未指定時は内部デフォルト定義）
+			指定時は内部デフォルト定義は利用しない
+ -u,--unchange <arg>　　　差分で変更なしのファイル本数を集計分類するか指定
+			'detail'	classifyの指定どおり分類（未指定時のデフォルト値）
+                        'total'		分類せずに合計する
+ -x,--xml <arg>       　classify指定がfw:<name>のときはフレームワーク定義XMLを指定し、
+			指定時は内部デフォルト定義を利用しない
+			それ以外のときは言語定義XMLファイルを指定し、
+			指定時は内部デフォルト定義を先に読んでから、指定された定義を上書き追加する
+#
+#
+# MatchExtract
+#	行数計測結果抽出
+#
+java -cp keisuke-x.x.x-jar-with-dependencies.jar keisuke.DiffReport ファイル ファイル [ファイル] [オプション]
+#
+usage: MatchExtract <mafile> <trfile>  [<outfile>] [-?] [-o <arg>]
+ <mafile>　　　　　　　　　　　　　　抽出元となる行数計測結果ファイル
+ <trfile>　　　　　　　　　　　　　　抽出対象を指定するファイル（DiffReportのaoutまたはmoutの出力ファイル）
+ <outfile>　　　　　        抽出結果出力ファイル（未指定時は標準出力）
+ -?,--help　　　　　　　　　　　　　コマンドライン引数説明の表示
+ -o,--output <arg>　　　　　抽出結果出力ファイル（<outfile>より優先、未指定時は<outfile>）

@@ -14,6 +14,7 @@ public final class CountOptionConstant {
 	public static final String OPT_OUTPUT = "output";
 	public static final String OPT_FORMAT = "format";
 	public static final String OPT_SHOWDIR = "showDirectory";
+	public static final String OPT_SORT = "sort";
 	public static final String OPT_XML = "xml";
 
 	public static final String OPTVAL_TEXT = "text";
@@ -23,4 +24,11 @@ public final class CountOptionConstant {
 	public static final String OPTVAL_JSON = "json";
 	public static final String OPTVAL_HTML = "html";
 
+	public static final String OPTVAL_SORT_ON = "on";
+	public static final String OPTVAL_SORT_OS = "os";
+	public static final String OPTVAL_SORT_OFF = "off";
+
+	// Match Proc Option
+	public static final String ARG_NEWDIR = "newDir";
+	public static final String ARG_OLDDIR = "oldDir";
 }

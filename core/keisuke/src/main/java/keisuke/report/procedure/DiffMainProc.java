@@ -23,7 +23,6 @@ import keisuke.report.DiffCountResultForReport;
 import keisuke.report.DiffCountResultsAssortedStatus;
 import keisuke.report.IllegalFormattedLineException;
 import keisuke.report.ProcedureType;
-import keisuke.report.property.PropertyDefine;
 import keisuke.util.LogUtil;
 import keisuke.util.PathDepthList;
 
@@ -31,7 +30,7 @@ import keisuke.util.PathDepthList;
 /**
  * Class of main procedure to account result of DiffCount
  */
-final class DiffMainProc extends AbstractMainProc {
+public final class DiffMainProc extends AbstractReportMainProc {
 
 	//private String[] statusArray = null;
 	private DiffStatusLabels statusText = null;
@@ -44,7 +43,7 @@ final class DiffMainProc extends AbstractMainProc {
 	private String moutfile = null; // 修正ファイルリスト出力ファイル
 	private String moutText = null;
 
-	protected DiffMainProc() {
+	public DiffMainProc() {
 		super();
 		this.createBindedFuncs(ProcedureType.DIFF_PROC);
 	}
@@ -52,48 +51,63 @@ final class DiffMainProc extends AbstractMainProc {
 	@Override
 	public void main(final String[] args) {
 		this.setArgMap(this.commandOption().makeMapOfOptions(args));
-		if (this.argMapEntity() == null) {
+		if (this.argMap() == null) {
 			return;
 		}
 		//this.argMap().debugMap();
-		String pfile = this.argMapEntity().get(OPT_PROP);
-		PropertyDefine propDef = new PropertyDefine();
-		if (pfile != null) {
-			propDef.customizePropertyDefine(pfile);
-		}
-		this.setColumnMap(propDef.getDiffProperties());
-		this.setMessageMap(propDef.getMessageProperties());
-		//this.columnMap().debugMap();
-		//this.messageMap().debugMap();
+		this.setSomeFromProperties(this.argMap().get(OPT_PROP));
 
-		String ctype = this.argMapEntity().get(OPT_CLASS);
-		if (ctype == null ||  !(ctype.equals(OPTVAL_LANGUAGE)
-				|| ctype.equals(OPTVAL_LANGGROUP)
-				|| ctype.startsWith(OPTVAL_FW))) {
+		String ctype = this.argMap().get(OPT_CLASS);
+		if (ctype == null) {
 			ctype = OPTVAL_EXTENSION;
+		} else if (!this.commandOption().valuesAs(OPT_CLASS).contains(ctype)) {
+			LogUtil.errorLog("'" + ctype + "' is invalid option value for '" + OPT_CLASS + "'.");
+			throw new IllegalArgumentException("invalid option value");
 		}
-		String xfile = this.argMapEntity().get(OPT_XML);
-		if (xfile != null) {
-			this.makeClassifier(ctype, xfile);
-		} else {
-			this.makeClassifier(ctype);
-		}
+		this.setClassifierFromXml(ctype, this.argMap().get(OPT_XML));
+		this.setAddedListFileName(this.argMap().get(OPT_AOUT));
+		this.setModifiedListFileName(this.argMap().get(OPT_MOUT));
+		this.setUnchangeMode(this.argMap().get(OPT_UNCHANGE));
+		this.setOutputFileName(this.argMap().get(OPT_OUT));
+		this.aggregateFrom(this.argMap().get(ARG_INPUT));
+	}
 
-		String infile = this.argMapEntity().get(ARG_INPUT);
+	/**
+	 * 追加リストを出力するファイル名を設定する
+	 * @param filename 追加リスト出力ファイル名
+	 */
+	public void setAddedListFileName(final String filename) {
+		this.aoutfile = filename;
+	}
 
-		String aout = this.argMapEntity().get(OPT_AOUT);
-		if (aout != null) {
-			this.aoutfile = aout;
-		}
-		String mout = this.argMapEntity().get(OPT_MOUT);
-		if (mout != null) {
-			this.moutfile = mout;
-		}
-		String unch = this.argMapEntity().get(OPT_UNCHANGE);
-		if (unch != null && !unch.equals(OPTVAL_DETAIL)) {
-			this.unchangeByLang = false;
-		}
+	/**
+	 * 変更リストを出力するファイル名を設定する
+	 * @param filename 変更リスト出力ファイル名
+	 */
+	public void setModifiedListFileName(final String filename) {
+		this.moutfile = filename;
+	}
 
+	/**
+	 * 変更なしファイルの集計モードを設定する
+	 * @param mode 変更なしファイルの集計モード( detail | total )
+	 */
+	public void setUnchangeMode(final String mode) {
+		if (mode != null) {
+			if (mode.equals(OPTVAL_TOTAL)) {
+				this.unchangeByLang = false;
+			} else if (!this.commandOption().valuesAs(OPT_UNCHANGE).contains(mode)) {
+				LogUtil.errorLog("'" + mode + "' is invalid option value for '" + OPT_UNCHANGE + "'.");
+				throw new IllegalArgumentException("invalid option value");
+			}
+		}
+	}
+
+	/**
+	 * 入力ファイルから集計した結果を出力する
+	 * @param infile 入力ファイル名
+	 */
+	public void aggregateFrom(final String infile) {
 		this.statusText = new DiffStatusLabelsImpl(this.messageMap());
 		prepareResultMap();
 		aggregateDiff(infile);

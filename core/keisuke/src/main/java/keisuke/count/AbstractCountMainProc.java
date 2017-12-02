@@ -3,23 +3,17 @@ package keisuke.count;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Map;
 
-import keisuke.ArgumentMap;
-import keisuke.CommandOption;
-import keisuke.MainProcedure;
+import keisuke.AbstractMainProc;
 
 /**
  * Abstract class for main procedure of counting command.
  */
-public abstract class AbstractCountMainProc implements MainProcedure {
+public abstract class AbstractCountMainProc extends AbstractMainProc {
 
-	private CommandOption commandOption = null;
-	private String[] argArray = null;
 	private OutputStream outputStream = System.out;
 	private String srcEncoding = System.getProperty("file.encoding");
 	private String xmlFileName = null;
-	private ArgumentMap argMap = null;
 
 	protected AbstractCountMainProc() { }
 
@@ -31,18 +25,16 @@ public abstract class AbstractCountMainProc implements MainProcedure {
 	public void main(final String[] args) {
 		// 引数処理
 		// オプション解析
-		this.setArgMap(this.commandOption.makeMapOfOptions(args));
+		this.setArgMap(this.commandOption().makeMapOfOptions(args));
 		if (this.argMap() == null) {
 			return;
 		}
 		// 引数で指定されたカウント対象を設定
-		this.argArray = this.commandOption.makeRestArgArray();
-		// コマンド毎の引数処理
 		try {
 			this.setFileArguments();
-		} catch (IllegalArgumentException e) {
+		} catch (IllegalArgumentException ex) {
 			this.commandOption().showUsage();
-			return;
+			throw ex;
 		}
 
 		try {
@@ -52,8 +44,10 @@ public abstract class AbstractCountMainProc implements MainProcedure {
 			this.executeCounting();
 			// 出力処理
 			this.writeResults();
-		} catch (Throwable t) {
-			t.printStackTrace();
+		} catch (FileNotFoundException fnfe) {
+			throw new RuntimeException("Output file error.", fnfe);
+		} catch (IOException ioe) {
+			throw new RuntimeException("Count error.", ioe);
 		} finally {
 			if (this.outputStream != null && this.outputStream != System.out) {
 				try {
@@ -88,30 +82,6 @@ public abstract class AbstractCountMainProc implements MainProcedure {
 	 * @throws IOException 出力時に異常があると発行
 	 */
 	protected abstract void writeResults() throws IOException;
-
-	/**
-	 * コマンドオプション処理のインスタンスを設定する
-	 * @param comOpt コマンドオプション処理のインスタンス
-	 */
-	protected void setCommandOption(final CommandOption comOpt) {
-		this.commandOption = comOpt;
-	}
-
-	/**
-	 * コマンドオプション処理のインスタンスを返す
-	 * @return コマンドオプション処理のインスタンス
-	 */
-	protected CommandOption commandOption() {
-		return this.commandOption;
-	}
-
-	/**
-	 * コマンドオプションを取り除いた残りの引数を格納した文字列配列を返す
-	 * @return 引数を格納した文字列配列
-	 */
-	protected String[] argArray() {
-		return this.argArray;
-	}
 
 	/**
 	 * ソースファイルのエンコード名をセット
@@ -161,30 +131,4 @@ public abstract class AbstractCountMainProc implements MainProcedure {
 		return this.outputStream;
 	}
 
-	/**
-	 * 引数解析結果のマップを設定する
-	 * @param map 引数解析結果のマップ
-	 */
-	protected void setArgMap(final ArgumentMap map) {
-		this.argMap = map;
-	}
-
-	/**
-	 * 引数解析結果のマップを返す
-	 * @return 引数解析結果のマップ
-	 */
-	protected ArgumentMap argMap() {
-		return this.argMap;
-	}
-
-	/**
-	 * テスト用　引数解析結果のマップを返す
-	 * @return 引数解析結果のマップの実体Map
-	 */
-	protected Map<String, String> argMapEntity() {
-		if (this.argMap == null) {
-			return null;
-		}
-		return this.argMap.getMap();
-	}
 }

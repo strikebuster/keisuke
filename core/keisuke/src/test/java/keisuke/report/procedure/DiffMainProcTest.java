@@ -1,5 +1,8 @@
 package keisuke.report.procedure;
 
+import keisuke.util.StderrCapture;
+import keisuke.util.StdoutCapture;
+
 import java.io.File;
 import java.net.URL;
 import org.junit.After;
@@ -8,16 +11,14 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import keisuke.util.StderrCapture;
-
-import static org.junit.Assert.assertFalse;
+import static keisuke.report.option.ReportOptionConstant.*;
 import static keisuke.util.TestUtil.*;
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.fail;
 
 /**
  * Test class of DiffProc.
- * @author strikebuster
  *
  */
 public class DiffMainProcTest {
@@ -26,6 +27,9 @@ public class DiffMainProcTest {
 
 	@After
 	public void tearDown() throws Exception { }
+
+	@Rule
+    public ExpectedException thrownEx = ExpectedException.none();
 
 	@Test
 	public void dealHelpOption() throws Exception {
@@ -42,15 +46,15 @@ public class DiffMainProcTest {
 		System.out.println("## DiffProcTest ## arg02 ## dealArgsWhichHaveAoutAndMoutOption ##");
 
 		DiffMainProc dproc = new DiffMainProc();
-		String[] args = {"-aout", "test/out/add02a.txt", "-mout", "test/out/modify02a.txt",
+		String[] args = {"-a", "test/out/add02a.txt", "-m", "test/out/modify02a.txt",
 				"test/data/dummy.txt"};
 		dproc.main(args);
 
 		final int expectedNumber = 3;
 		assertThat(dproc.argMapEntity().size(), is(greaterThanOrEqualTo(expectedNumber)));
-		assertThat(dproc.argMapEntity(), hasEntry("infile", "test/data/dummy.txt"));
-		assertThat(dproc.argMapEntity(), hasEntry("aout", "test/out/add02a.txt"));
-		assertThat(dproc.argMapEntity(), hasEntry("mout", "test/out/modify02a.txt"));
+		assertThat(dproc.argMapEntity(), hasEntry(ARG_INPUT, "test/data/dummy.txt"));
+		assertThat(dproc.argMapEntity(), hasEntry(OPT_AOUT, "test/out/add02a.txt"));
+		assertThat(dproc.argMapEntity(), hasEntry(OPT_MOUT, "test/out/modify02a.txt"));
 	}
 
 	@Test
@@ -58,39 +62,76 @@ public class DiffMainProcTest {
 		System.out.println("## DiffProcTest ## arg03 ## dealArgsWhichHavePropOption ##");
 
 		DiffMainProc dproc = new DiffMainProc();
-		String[] args = {"-prop", "test/data/ktest.properties", "test/data/dummy.txt"};
+		String[] args = {"-p", "test/data/ktest.properties", "test/data/dummy.txt"};
 		dproc.main(args);
 
 		assertThat(dproc.argMapEntity().size(), is(greaterThanOrEqualTo(2)));
-		assertThat(dproc.argMapEntity(), hasEntry("infile", "test/data/dummy.txt"));
-		assertThat(dproc.argMapEntity(), hasEntry("properties", "test/data/ktest.properties"));
+		assertThat(dproc.argMapEntity(), hasEntry(ARG_INPUT, "test/data/dummy.txt"));
+		assertThat(dproc.argMapEntity(), hasEntry(OPT_PROP, "test/data/ktest.properties"));
 	}
 
 	@Test
 	public void dealArgsWhichHaveUnchangeOptionButMissingValue() throws Exception {
 		System.out.println("## DiffProcTest ## arg04 ## dealArgsWhichHaveUnchangeOptionButMissingValue ##");
 
-		DiffMainProc dproc = new DiffMainProc();
-		String[] args = {"test/data/dummy.txt", "-unchange"};
-		dproc.main(args);
+		StdoutCapture capture = new StdoutCapture();
+		String outMessage = null;
+		Exception firedException = null;
+		String expected = "fail to parse";
 
+		DiffMainProc dproc = new DiffMainProc();
+		String[] args = {"test/data/dummy.txt", "-u"};
+		try {
+			dproc.main(args);
+		} catch (Exception e) {
+			firedException = e;
+		} finally {
+			outMessage = capture.getCapturedString();
+			capture.finish();
+		}
 		assertThat(dproc.argMapEntity(), is(nullValue()));
+		assertThat(outMessage, containsString("usage"));
+		if (firedException != null) {
+			assertThat(firedException.getMessage(), containsString(expected));
+		} else {
+			// Not reach here because exception is expected to be occured
+			fail("Should throw Exception : " + expected);
+		}
 	}
 
 	@Test
 	public void dealArgsWhichHaveUnchangeOptionButWrongValue() throws Exception {
 		System.out.println("## DiffProcTest ## arg05 ## dealArgsWhichHaveUnchangeOptionButWrongValue ##");
 
+		StderrCapture capture = new StderrCapture();
+		String errMessage = null;
+		Exception firedException = null;
+		String expected = "invalid option value";
+
 		DiffMainProc dproc = new DiffMainProc();
-		String[] args = {"-unchange", "xxx", "test/data/diff01.txt"};
-		dproc.main(args);
+		String[] args = {"--" + OPT_UNCHANGE, "xxx", "test/data/diff01.txt"};
+		try {
+			dproc.main(args);
+		} catch (Exception e) {
+			firedException = e;
+		} finally {
+			errMessage = capture.getCapturedString();
+			capture.finish();
+		}
 
 		final int expectedNumber = 4;
 		assertThat(dproc.argMapEntity().size(), is(greaterThanOrEqualTo(expectedNumber)));
-		assertThat(dproc.argMapEntity(), hasEntry("infile", "test/data/diff01.txt"));
-		assertThat(dproc.argMapEntity(), hasEntry("unchange", "xxx"));
-		assertThat(dproc.argMapEntity(), hasEntry("aout", null));
-		assertThat(dproc.argMapEntity(), hasEntry("mout", null));
+		assertThat(dproc.argMapEntity(), hasEntry(ARG_INPUT, "test/data/diff01.txt"));
+		assertThat(dproc.argMapEntity(), hasEntry(OPT_UNCHANGE, "xxx"));
+		assertThat(dproc.argMapEntity(), hasEntry(OPT_AOUT, null));
+		assertThat(dproc.argMapEntity(), hasEntry(OPT_MOUT, null));
+		assertThat(errMessage, containsString(expected));
+		if (firedException != null) {
+			assertThat(firedException.getMessage(), containsString(expected));
+		} else {
+			// Not reach here because exception is expected to be occured
+			fail("Should throw Exception : " + expected);
+		}
 	}
 
 	@Test
@@ -99,60 +140,93 @@ public class DiffMainProcTest {
 		URL expected = this.getClass().getResource("DiffTest_arg06.csv");
 
 		DiffMainProc dproc = new DiffMainProc();
-		String[] args = {"-unchange", "total", "test/data/diff01.txt"};
+		String[] args = {"-" + OPT_UNCHANGE, OPTVAL_TOTAL, "test/data/diff01.txt"};
 		dproc.main(args);
 
 		final int expectedNumber = 3;
 		assertThat(dproc.argMapEntity().size(), is(greaterThanOrEqualTo(expectedNumber)));
-		assertThat(dproc.argMapEntity(), hasEntry("infile", "test/data/diff01.txt"));
-		assertThat(dproc.argMapEntity(), hasEntry("unchange", "total"));
+		assertThat(dproc.argMapEntity(), hasEntry(ARG_INPUT, "test/data/diff01.txt"));
+		assertThat(dproc.argMapEntity(), hasEntry(OPT_UNCHANGE, OPTVAL_TOTAL));
 		assertThat(dproc.reportText(), is(equalTo(contentOf(expected))));
 	}
 
-	@Rule
-    public ExpectedException thrownEx = ExpectedException.none();
+	@Test
+	public void dealArgsWhichHaveClassOptionButWrongValue() throws Exception {
+		System.out.println("## DiffProcTest ## arg07 ## dealArgsWhichHaveClassOptionButWrongValue ##");
+
+		StderrCapture capture = new StderrCapture();
+		String errMessage = null;
+		Exception firedException = null;
+		String expected = "invalid option value";
+
+		DiffMainProc dproc = new DiffMainProc();
+		String[] args = {"-" + OPT_CLASS, "xxx", "test/data/diff01.txt"};
+		try {
+			dproc.main(args);
+		} catch (Exception e) {
+			firedException = e;
+		} finally {
+			errMessage = capture.getCapturedString();
+			capture.finish();
+		}
+		final int expectedNumber = 2;
+		assertThat(dproc.argMapEntity().size(), is(greaterThanOrEqualTo(expectedNumber)));
+		assertThat(dproc.argMapEntity(), hasEntry(ARG_INPUT, "test/data/diff01.txt"));
+		assertThat(dproc.argMapEntity(), hasEntry(OPT_CLASS, "xxx"));
+		assertThat(errMessage, containsString(expected));
+		if (firedException != null) {
+			assertThat(firedException.getMessage(), containsString(expected));
+		} else {
+			// Not reach here because exception is expected to be occured
+			fail("Should throw Exception : " + expected);
+		}
+	}
 
 	@Test
 	public void dealInfileWhichDoesNotExist() throws Exception {
 		System.out.println("## DiffProcTest ## error01 ## dealInfileWhichDoesNotExist ##");
+		String expected = "FileNotFoundException";
 		thrownEx.expect(RuntimeException.class);
-		thrownEx.expectMessage("FileNotFoundException");
+		thrownEx.expectMessage(expected);
 
 		DiffMainProc dproc = new DiffMainProc();
 		String[] args = {"test/data/nofile.txt"};
 		dproc.main(args);
 
 		// Not reach here because exception is expected to be occured
-		assertFalse(true);
+		fail("Should throw Exception : " + expected);
 	}
 
 	@Test
 	public void dealPropOptionWhichFileDoesNotExist() throws Exception {
 		System.out.println("## DiffProcTest ## error02 ## dealPropOptionWhichFileDoesNotExist ##");
+		String expected = "FileNotFoundException";
 		thrownEx.expect(RuntimeException.class);
-		thrownEx.expectMessage("FileNotFoundException");
+		thrownEx.expectMessage(expected);
 
 		DiffMainProc dproc = new DiffMainProc();
-		String[] args = {"test/data/diff01.txt", "-class", "extension", "-prop", "test/data/nofile.properties"};
+		String[] args = {"test/data/diff01.txt", "-c", OPTVAL_EXTENSION,
+				"-prop", "test/data/nofile.properties"};
 		dproc.main(args);
 
 		// Not reach here because exception is expected to be occured
-		assertFalse(true);
+		fail("Should throw Exception : " + expected);
 	}
 
 	@Test
 	public void dealXmlOptionWhichFileDoesNotExistAndClassOptionIsLanguage() throws Exception {
 		System.out.println(
 			"## DiffProcTest ## error03 ## dealXmlOptionWhichFileDoesNotExistAndClassOptionIsLanguage ##");
+		String expected = "FileNotFoundException";
 		thrownEx.expect(RuntimeException.class);
-		thrownEx.expectMessage("FileNotFoundException");
+		thrownEx.expectMessage(expected);
 
 		DiffMainProc dproc = new DiffMainProc();
-		String[] args = {"test/data/diff01.txt", "-class", "language", "-xml", "test/data/nofile.xml"};
+		String[] args = {"test/data/diff01.txt", "-class", OPTVAL_LANGUAGE, "-x", "test/data/nofile.xml"};
 		dproc.main(args);
 
 		// Not reach here because exception is expected to be occured
-		assertFalse(true);
+		fail("Should throw Exception : " + expected);
 	}
 
 	@Test
@@ -162,7 +236,8 @@ public class DiffMainProcTest {
 		URL expected = this.getClass().getResource("DiffTest_diff07.csv");
 
 		DiffMainProc dproc = new DiffMainProc();
-		String[] args = {"test/data/diff01.txt", "-class", "group", "-xml", "test/data/ktestf.xml"};
+		String[] args = {"test/data/diff01.txt", "--" + OPT_CLASS, OPTVAL_LANGGROUP,
+				"--" + OPT_XML, "test/data/ktestf.xml"};
 		dproc.main(args);
 
 		assertThat(dproc.reportText(), is(equalTo(contentOf(expected))));
@@ -170,18 +245,20 @@ public class DiffMainProcTest {
 
 	@Test
 	public void dealXmlOptionWhichFileDoesNotExistAndClassOptionIsFw() throws Exception {
-		System.out.println(
-			"## DiffProcTest ## error05 ## dealXmlOptionWhichFileDoesNotExistAndClassOptionIsFw ##");
+		System.out.println("## DiffProcTest ## error05 ## "
+				+ "dealXmlOptionWhichFileDoesNotExistAndClassOptionIsFw ##");
 		//URL expected = this.getClass().getResource("DiffTest_diff20.csv");
+		String expected = "FileNotFoundException";
 		thrownEx.expect(RuntimeException.class);
-		thrownEx.expectMessage("FileNotFoundException");
+		thrownEx.expectMessage(expected);
 
 		DiffMainProc dproc = new DiffMainProc();
-		String[] args = {"-class", "fw:struts", "-xml", "test/data/nofile.xml", "test/data/diff01.txt"};
+		String[] args = {"-" + OPT_CLASS, OPTVAL_FW + "struts", "-" + OPT_XML, "test/data/nofile.xml",
+				"test/data/diff01.txt"};
 		dproc.main(args);
 
 		// Not reach here because exception is expected to be occured
-		assertFalse(true);
+		fail("Should throw Exception : " + expected);
 	}
 
 	@Test
@@ -194,7 +271,7 @@ public class DiffMainProcTest {
 		URL expected = this.getClass().getResource("DiffTest_error06.csv");
 
 		DiffMainProc dproc = new DiffMainProc();
-		String[] args = {"-class", "fw:rails", "-xml", "test/data/ktestl.xml", "test/data/diff01.txt"};
+		String[] args = {"-c", OPTVAL_FW + "rails", "-x", "test/data/ktestl.xml", "test/data/diff01.txt"};
 		dproc.main(args);
 
 		assertThat(dproc.reportText(), is(equalTo(contentOf(expected))));
@@ -214,7 +291,7 @@ public class DiffMainProcTest {
 		URL expected = this.getClass().getResource("DiffTest_error06.csv");
 
 		DiffMainProc dproc = new DiffMainProc();
-		String[] args = {"-class", "fw:spring", "-xml", "test/data/ktestf.xml", "test/data/diff01.txt"};
+		String[] args = {"-c", OPTVAL_FW + "spring", "-x", "test/data/ktestf.xml", "test/data/diff01.txt"};
 		dproc.main(args);
 
 		assertThat(dproc.reportText(), is(equalTo(contentOf(expected))));
@@ -254,7 +331,7 @@ public class DiffMainProcTest {
 		URL expected = this.getClass().getResource("DiffTest_diff03.txt");
 
 		DiffMainProc dproc = new DiffMainProc();
-		String[] args = {"-aout", "test/out/add03.txt", "test/data/diff01.txt"};
+		String[] args = {"--" + OPT_AOUT, "test/out/add03.txt", "test/data/diff01.txt"};
 		dproc.main(args);
 
 		File actual = new File("test/out/add03.txt");
@@ -267,7 +344,7 @@ public class DiffMainProcTest {
 		URL expected = this.getClass().getResource("DiffTest_diff04.txt");
 
 		DiffMainProc dproc = new DiffMainProc();
-		String[] args = {"-aout", "test/out/add04.txt", "-mout", "test/out/modify04.txt",
+		String[] args = {"-" + OPT_AOUT, "test/out/add04.txt", "--" + OPT_MOUT, "test/out/modify04.txt",
 			"test/data/diff01.txt"};
 		dproc.main(args);
 
@@ -281,7 +358,8 @@ public class DiffMainProcTest {
 		URL expected = this.getClass().getResource("DiffTest_diff05.csv");
 
 		DiffMainProc dproc = new DiffMainProc();
-		String[] args = {"test/data/diff01.txt", "-class", "xxx", "-prop", "test/data/ktest.properties"};
+		String[] args = {"test/data/diff01.txt", "-c", "extension", "--" + OPT_PROP,
+				"test/data/ktest.properties"};
 		dproc.main(args);
 
 		assertThat(dproc.reportText(), is(equalTo(contentOf(expected))));
@@ -293,7 +371,7 @@ public class DiffMainProcTest {
 		URL expected = this.getClass().getResource("DiffTest_diff06.csv");
 
 		DiffMainProc dproc = new DiffMainProc();
-		String[] args = {"test/data/diff01.txt", "-class", "language"};
+		String[] args = {"test/data/diff01.txt", "-c", OPTVAL_LANGUAGE};
 		dproc.main(args);
 
 		assertThat(dproc.reportText(), is(equalTo(contentOf(expected))));
@@ -305,7 +383,7 @@ public class DiffMainProcTest {
 		URL expected = this.getClass().getResource("DiffTest_diff07.csv");
 
 		DiffMainProc dproc = new DiffMainProc();
-		String[] args = {"-class", "group", "test/data/diff01.txt"};
+		String[] args = {"-c", OPTVAL_LANGGROUP, "test/data/diff01.txt"};
 		dproc.main(args);
 
 		assertThat(dproc.reportText(), is(equalTo(contentOf(expected))));
@@ -318,7 +396,7 @@ public class DiffMainProcTest {
 		URL expected = this.getClass().getResource("DiffTest_diff08.csv");
 
 		DiffMainProc dproc = new DiffMainProc();
-		String[] args = {"test/data/diff01.txt", "-xml", "test/data/ktestl.xml", "-class", "language"};
+		String[] args = {"test/data/diff01.txt", "-x", "test/data/ktestl.xml", "-c", OPTVAL_LANGUAGE};
 		dproc.main(args);
 
 		assertThat(dproc.reportText(), is(equalTo(contentOf(expected))));
@@ -331,7 +409,7 @@ public class DiffMainProcTest {
 		URL expected = this.getClass().getResource("DiffTest_diff09.csv");
 
 		DiffMainProc dproc = new DiffMainProc();
-		String[] args = {"-xml", "test/data/ktestl.xml", "-class", "group", "test/data/diff01.txt"};
+		String[] args = {"-x", "test/data/ktestl.xml", "-c", OPTVAL_LANGGROUP, "test/data/diff01.txt"};
 		dproc.main(args);
 
 		assertThat(dproc.reportText(), is(equalTo(contentOf(expected))));
@@ -343,7 +421,7 @@ public class DiffMainProcTest {
 		URL expected = this.getClass().getResource("DiffTest_diff20.csv");
 
 		DiffMainProc dproc = new DiffMainProc();
-		String[] args = {"-class", "fw:ow", "-xml", "test/data/ktestf2.xml", "test/data/diff01.txt"};
+		String[] args = {"-c", OPTVAL_FW + "ow", "-x", "test/data/ktestf2.xml", "test/data/diff01.txt"};
 		dproc.main(args);
 
 		assertThat(dproc.reportText(), is(equalTo(contentOf(expected))));
@@ -356,7 +434,7 @@ public class DiffMainProcTest {
 		URL expected = this.getClass().getResource("DiffTest_diff21.csv");
 
 		DiffMainProc dproc = new DiffMainProc();
-		String[] args = {"-xml", "test/data/ktestf.xml", "-class", "fw:ow", "test/data/diff01.txt"};
+		String[] args = {"-x", "test/data/ktestf.xml", "-c", OPTVAL_FW + "ow", "test/data/diff01.txt"};
 		dproc.main(args);
 
 		assertThat(dproc.reportText(), is(equalTo(contentOf(expected))));
@@ -368,7 +446,7 @@ public class DiffMainProcTest {
 		URL expected = this.getClass().getResource("DiffTest_diff22.csv");
 
 		DiffMainProc dproc = new DiffMainProc();
-		String[] args = {"-class", "fw:o3w", "-xml", "test/data/ktestf2.xml", "test/data/diff01.txt"};
+		String[] args = {"-c", OPTVAL_FW + "o3w", "-x", "test/data/ktestf2.xml", "test/data/diff01.txt"};
 		dproc.main(args);
 
 		assertThat(dproc.reportText(), is(equalTo(contentOf(expected))));
@@ -380,7 +458,7 @@ public class DiffMainProcTest {
 		URL expected = this.getClass().getResource("DiffTest_diff23.csv");
 
 		DiffMainProc dproc = new DiffMainProc();
-		String[] args = {"-class", "fw:struts", "test/data/diff01.txt"};
+		String[] args = {"-c", OPTVAL_FW + "struts", "test/data/diff01.txt"};
 		dproc.main(args);
 
 		assertThat(dproc.reportText(), is(equalTo(contentOf(expected))));

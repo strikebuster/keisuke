@@ -5,6 +5,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
+import java.io.File;
 import java.net.URL;
 
 import org.junit.After;
@@ -29,13 +30,28 @@ public class DiffReportTest {
 		URL expected = this.getClass().getResource("report/procedure/DiffTest_diff01.csv");
 
 		StdoutCapture capture = new StdoutCapture();
+		String outMessage = null;
 
 		String[] args = {"test/data/diff01.txt"};
-		DiffReport.main(args);
+		try {
+			DiffReport.main(args);
+		} finally {
+			outMessage = capture.getCapturedString();
+			capture.finish();
+		}
 
-		String outMessage = capture.getCapturedString();
-		capture.finish();
 		assertThat(outMessage, is(equalTo(contentOf(expected))));
 	}
 
+	@Test
+	public void accountUsingDefaultAndOutOption() throws Exception {
+		System.out.println("## DiffReportTest ## diff02 ## accountUsingDefaultAndOutOption ##");
+		URL expected = this.getClass().getResource("report/procedure/DiffTest_diff01.csv");
+
+		String[] args = {"test/data/diff01.txt", "-out", "test/out/diffrep02.csv"};
+		DiffReport.main(args);
+
+		File actual = new File("test/out/diffrep02.csv");
+		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+	}
 }

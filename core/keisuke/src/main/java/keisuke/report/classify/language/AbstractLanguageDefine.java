@@ -53,7 +53,7 @@ public abstract class AbstractLanguageDefine {
 	 */
 	protected void initialize() {
 		if (this.langDefineFactory == null) {
-			throw new RuntimeException("!! langDefineFactory is not created by calling init().");
+			throw new RuntimeException("langDefineFactory is not created by calling init().");
 		}
 		try {
 			this.langDefine = this.langDefineFactory.createXmlLanguageDefine();
@@ -63,7 +63,8 @@ public abstract class AbstractLanguageDefine {
 			this.extLangMap = this.langDefine.createLanguageMapBy(uriStr);
 			//this.extLangMap.debugMap();
 		} catch (Exception ex) {
-			throw new RuntimeException(ex);
+			LogUtil.errorLog("LanguageDefine initialize error");
+			throw new RuntimeException("LanguageDefine initialize error", ex);
 		}
 	}
 
@@ -78,10 +79,4 @@ public abstract class AbstractLanguageDefine {
 		//this.extLangMap.debugMap();
 	}
 
-	/**
-	 * LogUtilのインポートを正当化するためのダミー
-	 */
-	static void noUsingDummy() {
-		LogUtil.warningLog("This must not be called, because dummy");
-	}
 }
