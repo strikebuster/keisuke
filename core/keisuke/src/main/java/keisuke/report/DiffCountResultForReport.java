@@ -4,6 +4,7 @@ import static keisuke.report.property.PropertyConstant.*;
 
 import keisuke.DiffCountResult;
 import keisuke.util.LogUtil;
+import keisuke.util.NumberUtil;
 
 /**
  * Account element for result of DiffCount.
@@ -121,8 +122,8 @@ public class DiffCountResultForReport extends DiffCountResult implements CountRe
         	String stradd = strarray[0];
         	String strdel = strarray[1];
         	try {
-        		numadd = Long.parseLong(stradd);
-        		numdel = Long.parseLong(strdel) * -1;
+        		numadd = NumberUtil.parseLong(stradd);
+        		numdel = NumberUtil.parseLong(strdel) * -1;
         	} catch (NumberFormatException e) {
         		LogUtil.warningLog("NumberFormatException at " + line);
         		throw new IllegalFormattedLineException("fail to parse integer.");

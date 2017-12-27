@@ -119,9 +119,7 @@
       </fileset>
     </StepCountTask>
     <!-- 計測結果集計 -->
-    <!--
     <CountReportTask classify="${CLASSIFY}" input="${IFFILE04}" output="${OUTFILE04}" />
-    -->
   </target>
 
   <!-- ＝＝＝(5)改修母体PGMのカウント＝＝＝ -->
@@ -136,7 +134,7 @@
   <!-- StepCount計測結果から修正ファイルのみ抽出したI/Fファイル -->
   <property name="IFFILE05" value="_count_modify_old.csv" />
   <!-- 計測結果レポートファイル -->
-  <property name="OUTFILE05" value="04_改修母体規模.csv" />
+  <property name="OUTFILE05" value="05_改修母体規模.csv" />
 
   <target name="ExtractModified" if="OLDSRCROOT" >
     <!-- 計測結果ファイルをソート -->
