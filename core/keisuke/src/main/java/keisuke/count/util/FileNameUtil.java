@@ -1,6 +1,7 @@
 package keisuke.count.util;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -43,27 +44,42 @@ public final class FileNameUtil {
 		return false;
 	}
 
+	/* ファイルパス処理用の変数と初期化処理 */
+	private static String[] fsRootPaths;
+	private static File[] fsRootDirs = File.listRoots();
+	static {
+		fsRootPaths = new String[fsRootDirs.length];
+		for (int i = 0; i < fsRootDirs.length; i++) {
+			try {
+				fsRootPaths[i] = fsRootDirs[i].getCanonicalPath().replace('\\', '/');
+			} catch (IOException ex) {
+				fsRootPaths[i] = "";
+			}
+		}
+	}
+
 	/**
 	 * ファイル名の絶対パスを基点ディレクトリ名からの相対パスにして返す
 	 * 相対パスに基点ディレクトリは含まれない
 	 *
 	 * @param fullPath ファイル名の絶対パス
-	 * @param baseName 基点ディレクトリ名
+	 * @param basePath 基点ディレクトリの絶対パス
 	 * @return ファイル名の相対パス
 	 */
-	public static String getRelativePath(final String fullPath, final String baseName) {
-		if (fullPath == null) {
-			return "";
+	public static String getRelativePath(final String fullPath, final String basePath) {
+		String noGoodValue = checkPathArgs(fullPath, basePath);
+		if (noGoodValue != null) {
+			return noGoodValue;
 		}
-		String keyword = getStringToSearchBase(baseName);
-		if (keyword == null) {
+		if (isRootDirectory(basePath)) {
+			// 基点がルートディレクトリなので処理が特別
+			return fullPath.substring(basePath.length());
+		} else if (fullPath.charAt(basePath.length()) == '/') {
+			return fullPath.substring(basePath.length() + 1);
+		} else {
+			// 正常ではないのでファイルの絶対パスを返す
 			return fullPath;
 		}
-		int pos = fullPath.indexOf(keyword);
-		if (pos < 0) {
-			return fullPath;
-		}
-		return fullPath.substring(pos + keyword.length());
 	}
 
 	/**
@@ -71,57 +87,167 @@ public final class FileNameUtil {
 	 * 部分パスには基点ディレクトリ名を含む
 	 *
 	 * @param fullPath ファイル名の絶対パス
-	 * @param baseName 基点ディレクトリ名
+	 * @param basePath 基点ディレクトリの絶対パス
 	 * @return ファイル名の相対パス
 	 */
-	public static String getSubPathFromBottomOfBase(final String fullPath, final String baseName) {
-		if (fullPath == null) {
-			return "";
+	public static String getSubPathFromBottomOfBase(final String fullPath, final String basePath) {
+		String noGoodValue = checkPathArgs(fullPath, basePath);
+		if (noGoodValue != null) {
+			return noGoodValue;
 		}
-		String keyword = getStringToSearchBase(baseName);
-		if (keyword == null) {
+		if (isRootDirectory(basePath)) {
+			// 基点がルートディレクトリなので処理が特別
+			return fullPath.substring(basePath.length() - 1);
+		} else if (fullPath.charAt(basePath.length()) == '/') {
+			StringBuffer sb = new StringBuffer();
+			int pos2 = basePath.lastIndexOf('/');
+			if (pos2 >= 0) {
+				sb.append(basePath.substring(pos2));
+			}
+			return sb.append(fullPath.substring(basePath.length())).toString();
+		} else {
+			// 正常ではないのでファイルの絶対パスを返す
 			return fullPath;
 		}
-		int pos = fullPath.lastIndexOf(keyword);
-		if (pos < 0) {
-			return fullPath;
-		}
-		int pos2 = keyword.substring(0, keyword.length() - 1).lastIndexOf('/');
-		return fullPath.substring(pos + pos2);
 	}
 
 	/**
 	 * ファイル名の絶対パスから基点ディレクトリ名以下の部分パスを返す
-	 * 部分パスには基点ディレクトリ名を含む
+	 * 部分パスには基点ディレクトリ名全てを含む
 	 *
 	 * @param fullPath ファイル名の絶対パス
-	 * @param baseName 基点ディレクトリ名
+	 * @param basePath 基点ディレクトリの絶対パス
+	 * @param currentPath カレントディレクトリの絶対パス
 	 * @return ファイル名の相対パス
 	 */
-	public static String getSubPathFromTopOfBase(final String fullPath, final String baseName) {
-		if (fullPath == null) {
-			return "";
-		}
-		String keyword = getStringToSearchBase(baseName);
-		if (keyword == null) {
-			return fullPath;
-		}
-		int pos = fullPath.lastIndexOf(keyword);
-		if (pos < 0) {
-			return fullPath;
-		}
-		return fullPath.substring(pos);
-	}
-
-	private static String getStringToSearchBase(final String baseName) {
-		if (baseName == null || baseName.isEmpty()) {
-			return null;
+	public static String getSubPathFromTopOfBase(final String fullPath, final String basePath,
+			final String currentPath) {
+		String noGoodValue = checkPathArgs(fullPath, basePath);
+		if (noGoodValue != null) {
+			return noGoodValue;
 		}
 		StringBuffer sb = new StringBuffer();
-		if (baseName.charAt(0) != '/') {
-			sb.append('/');
+		sb.append(getRelativeForefatherPath(basePath, currentPath));
+		if (isRootDirectory(basePath)) {
+			// 基点がルートディレクトリなので処理が特別
+			sb.append(fullPath.substring(basePath.length()));
+		} else if (fullPath.charAt(basePath.length()) == '/') {
+			sb.append(fullPath.substring(basePath.length() + 1));
+		} else {
+			// 正常ではないのでファイルの絶対パスを返す
+			return fullPath;
 		}
-		sb.append(baseName).append('/');
+		return sb.toString();
+	}
+
+	private static String checkPathArgs(final String fullPath, final String basePath) {
+		if (fullPath == null || fullPath.isEmpty()) {
+			return "";
+		}
+		if (basePath == null || basePath.isEmpty()) {
+			return fullPath;
+		}
+		int pos = fullPath.indexOf(basePath);
+		// 正常な値の組み合わせでない場合はファイルの絶対パスを返す
+		if (pos != 0) {
+			return fullPath;
+		} else if (fullPath.length() == basePath.length()) {
+			return fullPath;
+		}
+		// 正常な場合にはnullを返す
+		return null;
+	}
+
+	private static boolean isRootDirectory(final String path) {
+		if (path == null || path.isEmpty()) {
+			return false;
+		}
+		for (int i = 0; i < fsRootPaths.length; i++) {
+			if (path.equals(fsRootPaths[i])) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * カレントディレクトリから対象の基点ディレクトリの相対パスを返す
+	 * @param targetPath 対象の基点ディレクトリの絶対パス文字列
+	 * @param currentPath カレントディレクトリの絶対パス文字列
+	 * @return カレントディレクトリからの基点ディレクトリの相対パス文字列
+	 */
+	private static String getRelativeForefatherPath(final String targetPath, final String currentPath) {
+		if (targetPath == null || targetPath.isEmpty()) {
+			return "";
+		}
+		if (currentPath == null || currentPath.isEmpty()) {
+			return targetPath + "/";
+		}
+		if (isRootDirectory(currentPath)) {
+			if (targetPath.startsWith(currentPath)) {
+				return targetPath.substring(currentPath.length()) + "/";
+			} else {
+				// Windowsでドライブが異なる場合はこちら
+				return targetPath + "/";
+			}
+		}
+		if (isRootDirectory(targetPath)) {
+			if (!currentPath.startsWith(targetPath)) {
+				// Windowsでドライブが異なる場合
+				return targetPath + "/";
+			}
+		}
+		String[] targetDirs = targetPath.split("/");
+		if (targetDirs.length == 0) {
+			// targetPath == "/"
+			targetDirs = new String[1];
+			targetDirs[0] = "";
+		}
+		/*
+		System.out.print("target: ");
+		for (int i = 0; i < targetDirs.length; i++) {
+			System.out.print("[" + targetDirs[i] + "]");
+		}
+		System.out.println(" len=" + targetDirs.length);
+		*/
+
+		String[] currentDirs = currentPath.split("/");
+		/*
+		System.out.print("current: ");
+		for (int i = 0; i < currentDirs.length; i++) {
+			System.out.print("[" + currentDirs[i] + "]");
+		}
+		System.out.println(" len=" + currentDirs.length);
+		*/
+
+		int idx = -1;
+		int limit = currentDirs.length;
+		if (limit > targetDirs.length) {
+			limit = targetDirs.length;
+		}
+		for (int i = 0; i < limit; i++) {
+			if (!currentDirs[i].equals(targetDirs[i])) {
+				idx = i;
+				break;
+			}
+		}
+		if (idx == -1) {
+			if (currentDirs.length < targetDirs.length) {
+				// targetPathはcurrentPathの下位
+				idx = currentDirs.length;
+			} else {
+				// targetPathはcurrentPathの上位か同一
+				idx = targetDirs.length;
+			}
+		}
+		StringBuffer sb = new StringBuffer();
+		for (int i = idx; i < currentDirs.length; i++) {
+			sb.append("../");
+		}
+		for (int i = idx; i < targetDirs.length; i++) {
+			sb.append(targetDirs[i]).append('/');
+		}
+		//System.out.println("relative: " + sb.toString());
 		return sb.toString();
 	}
 

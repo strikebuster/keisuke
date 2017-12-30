@@ -75,10 +75,10 @@ class StepCountFunction {
 				// showDirectory用にパス情報を記録しておく
 				if (file.isDirectory()) {
 					// 基点ディレクトリを記録
-					result.setBaseName(fullpath);
+					result.setBaseDirPath(fullpath);
 				} else {
 					// ファイル指定パスを記録
-					result.setSpecifiedPath(path.replace('\\', '/'));
+					result.setSpecifiedFilePath(path.replace('\\', '/'));
 				}
 				list.add(result);
 			}

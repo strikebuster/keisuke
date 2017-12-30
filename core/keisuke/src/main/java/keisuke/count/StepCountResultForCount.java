@@ -11,8 +11,8 @@ import keisuke.count.util.FileNameUtil;
 public class StepCountResultForCount extends StepCountResult {
 
 	private File file;
-	private String baseName = null;
-	private String specifiedPath = null;
+	private String baseDirPath = null;
+	private String specifiedFilePath = null;
 
 	public StepCountResultForCount() { }
 
@@ -35,28 +35,31 @@ public class StepCountResultForCount extends StepCountResult {
 	}
 
 	/**
-	 * 指定された基点ディレクトリを設定する
-	 * @param name 相対パスの基点ディレクトリ
+	 * 指定された基点ディレクトリの絶対パスを設定する
+	 * @param path 基点ディレクトリの絶対パス文字列
 	 */
-	public void setBaseName(final String name) {
-		this.baseName = name;
+	public void setBaseDirPath(final String path) {
+		this.baseDirPath = path;
 	}
 
 	/**
 	 * 指定されたファイルパスを設定する
-	 * @param path ファイルパス名
+	 * 絶対パスと相対パスのいずれでもよく、指定された通りの文字列のまま設定する
+	 * @param path ファイルパス名文字列
 	 */
-	public void setSpecifiedPath(final String path) {
-		this.specifiedPath = path;
+	public void setSpecifiedFilePath(final String path) {
+		this.specifiedFilePath = path;
 	}
 
 	/**
-	 * 指定された基点ディレクトリを返す
-	 * @return 相対パスの基点ディレクトリ
+	 * 計測対象ファイルの基点ディレクトリ名からの相対パス文字列を返す
+	 * パスには基点ディレクトリ自身を含む
+	 * @return 相対パス文字列
 	 */
 	public String getSubPathFromBase() {
-		if (this.specifiedPath != null) {
-			return this.specifiedPath;
+		//ファイルパス指定がある場合はそれを優先
+		if (this.specifiedFilePath != null) {
+			return this.specifiedFilePath;
 		}
 		String path = null;
 		try {
@@ -64,9 +67,16 @@ public class StepCountResultForCount extends StepCountResult {
 		} catch (Exception e) {
 			return "*fail to get path*/" + this.filePath();
 		}
-		if (this.baseName == null) {
+		if (this.baseDirPath == null) {
 			return path;
 		}
-		return FileNameUtil.getSubPathFromBottomOfBase(path, this.baseName);
+		return FileNameUtil.getSubPathFromBottomOfBase(path, this.baseDirPath);
+	}
+
+	/**
+	 * 計測対象ファイルの基点ディレクトリ名からの相対パス文字列をファイルパスに設定する
+	 */
+	public void setFilePathAsSubPathFromBase() {
+		this.setFilePath(this.getSubPathFromBase());
 	}
 }

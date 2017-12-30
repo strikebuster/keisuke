@@ -98,4 +98,7 @@ public class TestUtil {
 		return sb.toString();
 	}
 
+	public static String nameOfSystemOS() {
+		return System.getProperty("os.name");
+	}
 }

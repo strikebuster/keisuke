@@ -143,7 +143,7 @@ public class StepCountTask extends AbstractCountTask {
 
 	    	for (ResourceCollection resource : this.resourceCollections) {
 		    	File baseDir = null;
-		    	String basePath = null;
+		    	String baseFullPath = null;
 		    	FileList fileList = null;
 		    	FileSet fileSet = null;
 
@@ -169,7 +169,7 @@ public class StepCountTask extends AbstractCountTask {
 	    		}
 	    		try {
 					if (this.showDirectory) {
-						basePath = baseDir.getCanonicalPath().replace('\\', '/');
+						baseFullPath = baseDir.getCanonicalPath().replace('\\', '/');
 					}
 				} catch (IOException e) {
 					if (this.failonerror) {
@@ -209,9 +209,9 @@ public class StepCountTask extends AbstractCountTask {
 	    				file = new File(baseDir, name);
 	    				StepCountResultForCount result = this.count(file);
 	    				if (this.showDirectory) {
-	    					result.setBaseName(basePath);
+	    					result.setBaseDirPath(baseFullPath);
 	    					// filelist|filesetのdir指定ディレクトリからのファイルパスに上書きします。
-	    					result.setFilePath(result.getSubPathFromBase());
+	    					result.setFilePathAsSubPathFromBase();
 	    				}
 	    				if (directoryAsCategory) {
 	    					result.setSourceCategory(baseDir.getName());
