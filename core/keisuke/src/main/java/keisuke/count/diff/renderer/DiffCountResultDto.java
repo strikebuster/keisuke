@@ -1,5 +1,6 @@
 package keisuke.count.diff.renderer;
 
+import keisuke.DiffStatusLabels;
 import keisuke.count.diff.DiffFileResult;
 
 /**
@@ -8,12 +9,15 @@ import keisuke.count.diff.DiffFileResult;
  */
 public class DiffCountResultDto extends DiffFileResult implements DiffResultCompatible {
 
-	public DiffCountResultDto(final DiffFileResult result) {
-		super(result.nodeName(), result.status(), result.getParent(), result.getDiffStatusLabel());
+	private String statusText = null;
+
+	public DiffCountResultDto(final DiffFileResult result, final DiffStatusLabels statusLabels) {
+		super(result.nodeName(), result.status(), result.getParent());
 		this.setFilePath(result.pathFromTop());
 		this.setSourceType(result.sourceType());
 		this.setSourceCategory(result.sourceCategory());
 		this.setSteps(result.addedSteps(), result.deletedSteps());
+		this.statusText = statusLabels.getLabelOf(result.status());
 	}
 
 	/** {@inheritDoc} */
@@ -28,7 +32,7 @@ public class DiffCountResultDto extends DiffFileResult implements DiffResultComp
 
 	/** {@inheritDoc} */
 	public String getStatus() {
-		return super.getStatusLabel();
+		return this.statusText;
 	}
 
 	/** {@inheritDoc} */

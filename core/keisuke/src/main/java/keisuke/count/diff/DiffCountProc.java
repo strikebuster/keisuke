@@ -10,9 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 
-import keisuke.DiffStatusLabelsImpl;
 import keisuke.count.AbstractCountMainProc;
-
 import keisuke.count.diff.renderer.RendererFactory;
 import keisuke.count.option.DiffCountOption;
 import keisuke.report.property.MessageDefine;
@@ -97,8 +95,7 @@ public class DiffCountProc extends AbstractCountMainProc {
 	 */
 	protected void executeCounting() throws IOException {
 		this.msgDef = new MessageDefine(MSG_DIFF_PREFIXES);
-		DiffCountFunction diffcounter = new DiffCountFunction(this.sourceEncoding(), this.xmlFileName(),
-				new DiffStatusLabelsImpl(this.msgDef));
+		DiffCountFunction diffcounter = new DiffCountFunction(this.sourceEncoding(), this.xmlFileName());
 		this.diffResult = diffcounter.countDiffBetween(this.oldSrcdir, this.srcdir);
 	}
 

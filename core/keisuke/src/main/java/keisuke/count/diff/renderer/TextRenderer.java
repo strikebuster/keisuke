@@ -18,11 +18,11 @@ public class TextRenderer extends AbstractRenderer {
 	/** {@inheritDoc} */
 	public byte[] render(final DiffFolderResult result) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(this.messageMap().get(MSG_DIFF_RND_TIME));
+		sb.append(this.getMessageText(MSG_DIFF_RND_TIME));
 		sb.append("：");
 		sb.append(DateUtil.formatDate(new Date())).append("\n");
 		sb.append("--\n");
-		sb.append(getTextLineAbout(result, 0));
+		sb.append(this.getTextLineAbout(result, 0));
 		return sb.toString().getBytes();
 	}
 
@@ -32,11 +32,11 @@ public class TextRenderer extends AbstractRenderer {
 	 * @param nest ルートからの階層数
 	 * @return 表示用テキスト
 	 */
-	protected static String getTextLineAbout(final AbstractDiffResultForCount result, final int nest) {
+	protected String getTextLineAbout(final AbstractDiffResultForCount result, final int nest) {
 		if (result instanceof DiffFolderResult) {
-			return getTextLineAbout((DiffFolderResult) result, nest);
+			return this.getTextLineAbout((DiffFolderResult) result, nest);
 		} else if (result instanceof DiffFileResult) {
-			return getTextLineAbout((DiffFileResult) result, nest);
+			return this.getTextLineAbout((DiffFileResult) result, nest);
 		}
 		return "";
 	}
@@ -47,19 +47,19 @@ public class TextRenderer extends AbstractRenderer {
 	 * @param nest ルートからの階層数
 	 * @return 表示用テキスト
 	 */
-	protected static String getTextLineAbout(final DiffFolderResult result, final int nest) {
-		result.evaluateChildren(); // 子供を評価して自身の値を確定する
+	protected String getTextLineAbout(final DiffFolderResult result, final int nest) {
+		//result.evaluateChildren(); // 子供を評価して自身の値を確定する
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < nest; i++) {
 			sb.append(" ");
 		}
 		sb.append(result.nodeName()).append("/");
-		sb.append("[").append(result.getStatusLabel()).append("]");
+		sb.append("[").append(this.getStatusLabelOf(result.status())).append("]");
 		sb.append(" +").append(result.addedSteps());
 		sb.append(" -").append(result.deletedSteps()).append("\n");
 
 		for (AbstractDiffResultForCount obj : result.getSortedChildren()) {
-			sb.append(getTextLineAbout(obj, nest + 1));
+			sb.append(this.getTextLineAbout(obj, nest + 1));
 		}
 		return sb.toString();
 	}
@@ -70,13 +70,13 @@ public class TextRenderer extends AbstractRenderer {
 	 * @param nest ルートからの階層数
 	 * @return 表示用テキスト
 	 */
-	protected static String getTextLineAbout(final DiffFileResult result, final int nest) {
+	protected String getTextLineAbout(final DiffFileResult result, final int nest) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < nest; i++) {
 			sb.append(" ");
 		}
 		sb.append(result.nodeName());
-		sb.append("[").append(result.getStatusLabel()).append("]");
+		sb.append("[").append(this.getStatusLabelOf(result.status())).append("]");
 		sb.append(" +").append(result.addedSteps());
 		sb.append(" -").append(result.deletedSteps());
 		sb.append("\n");

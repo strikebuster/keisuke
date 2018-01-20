@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import keisuke.DiffStatusEnum;
-import keisuke.DiffStatusLabels;
+import keisuke.util.LogUtil;
 
 /**
  * ディレクトリの差分変更結果を示すオブジェクトです。
@@ -22,10 +22,9 @@ public class DiffFolderResult extends AbstractDiffResultForCount {
 	/**
 	 * 親フォルダーを指定するコンストラクタ
 	 * @param parent 親フォルダーの差分計測結果インスタンス
-	 * @param statusLabels 差分変更ステータスの表示文言定義インスタンス
 	 */
-	public DiffFolderResult(final DiffFolderResult parent, final DiffStatusLabels statusLabels) {
-		super(parent, statusLabels);
+	public DiffFolderResult(final DiffFolderResult parent) {
+		super(parent);
 		this.setIsFile(false);
 	}
 
@@ -34,11 +33,10 @@ public class DiffFolderResult extends AbstractDiffResultForCount {
 	 * @param name ノード名
 	 * @param status 差分変更ステータス値
 	 * @param parent 親フォルダーの差分計測結果インスタンス
-	 * @param statusLabels 差分変更ステータスの表示文言定義インスタンス
 	 */
 	public DiffFolderResult(final String name, final DiffStatusEnum status,
-			final DiffFolderResult parent, final DiffStatusLabels statusLabels) {
-		super(name, status, parent, statusLabels);
+			final DiffFolderResult parent) {
+		super(name, status, parent);
 		this.setIsFile(false);
 	}
 
@@ -74,7 +72,7 @@ public class DiffFolderResult extends AbstractDiffResultForCount {
 	 * 子要素をスキャンして下位の変更ステータスと差分行数を評価して
 	 * 自身の変更ステータスと差分行数を設定する
 	 */
-	public void evaluateChildren() {
+	private void evaluateChildren() {
 		if (this.evaluated) {
 			return;
 		}
@@ -87,8 +85,7 @@ public class DiffFolderResult extends AbstractDiffResultForCount {
 		this.setSteps(addcnt, delcnt);
 		DiffStatusEnum stat = super.status();
 		if (stat == null) {
-			// rootの場合に仮で設定
-			this.setDiffStatus(DiffStatusEnum.MODIFIED);
+			LogUtil.warningLog("Null value is unexpected for diff status.");
 		}
 		if (stat == DiffStatusEnum.MODIFIED && addcnt == 0 && delcnt == 0) {
 			this.setDiffStatus(DiffStatusEnum.UNCHANGED);

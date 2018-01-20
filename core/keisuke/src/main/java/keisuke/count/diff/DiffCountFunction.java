@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.List;
 
 import keisuke.DiffStatusEnum;
-import keisuke.DiffStatusLabels;
 import keisuke.count.NakedSourceCode;
 import keisuke.count.StepCutter;
 import keisuke.count.language.XmlDefinedStepCounterFactory;
@@ -23,15 +22,13 @@ public class DiffCountFunction {
 
 	private String encoding = null;
 	private XmlDefinedStepCounterFactory factory = null;
-	private DiffStatusLabels diffStatLabels = null;
 
 	/**
 	 * 言語定義XMLファイルと差分変更ステータスの表示文言定義を指定するコンストラクター
 	 * @param encode ソースのエンコード名
 	 * @param xmlfile 言語ルールのカスタマイズ定義XMLファイル名
-	 * @param statusLabels 差分変更ステータスの表示文言定義インスタンス
 	 */
-	public DiffCountFunction(final String encode, final String xmlfile, final DiffStatusLabels statusLabels) {
+	public DiffCountFunction(final String encode, final String xmlfile) {
 		// エンコードの設定
 		this.encoding = encode;
 		// 言語カウンターのファクトリ生成
@@ -39,7 +36,6 @@ public class DiffCountFunction {
 		if (xmlfile != null) {
 			this.factory.appendCustomizeXml(xmlfile);
 		}
-		this.diffStatLabels = statusLabels;
 	}
 
 	/**
@@ -51,8 +47,9 @@ public class DiffCountFunction {
 	 */
 	public DiffFolderResult countDiffBetween(final File oldRoot, final File newRoot) {
 
-		DiffFolderResult root = new DiffFolderResult(newRoot.getName(), null,
-				null, this.diffStatLabels);
+		DiffFolderResult root = new DiffFolderResult(newRoot.getName(),
+				DiffStatusEnum.MODIFIED,	// 暫定で変更と設定し、後で再評価する
+				null);
 
 		this.makeDiffResultAboutSubFolder(root, oldRoot, newRoot);
 
@@ -131,7 +128,9 @@ public class DiffCountFunction {
 				result = createDiffResult(parent, null, newFile, DiffStatusEnum.ADDED);
 				parent.addChild(result);
 			} else {
-				// oldにあったので「変更」だが、ファイルとディレクトリの組み合わせ確認
+				// oldにあったのでファイルとディレクトリの組み合わせが合っていれば
+				//「変更」または「変更なし」だが、配下の比較しないと分からないので
+				// 暫定的に「変更」を設定し、後で再評価する
 				//LogUtil.debugLog("NEW == OLD");
 				if ((oldFile.isFile() && newFile.isFile())
 						|| (oldFile.isDirectory() && newFile.isDirectory())) {
@@ -205,8 +204,7 @@ public class DiffCountFunction {
 				}
 			} else {
 				// カッターが取得できなかった場合はサポート対象外とする
-				diffResult = new DiffFileResult(fileName, DiffStatusEnum.UNSUPPORTED,
-						parent, this.diffStatLabels);
+				diffResult = new DiffFileResult(fileName, DiffStatusEnum.UNSUPPORTED, parent);
 			}
 			return diffResult;
 
@@ -225,19 +223,16 @@ public class DiffCountFunction {
 				}
 			} else {
 				// カッターが取得できなかった場合はサポート対象外とする
-				diffResult = new DiffFileResult(fileName, DiffStatusEnum.UNSUPPORTED,
-						parent, this.diffStatLabels);
+				diffResult = new DiffFileResult(fileName, DiffStatusEnum.UNSUPPORTED, parent);
 			}
 			return diffResult;
 
 		} else if (newFile != null && newFile.isDirectory()) {
-			DiffFolderResult diffResult = new DiffFolderResult(newFile.getName(), status,
-					parent, this.diffStatLabels);
+			DiffFolderResult diffResult = new DiffFolderResult(newFile.getName(), status, parent);
 			return diffResult;
 
 		} else if (oldFile != null && oldFile.isDirectory()) {
-			DiffFolderResult diffResult = new DiffFolderResult(oldFile.getName(), status,
-					parent, this.diffStatLabels);
+			DiffFolderResult diffResult = new DiffFolderResult(oldFile.getName(), status, parent);
 			return diffResult;
 		}
 
@@ -251,11 +246,9 @@ public class DiffCountFunction {
 		DiffFileResult diffResult = null;
 		// REMOVEDのときは対象はoldFileにする、そうでなければnewFile
 		if (status == DiffStatusEnum.DROPED) {
-			diffResult = new DiffFileResult(oldFile.getName(), status,
-					parent, this.diffStatLabels);
+			diffResult = new DiffFileResult(oldFile.getName(), status, parent);
 		} else {
-			diffResult = new DiffFileResult(newFile.getName(), status,
-					parent, this.diffStatLabels);
+			diffResult = new DiffFileResult(newFile.getName(), status, parent);
 		}
 		diffResult.setSourceType(cutter.getFileType());
 

@@ -268,6 +268,23 @@ public class DiffCounterTest {
 	}
 
 	@Test
+	public void countDiffJavaWhenThereIsNoDifference() throws Exception {
+		System.out.println("## DiffCount ## countDiffJavaWhenThereIsNoDifference ##");
+		String oldRoot = "test/data/java/root1";
+		String newRoot = "test/data/java/root1";
+		URL expected = this.getClass()
+				.getResource("DiffCounterTest_testCount_java3.txt");
+
+		String[] args = {"-e", "UTF-8", "-f", "text",
+				"-o", "test/out/diff_java3.txt", newRoot, oldRoot};
+		DiffCountProc diffcount = new DiffCountProc();
+		diffcount.main(args);
+
+		File actual = new File("test/out/diff_java3.txt");
+		assertThat(contentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)), is(equalTo(contentOf(expected))));
+	}
+
+	@Test
 	public void countDiffJavaWhenScmDirectoriesExist() throws Exception {
 		System.out.println("## DiffCount ## countDiffJavaWhenScmDirectoriesExist ##");
 		String oldRoot = "test/data/java/root4";

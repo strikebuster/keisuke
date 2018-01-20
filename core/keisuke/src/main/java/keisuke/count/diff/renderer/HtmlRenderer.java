@@ -19,7 +19,7 @@ public class HtmlRenderer extends AbstractRenderer {
 		sb.append("<html>\n");
 		sb.append("<head>\n");
 		sb.append("<title>");
-		sb.append(this.messageMap().get(MSG_DIFF_RND_TITLE));
+		sb.append(this.getMessageText(MSG_DIFF_RND_TITLE));
 		sb.append("</title>\n");
 		sb.append("<script type=\"text/javascript\">\n");
 		sb.append("function switchDir(dirId){\n");
@@ -59,25 +59,25 @@ public class HtmlRenderer extends AbstractRenderer {
 		sb.append("</head>\n");
 		sb.append("<body>\n");
 
-		sb.append(this.messageMap().get(MSG_DIFF_RND_TIME));
+		sb.append(this.getMessageText(MSG_DIFF_RND_TIME));
 		sb.append("：").append(DateUtil.formatDate(new Date())).append("\n");
 		sb.append("<input type=\"button\" onclick=\"showAll();\" value=\"");
-		sb.append(this.messageMap().get(MSG_DIFF_RND_EXPAND));
+		sb.append(this.getMessageText(MSG_DIFF_RND_EXPAND));
 		sb.append("\">");
 		sb.append("<input type=\"button\" onclick=\"hideAll();\" value=\"");
-		sb.append(this.messageMap().get(MSG_DIFF_RND_HIDE));
+		sb.append(this.getMessageText(MSG_DIFF_RND_HIDE));
 		sb.append("\">");
 
 		sb.append("<table border=\"1\" width=\"100%\">\n");
 
 		sb.append("<tr><th width=\"80%\">");
-		sb.append(this.messageMap().get(MSG_DIFF_RND_PATH));
+		sb.append(this.getMessageText(MSG_DIFF_RND_PATH));
 		sb.append("</th><th width=\"10%\">");
-		sb.append(this.messageMap().get(MSG_DIFF_RND_STATUS));
+		sb.append(this.getMessageText(MSG_DIFF_RND_STATUS));
 		sb.append("</th><th width=\"10%\">");
-		sb.append(this.messageMap().get(MSG_DIFF_RND_INCREASE));
+		sb.append(this.getMessageText(MSG_DIFF_RND_INCREASE));
 		sb.append("</th><th>");
-		sb.append(this.messageMap().get(MSG_DIFF_RND_DECREASE));
+		sb.append(this.getMessageText(MSG_DIFF_RND_DECREASE));
 		sb.append("</th></tr>\n");
 
 		for (AbstractDiffResultForCount obj : result.getSortedChildren()) {
@@ -114,7 +114,7 @@ public class HtmlRenderer extends AbstractRenderer {
 		sb.append("</td>");
 
 		sb.append("<td>");
-		sb.append(obj.getStatusLabel());
+		sb.append(this.getStatusLabelOf(obj.status()));
 		sb.append("</td>");
 
 		sb.append("<td style=\"text-align: right;\">");

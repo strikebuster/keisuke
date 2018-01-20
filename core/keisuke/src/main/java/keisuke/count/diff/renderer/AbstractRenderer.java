@@ -4,7 +4,10 @@ import keisuke.MessageMap;
 import keisuke.count.diff.DiffFolderResult;
 import keisuke.count.diff.Renderer;
 import keisuke.report.property.MessageDefine;
-import static keisuke.count.diff.renderer.RendererConstant.*;
+
+import keisuke.DiffStatusEnum;
+import keisuke.DiffStatusLabels;
+import keisuke.DiffStatusLabelsImpl;
 
 /**
  * 差分計測結果の出力整形をするI/Fを実装する抽象基底クラス
@@ -12,26 +15,28 @@ import static keisuke.count.diff.renderer.RendererConstant.*;
 public abstract class AbstractRenderer implements Renderer {
 
 	private MessageMap messageMap = null;
+	private DiffStatusLabels diffStatusLabels = null;
 
 	protected AbstractRenderer() {	}
-
-	/**
-	 * メッセージ定義インスタンスを返す
-	 * @return メッセージ定義インスタンス
-	 */
-	protected MessageMap messageMap() {
-		return this.messageMap;
-	}
 
 	/**
 	 * メッセージ定義インスタンスを設定する
 	 * @param msgdef メッセージ定義インスタンス
 	 */
-	public void setMessageMap(final MessageDefine msgdef) {
+	protected void setMessageMap(final MessageDefine msgdef) {
 		if (msgdef == null) {
 			return;
 		}
 		this.messageMap = msgdef.getMessageMap();
+		this.diffStatusLabels = new DiffStatusLabelsImpl(msgdef);
+	}
+
+	/**
+	 * DiffStatusLabelsインスタンスを返す
+	 * @return DiffStatusLabelsインスタンス
+	 */
+	protected DiffStatusLabels diffStatusLabels() {
+		return this.diffStatusLabels;
 	}
 
 	/**
@@ -39,14 +44,20 @@ public abstract class AbstractRenderer implements Renderer {
 	 * @param key 定形文言の種類を示すキー
 	 * @return 表示用定形文言
 	 */
-	public String getMessageText(final String key) {
+	protected String getMessageText(final String key) {
 		if (key == null) {
 			return "";
 		}
-		if (this.messageMap == null) {
-			this.messageMap = new MessageDefine(MSG_DIFF_RND_PREFIX).getMessageMap();
-		}
 		return this.messageMap.get(key);
+	}
+
+	/**
+	 * 変更ステータスに対するメッセージ定義の文言を返す
+	 * @param status 変更ステータス
+	 * @return メッセージ定義の文言
+	 */
+	protected String getStatusLabelOf(final DiffStatusEnum status) {
+		return this.diffStatusLabels.getLabelOf(status);
 	}
 
 	/** {@inheritDoc} */

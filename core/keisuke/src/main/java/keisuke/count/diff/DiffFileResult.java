@@ -1,7 +1,6 @@
 package keisuke.count.diff;
 
 import keisuke.DiffStatusEnum;
-import keisuke.DiffStatusLabels;
 
 /**
  * ファイルの差分変更結果を示すオブジェクトです。
@@ -14,10 +13,9 @@ public class DiffFileResult extends AbstractDiffResultForCount {
 	/**
 	 * 親フォルダーを指定するコンストラクタ
 	 * @param parent 親フォルダーの差分計測結果インスタンス
-	 * @param statusLabels 差分変更ステータスの表示文言定義インスタンス
 	 */
-	public DiffFileResult(final DiffFolderResult parent, final DiffStatusLabels statusLabels) {
-		super(parent, statusLabels);
+	public DiffFileResult(final DiffFolderResult parent) {
+		super(parent);
 		this.setIsFile(true);
 		this.setSourceType("UNDEF");
 	}
@@ -27,11 +25,10 @@ public class DiffFileResult extends AbstractDiffResultForCount {
 	 * @param name ノード名
 	 * @param status 差分変更ステータス値
 	 * @param parent 親フォルダーの差分計測結果インスタンス
-	 * @param statusLabels 差分変更ステータスの表示文言定義インスタンス
 	 */
 	public DiffFileResult(final String name, final DiffStatusEnum status,
-			final DiffFolderResult parent, final DiffStatusLabels statusLabels) {
-		super(name, status, parent, statusLabels);
+			final DiffFolderResult parent) {
+		super(name, status, parent);
 		this.setIsFile(true);
 		this.setSourceType("UNDEF");
 	}

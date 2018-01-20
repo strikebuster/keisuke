@@ -9,7 +9,6 @@ import java.io.OutputStream;
 
 import org.apache.tools.ant.BuildException;
 
-import keisuke.DiffStatusLabelsImpl;
 import keisuke.count.diff.DiffCountFunction;
 import keisuke.count.diff.DiffFolderResult;
 import keisuke.count.diff.Renderer;
@@ -57,8 +56,7 @@ public class DiffCountTask extends AbstractCountTask {
 			throw new BuildException(this.formatType() + " is invalid format value.");
 		}
 
-		DiffCountFunction diffcounter = new DiffCountFunction(this.sourceEncoding(), this.xmlFileName(),
-				new DiffStatusLabelsImpl(this.msgDef));
+		DiffCountFunction diffcounter = new DiffCountFunction(this.sourceEncoding(), this.xmlFileName());
 		this.diffResult = diffcounter.countDiffBetween(this.olddir, this.srcdir);
 
 		OutputStream out = null;

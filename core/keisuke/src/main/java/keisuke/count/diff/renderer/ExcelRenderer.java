@@ -39,7 +39,7 @@ public class ExcelRenderer extends AbstractRenderer {
 			InputStream in = ExcelRenderer.class.getResourceAsStream(xlsTemplate);
 
 			Map<String, Object> data = new HashMap<String, Object>();
-			data.put(XLS_DATA_RESULT, listConvertedFrom(result));
+			data.put(XLS_DATA_RESULT, this.listConvertedFrom(result));
 			data.put(XLS_DATA_TOTAL_ADD, result.addedSteps());
 			data.put(XLS_DATA_TOTAL_DELETE, result.deletedSteps());
 
@@ -51,13 +51,13 @@ public class ExcelRenderer extends AbstractRenderer {
 		}
 	}
 
-	private static List<DiffCountResultDto> listConvertedFrom(
+	private List<DiffCountResultDto> listConvertedFrom(
 			final DiffFolderResult folderResult) {
 		return new ArrayList<DiffCountResultDto>(
-				mapConvertedFrom(folderResult).values());
+				this.mapConvertedFrom(folderResult).values());
 	}
 
-	private static Map<String, DiffCountResultDto> mapConvertedFrom(
+	private Map<String, DiffCountResultDto> mapConvertedFrom(
 			final DiffFolderResult folderResult) {
 		Map<String, DiffCountResultDto> map = new TreeMap<String, DiffCountResultDto>();
 		List<AbstractDiffResultForCount> children = folderResult.getChildren();
@@ -66,7 +66,8 @@ public class ExcelRenderer extends AbstractRenderer {
 				Map<String, DiffCountResultDto> childMap = mapConvertedFrom((DiffFolderResult) child);
 				map.putAll(childMap);
 			} else if (child instanceof DiffFileResult) {
-				DiffCountResultDto dto = new DiffCountResultDto((DiffFileResult) child);
+				DiffCountResultDto dto =
+						new DiffCountResultDto((DiffFileResult) child, this.diffStatusLabels());
 				map.put(dto.pathFromTop(), dto);
 			}
 		}
