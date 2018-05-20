@@ -29,7 +29,7 @@ public class LuaCounter extends GeneralStepCounter {
 
 	/* 複数行ブロックコメントの開始から行末までの処理をする */
 	@Override
-	public String dealAreaCommentStart(
+	public String handleAreaCommentStart(
 			final ProgramLangRule lang, final String line, final AreaComment area) {
 		if (area.checkLongBracket()) {
 			// N段長括弧コメント
@@ -47,13 +47,13 @@ public class LuaCounter extends GeneralStepCounter {
 			}
 		} else {
 			// 通常の複数行コメント
-			return super.dealAreaCommentStart(lang, line, area);
+			return super.handleAreaCommentStart(lang, line, area);
 		}
 	}
 
 	/* リテラル文字列の開始から行末までの処理をする */
 	@Override
-	public String dealLiteralStringStart(
+	public String handleLiteralStringStart(
 			final ProgramLangRule lang, final String line, final LiteralString literal) {
 		StringBuilder sb = new StringBuilder();
 		if (literal.checkLongBracket()) {
@@ -74,7 +74,7 @@ public class LuaCounter extends GeneralStepCounter {
 			return sb.toString();
 		} else {
 			// 通常の引用符リテラル
-			return super.dealLiteralStringStart(lang, line, literal);
+			return super.handleLiteralStringStart(lang, line, literal);
 		}
 	}
 

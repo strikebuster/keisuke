@@ -28,8 +28,8 @@ public class CountMainProcTest {
     public ExpectedException thrownEx = ExpectedException.none();
 
 	@Test
-	public void dealHelpOption() throws Exception {
-		System.out.println("## CountProcTest ## arg01 ## dealHelpOption ##");
+	public void handleHelpOption() throws Exception {
+		System.out.println("## CountProcTest ## arg01 ## handleHelpOption ##");
 
 		CountMainProc cproc = new CountMainProc();
 		String[] args = {"-?", "xxx"};
@@ -39,8 +39,8 @@ public class CountMainProcTest {
 	}
 
 	@Test
-	public void dealArgsWhichHaveOnlyInfile() throws Exception {
-		System.out.println("## CountProcTest ## arg02 ## dealArgsWhichHaveOnlyInfile ##");
+	public void handleArgsWhichHaveOnlyInfile() throws Exception {
+		System.out.println("## CountProcTest ## arg02 ## handleArgsWhichHaveOnlyInfile ##");
 
 		CountMainProc cproc = new CountMainProc();
 		String[] args = {"test/data/dummy.csv"};
@@ -51,8 +51,8 @@ public class CountMainProcTest {
 	}
 
 	@Test
-	public void dealArgsWhichHavePropOption() throws Exception {
-		System.out.println("## CountProcTest ## arg03 ## dealArgsWhichHavePropOption ##");
+	public void handleArgsWhichHavePropOption() throws Exception {
+		System.out.println("## CountProcTest ## arg03 ## handleArgsWhichHavePropOption ##");
 
 		CountMainProc cproc = new CountMainProc();
 		String[] args = {"-p", "test/data/ktest.properties", "test/data/dummy.csv"};
@@ -64,8 +64,8 @@ public class CountMainProcTest {
 	}
 
 	@Test
-	public void dealArgsWhichHaveClassOptionButWrongValue() throws Exception {
-		System.out.println("## CountProcTest ## arg04 ## dealArgsWhichHaveClassOptionButWrongValue ##");
+	public void handleArgsWhichHaveClassOptionButWrongValue() throws Exception {
+		System.out.println("## CountProcTest ## arg04 ## handleArgsWhichHaveClassOptionButWrongValue ##");
 
 		StderrCapture capture = new StderrCapture();
 		String errMessage = null;
@@ -95,8 +95,8 @@ public class CountMainProcTest {
 	}
 
 	@Test
-	public void dealInfileWhichDoesNotExist() throws Exception {
-		System.out.println("## CountProcTest ## error01 ## dealInfileWhichDoesNotExist ##");
+	public void handleInfileWhichDoesNotExist() throws Exception {
+		System.out.println("## CountProcTest ## error01 ## handleInfileWhichDoesNotExist ##");
 		String expected = "FileNotFoundException";
 		thrownEx.expect(RuntimeException.class);
 		thrownEx.expectMessage(expected);
@@ -110,8 +110,8 @@ public class CountMainProcTest {
 	}
 
 	@Test
-	public void dealPropOptionWhichFileDoesNotExist() throws Exception {
-		System.out.println("## CountProcTest ##_error02 ## dealPropOptionWhichFileDoesNotExist ##");
+	public void handlePropOptionWhichFileDoesNotExist() throws Exception {
+		System.out.println("## CountProcTest ##_error02 ## handlePropOptionWhichFileDoesNotExist ##");
 		String expected = "FileNotFoundException";
 		thrownEx.expect(RuntimeException.class);
 		thrownEx.expectMessage(expected);
@@ -125,8 +125,8 @@ public class CountMainProcTest {
 	}
 
 	@Test
-	public void dealXmlOptionWhichFileDoesNotExist() throws Exception {
-		System.out.println("## CountProcTest ## error03 ## dealXmlOptionWhichFileDoesNotExist ##");
+	public void handleXmlOptionWhichFileDoesNotExist() throws Exception {
+		System.out.println("## CountProcTest ## error03 ## handleXmlOptionWhichFileDoesNotExist ##");
 		String expected = "FileNotFoundException";
 		thrownEx.expect(RuntimeException.class);
 		thrownEx.expectMessage(expected);

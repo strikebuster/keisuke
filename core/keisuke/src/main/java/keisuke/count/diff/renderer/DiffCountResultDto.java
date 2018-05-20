@@ -5,7 +5,7 @@ import keisuke.count.diff.DiffFileResult;
 
 /**
  * jXLSを利用するテンプレートへデータを渡すDTOクラス
- * jp.sf.amateras.stepcounter.DiffFileResultとの互換性を持つ
+ * jp.sf.amateras.stepcounter.diffcount.object.DiffFileResultとの互換性を持つ
  */
 public class DiffCountResultDto extends DiffFileResult implements DiffResultCompatible {
 

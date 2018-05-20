@@ -1,5 +1,7 @@
 package keisuke.count;
 
+import keisuke.count.step.StepCountProc;
+
 /**
  * コマンドラインから引数で指定したファイルやディレクトリ配下のファイルの
  * ソースコード行数をカウントする

@@ -27,7 +27,7 @@ public class XmlLanguageDefineWithRule extends XmlLanguageDefine {
 
 	/** {@inheritDoc} */
 	@Override
-	protected void dealChild(final String name, final Element elem) {
+	protected void handleChild(final String name, final Element elem) {
 		if (name.equals(XML_NODE_RULE)) {
 			this.parseLangCountRule(elem);
 		} else if (name.equals(XML_NODE_SKIP)) {
@@ -45,7 +45,7 @@ public class XmlLanguageDefineWithRule extends XmlLanguageDefine {
 		} else if (name.equals(XML_NODE_SCRIPT)) {
 			this.parseRuleOfScriptBlock(elem);
 		} else {
-			super.dealChild(name, elem);
+			super.handleChild(name, elem);
 		}
 	}
 

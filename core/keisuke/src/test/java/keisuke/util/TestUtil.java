@@ -101,4 +101,15 @@ public class TestUtil {
 	public static String nameOfSystemOS() {
 		return System.getProperty("os.name");
 	}
+
+	public static boolean removeFile(final String filename) {
+		if (filename == null || filename.isEmpty()) {
+			return false;
+		}
+		File file = new File(filename);
+		if (!file.exists() || !file.isFile()) {
+			return false;
+		}
+		return file.delete();
+	}
 }

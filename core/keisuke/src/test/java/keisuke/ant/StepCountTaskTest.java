@@ -128,7 +128,7 @@ public class StepCountTaskTest {
 		System.out.println("## StepCountTask ## countJavaUsingCsvFormat ##");
 		String targetName = "CountJava_Csv";
 		URL expected = this.getClass()
-				.getResource("../count/StepCounterTest_testCount_java.txt");
+				.getResource("../count/step/StepCounterTest_testCount_java.txt");
 
 		AntTaskTestDriver driver = new AntTaskTestDriver();
 		driver.configureProject(projfile);
@@ -146,7 +146,7 @@ public class StepCountTaskTest {
 		System.out.println("## StepCountTask ## countJavaUsingCsvFormatWithoutShowDirectory ##");
 		String targetName = "CountJavaWithoutShowDir";
 		URL expected = this.getClass()
-				.getResource("../count/StepCounterTest_testCount_java_nodir.txt");
+				.getResource("../count/step/StepCounterTest_testCount_java_nodir.txt");
 
 		AntTaskTestDriver driver = new AntTaskTestDriver();
 		driver.configureProject(projfile);
@@ -164,7 +164,7 @@ public class StepCountTaskTest {
 		System.out.println("## StepCountTask ## countJavaUsingCsvFormatAndSortOffWithoutShowDirectory ##");
 		String targetName = "CountJavaWithoutShowDirWithSortOff";
 		URL expected = this.getClass()
-				.getResource("../count/StepCounterTest_testCount_java_nodir_nosort.txt");
+				.getResource("../count/step/StepCounterTest_testCount_java_nodir_nosort.txt");
 
 		AntTaskTestDriver driver = new AntTaskTestDriver();
 		driver.configureProject(projfile);
@@ -182,7 +182,7 @@ public class StepCountTaskTest {
 		System.out.println("## StepCountTask ## countJavaUsingCsvFormatAndCustomRule ##");
 		String targetName = "CountJavaUsingCustomRule";
 		URL expected = this.getClass()
-				.getResource("../count/RuleCounterTest_testCount_java.txt");
+				.getResource("../count/step/RuleCounterTest_testCount_java.txt");
 
 		AntTaskTestDriver driver = new AntTaskTestDriver();
 		driver.configureProject(projfile);

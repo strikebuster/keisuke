@@ -25,8 +25,8 @@ public class MatchMainProcTest {
 	public void tearDown() throws Exception { }
 
 	@Test
-	public void dealHelpOption() throws Exception {
-		System.out.println("## MatchProcTest ## arg01 ## dealHelpOption ##");
+	public void handleHelpOption() throws Exception {
+		System.out.println("## MatchProcTest ## arg01 ## handleHelpOption ##");
 
 		MatchMainProc mproc = new MatchMainProc();
 		String[] args = {"-?", "xxx"};
@@ -36,8 +36,8 @@ public class MatchMainProcTest {
 	}
 
 	@Test
-	public void dealArgsWhichHaveOnlyOnefile() throws Exception {
-		System.out.println("## MatchProcTest ## arg02 ## dealArgsWhichHaveOnlyOneFile ##");
+	public void handleArgsWhichHaveOnlyOnefile() throws Exception {
+		System.out.println("## MatchProcTest ## arg02 ## handleArgsWhichHaveOnlyOneFile ##");
 
 		StdoutCapture outCapture = new StdoutCapture();
 		StderrCapture errCapture = new StderrCapture();

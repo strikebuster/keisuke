@@ -7,13 +7,14 @@ import java.io.OutputStream;
 import keisuke.AbstractMainProc;
 
 /**
- * Abstract class for main procedure of counting command.
+ * Template class for main procedure of counting command.
  */
 public abstract class AbstractCountMainProc extends AbstractMainProc {
 
 	private OutputStream outputStream = System.out;
 	private String srcEncoding = System.getProperty("file.encoding");
 	private String xmlFileName = null;
+	private String formatType = "";
 
 	protected AbstractCountMainProc() { }
 
@@ -87,7 +88,7 @@ public abstract class AbstractCountMainProc extends AbstractMainProc {
 	 * ソースファイルのエンコード名をセット
 	 * @param encoding エンコード名
 	 */
-	protected void setSourceEncoding(final String encoding) {
+	public void setSourceEncoding(final String encoding) {
 		this.srcEncoding = encoding;
 	}
 
@@ -103,7 +104,7 @@ public abstract class AbstractCountMainProc extends AbstractMainProc {
 	 * 言語定義XMLファイル名をセット
 	 * @param name XMLファイル名
 	 */
-	protected void setXmlFileName(final String name) {
+	public void setXmlFileName(final String name) {
 		this.xmlFileName = name;
 	}
 
@@ -113,6 +114,22 @@ public abstract class AbstractCountMainProc extends AbstractMainProc {
 	 */
 	protected String xmlFileName() {
 		return this.xmlFileName;
+	}
+
+	/**
+	 * 結果出力のフォーマットを設定します
+	 * @param format 出力フォーマット
+	 */
+	public void setFormat(final String format) {
+		this.formatType = format;
+	}
+
+	/**
+	 * 結果出力のフォーマットを返す
+	 * @return format 出力フォーマット
+	 */
+	protected String format() {
+		return this.formatType;
 	}
 
 	/**
@@ -131,4 +148,12 @@ public abstract class AbstractCountMainProc extends AbstractMainProc {
 		return this.outputStream;
 	}
 
+	/**
+	 * オプションや計測対象ファイル名を設定後に、ステップ計測と結果出力を実行する
+	 * @param filenames 計測対象ファイル名配列
+	 * @param output 結果出力先
+	 * @throws IOException ファイル入出力で異常があれば発行する
+	 */
+	public abstract void doCountingAndWriting(String[] filenames, OutputStream output)
+			throws IOException;
 }

@@ -182,7 +182,7 @@ public final class StringUtil {
 	 * @return 改行毎に分割された文字列の配列
 	 */
 	public static String[] splitArrayOfLinesFrom(final String text) {
-		String[] array = text.split("\r?\n|\r");
+		String[] array = text.split("\r\n?|\n");
 		if (array.length == 1 && array[0].isEmpty()) {
 			return new String[0];
 		}
@@ -196,5 +196,18 @@ public final class StringUtil {
 	 */
 	public static List<String> splitListOfLinesFrom(final String text) {
 		return Arrays.asList(splitArrayOfLinesFrom(text));
+	}
+
+	/**
+	 * 文字列中にOS依存の改行コードを"\n"に変換する
+	 * OS依存改行コードとして"\r\n"および"\r"が対象
+	 * @param text 文字列
+	 * @return 改行コードを"\n"に変換した文字列
+	 */
+	public static String normalizeLineSeparator(final String text) {
+		if (text == null) {
+			return null;
+		}
+		return text.replaceAll("\r\n?", "\n");
 	}
 }

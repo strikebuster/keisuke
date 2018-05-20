@@ -3,7 +3,8 @@ package keisuke;
 import java.util.Map;
 
 /**
- * Abstract class for main procedure of command.
+ * Common base class for main procedure of command.
+ * We have common variables for command options and arguments.
  */
 public abstract class AbstractMainProc {
 

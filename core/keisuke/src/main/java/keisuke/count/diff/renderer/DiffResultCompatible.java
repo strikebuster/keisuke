@@ -1,7 +1,8 @@
 package keisuke.count.diff.renderer;
 
 /**
- * jp.sf.amateras.stepcounter.diffcout.DiffFolderResultとの互換性を持つためのインタフェース
+ * jp.sf.amateras.stepcounter.diffcount.object.DiffFolderResultとの互換性を
+ * 持つためのインタフェース
  * Excel形式の出力をするために利用するExcelテンプレートのファイル別集計シートは
  * このインタフェースを持つオブジェクトのデータを取り込める
  * テンプレートをオリジナルのStepCounterと共有可能にするために必要な互換性

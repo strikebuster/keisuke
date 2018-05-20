@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" output="build/classes/java/main" path="src/main/java"/>
+	<classpathentry kind="src" output="build/resources/main" path="src/main/resources"/>
+	<classpathentry kind="src" output="build/classes/java/test" path="src/test/java"/>
+	<classpathentry kind="src" output="build/resources/test" path="src/test/resources"/>
+	<classpathentry kind="src" output="build/test/data" path="test/data"/>
+	<classpathentry kind="src" output="build/test/archive" path="test/archive"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5/"/>
+	<classpathentry kind="con" path="org.eclipse.buildship.core.gradleclasspathcontainer"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/core-keisuke"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

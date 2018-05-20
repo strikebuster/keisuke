@@ -19,7 +19,7 @@ public class FunctionalLangCounter extends GeneralStepCounter {
 
 	/* コメント化された式のチェックし、コメント部分除き有効な文字列を返す */
 	@Override
-	protected String dealValidCode(final ProgramLangRule lang, final String line, final boolean validCodeFlag) {
+	protected String handleValidCode(final ProgramLangRule lang, final String line, final boolean validCodeFlag) {
 		// lineの内容はコメントの抜かれたソースコードのみからなる文字列
 		if (!this.isInsideOfCommentExpressionRule()) {
 			// コメント式ではないのですべて出力
@@ -50,7 +50,7 @@ public class FunctionalLangCounter extends GeneralStepCounter {
 
 	/* 複数行ブロックコメントの開始から行末までの処理をする */
 	@Override
-	public String dealAreaCommentStart(final ProgramLangRule lang, final String line, final AreaComment area) {
+	public String handleAreaCommentStart(final ProgramLangRule lang, final String line, final AreaComment area) {
 		if (area instanceof CommentExpr) {
 			// コメント式
 			CommentExpr expr = (CommentExpr) area;
@@ -72,7 +72,7 @@ public class FunctionalLangCounter extends GeneralStepCounter {
 			return this.removeCommentFromLeft(lang, line.substring(pos), 1);
 		} else {
 			// 通常の複数行コメント
-			return super.dealAreaCommentStart(lang, line, area);
+			return super.handleAreaCommentStart(lang, line, area);
 		}
 	}
 

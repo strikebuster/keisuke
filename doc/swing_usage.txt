@@ -1,0 +1,33 @@
+# GUI画面（Swing版）の使用方法
+
+#
+# StepCount　
+#	行数計測
+#
+java -cp keisuke-swing-x.x.x-jar-with-local-dependencies.jar:keisuke-x.x.x-jar-with-dependencies.jar keisuke.swing.StepCount
+#
+引数およびオプションはありません。
+keisuke.count.StepCountの引数およびオプションで指定する値は、画面の中で指定できます。
+
+#
+# DiffCount
+#	差分行数計測
+#
+java -cp keisuke-swing-x.x.x-jar-with-local-dependencies.jar:keisuke-x.x.x-jar-with-dependencies.jar keisuke.swing.DiffCount
+#
+引数およびオプションはありません。
+keisuke.count.DiffCountの引数およびオプションで指定する値は、画面の中で指定できます。
+
+#
+# 備考
+#
+GUI画面用のJar（keisuke-swing-x.x.x-jar-with-local-dependencies.jar)から
+呼び出せるCLI用のJar（keisuke-x.x.x-jar-with-dependencies.jar）は、バージョン
+が同じか大きいこと（GUI画面バージョン ≦　CLI機能バージョン）
+#
+GUI画面は計測機能(StepCount,DiffCount)のみ対応しています。
+集計機能（CountReport,DiffReport,MatchExtract)には対応していません。
+#
+Windowsで使用する場合は、クラスパスの区切り文字に':'ではなく';'を使う
+
+

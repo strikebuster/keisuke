@@ -1,21 +1,23 @@
+// build.gradle as a single project
+//  or as a sub-project of the multi-project
+//  which configurations are defined by ../../settings.gradle.
+
 plugins {
   id 'java'
-  //id 'eclipse'
-  //id 'maven'
   id 'checkstyle'
   id 'findbugs'
   id 'jacoco'
   id 'com.github.johnrengelman.shadow' version '1.2.4'
 }
 
-def defaultEncoding = 'UTF-8'
-
 group = 'keisuke'
-//name = 'keisuke'
-version = '1.2.3'
+//name : 'keisuke' as single project
+version = '1.3.0'
 //version = '1.x.x-SNAPSHOT'
 
-description = """keisuke"""
+description = """keisuke : counts source code steps like as stepcounter"""
+
+def defaultEncoding = 'UTF-8'
 
 repositories {
     mavenCentral()
@@ -44,7 +46,7 @@ dependencies {
     testCompile 'org.hamcrest:hamcrest-all:1.3'
     testCompile 'org.jacoco:org.jacoco.agent:0.7.8'
     testCompile 'org.jacoco:org.jacoco.ant:0.7.8'
-    checkstyle 'com.puppycrawl.tools:checkstyle:7.8.1'
+    checkstyle 'com.puppycrawl.tools:checkstyle:8.1'
     findbugs 'com.google.code.findbugs:findbugs:3.0.1'
 }
 
@@ -55,7 +57,7 @@ sourceCompatibility = 1.5
 targetCompatibility = 1.5
 
 checkstyle {
-    toolVersion = '7.8.1'
+    toolVersion = '8.1'
     configFile = file('config/checkstyle/sun_checks_custom.xml')
     //reportsDir = file("${buildDir}/reports/checkstyle")
     ignoreFailures = true
@@ -81,11 +83,13 @@ task cleanAll(type: Delete) {
     }
 }
 
-task makeDirForTest << {
-    def outDir = file(dirPathForOutputOfTestRun)
-    if (!outDir.exists()) {
-        outDir.mkdirs()
-        println("makeDir ${dirPathForOutputOfTestRun}")
+task makeDirForTest {
+    doLast {
+        def outDir = file(dirPathForOutputOfTestRun)
+        if (!outDir.exists()) {
+            outDir.mkdirs()
+            println("makeDir ${dirPathForOutputOfTestRun}")
+        }
     }
 }
 
@@ -110,10 +114,10 @@ jacoco {
 
 jacocoTestReport {
     reports {
-        xml.enabled false
-        csv.enabled false
-        html.enabled true
-        html.destination "${buildDir}/reports/jacoco"
+        xml.enabled = false
+        csv.enabled = false
+        html.enabled = true
+        html.destination = file("${buildDir}/reports/jacoco")
     }
     dependsOn test
 }
@@ -122,7 +126,7 @@ jar {
     baseName = project.name
     version = project.version
     manifest {
-        attributes 'Implementation-Title':"${project.name}", 'Implementation-Version':"${project.version}"
+        attributes 'Implementation-Title':"${baseName}", 'Implementation-Version':"${version}"
     }
 }
 
@@ -131,9 +135,9 @@ def suffixFatJar = 'jar-with-dependencies'
 shadowJar {
     baseName = project.name
     version = project.version
-    classifier "${suffixFatJar}"
+    classifier = suffixFatJar
     manifest {
-        attributes 'Implementation-Title':"${project.name}-${suffixFatJar}", 'Implementation-Version':"${project.version}"
+        attributes 'Implementation-Title':"${baseName}-${classifier}", 'Implementation-Version':"${version}"
     }
     dependsOn build
 }
@@ -143,42 +147,49 @@ def suffixSrcJar = 'sources'
 task sourcesJar(type: Jar) {
     baseName = project.name
     version = project.version
-    classifier = "${suffixSrcJar}"
+    classifier = suffixSrcJar
     from sourceSets.main.allSource
     manifest {
-        attributes 'Implementation-Title':"${project.name}-${suffixSrcJar}", 'Implementation-Version':"${project.version}"
+        attributes 'Implementation-Title':"${baseName}-${classifier}", 'Implementation-Version':"${version}"
     }
     dependsOn build
 }
 
-task makeArtifacts(dependsOn: [sourcesJar, shadowJar]) << {
-    // do sourcesJar & shadowJar
-    println("Artifact = ${project.group}:${project.name}:${project.version}")
+task makeArtifacts(dependsOn: [sourcesJar, shadowJar]) {
+    doLast {
+        // do sourcesJar & shadowJar
+        println("Artifact = ${project.group}:${project.name}:${project.version}")
+    }
 }
 
 // Definitions about test data 
 def dirPathOfTestDataZip = 'test/archive'
 def zipPathOfTestData = 'test/archive/data.zip'
 def dirPathOfTestData = 'test/data'
-def dirPathDummy = 'test/dummy'
+def dirPathDummy = 'build/test/dummy'
 
 sourceSets {
     testdata {
         java.srcDirs = []
         resources.srcDirs = [dirPathOfTestData]
-        output.classesDir = dirPathDummy
-        output.resourcesDir = dirPathDummy
-    } 
+        //output.classesDir = dirPathDummy
+        output.resourcesDir = 'build/test/data'
+    }
 }
 
 compileTestdataJava.deleteAllActions()
-//processTestdataResources.deleteAllActions()
 testdataClasses.deleteAllActions()
 
-task processTestdataResources(overwrite: true, type: Zip) {
+//processTestdataResources {
+//    doLast {
+//        tasks.makeZipOfTestData.execute()
+//    }
+//}
+
+task makeZipOfTestData(type: Zip) {
     baseName = 'data'
     version = null
-    destinationDir = file('./test/archive')
+    destinationDir = file(dirPathOfTestDataZip)
     from(dirPathOfTestData) {
         include '**'
         includeEmptyDirs = true
@@ -198,32 +209,43 @@ task processTestdataResources(overwrite: true, type: Zip) {
     }
 }
 
-task makeZipOfTestData(dependsOn: processTestdataResources) 
-
 sourceSets {
     testzip {
         java.srcDirs = []
         resources.srcDirs = [dirPathOfTestDataZip]
-        output.classesDir = dirPathDummy
-        output.resourcesDir = dirPathDummy
-    } 
+        //output.classesDir = dirPathDummy
+        output.resourcesDir = 'build/test/archive'
+    }
 }
 
 compileTestzipJava.deleteAllActions()
-//processTestzipResources.deleteAllActions()
 testzipClasses.deleteAllActions()
 
-task processTestzipResources(overwrite: true, type: Copy) {
+processTestzipResources {
+    doLast {
+        tasks.extractTestData.execute()
+    }
+}
+
+task extractTestData(dependsOn: processTestzipResources, type: Copy) {
     from(zipTree(zipPathOfTestData)) {
         include '**'
         includeEmptyDirs = true
     }
     into dirPathOfTestData
+    def copyFiles = []
+    eachFile {
+        copyFiles << it
+    }
     doLast {
+        copyFiles.each {
+            FileCopyDetails detail ->
+            def node = file("${dirPathOfTestData}/${detail.path}")
+            if (node.exists()) {
+                node.setLastModified(detail.lastModified)
+            }
+        }
         println("Extract test data into dir: ${dirPathOfTestData}")
     }
 }
-
-task extractTestData(dependsOn: processTestzipResources)
-
 

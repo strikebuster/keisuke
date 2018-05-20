@@ -1,6 +1,6 @@
 package keisuke.report.procedure;
 
-import static keisuke.count.format.FormatConstant.*;
+import static keisuke.count.step.format.FormatConstant.*;
 import static keisuke.report.option.ReportOptionConstant.*;
 import static keisuke.report.property.MessageConstant.*;
 

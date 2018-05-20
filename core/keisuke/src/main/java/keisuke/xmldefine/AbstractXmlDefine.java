@@ -95,7 +95,7 @@ public abstract class AbstractXmlDefine {
 				continue;
 			}
 			// 解析対象子ノードの処理
-			this.dealChild(nodename, element);
+			this.handleChild(nodename, element);
 		}
 	}
 
@@ -104,7 +104,7 @@ public abstract class AbstractXmlDefine {
 	 * @param name 解析対象のXMLノードの定義名
 	 * @param element 解析対象のXMLノードElement
 	 */
-	protected abstract void dealChild(String name, Element element);
+	protected abstract void handleChild(String name, Element element);
 
 	/**
 	 * XMLノードがElementであるかチェックする

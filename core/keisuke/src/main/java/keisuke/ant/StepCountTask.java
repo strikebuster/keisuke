@@ -23,12 +23,12 @@ import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.ResourceCollection;
 
 import keisuke.StepCountResult;
-import keisuke.count.Formatter;
 import keisuke.count.StepCountResultForCount;
 import keisuke.count.StepCounter;
-import keisuke.count.format.FormatterFactory;
 import keisuke.count.language.XmlDefinedStepCounterFactory;
 import keisuke.count.option.StepCountOption;
+import keisuke.count.step.Formatter;
+import keisuke.count.step.format.FormatterFactory;
 import keisuke.count.util.FileNameUtil;
 
 /**
@@ -108,6 +108,9 @@ public class StepCountTask extends AbstractCountTask {
 
     /**
 	 * ステップ数測定を実行します。
+	 * 基点ディレクトリ名をカテゴリとして設定するAnt I/F固有のオプション機能があるため
+	 * keisuke.count.StepCountFunctionを呼び出さずに、同様の処理を
+	 * このメソッドで実装する。
 	 *
 	 * @see org.apache.tools.ant.Task#execute()
 	 * @throws BuildException when one of some exception occured
@@ -179,7 +182,7 @@ public class StepCountTask extends AbstractCountTask {
                         continue;
                     }
 				}
-
+	    		// resource内の全ファイル名を取得
 	    		String[] fnameArray = null;
 	    		if (fileList != null) {
    					fnameArray = fileList.getFiles(this.getProject());

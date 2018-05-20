@@ -3,7 +3,7 @@
 - - -
 ### 概要
 StepCounter (http://github.com/takezoe/stepcounter) のコマンドラインI/Fで出力されるファイルに対し、集計する機能があります。  
-StepCounterを模倣してソースコードの行数計測をする機能もあります。行数計測において本ツールで実装したのはStepCounterの行数カウントと２つの版の差分行数カウントの機能です。コマンドラインI/FおよびAntタスクI/Fのみであり、StepCounterの用意しているSwingのGUIやEclipseプラグインなどのI/Fはありません。
+StepCounterを模倣してソースコードの行数計測をする機能もあります。行数計測において本ツールで実装したのはStepCounterの行数カウントと２つの版の差分行数カウントの機能です。コマンドラインI/FおよびAntタスクI/FおよびSwing画面I/Fを提供していますが、StepCounterの用意しているEclipseプラグインのI/Fはありません。
 - - -
 ### 使い方
 #### 行数カウント集計コマンド
@@ -58,12 +58,35 @@ StepCounterを模倣してソースコードの行数計測をする機能もあ
 オプション引数"-?", "--help"を指定すると他のオプション引数が表示されます。
 
 - - -
+#### ソースコード行数計測画面
+```
+> java -cp keisuke-swing-x.x.x-jar-with-local-dependencies.jar:keisuke-x.x.x-jar-with-dependencies.jar keisuke.swing.StepCount
+```
+引数およびオプションはありません。  
+keisuke.count.StepCountの引数およびオプションで指定する値は、画面の中で指定できます。
+
+#### ソースコード差分行数計測画面
+```
+> java -cp keisuke-swing-x.x.x-jar-with-local-dependencies.jar:keisuke-x.x.x-jar-with-dependencies.jar keisuke.swing.DiffCount
+```
+引数およびオプションはありません。  
+keisuke.count.DiffCountの引数およびオプションで指定する値は、画面の中で指定できます。
+
+- - -
 ### 詳細説明
 より詳細な情報については、gitリポジトリのdocディレクトリ内のファイルを参照する。  
 ファイルはUTF-8エンコード、UNIX改行で作成しています。
 
 - - -
 ### 更新履歴
+###### Version 1.3.0(2018/5/20)
+* 機能追加  
+・StepCountとDiffCountのGUI画面を追加  
+* 内部的な改変  
+・計測機能に新たなI/Fを追加しやすくするため、StepCountとDiffCountに対しオプション設定や機能呼び出しのメソッドを追加  
+・keisuke.countの下のパッケージ構成一部見直し  
+・Gradleマルチプロジェクトとしてビルド設定変更  
+
 ###### Version 1.2.3(2018/1/20)
 * バグ修正  
 ・DiffCountで差分がない場合にルートディレクトリのステータスが「変更」となるバグを修正  

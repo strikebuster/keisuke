@@ -764,13 +764,13 @@ public class GeneralStepCounter extends ProgramLangRule implements StepCounter, 
 		// 最左に選ばれたものを処理する
 		if (!parse.hasTarget()) {
 			// 解析対象のコメント記号・リテラル記号・スクリプト終了記号はなし
-			return this.dealValidCode(lang, line);
+			return this.handleValidCode(lang, line);
 
 		} else if (parse.mostLeftTarget() instanceof LineComment) {
 			// 最左は単一行コメント記号、行末までコメント
 			//LogUtil.debugLog("Find (Line Comment):"
 			//		+ ((LineComment) parse.mostLeftTarget().getStartString());
-			return this.dealValidCode(lang, line.substring(0, parse.mostLeftPosition()));
+			return this.handleValidCode(lang, line.substring(0, parse.mostLeftPosition()));
 
 		} else if (parse.mostLeftTarget() instanceof AreaComment) {
 			// 最左は複数行コメント記号
@@ -780,11 +780,11 @@ public class GeneralStepCounter extends ProgramLangRule implements StepCounter, 
 			StringBuilder sb = new StringBuilder();
 			if (parse.mostLeftPosition() > 0) {
 				// コメントの左側は有効行なので返却対象
-				sb.append(this.dealValidCode(lang, line.substring(0, parse.mostLeftPosition())));
+				sb.append(this.handleValidCode(lang, line.substring(0, parse.mostLeftPosition())));
 			}
 			// コメント開始記号の左端から右の処理
 			this.pushNewStatusAsCommentRuleWith(area);
-			sb.append(this.dealAreaCommentStart(lang, line.substring(parse.mostLeftPosition()), area));
+			sb.append(this.handleAreaCommentStart(lang, line.substring(parse.mostLeftPosition()), area));
 			return sb.toString();
 
 		} else if (parse.mostLeftTarget() instanceof LiteralString) {
@@ -814,10 +814,11 @@ public class GeneralStepCounter extends ProgramLangRule implements StepCounter, 
 			}
 			//LogUtil.debugLog("Find (Literal String):" + literal.getStartString());
 			// 開始記号含まない左側の有効行を処理
-			sb.append(this.dealValidCode(lang, line.substring(0, parse.mostLeftPosition())));
+			sb.append(this.handleValidCode(lang, line.substring(0, parse.mostLeftPosition())));
 			// 開始記号含む右のリテラルの処理
 			this.pushNewStatusAsLiteralRuleWith(literal);
-			sb.append(this.dealLiteralStringStart(lang, line.substring(parse.mostLeftPosition()), literal));
+			sb.append(this.handleLiteralStringStart(lang, line.substring(parse.mostLeftPosition()),
+					literal));
 			return sb.toString();
 
 		} else if (parse.mostLeftTarget() instanceof ScriptBlock) {
@@ -826,18 +827,18 @@ public class GeneralStepCounter extends ProgramLangRule implements StepCounter, 
 			//LogUtil.debugLog("Find (Script End):" + block.getEndString());
 			StringBuilder sb = new StringBuilder();
 			// 終了記号を含まない有効行を処理
-			sb.append(this.dealValidCode(lang, line.substring(0, parse.mostLeftPosition())));
+			sb.append(this.handleValidCode(lang, line.substring(0, parse.mostLeftPosition())));
 			// 終了記号を含む右側の外部リテラルを処理
 			this.setCurrentLang(null);
 			this.popStatusAsScriptletCode();
 			this.popStatusAsProgramRule();
-			sb.append(this.dealScriptBlockEnd(lang, line.substring(parse.mostLeftPosition()), block));
+			sb.append(this.handleScriptBlockEnd(lang, line.substring(parse.mostLeftPosition()), block));
 			return sb.toString();
 
 		} else {
 			// ここには到達しないはず
 			LogUtil.warningLog("Unknown ParseInfo. : " + line);
-			return this.dealValidCode(lang, line);
+			return this.handleValidCode(lang, line);
 		}
 	}
 
@@ -848,7 +849,7 @@ public class GeneralStepCounter extends ProgramLangRule implements StepCounter, 
 	 * @param area 対象のブロックコメント定義インスタンス
 	 * @return lineから先頭にあるブロックコメント範囲を取り除いた文字列
 	 */
-	protected String dealAreaCommentStart(
+	protected String handleAreaCommentStart(
 			final ProgramLangRule lang, final String line, final AreaComment area) {
 		area.addNest();
 		// 開始記号末尾の位置
@@ -865,14 +866,14 @@ public class GeneralStepCounter extends ProgramLangRule implements StepCounter, 
 	 * @param literal 対象のリテラル文字列定義インスタンス
 	 * @return lineからリテラル文字列を取り除いた文字列
 	 */
-	protected String dealLiteralStringStart(
+	protected String handleLiteralStringStart(
 			final ProgramLangRule lang, final String line, final LiteralString literal) {
 		// 通常の引用符リテラル
 		String start = literal.getStartString();
 		StringBuilder sb = new StringBuilder();
 		// 開始記号を処理
 		int pos = start.length();
-		sb.append(this.dealValidCode(lang, line.substring(0, pos), HAVING_ONLY_LITERAL));
+		sb.append(this.handleValidCode(lang, line.substring(0, pos), HAVING_ONLY_LITERAL));
 		// 右側を処理
 		sb.append(this.searchLiteralStringEnd(lang, line.substring(pos)));
 		return sb.toString();
@@ -885,14 +886,14 @@ public class GeneralStepCounter extends ProgramLangRule implements StepCounter, 
 	 * @param block 対象のScriptletブロック定義インスタンス
 	 * @return lineからScriptletブロック外部を取り除いた文字列
 	 */
-	protected String dealScriptBlockEnd(
+	protected String handleScriptBlockEnd(
 			final ProgramLangRule lang, final  String line, final ScriptBlock block) {
 		// 通常の引用符リテラル
 		String end = block.getEndString();
 		StringBuilder sb = new StringBuilder();
 		// 開始記号を処理
 		int pos = end.length();
-		sb.append(this.dealValidCode(lang, line.substring(0, pos), HAVING_ONLY_LITERAL));
+		sb.append(this.handleValidCode(lang, line.substring(0, pos), HAVING_ONLY_LITERAL));
 		// 右側を処理
 		sb.append(this.searchScriptStart(line.substring(pos)));
 		return sb.toString();
@@ -935,16 +936,16 @@ public class GeneralStepCounter extends ProgramLangRule implements StepCounter, 
 			this.popStatusAsLiteralRule();
 			// リテラルの内容を返す
 			StringBuilder sb = new StringBuilder();
-			sb.append(this.dealValidCode(lang, line.substring(0, pos), HAVING_ONLY_LITERAL));
+			sb.append(this.handleValidCode(lang, line.substring(0, pos), HAVING_ONLY_LITERAL));
 			// リテラル終了後の右側のコードを解析して返す
 			if (pos < line.length()) {
 				sb.append(this.removeCommentFromLeft(lang, line.substring(pos), 1));
 			}
-			//dealProgramCode処理後の内容なのでそのまま返す
+			//handleValidCode処理後の内容なのでそのまま返す
 			return sb.toString();
 		}
 		// 文字列終了していないので、全てリテラル
-		return this.dealValidCode(lang, line, HAVING_ONLY_LITERAL);
+		return this.handleValidCode(lang, line, HAVING_ONLY_LITERAL);
 	}
 
 	/**
@@ -1002,9 +1003,9 @@ public class GeneralStepCounter extends ProgramLangRule implements StepCounter, 
 	 * @param line 処理対象行でコメントは抜かれたソースコードのみの文字列
 	 * @return 引数lineからコメント式範囲を取り除いたソースコード文字列
 	 */
-	protected String dealValidCode(final ProgramLangRule lang, final String line) {
+	protected String handleValidCode(final ProgramLangRule lang, final String line) {
 		// lineの内容はコメントのないソースコードの一部
-		return  dealValidCode(lang, line, HAVING_VALID_STATEMENT);
+		return  handleValidCode(lang, line, HAVING_VALID_STATEMENT);
 	}
 
 	/**
@@ -1014,7 +1015,7 @@ public class GeneralStepCounter extends ProgramLangRule implements StepCounter, 
 	 * @param validCodeFlag 有効行コードが含まれるか示すフラグ（falseは文字列リテラルのみの場合）
 	 * @return 引数lineからコメント式範囲を取り除いたソースコード文字列
 	 */
-	protected String dealValidCode(final ProgramLangRule lang, final String line, final boolean validCodeFlag) {
+	protected String handleValidCode(final ProgramLangRule lang, final String line, final boolean validCodeFlag) {
 		// lineの内容はコメントのないソースコードの一部
 		// 通常言語はvalidCodeFlagの値によらずそのまま全てを返す
 		return line;

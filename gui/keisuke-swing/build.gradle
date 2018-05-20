@@ -1,0 +1,249 @@
+// build.gradle as a single project
+// - the dependency on ../../core/keisuke is implemented by files().
+
+plugins {
+  id 'java'
+  id 'checkstyle'
+  id 'findbugs'
+  id 'jacoco'
+  id 'com.github.johnrengelman.shadow' version '2.0.4'
+}
+
+group = 'keisuke'
+//name : 'keisuke-swing'
+version = '1.3.0'
+//version = '1.x.x-SNAPSHOT'
+
+description = """keisuke-swing : GUI constructed with Swing for keisuke.count"""
+
+def defaultEncoding = 'UTF-8'
+def jstandDesktop = 'org.codehaus.jtstand:jtstand-desktop:1.2.1'
+def coreMainJar = '../../core/keisuke/build/libs/keisuke-1.3.0-jar-with-dependencies.jar'
+def coreTestClasses = '../../core/keisuke/build/classes/java/test'
+
+repositories {
+    mavenCentral()
+
+    maven { // for jtstand-desktop
+      url 'http://repo1.maven.org/maven2/'
+      //artifactUrls 'http://repo1.maven.org/maven2/'
+    }
+}
+
+dependencies {
+    compileOnly files(coreMainJar)
+    compile jstandDesktop
+    testCompile files(coreTestClasses)
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.easytesting:fest-swing-junit-4.5:1.2.1'
+    testCompile 'org.hamcrest:hamcrest-all:1.3'
+    testCompile 'org.jacoco:org.jacoco.agent:0.7.8'
+    testCompile 'org.jacoco:org.jacoco.ant:0.7.8'
+    checkstyle 'com.puppycrawl.tools:checkstyle:8.1'
+    findbugs 'com.google.code.findbugs:findbugs:3.0.1'
+}
+
+sourceSets.test {
+    compileClasspath += configurations.compileOnly
+    runtimeClasspath += configurations.compileOnly
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = defaultEncoding
+}
+sourceCompatibility = 1.5
+targetCompatibility = 1.5
+
+checkstyle {
+    toolVersion = '8.1'
+    configFile = file('config/checkstyle/sun_checks_custom.xml')
+    //reportsDir = file("${buildDir}/reports/checkstyle")
+    ignoreFailures = true
+}
+
+checkstyleTest {
+    excludes = ['**/*']
+}
+
+findbugs {
+    toolVersion = '3.0.1'
+    //reportsDir = file("${buildDir}/reports/findbugs")
+    ignoreFailures = true
+}
+
+def dirPathForOutputOfTestRun = 'test/out'
+
+task cleanAll(type: Delete) {
+    delete dirPathForOutputOfTestRun
+    dependsOn clean
+    doLast {
+        println("Delete ${dirPathForOutputOfTestRun}")
+    }
+}
+
+task makeDirForTest {
+    doLast {
+        def outDir = file(dirPathForOutputOfTestRun)
+        if (!outDir.exists()) {
+            outDir.mkdirs()
+            println("makeDir ${dirPathForOutputOfTestRun}")
+        }
+    }
+}
+
+test {
+    // The files used as expected data for assertion are encoded with "ja_JP.UTF-8"
+    systemProperty 'file.encoding', "${defaultEncoding}"
+    systemProperty 'user.language', 'ja'
+    systemProperty 'user.country', 'JP'
+    //testLogging.showStandardStreams = true
+    ignoreFailures = true
+    jacoco {
+        append = false
+        destinationFile = file("${buildDir}/jacoco/Test.exec")
+    }
+    dependsOn makeDirForTest
+}
+
+jacoco {
+    toolVersion = '0.7.8'
+    //reportsDir = file("${buildDir}/reports/jacoco")
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled = false
+        csv.enabled = false
+        html.enabled = true
+        html.destination = file("${buildDir}/reports/jacoco")
+    }
+    dependsOn test
+}
+
+jar {
+    baseName = project.name
+    version = project.version
+    manifest {
+        attributes 'Implementation-Title':"${baseName}", 'Implementation-Version':"${version}"
+    }
+}
+
+def suffixFatJar = 'jar-with-local-dependencies'
+
+shadowJar {
+    baseName = project.name
+    version = project.version
+    classifier = suffixFatJar
+    manifest {
+        attributes 'Implementation-Title':"${baseName}-${classifier}", 'Implementation-Version':"${version}"
+    }
+    dependsOn build
+}
+
+def suffixSrcJar = 'sources'
+
+task sourcesJar(type: Jar) {
+    baseName = project.name
+    version = project.version
+    classifier = suffixSrcJar
+    from sourceSets.main.allSource
+    manifest {
+        attributes 'Implementation-Title':"${baseName}-${classifier}", 'Implementation-Version':"${version}"
+    }
+    dependsOn build
+}
+
+task makeArtifacts(dependsOn: [sourcesJar, shadowJar]) {
+    doLast {
+        // do sourcesJar & shadowJar
+        println("Artifact = ${project.group}:${project.name}:${project.version}")
+    }
+}
+
+// Definitions about test data 
+def dirPathOfTestDataZip = 'test/archive'
+def zipPathOfTestData = 'test/archive/data.zip'
+def dirPathOfTestData = 'test/data'
+def dirPathDummy = 'build/test/dummy'
+
+sourceSets {
+    testdata {
+        java.srcDirs = []
+        resources.srcDirs = [dirPathOfTestData]
+        //output.classesDir = dirPathDummy
+        output.resourcesDir = 'build/test/data'
+    }
+}
+
+compileTestdataJava.deleteAllActions()
+testdataClasses.deleteAllActions()
+
+//processTestdataResources {
+//    doLast {
+//        tasks.makeZipOfTestData.execute()
+//    }
+//}
+
+task makeZipOfTestData(type: Zip) {
+    baseName = 'data'
+    version = null
+    destinationDir = file(dirPathOfTestDataZip)
+    from(dirPathOfTestData) {
+        include '**'
+        includeEmptyDirs = true
+    }
+    doFirst {
+        if (!file(dirPathOfTestData).exists()) {
+            println("Fail because it does not exist: ${dirPathOfTestData}")
+            throw new Exception("Not exist ${dirPathOfTestData}")
+        }
+        //if (file(zipPathOfTestData).exists()) {
+        //    println("Fail because it already exists: ${zipPathOfTestData}")
+        //    throw new Exception("Already exists ${zipPathOfTestData}")
+        //}
+    }
+    doLast {
+        println("Archive test data into zip file: ${zipPathOfTestData}")
+    }
+}
+
+sourceSets {
+    testzip {
+        java.srcDirs = []
+        resources.srcDirs = [dirPathOfTestDataZip]
+        //output.classesDir = dirPathDummy
+        output.resourcesDir = 'build/test/archive'
+    }
+}
+
+compileTestzipJava.deleteAllActions()
+testzipClasses.deleteAllActions()
+
+processTestzipResources {
+    doLast {
+        tasks.extractTestData.execute()
+    }
+}
+
+task extractTestData(dependsOn: processTestzipResources, type: Copy) {
+    from(zipTree(zipPathOfTestData)) {
+        include '**'
+        includeEmptyDirs = true
+    }
+    into dirPathOfTestData
+    def copyFiles = []
+    eachFile {
+        copyFiles << it
+    }
+    doLast {
+        copyFiles.each {
+            FileCopyDetails detail ->
+            def node = file("${dirPathOfTestData}/${detail.path}")
+            if (node.exists()) {
+                node.setLastModified(detail.lastModified)
+            }
+        }
+        println("Extract test data into dir: ${dirPathOfTestData}")
+    }
+}
+

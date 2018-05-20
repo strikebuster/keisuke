@@ -1,0 +1,14 @@
+// multi-project configurations.
+
+rootProject.name = 'keisuke'
+//rootProject.name = 'keisuke-all'
+// eclipse Buildship plugin can accept the root project name
+// only to be named same as the physical direcory.
+
+
+include ':core:keisuke'
+include ':gui:keisuke-swing'
+
+project(':gui:keisuke-swing').buildFileName = 'sub_build.gradle'
+
+

@@ -72,7 +72,7 @@ public class RubyCounter extends LabelHereDocScriptCounter {
 
 	/* リテラル文字列の開始から行末までの処理をする */
 	@Override
-	public String dealLiteralStringStart(
+	public String handleLiteralStringStart(
 			final ProgramLangRule lang, final String line, final LiteralString literal) {
 		StringBuilder sb = new StringBuilder();
 		if (literal.checkPercentNotation()) {
@@ -102,7 +102,7 @@ public class RubyCounter extends LabelHereDocScriptCounter {
 			}
 		} else {
 			// 通常の引用符またはラベル終了リテラル
-			return super.dealLiteralStringStart(lang, line, literal);
+			return super.handleLiteralStringStart(lang, line, literal);
 		}
 	}
 

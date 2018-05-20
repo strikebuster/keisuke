@@ -1,0 +1,11 @@
+FileName                                Type        Category            Exec  Blanc Cmnt  Sum   
+------------------------------------------------------------------------------------------------
+FileObj.java                            Java                                22     6     5    33
+JavaCutter.java                         Java        Cutter                   8     5     7    20
+StringUtil.java                         Java                                42    11     9    62
+Utils                                   UNSUPPORTED
+Utils.java                              Java                                42    11     9    62
+Utils.txt                               Text                                51    11     0    62
+hoge.txt                                Text                                 0     0     0     0
+------------------------------------------------------------------------------------------------
+TOTAL                                                                      165    44    30   239

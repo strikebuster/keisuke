@@ -32,9 +32,9 @@ public class DiffMainProcTest {
     public ExpectedException thrownEx = ExpectedException.none();
 
 	@Test
-	public void dealHelpOption() throws Exception {
+	public void handleHelpOption() throws Exception {
 		//String newRoot = "test/sample/java/root1";
-		System.out.println("## DiffProcTest ## arg01 ## dealHelpOption ##");
+		System.out.println("## DiffProcTest ## arg01 ## handleHelpOption ##");
 		DiffMainProc dproc = new DiffMainProc();
 		String[] args = {"-?", "xxx"};
 		dproc.main(args);
@@ -42,8 +42,8 @@ public class DiffMainProcTest {
 	}
 
 	@Test
-	public void dealArgsWhichHaveAoutAndMoutOption() throws Exception {
-		System.out.println("## DiffProcTest ## arg02 ## dealArgsWhichHaveAoutAndMoutOption ##");
+	public void handleArgsWhichHaveAoutAndMoutOption() throws Exception {
+		System.out.println("## DiffProcTest ## arg02 ## handleArgsWhichHaveAoutAndMoutOption ##");
 
 		DiffMainProc dproc = new DiffMainProc();
 		String[] args = {"-a", "test/out/add02a.txt", "-m", "test/out/modify02a.txt",
@@ -58,8 +58,8 @@ public class DiffMainProcTest {
 	}
 
 	@Test
-	public void dealArgsWhichHavePropOption() throws Exception {
-		System.out.println("## DiffProcTest ## arg03 ## dealArgsWhichHavePropOption ##");
+	public void handleArgsWhichHavePropOption() throws Exception {
+		System.out.println("## DiffProcTest ## arg03 ## handleArgsWhichHavePropOption ##");
 
 		DiffMainProc dproc = new DiffMainProc();
 		String[] args = {"-p", "test/data/ktest.properties", "test/data/dummy.txt"};
@@ -71,8 +71,8 @@ public class DiffMainProcTest {
 	}
 
 	@Test
-	public void dealArgsWhichHaveUnchangeOptionButMissingValue() throws Exception {
-		System.out.println("## DiffProcTest ## arg04 ## dealArgsWhichHaveUnchangeOptionButMissingValue ##");
+	public void handleArgsWhichHaveUnchangeOptionButMissingValue() throws Exception {
+		System.out.println("## DiffProcTest ## arg04 ## handleArgsWhichHaveUnchangeOptionButMissingValue ##");
 
 		StdoutCapture capture = new StdoutCapture();
 		String outMessage = null;
@@ -100,8 +100,8 @@ public class DiffMainProcTest {
 	}
 
 	@Test
-	public void dealArgsWhichHaveUnchangeOptionButWrongValue() throws Exception {
-		System.out.println("## DiffProcTest ## arg05 ## dealArgsWhichHaveUnchangeOptionButWrongValue ##");
+	public void handleArgsWhichHaveUnchangeOptionButWrongValue() throws Exception {
+		System.out.println("## DiffProcTest ## arg05 ## handleArgsWhichHaveUnchangeOptionButWrongValue ##");
 
 		StderrCapture capture = new StderrCapture();
 		String errMessage = null;
@@ -135,8 +135,8 @@ public class DiffMainProcTest {
 	}
 
 	@Test
-	public void dealArgsWhichHaveUnchangeOptionAndValueIsTotal() throws Exception {
-		System.out.println("## DiffProcTest ## arg06 ## dealArgsWhichHaveUnchangeOptionAndValueIsTotal ##");
+	public void handleArgsWhichHaveUnchangeOptionAndValueIsTotal() throws Exception {
+		System.out.println("## DiffProcTest ## arg06 ## handleArgsWhichHaveUnchangeOptionAndValueIsTotal ##");
 		URL expected = this.getClass().getResource("DiffTest_arg06.csv");
 
 		DiffMainProc dproc = new DiffMainProc();
@@ -151,8 +151,8 @@ public class DiffMainProcTest {
 	}
 
 	@Test
-	public void dealArgsWhichHaveClassOptionButWrongValue() throws Exception {
-		System.out.println("## DiffProcTest ## arg07 ## dealArgsWhichHaveClassOptionButWrongValue ##");
+	public void handleArgsWhichHaveClassOptionButWrongValue() throws Exception {
+		System.out.println("## DiffProcTest ## arg07 ## handleArgsWhichHaveClassOptionButWrongValue ##");
 
 		StderrCapture capture = new StderrCapture();
 		String errMessage = null;
@@ -183,8 +183,8 @@ public class DiffMainProcTest {
 	}
 
 	@Test
-	public void dealInfileWhichDoesNotExist() throws Exception {
-		System.out.println("## DiffProcTest ## error01 ## dealInfileWhichDoesNotExist ##");
+	public void handleInfileWhichDoesNotExist() throws Exception {
+		System.out.println("## DiffProcTest ## error01 ## handleInfileWhichDoesNotExist ##");
 		String expected = "FileNotFoundException";
 		thrownEx.expect(RuntimeException.class);
 		thrownEx.expectMessage(expected);
@@ -198,8 +198,8 @@ public class DiffMainProcTest {
 	}
 
 	@Test
-	public void dealPropOptionWhichFileDoesNotExist() throws Exception {
-		System.out.println("## DiffProcTest ## error02 ## dealPropOptionWhichFileDoesNotExist ##");
+	public void handlePropOptionWhichFileDoesNotExist() throws Exception {
+		System.out.println("## DiffProcTest ## error02 ## handlePropOptionWhichFileDoesNotExist ##");
 		String expected = "FileNotFoundException";
 		thrownEx.expect(RuntimeException.class);
 		thrownEx.expectMessage(expected);
@@ -214,9 +214,9 @@ public class DiffMainProcTest {
 	}
 
 	@Test
-	public void dealXmlOptionWhichFileDoesNotExistAndClassOptionIsLanguage() throws Exception {
-		System.out.println(
-			"## DiffProcTest ## error03 ## dealXmlOptionWhichFileDoesNotExistAndClassOptionIsLanguage ##");
+	public void handleXmlOptionWhichFileDoesNotExistAndClassOptionIsLanguage() throws Exception {
+		System.out.println("## DiffProcTest ## error03 ## "
+				+ "handleXmlOptionWhichFileDoesNotExistAndClassOptionIsLanguage ##");
 		String expected = "FileNotFoundException";
 		thrownEx.expect(RuntimeException.class);
 		thrownEx.expectMessage(expected);
@@ -244,9 +244,9 @@ public class DiffMainProcTest {
 	}
 
 	@Test
-	public void dealXmlOptionWhichFileDoesNotExistAndClassOptionIsFw() throws Exception {
+	public void handleXmlOptionWhichFileDoesNotExistAndClassOptionIsFw() throws Exception {
 		System.out.println("## DiffProcTest ## error05 ## "
-				+ "dealXmlOptionWhichFileDoesNotExistAndClassOptionIsFw ##");
+				+ "handleXmlOptionWhichFileDoesNotExistAndClassOptionIsFw ##");
 		//URL expected = this.getClass().getResource("DiffTest_diff20.csv");
 		String expected = "FileNotFoundException";
 		thrownEx.expect(RuntimeException.class);

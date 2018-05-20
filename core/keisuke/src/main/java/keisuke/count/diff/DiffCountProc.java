@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintStream;
 
 import keisuke.count.AbstractCountMainProc;
@@ -26,7 +27,6 @@ public class DiffCountProc extends AbstractCountMainProc {
 
 	private File srcdir = null;
 	private File oldSrcdir = null;
-	private String formatType = "";
 	private MessageDefine msgDef = null;
 	private DiffFolderResult diffResult;
 
@@ -101,7 +101,7 @@ public class DiffCountProc extends AbstractCountMainProc {
 
 	/** {@inheritDoc} */
 	protected void writeResults() throws IOException {
-		Renderer renderer = RendererFactory.getRenderer(this.formatType, this.msgDef);
+		Renderer renderer = RendererFactory.getRenderer(this.format(), this.msgDef);
 		if (renderer == null) {
 			throw new RuntimeException("fail to get a formatter");
 		}
@@ -127,11 +127,56 @@ public class DiffCountProc extends AbstractCountMainProc {
 		this.oldSrcdir = dir;
 	}
 
+	/** {@inheritDoc} */
+	public void doCountingAndWriting(final String[] filenames, final OutputStream output) throws IOException {
+		if (filenames == null || filenames.length < 2) {
+			LogUtil.errorLog("old and new directories are not specified.");
+			throw new IllegalArgumentException("short of arguments");
+		}
+		doCountingAndWriting(filenames[0], filenames[1], output);
+	}
 	/**
-	 * 結果出力のフォーマットを設定します
-	 * @param format 出力フォーマット
+	 * オプションや計測対象ファイル名を設定後に、差分ステップ計測と結果出力を実行する
+	 * @param olddir 計測対象の旧バージョンのディレクトリ
+	 * @param newdir 計測対象の新バージョンのディレクトリ
+	 * @param output 結果出力先
+	 * @throws IOException ファイル入出力で異常があれば発行する
 	 */
-	private void setFormat(final String format) {
-		this.formatType = format;
+	public void doCountingAndWriting(final String olddir, final String newdir,
+					final OutputStream output) throws IOException {
+		// 旧バージョンDir
+		if (olddir == null) {
+			LogUtil.errorLog("old directory is not specified.");
+			throw new IllegalArgumentException("short of arguments");
+		}
+		File olddirFile = new File(olddir);
+		if (!olddirFile.isDirectory()) {
+			LogUtil.errorLog("'" + olddirFile.getAbsolutePath() + "' is not directory.");
+			throw new IllegalArgumentException("not directory");
+		}
+		this.setOldDirectory(olddirFile);
+		// 新バージョンDir
+		if (newdir == null) {
+			LogUtil.errorLog("new directory is not specified.");
+			throw new IllegalArgumentException("short of arguments");
+		}
+		File newdirFile = new File(newdir);
+		if (!newdirFile.isDirectory()) {
+			LogUtil.errorLog("'" + newdirFile.getAbsolutePath() + "' is not directory.");
+			throw new IllegalArgumentException("not directory");
+		}
+		this.setNewDirectory(newdirFile);
+		// 計測と出力
+		this.setOutputStream(output);
+		this.executeCounting();
+		this.writeResults();
+	}
+
+	/**
+	 * 計測結果を格納している木構造データのルートを返す
+	 * @return 木構造データのルート
+	 */
+	public DiffFolderResult getResultAsRawData() {
+		return this.diffResult;
 	}
 }

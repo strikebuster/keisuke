@@ -1,7 +1,7 @@
 package keisuke.ant;
 
-import static keisuke.count.SCTestUtil.*;
-import static keisuke.count.SCTestConstant.*;
+import static keisuke.count.CountTestUtil.*;
+import static keisuke.count.diff.DiffCountTestConstant.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -92,7 +92,7 @@ public class DiffCountTaskTest {
 		System.out.println("## DiffCountTask ## countDiffJava ##");
 		String targetName = "DiffJava";
 		URL expected = this.getClass()
-				.getResource("../count/DiffCounterTest_testCount_java.txt");
+				.getResource("../count/diff/DiffCounterTest_testCount_java.txt");
 
 		AntTaskTestDriver driver = new AntTaskTestDriver();
 		driver.configureProject(projfile);
@@ -110,7 +110,7 @@ public class DiffCountTaskTest {
 		System.out.println("## DiffCountTask ## countDiffJavaUsingCustomRule ##");
 		String targetName = "DiffJavaUsingCustomRule";
 		URL expected = this.getClass()
-				.getResource("../count/RuleDiffCounterTest_testCount_java.txt");
+				.getResource("../count/diff/RuleDiffCounterTest_testCount_java.txt");
 
 		AntTaskTestDriver driver = new AntTaskTestDriver();
 		driver.configureProject(projfile);

@@ -32,7 +32,7 @@ public class LabelHereDocScriptCounter extends GeneralStepCounter {
 
 	/* リテラル文字列の開始から行末までの処理をする */
 	@Override
-	public String dealLiteralStringStart(
+	public String handleLiteralStringStart(
 			final ProgramLangRule lang, final String line, final LiteralString literal) {
 		StringBuilder sb = new StringBuilder();
 		int pos = -1;
@@ -51,7 +51,7 @@ public class LabelHereDocScriptCounter extends GeneralStepCounter {
 				//LogUtil.debugLog("label = " + label);
 				pos = matcher.end();
 				// 開始記号およびラベルの処理
-				sb.append(this.dealValidCode(lang, line.substring(0, pos), false));
+				sb.append(this.handleValidCode(lang, line.substring(0, pos), false));
 				// ラベル宣言より右の処理
 				sb.append(this.removeCommentFromLeft(lang, line.substring(pos), 1));
 				//右側の処理結果に不正なブロックコメント定義があった場合の備え
@@ -68,7 +68,7 @@ public class LabelHereDocScriptCounter extends GeneralStepCounter {
 				this.popStatusAsLiteralRule(); // pop(IN_LITERAL&LabelHereDoc)
 				// 開始記号を処理
 				pos = heredoc.getStartString().length();
-				sb.append(this.dealValidCode(lang, line.substring(0, pos)));
+				sb.append(this.handleValidCode(lang, line.substring(0, pos)));
 				// 右側を処理、空でもremoveCommentFromLeft()を呼ぶ
 				sb.append(this.removeCommentFromLeft(lang, line.substring(pos), 1));
 			}
@@ -76,7 +76,7 @@ public class LabelHereDocScriptCounter extends GeneralStepCounter {
 
 		} else {
 			// 通常の引用符リテラル
-			return super.dealLiteralStringStart(lang, line, literal);
+			return super.handleLiteralStringStart(lang, line, literal);
 		}
 	}
 }

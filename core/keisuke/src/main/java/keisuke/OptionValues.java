@@ -98,4 +98,12 @@ public class OptionValues {
 		}
 		return sb.toString();
 	}
+
+	/**
+	 * オプションリストをString配列に格納して返す
+	 * @return オプションリストを配列化したインスタンス
+	 */
+	public String[] getValuesAsArray() {
+		return (String[]) this.valuesList.toArray(new String[this.valuesList.size()]);
+	}
 }

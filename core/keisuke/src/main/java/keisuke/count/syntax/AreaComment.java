@@ -75,7 +75,7 @@ public class AreaComment extends AbstractBlock {
 
 	/**
 	 * コメントのネスト終了をチェックします
-	 *　@return ネストが０ならtrue
+	 * @return ネストが０ならtrue
 	 */
 	public boolean checkNestQuit() {
 		return (this.nest <= 0);

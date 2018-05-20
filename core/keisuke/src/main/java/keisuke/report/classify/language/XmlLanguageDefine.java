@@ -70,7 +70,7 @@ public class XmlLanguageDefine extends AbstractXmlDefine {
 	}
 
 	/** {@inheritDoc} */
-	protected void dealChild(final String name, final Element elem) {
+	protected void handleChild(final String name, final Element elem) {
 		if (name.equals(XML_NODE_LANG)) {
 			this.parseLanguage(elem);
 		} else if (name.equals(XML_NODE_EXT)) {
