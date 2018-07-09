@@ -106,6 +106,24 @@ public class DiffCountTaskTest {
 	}
 
 	@Test
+	public void countDiffJavaUsingCsvFormat() throws Exception {
+		System.out.println("## DiffCountTask ## countDiffJavaUsingCsvFormat ##");
+		String targetName = "DiffJavaUsingCsvFormat";
+		URL expected = this.getClass()
+				.getResource("../count/diff/diffCount_java.csv");
+
+		AntTaskTestDriver driver = new AntTaskTestDriver();
+		driver.configureProject(projfile);
+		driver.executeTarget(targetName);
+		System.out.println(driver.getLog());
+		System.err.println(driver.getStderr());
+		System.out.println(driver.getStdout());
+
+		File actual = new File("test/out/ant_diff_java.csv");
+		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+	}
+
+	@Test
 	public void countDiffJavaUsingCustomRule() throws Exception {
 		System.out.println("## DiffCountTask ## countDiffJavaUsingCustomRule ##");
 		String targetName = "DiffJavaUsingCustomRule";

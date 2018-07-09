@@ -15,18 +15,18 @@ import keisuke.swing.ResultViewComponent;
  */
 class DiffResultViewComponent extends ResultViewComponent {
 
-	private ShowAllButtonUnit showButton;
-	private HideAllButtonUnit hideButton;
+	private ShowAllButtonElement showButton;
+	private HideAllButtonElement hideButton;
 	private JLabel padding;
-	private TotalSumUnit totalSum;
+	private TotalSumElement totalSum;
 	private DiffFolderResult currentResult;
 
 	DiffResultViewComponent(final DiffCountGUI owner, final MessageDefine msgdef) {
 		super(owner);
-		this.showButton = new ShowAllButtonUnit(this);
-		this.hideButton = new HideAllButtonUnit(this);
+		this.showButton = new ShowAllButtonElement(this);
+		this.hideButton = new HideAllButtonElement(this);
 		this.padding = new JLabel("   "); //3 spaces
-		this.totalSum = new TotalSumUnit(msgdef);
+		this.totalSum = new TotalSumElement(msgdef);
 		this.setResultPane(new DiffResultPaneUnit(this, msgdef));
 	}
 

@@ -19,7 +19,7 @@ class StepCountAdapter extends AbstractCountAdapter {
 	}
 
 	void setSort(final String sort) {
-		((StepCountProc) this.countProc()).setSort(sort);
+		((StepCountProc) this.countProc()).setSortOrder(sort);
 	}
 
 	StepCountResult[] getCountedResultAsRaw() {

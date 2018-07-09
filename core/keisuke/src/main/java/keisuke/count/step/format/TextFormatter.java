@@ -1,8 +1,12 @@
 package keisuke.count.step.format;
 
 import static keisuke.count.step.format.FormatConstant.*;
+import static keisuke.util.StringUtil.LINE_SEP;
+
+import java.io.UnsupportedEncodingException;
 
 import keisuke.StepCountResult;
+import keisuke.count.FormatEnum;
 import keisuke.util.StringUtil;
 
 /**
@@ -18,18 +22,22 @@ public class TextFormatter extends AbstractFormatter {
 	private static final int COMMENT_MAX_LEN = 6;
 	private static final int SUM_MAX_LEN = 6;
 
+	TextFormatter() {
+		super(FormatEnum.TEXT);
+	}
+
 	/** {@inheritDoc} */
 	public byte[] format(final StepCountResult[] results) {
-
-		long sumStep    = 0;
+		long sumExec    = 0;
 		long sumComment = 0;
-		long sumNone    = 0;
+		long sumBlanc    = 0;
 
-		int maxFileLength = maxLengthOfFileNameIn(results);
-		// ヘッダをフォーマット
+		if (results == null) {
+			return null;
+		}
 		StringBuffer sb = new StringBuffer();
-		//sb.append(fillOrCut("ファイル", maxFileLength));
-		//sb.append("種類  カテゴリ            実行  空行  ｺﾒﾝﾄ  合計  ");
+		int maxFileLength = maxLengthOfFileNameIn(results);
+		// ヘッダー行
 		sb.append(fillOrCut(this.getMessageText(MSG_COUNT_FMT_PATH), maxFileLength));
 		sb.append(fillOrCut(this.getMessageText(MSG_COUNT_FMT_TYPE), TYPE_MAX_LEN));
 		sb.append(fillOrCut(this.getMessageText(MSG_COUNT_FMT_CATEGORY), CATEGORY_MAX_LEN));
@@ -37,61 +45,54 @@ public class TextFormatter extends AbstractFormatter {
 		sb.append(fillOrCut(this.getMessageText(MSG_COUNT_FMT_BLANC), BLANC_MAX_LEN));
 		sb.append(fillOrCut(this.getMessageText(MSG_COUNT_FMT_COMMENT), COMMENT_MAX_LEN));
 		sb.append(fillOrCut(this.getMessageText(MSG_COUNT_FMT_SUM), SUM_MAX_LEN));
-		sb.append("\n");
-		//sb.append(makeHyphen(maxFileLength));
-		//sb.append("--------------------------------------------------");
+		sb.append(LINE_SEP);
+		// 区切り行
 		sb.append(getHyphens(maxFileLength + TYPE_MAX_LEN + CATEGORY_MAX_LEN
 				+ EXEC_MAX_LEN + BLANC_MAX_LEN + COMMENT_MAX_LEN + SUM_MAX_LEN));
-		sb.append("\n");
+		sb.append(LINE_SEP);
 		// １行ずつ処理を行う
 		for (int i = 0; i < results.length; i++) {
 			StepCountResult result = results[i];
-			// 未対応のカウント結果をフォーマット
 			if (result.sourceType() == null) {
+				// 未対応のカウント結果をフォーマット
 				sb.append(fillOrCut(result.filePath(), maxFileLength));
-				//sb.append("未対応");
 				sb.append(this.getMessageText(MSG_COUNT_FMT_UNDEF));
-				sb.append("\n");
-			// 正常にカウントされた結果をフォーマット
+				sb.append(LINE_SEP);
 			} else {
-				//String fileName = result.getFileName();
-				//String fileType = result.getFileType();
-				String step     = String.valueOf(result.execSteps());
-				String non      = String.valueOf(result.blancSteps());
-				String comment  = String.valueOf(result.commentSteps());
-				String sum      = String.valueOf(result.sumSteps());
-
+				// 正常にカウントされた結果をフォーマット
 				sb.append(fillOrCut(result.filePath(), maxFileLength));
 				sb.append(fillOrCut(result.sourceType(), TYPE_MAX_LEN));
 				sb.append(fillOrCut(result.sourceCategory(), CATEGORY_MAX_LEN));
-				sb.append(fillLeftOrCut(step, EXEC_MAX_LEN));
-				sb.append(fillLeftOrCut(non, BLANC_MAX_LEN));
-				sb.append(fillLeftOrCut(comment, COMMENT_MAX_LEN));
-				sb.append(fillLeftOrCut(sum, SUM_MAX_LEN));
-				sb.append("\n");
-
-				sumStep    += result.execSteps();
+				sb.append(fillLeftOrCut(Long.toString(result.execSteps()), EXEC_MAX_LEN));
+				sb.append(fillLeftOrCut(Long.toString(result.blancSteps()), BLANC_MAX_LEN));
+				sb.append(fillLeftOrCut(Long.toString(result.commentSteps()),
+						COMMENT_MAX_LEN));
+				sb.append(fillLeftOrCut(Long.toString(result.sumSteps()), SUM_MAX_LEN));
+				sb.append(LINE_SEP);
+				sumExec    += result.execSteps();
 				sumComment += result.commentSteps();
-				sumNone    += result.blancSteps();
+				sumBlanc   += result.blancSteps();
 			}
 		}
-		// 合計行をフォーマット
-		//sb.append(makeHyphen(maxFileLength));
-		//sb.append("--------------------------------------------------");
+		// 区切り行
 		sb.append(getHyphens(maxFileLength + TYPE_MAX_LEN + CATEGORY_MAX_LEN
 				+ EXEC_MAX_LEN + BLANC_MAX_LEN + COMMENT_MAX_LEN + SUM_MAX_LEN));
-		sb.append("\n");
-		//sb.append(fillOrCut("合計", maxFileLength));
+		sb.append(LINE_SEP);
+		// 合計行をフォーマット
 		sb.append(fillOrCut(this.getMessageText(MSG_COUNT_FMT_TOTAL), maxFileLength));
 		sb.append(getSpaces(TYPE_MAX_LEN));
 		sb.append(getSpaces(CATEGORY_MAX_LEN));
-		sb.append(fillLeftOrCut(String.valueOf(sumStep), EXEC_MAX_LEN));
-		sb.append(fillLeftOrCut(String.valueOf(sumNone), BLANC_MAX_LEN));
-		sb.append(fillLeftOrCut(String.valueOf(sumComment), COMMENT_MAX_LEN));
-		sb.append(fillLeftOrCut(String.valueOf(sumStep + sumNone + sumComment), SUM_MAX_LEN));
-		sb.append("\n");
-
-		return sb.toString().getBytes();
+		sb.append(fillLeftOrCut(Long.toString(sumExec), EXEC_MAX_LEN));
+		sb.append(fillLeftOrCut(Long.toString(sumBlanc), BLANC_MAX_LEN));
+		sb.append(fillLeftOrCut(Long.toString(sumComment), COMMENT_MAX_LEN));
+		sb.append(fillLeftOrCut(Long.toString(sumExec + sumBlanc + sumComment), SUM_MAX_LEN));
+		sb.append(LINE_SEP);
+		try {
+			return sb.toString().getBytes(this.textEncoding());
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	/**

@@ -9,9 +9,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintStream;
 
 import keisuke.count.AbstractCountMainProc;
+import keisuke.count.Formatter;
 import keisuke.count.diff.renderer.RendererFactory;
 import keisuke.count.option.DiffCountOption;
 import keisuke.report.property.MessageDefine;
@@ -29,6 +29,7 @@ public class DiffCountProc extends AbstractCountMainProc {
 	private File oldSrcdir = null;
 	private MessageDefine msgDef = null;
 	private DiffFolderResult diffResult;
+	//private Formatter<DiffFolderResult> formatter = null;
 
 	public DiffCountProc() {
 		this.setCommandOption(new DiffCountOption());
@@ -36,28 +37,32 @@ public class DiffCountProc extends AbstractCountMainProc {
 
 	/** {@inheritDoc} */
 	protected void setFileArguments() throws IllegalArgumentException {
+		// 新しい版のソースの基点ディレクトリの設定
 		String newdir = this.argMap().get(ARG_NEWDIR);
 		if (newdir == null) {
 			LogUtil.errorLog("new directory is not specified.");
-			throw new IllegalArgumentException("short of arguments");
+			throw new IllegalArgumentException("no new directory");
+		} else {
+			try {
+				this.validateAndSetNewDirectory(newdir);
+			} catch (IllegalArgumentException e) {
+				LogUtil.errorLog("'" + newdir + "' is not directory.");
+				throw e;
+			}
 		}
-		File newdirFile = new File(newdir);
-		if (!newdirFile.isDirectory()) {
-			LogUtil.errorLog("'" + newdirFile.getAbsolutePath() + "' is not directory.");
-			throw new IllegalArgumentException("not directory");
-		}
+		// 古い版のソースの基点ディレクトリの設定
 		String olddir = this.argMap().get(ARG_OLDDIR);
 		if (olddir == null) {
 			LogUtil.errorLog("old directory is not specified.");
-			throw new IllegalArgumentException("short of arguments");
+			throw new IllegalArgumentException("no old directory.");
+		} else {
+			try {
+				this.validateAndSetOldDirectory(olddir);
+			} catch (IllegalArgumentException e) {
+				LogUtil.errorLog("'" + olddir + "' is not directory.");
+				throw e;
+			}
 		}
-		File olddirFile = new File(olddir);
-		if (!olddirFile.isDirectory()) {
-			LogUtil.errorLog("'" + olddirFile.getAbsolutePath() + "' is not directory.");
-			throw new IllegalArgumentException("not directory");
-		}
-		this.setNewDirectory(newdirFile);
-		this.setOldDirectory(olddirFile);
 	}
 
 	/** {@inheritDoc} */
@@ -74,9 +79,13 @@ public class DiffCountProc extends AbstractCountMainProc {
 		// フォーマットを設定
 		if (format == null) {
 			format = OPTVAL_TEXT;
-		} else if (!this.commandOption().valuesAs(OPT_FORMAT).contains(format)) {
-			LogUtil.errorLog("'" + format + "' is invalid option value for '" + OPT_FORMAT + "'.");
-			throw new IllegalArgumentException("invalid option value");
+		} else {
+			try {
+				this.validateFormatOption(format);
+			} catch (IllegalArgumentException e) {
+				LogUtil.errorLog("'" + format + "' is invalid option value for '" + OPT_FORMAT + "'.");
+				throw e;
+			}
 		}
 		this.setFormat(format);
 		// カスタマイズしたXML定義ファイル指定
@@ -85,7 +94,37 @@ public class DiffCountProc extends AbstractCountMainProc {
 		}
 		// 出力先の指定
 		if (outfile != null && outfile.length() > 0) {
-			this.setOutputStream(new PrintStream(new FileOutputStream(new File(outfile))));
+			this.setOutputStream(new FileOutputStream(new File(outfile)));
+		}
+	}
+
+	private void validateAndSetNewDirectory(final String dirname) {
+		File newdirFile = this.validateAndGetDirectory("new", dirname);
+		this.setNewDirectory(newdirFile);
+	}
+
+	private void validateAndSetOldDirectory(final String dirname) {
+		File olddirFile = this.validateAndGetDirectory("old", dirname);
+		this.setOldDirectory(olddirFile);
+	}
+
+	private File validateAndGetDirectory(final String prefix, final String dirname) {
+		if (dirname == null || dirname.isEmpty()) {
+			throw new IllegalArgumentException(prefix + " directory is not specified.");
+		}
+		File dirFile = new File(dirname);
+		if (!dirFile.isDirectory()) {
+			throw new IllegalArgumentException(dirname + " is not directory.");
+		}
+		return dirFile;
+	}
+
+	private void validateFormatOption(final String format) {
+		if (format == null || format.isEmpty()) {
+			return;
+		}
+		if (!this.commandOption().valuesAs(OPT_FORMAT).contains(format)) {
+			throw new IllegalArgumentException(format + " is invalid format value.");
 		}
 	}
 
@@ -101,12 +140,13 @@ public class DiffCountProc extends AbstractCountMainProc {
 
 	/** {@inheritDoc} */
 	protected void writeResults() throws IOException {
-		Renderer renderer = RendererFactory.getRenderer(this.format(), this.msgDef);
+		// フォーマッタを設定
+		Formatter<DiffFolderResult> renderer = RendererFactory.getFormatter(this.format(), this.msgDef);
+		this.setFormatter(renderer);
 		if (renderer == null) {
 			throw new RuntimeException("fail to get a formatter");
 		}
-		byte[] bytes = renderer.render(this.diffResult);
-		this.outputStream().write(bytes);
+		this.outputStream().write(renderer.format(this.diffResult));
 		this.outputStream().flush();
 		//LogUtil.debugLog(outputFile.getAbsolutePath() + "にカウント結果を出力しました。");
 	}
@@ -145,31 +185,18 @@ public class DiffCountProc extends AbstractCountMainProc {
 	public void doCountingAndWriting(final String olddir, final String newdir,
 					final OutputStream output) throws IOException {
 		// 旧バージョンDir
-		if (olddir == null) {
-			LogUtil.errorLog("old directory is not specified.");
-			throw new IllegalArgumentException("short of arguments");
-		}
-		File olddirFile = new File(olddir);
-		if (!olddirFile.isDirectory()) {
-			LogUtil.errorLog("'" + olddirFile.getAbsolutePath() + "' is not directory.");
-			throw new IllegalArgumentException("not directory");
-		}
-		this.setOldDirectory(olddirFile);
+		this.validateAndSetOldDirectory(olddir);
 		// 新バージョンDir
-		if (newdir == null) {
-			LogUtil.errorLog("new directory is not specified.");
-			throw new IllegalArgumentException("short of arguments");
-		}
-		File newdirFile = new File(newdir);
-		if (!newdirFile.isDirectory()) {
-			LogUtil.errorLog("'" + newdirFile.getAbsolutePath() + "' is not directory.");
-			throw new IllegalArgumentException("not directory");
-		}
-		this.setNewDirectory(newdirFile);
+		this.validateAndSetNewDirectory(newdir);
 		// 計測と出力
-		this.setOutputStream(output);
+		if (output != null) {
+			this.setOutputStream(output);
+		}
 		this.executeCounting();
-		this.writeResults();
+		if (output != null) {
+			this.validateFormatOption(this.format());
+			this.writeResults();
+		}
 	}
 
 	/**

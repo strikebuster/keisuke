@@ -26,6 +26,8 @@ class RootDirectoryUnit {
 	private JButton browseButton;
 	private JTextField dirField;
 	private boolean ready = false;
+	// 直近のディレクトリ記憶用
+	private File lastWorkingDir = null;
 
 	RootDirectoryUnit(final RootDirectoriesComponent owner, final String title, final String buttonLabel,
 			final String[] names) {
@@ -121,7 +123,9 @@ class RootDirectoryUnit {
 		JFileChooser chooser = new JFileChooser();
 		chooser.setName(FILE_CHOOSER + "-" + name);
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		chooser.setCurrentDirectory(this.lastWorkingDir); // if null, set default
 		if (chooser.showOpenDialog(this.parent.mainWindow()) == JFileChooser.APPROVE_OPTION) {
+			this.lastWorkingDir = chooser.getCurrentDirectory();
 			return chooser.getSelectedFile();
 		}
 		return null;

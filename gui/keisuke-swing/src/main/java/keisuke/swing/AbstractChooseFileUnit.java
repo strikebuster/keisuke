@@ -25,6 +25,8 @@ abstract class AbstractChooseFileUnit {
 	private JButton browseButton;
 	private String chooserName;
 	private ChooseFileEnum chooseEnum;
+	// 直近のディレクトリ記憶用
+	private File lastWorkingDir = null;
 
 	AbstractChooseFileUnit() {	}
 
@@ -125,6 +127,7 @@ abstract class AbstractChooseFileUnit {
 		JFileChooser chooser = new JFileChooser();
 		chooser.setName(name);
 		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		chooser.setCurrentDirectory(this.lastWorkingDir); // if null, set default
 		int stat = -1;
 		if (this.chooseEnum == ChooseFileEnum.SAVE) {
 			stat = chooser.showSaveDialog(this.mainWindow());
@@ -132,6 +135,7 @@ abstract class AbstractChooseFileUnit {
 			stat = chooser.showOpenDialog(this.mainWindow());
 		}
 		if (stat == JFileChooser.APPROVE_OPTION) {
+			this.lastWorkingDir = chooser.getCurrentDirectory();
 			return chooser.getSelectedFile();
 		}
 		return null;

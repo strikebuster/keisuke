@@ -7,12 +7,12 @@ plugins {
   id 'checkstyle'
   id 'findbugs'
   id 'jacoco'
-  id 'com.github.johnrengelman.shadow' version '1.2.4'
+  id 'com.github.johnrengelman.shadow' version '2.0.4'
 }
 
 group = 'keisuke'
 //name : 'keisuke' as single project
-version = '1.3.0'
+version = '1.4.0'
 //version = '1.x.x-SNAPSHOT'
 
 description = """keisuke : counts source code steps like as stepcounter"""
@@ -155,9 +155,22 @@ task sourcesJar(type: Jar) {
     dependsOn build
 }
 
-task makeArtifacts(dependsOn: [sourcesJar, shadowJar]) {
+def suffixTestJar = 'tests'
+
+task testsJar(type:Jar) {
+    baseName = project.name
+    version = project.version
+    classifier = suffixTestJar
+    from sourceSets.test.output
+    manifest {
+        attributes 'Implementation-Title':"${baseName}-${classifier}", 'Implementation-Version':"${version}"
+    }
+    dependsOn build
+}
+
+task makeArtifacts(dependsOn: [sourcesJar, shadowJar, testsJar]) {
     doLast {
-        // do sourcesJar & shadowJar
+        // do sourcesJar & shadowJar & testsJar
         println("Artifact = ${project.group}:${project.name}:${project.version}")
     }
 }
@@ -249,3 +262,42 @@ task extractTestData(dependsOn: processTestzipResources, type: Copy) {
     }
 }
 
+// Definitions for installing jar archives to local maven repository
+def installArgs = ['mvn', 'install:install-file',
+                "-DgroupId=${project.group}",
+                "-DartifactId=${project.name}",
+                "-Dversion=${project.version}",
+                '-Dpackaging=jar']
+
+task installJar(dependsOn: build, type: Exec) {
+    def jarName = "${project.name}-${project.version}.jar"
+    def appendArg = ["-Dfile=${jarName}"]
+    def argv = installArgs + appendArg
+    workingDir('build/libs')
+    commandLine(argv)
+}
+
+task installFatJar(dependsOn: shadowJar, type: Exec) {
+    def jarName = "${project.name}-${project.version}-${suffixFatJar}.jar"
+    def appendArg = ["-Dfile=${jarName}", "-Dclassifier=${suffixFatJar}"]
+    def argv = installArgs + appendArg
+    workingDir('build/libs')
+    commandLine(argv)
+}
+
+task installTestJar(dependsOn: testsJar, type: Exec) {
+    def jarName = "${project.name}-${project.version}-${suffixTestJar}.jar"
+    def appendArg = ["-Dfile=${jarName}", "-Dclassifier=${suffixTestJar}"]
+    def argv = installArgs + appendArg
+    workingDir('build/libs')
+    commandLine(argv)
+}
+
+task installArtifacts(dependsOn: [installJar, installFatJar, installTestJar]) {
+    doLast {
+        // install shadowJar & testsJar
+        println("Install to local repository.")
+        println("  Artifact = ${project.group}:${project.name}:${project.version}")
+        println("  Classifier = [ default , ${suffixFatJar} , ${suffixTestJar} ]")
+    }
+}

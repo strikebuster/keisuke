@@ -547,7 +547,7 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void countJavaUsingCsvFormatAndSortOS() {
-		System.out.println("## StepCountGUI ## countJavaUsingCsvFormatAndSortOS##");
+		System.out.println("## StepCountGUI ## countJavaUsingCsvFormatAndSortOS ##");
 
 		String srcRoot = "test/data/java/root1";
 		String[] fileNames = {srcRoot};
@@ -681,6 +681,16 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 		//System.out.println(text);
 		URL expected = this.getClass().getResource("StepCount_commentS_showdir.csv");
 		assertThat(text, is(equalTo(contentOf(expected))));
+
+		// エンコードを削除して再計測
+		frame.textBox(ENCODING_TEXT).deleteText();
+		sleep(SLEEPTIME);
+		frame.button(COUNT_BUTTON).requireEnabled(Timeout.timeout(WAITTIME)).click();
+		sleep(SLEEPLONGTIME);
+		text = frame.textBox(RESULT_TEXT).text();
+		//System.out.println(text);
+		//エンコードがデフォルトのUTF-8になっても結果が同じだった
+		//assertThat(text, is(not(equalTo(contentOf(expected)))));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -712,6 +722,15 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 		//System.out.println(text);
 		URL expected = this.getClass().getResource("RuleCount_java_showdir.csv");
 		assertThat(text, is(equalTo(contentOf(expected))));
-	}
 
+		// Xml定義を削除して再度実行
+		frame.textBox(XML_TEXT).deleteText();
+		sleep(SLEEPTIME);
+		frame.button(COUNT_BUTTON).requireEnabled(Timeout.timeout(WAITTIME)).click();
+		sleep(SLEEPLONGTIME);
+		text = frame.textBox(RESULT_TEXT).text();
+		//System.out.println(text);
+		expected = this.getClass().getResource("StepCount_java_showdir.csv");
+		assertThat(text, is(equalTo(contentOf(expected))));
+	}
 }

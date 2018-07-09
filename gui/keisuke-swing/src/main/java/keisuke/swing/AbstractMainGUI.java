@@ -143,6 +143,14 @@ public abstract class AbstractMainGUI {
 	}
 
 	/**
+	 * フォーマット済みの計測結果のバイト配列を返す
+	 * @return バイト配列
+	 */
+	protected byte[] resultBytes() {
+		return this.result;
+	}
+
+	/**
 	 * 計測結果を保存先ファイルに保存する
 	 * @param file 保存先ファイル
 	 */

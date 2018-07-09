@@ -1,10 +1,10 @@
 package keisuke.swing.stepcount;
 
 import static keisuke.count.step.format.FormatConstant.MSG_COUNT_FMT_PREFIX;
-import static keisuke.count.option.CountOptionConstant.OPTVAL_EXCEL;
 import static keisuke.swing.GUIConstant.MSG_EXCUSE_BINARY;
 
 import java.awt.Container;
+import java.io.UnsupportedEncodingException;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -76,26 +76,38 @@ public final class StepCountGUI extends AbstractMainGUI {
 	 */
 	protected void showCountingResult() {
 		String xml = this.commander().xmlFileName();
-		if (xml != null && !xml.isEmpty()) {
+		if (xml == null || xml.isEmpty()) {
+			this.stepCounter.setXml(null);
+		} else {
 			this.stepCounter.setXml(xml);
 		}
 		String encoding = this.commander().encoding();
-		if (encoding != null && !encoding.isEmpty()) {
+		if (encoding == null || encoding.isEmpty()) {
+			this.stepCounter.setEncoding(null);
+		} else {
 			this.stepCounter.setEncoding(encoding);
 		}
 		this.stepCounter.setShowDirectory(((CountCommandComponent) this.commander()).showDirectory());
 		this.stepCounter.setSort(((CountCommandComponent) this.commander()).sort());
 		String format = this.commander().format();
 		this.stepCounter.setFormat(format);
-		if (format.equals(OPTVAL_EXCEL)) {
-			this.setResultBytes(this.stepCounter.getCountingResultAsBytes(this.sources.getPathOfSources()));
-			((CountResultViewComponent) this.resultView())
-				.refreshWith(MSG_EXCUSE_BINARY, this.stepCounter.getCountedResultAsRaw());
-		} else {
-			String text = this.stepCounter.getCountingResultAsText(this.sources.getPathOfSources());
-			this.setResultBytes(text.getBytes());
+		this.setResultBytes(this.stepCounter.getCountingResultAsBytes(this.sources.getPathOfSources()));
+		if (this.stepCounter.isTextAsOutput()) {
+			String text = "";
+			//text = this.stepCounter.getCountingResultAsText(this.sources.getPathOfSources());
+			try {
+				//this.setResultBytes(text.getBytes(this.stepCounter.encodingAsOutput()));
+				text = new String(this.resultBytes(), this.stepCounter.encodingAsOutput());
+			} catch (UnsupportedEncodingException e) {
+				text = e.toString();
+			}
 			((CountResultViewComponent) this.resultView())
 				.refreshWith(text, this.stepCounter.getCountedResultAsRaw());
+		} else {
+			//this.setResultBytes(this.stepCounter
+			//		.getCountingResultAsBytes(this.sources.getPathOfSources()));
+			((CountResultViewComponent) this.resultView())
+				.refreshWith(MSG_EXCUSE_BINARY, this.stepCounter.getCountedResultAsRaw());
 		}
 	}
 

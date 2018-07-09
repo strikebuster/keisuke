@@ -1,8 +1,11 @@
 package keisuke.count.diff.renderer;
 
-import java.util.Date;
-
 import static keisuke.count.diff.renderer.RendererConstant.*;
+import static keisuke.util.StringUtil.LINE_SEP;
+import static keisuke.util.StringUtil.SYSTEM_ENCODING;
+
+import java.io.UnsupportedEncodingException;
+import java.util.Date;
 
 import keisuke.count.diff.AbstractDiffResultForCount;
 import keisuke.count.diff.DiffFileResult;
@@ -16,14 +19,24 @@ import keisuke.count.util.DateUtil;
 public class TextRenderer extends AbstractRenderer {
 
 	/** {@inheritDoc} */
-	public byte[] render(final DiffFolderResult result) {
-		StringBuilder sb = new StringBuilder();
+	public byte[] format(final DiffFolderResult result) {
+		if (result == null) {
+			return null;
+		}
+		StringBuffer sb = new StringBuffer();
 		sb.append(this.getMessageText(MSG_DIFF_RND_TIME));
 		sb.append("：");
-		sb.append(DateUtil.formatDate(new Date())).append("\n");
-		sb.append("--\n");
+		sb.append(DateUtil.formatDate(new Date()));
+		sb.append(LINE_SEP);
+		sb.append("--");
+		sb.append(LINE_SEP);
 		sb.append(this.getTextLineAbout(result, 0));
-		return sb.toString().getBytes();
+		try {
+			return sb.toString().getBytes(SYSTEM_ENCODING);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	/**
@@ -49,14 +62,14 @@ public class TextRenderer extends AbstractRenderer {
 	 */
 	protected String getTextLineAbout(final DiffFolderResult result, final int nest) {
 		//result.evaluateChildren(); // 子供を評価して自身の値を確定する
-		StringBuilder sb = new StringBuilder();
+		StringBuffer sb = new StringBuffer();
 		for (int i = 0; i < nest; i++) {
 			sb.append(" ");
 		}
 		sb.append(result.nodeName()).append("/");
 		sb.append("[").append(this.getStatusLabelOf(result.status())).append("]");
 		sb.append(" +").append(result.addedSteps());
-		sb.append(" -").append(result.deletedSteps()).append("\n");
+		sb.append(" -").append(result.deletedSteps()).append(LINE_SEP);
 
 		for (AbstractDiffResultForCount obj : result.getSortedChildren()) {
 			sb.append(this.getTextLineAbout(obj, nest + 1));
@@ -71,7 +84,7 @@ public class TextRenderer extends AbstractRenderer {
 	 * @return 表示用テキスト
 	 */
 	protected String getTextLineAbout(final DiffFileResult result, final int nest) {
-		StringBuilder sb = new StringBuilder();
+		StringBuffer sb = new StringBuffer();
 		for (int i = 0; i < nest; i++) {
 			sb.append(" ");
 		}
@@ -79,7 +92,17 @@ public class TextRenderer extends AbstractRenderer {
 		sb.append("[").append(this.getStatusLabelOf(result.status())).append("]");
 		sb.append(" +").append(result.addedSteps());
 		sb.append(" -").append(result.deletedSteps());
-		sb.append("\n");
+		sb.append(LINE_SEP);
 		return sb.toString();
+	}
+
+	/** {@inheritDoc} */
+	public boolean isText() {
+		return true;
+	}
+
+	/** {@inheritDoc} */
+	public String textEncoding() {
+		return SYSTEM_ENCODING;
 	}
 }

@@ -1,5 +1,6 @@
 package keisuke.util;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -8,9 +9,13 @@ import java.util.List;
  */
 public final class StringUtil {
 
-	/** the line separator for this OS */
+	/** keisuke original encoding */
+	public static final String ORIGINAL_ENCODING = "UTF-8";
+	/** default encoding for this system */
+	public static final String SYSTEM_ENCODING = System.getProperty("file.encoding");
+	/** String as line separator for this OS */
     public static final String LINE_SEP = System.getProperty("line.separator");
-    // tab aligns the end of itself on 8 characters width
+    /** tab aligns the end of itself on 8 characters width */
 	static final int TABWIDTH = 8;
 
 	private StringUtil() { }
@@ -21,7 +26,15 @@ public final class StringUtil {
 	 * @return バイト長
 	 */
 	public static int getByteLength(final String str) {
-		return str.getBytes().length;
+		if (str == null || str.isEmpty()) {
+			return 0;
+		}
+		try {
+			return str.getBytes(SYSTEM_ENCODING).length;
+		} catch (UnsupportedEncodingException ex) {
+			ex.printStackTrace();
+			return 0;
+		}
 	}
 
 	/**
@@ -178,6 +191,9 @@ public final class StringUtil {
 
 	/**
 	 * 改行を含む文字列を改行毎に分割して配列に格納して返す。
+	 * 以下の３種類を改行コードとして処理する。
+	 * 標準の改行コードとして"\n"
+	 * OS依存改行コードとして"\r\n"および"\r"
 	 * @param text 文字列
 	 * @return 改行毎に分割された文字列の配列
 	 */
@@ -210,4 +226,55 @@ public final class StringUtil {
 		}
 		return text.replaceAll("\r\n?", "\n");
 	}
+
+	/**
+	 * 文字列をシステムの文字コードに変換し、かつ'\n'をシステムの改行コードに変換
+	 * してからバイト配列に変換する
+	 * @param text 文字列
+	 * @return 変換後のバイト配列
+	 *
+	public static byte[] convertTextForLocalSystemFrom(final String text) {
+		if (text == null) {
+			return null;
+		} else if (text.isEmpty()) {
+			return new byte[0];
+		}
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		BufferedWriter writer = null;
+		try {
+			writer = new BufferedWriter(new OutputStreamWriter(out, SYSTEM_ENCODING));
+		} catch (UnsupportedEncodingException ex) {
+			ex.printStackTrace();
+			return null;
+		}
+		try {
+			int head = 0;
+			int nl = text.indexOf('\n', head);
+			while (nl >= 0) {
+				if (head < nl) {
+					String line = text.substring(head, nl);
+					writer.write(line);
+				}
+				writer.newLine();
+				head = nl + 1;
+				nl = text.indexOf('\n', head);
+			}
+			if (head < text.length()) {
+				String line = text.substring(head);
+				writer.write(line);
+			}
+			writer.flush();
+		} catch (IOException ex) {
+			ex.printStackTrace();
+			return null;
+		} finally {
+			try {
+				if (writer != null) writer.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return out.toByteArray();
+	}
+	*/
 }

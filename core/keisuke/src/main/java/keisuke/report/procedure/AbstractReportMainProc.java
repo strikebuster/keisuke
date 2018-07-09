@@ -1,8 +1,7 @@
 package keisuke.report.procedure;
 
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
@@ -17,6 +16,7 @@ import keisuke.report.editor.ReportEditorFactory;
 import keisuke.report.option.ReportOptionFactory;
 import keisuke.report.property.PropertyDefine;
 import keisuke.util.LogUtil;
+import keisuke.util.StringUtil;
 
 /**
  * Abstract class for main procedure of reporting command.
@@ -87,7 +87,7 @@ abstract class AbstractReportMainProc extends AbstractMainProc {
 	}
 
 	/**
-	 * Write the result of this procedue into System.out
+	 * Write the result of this procedue into System.out or output file.
 	 */
 	protected void writeOutput() {
 		BufferedWriter writer = null;
@@ -96,10 +96,14 @@ abstract class AbstractReportMainProc extends AbstractMainProc {
 				// 出力ファイル：標準出力
 				writer = new BufferedWriter(new OutputStreamWriter(System.out));
 			} else {
-				writer = new BufferedWriter(new OutputStreamWriter(
-						new FileOutputStream(new File(this.outputFileName))));
+				// デフォルトエンコーディングでファイルに出力
+				writer = new BufferedWriter(new FileWriter(this.outputFileName));
 			}
-			writer.write(this.reportOutput);
+			//writer.write(this.reportOutput);
+			for (String line : StringUtil.splitArrayOfLinesFrom(this.reportOutput)) {
+				writer.write(line);
+				writer.newLine(); // システム依存の改行コード
+			}
 			writer.flush();
 		} catch (IOException e) {
 			String outname = "<System.out>";
@@ -109,12 +113,10 @@ abstract class AbstractReportMainProc extends AbstractMainProc {
 			LogUtil.errorLog("Write error : " + outname);
 			throw new RuntimeException("fail to write output", e);
 		} finally {
-			if (this.outputFileName != null && writer != null) {
-				try {
-					writer.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+			try {
+				if (this.outputFileName != null && writer != null) writer.close();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
 	}

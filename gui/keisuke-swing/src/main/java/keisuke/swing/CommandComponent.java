@@ -16,7 +16,7 @@ public abstract class CommandComponent {
 	private SpecifyEncodingUnit encodingBox;
 	private ChooseXmlUnit xmlBox;
 	private SelectFormatUnit formatBox;
-	private CountButtonUnit countButton;
+	private CountButtonElement countButton;
 
 	/**
 	 * 計測指示に関連する部品集約コンポーネントのコンストラクタ
@@ -29,7 +29,7 @@ public abstract class CommandComponent {
 		this.encodingBox = new SpecifyEncodingUnit(this);
 		this.xmlBox = new ChooseXmlUnit(this);
 		this.formatBox = new SelectFormatUnit(this, option);
-		this.countButton = new CountButtonUnit(this);
+		this.countButton = new CountButtonElement(this);
 		this.countButton.setButtonText(text);
 	}
 
@@ -69,7 +69,7 @@ public abstract class CommandComponent {
 	 * 計測指示ボタン部品を返す
 	 * @return 計測指示ボタン部品インスタンス
 	 */
-	protected CountButtonUnit countButton() {
+	protected CountButtonElement countButton() {
 		return this.countButton;
 	}
 

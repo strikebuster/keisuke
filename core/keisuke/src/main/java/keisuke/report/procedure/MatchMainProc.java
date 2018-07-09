@@ -2,9 +2,8 @@ package keisuke.report.procedure;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
 import keisuke.report.ProcedureType;
 import keisuke.util.LogUtil;
@@ -47,7 +46,7 @@ public final class MatchMainProc extends AbstractReportMainProc {
 			outfile = outfileOfArg;
 		} else if (outfileOfArg != null) {
 			LogUtil.warningLog("ignore the argument '" + outfileOfArg
-					+ "' for output, because '--out' option is given priority.");
+					+ "' for output, because '--out' option is given high priority.");
 		}
 		if (outfile != null) {
 			this.setOutputFileName(outfile);
@@ -68,9 +67,11 @@ public final class MatchMainProc extends AbstractReportMainProc {
 		String lineTr = null;
 		try {
 			// 入力マスターファイル：stepcounterのCSV形式出力
-			readerMa = new BufferedReader(new InputStreamReader(new FileInputStream(new File(mafile))));
+			//readerMa = new BufferedReader(new InputStreamReader(new FileInputStream(new File(mafile))));
+			readerMa = new BufferedReader(new FileReader(new File(mafile)));
 			// 入力トランザクションファイル：	抽出対象ファイルパスのリスト
-			readerTr = new BufferedReader(new InputStreamReader(new FileInputStream(new File(trfile))));
+			//readerTr = new BufferedReader(new InputStreamReader(new FileInputStream(new File(trfile))));
+			readerTr = new BufferedReader(new FileReader(new File(trfile)));
 			int linectrMa = 0;
 			int linectrTr = 0;
 			while ((lineTr = readerTr.readLine()) != null) {
@@ -124,8 +125,7 @@ public final class MatchMainProc extends AbstractReportMainProc {
 			    	LogUtil.errorLog("it is not found in master : " + pathTr);
 			    	break;
 			    }
-			    sb.append(lineMa);
-			    sb.append("\n");
+			    sb.append(lineMa).append('\n');
 			}
 			if (lineTr == null) {
 				// 正常にTRファイル処理終了

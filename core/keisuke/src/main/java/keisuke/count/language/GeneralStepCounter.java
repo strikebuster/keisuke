@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.charset.Charset;
+//import java.nio.charset.Charset;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -34,6 +34,7 @@ import keisuke.util.LogUtil;
 import keisuke.util.StringUtil;
 
 import static keisuke.count.language.StepCounterConstant.*;
+import static keisuke.util.StringUtil.SYSTEM_ENCODING;
 
 /**
  * 言語毎のコメント記号やリテラル記号を設定して解析できる標準の
@@ -286,10 +287,11 @@ public class GeneralStepCounter extends ProgramLangRule implements StepCounter, 
 			return null;
 		}
 		String charSetName = charset;
-		if (charSetName == null) {
+		if (charSetName == null || charSetName.isEmpty()) {
 			// キャラクタセット無指定の場合は
 			// プラットフォームデフォルトキャラクタセットを指定します。
-			charSetName = Charset.defaultCharset().name();
+			//charSetName = Charset.defaultCharset().name();
+			charSetName = SYSTEM_ENCODING;
 		}
 		BufferedReader reader = new BufferedReader(new InputStreamReader(
 				new FileInputStream(file), charSetName));

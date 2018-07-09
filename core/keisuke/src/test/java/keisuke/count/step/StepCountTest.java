@@ -70,7 +70,7 @@ public class StepCountTest {
 		String outMessage = null;
 		String errMessage = null;
 		Exception firedException = null;
-		String expected = "short of arguments";
+		String expected = "no file argument";
 
 		String[] args = {"-s", "-e", "EUC-JP", "-f", "xml", "-x", "test/data/ktestl2.xml"};
 		StepCountProc stepcount = new StepCountProc();
@@ -106,7 +106,7 @@ public class StepCountTest {
 	public void handleOptionsButInvalidFormat() throws Exception {
 		System.out.println("## StepCount ## arg04 ## handleOptionsButInvalidFormat ##");
 		String newRoot = "test/data/java/root1";
-		String expected = "invalid option value";
+		String expected = "invalid format value";
 		thrownEx.expect(RuntimeException.class);
 		thrownEx.expectMessage(expected);
 
@@ -122,7 +122,7 @@ public class StepCountTest {
 	public void handleOptionsButInvalidSort() throws Exception {
 		System.out.println("## StepCount ## arg05 ## handleOptionsButInvalidSort ##");
 		String newRoot = "test/data/java/root1";
-		String expected = "invalid option value";
+		String expected = "invalid sort value";
 		thrownEx.expect(RuntimeException.class);
 		thrownEx.expectMessage(expected);
 
@@ -347,7 +347,8 @@ public class StepCountTest {
 		stepcount.main(args);
 
 		File actual = new File("test/out/count_java.json");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		// JSON形式ではエンコードはUTF-8固定
+		assertThat(contentOf(actual, "UTF-8"), is(equalTo(contentOf(expected))));
 	}
 
 	@Test
@@ -370,7 +371,8 @@ public class StepCountTest {
 			Locale.setDefault(org);
 		}
 		File actual = new File("test/out/count_java_en.json");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		// JSON形式ではエンコードはUTF-8固定
+		assertThat(contentOf(actual, "UTF-8"), is(equalTo(contentOf(expected))));
 	}
 
 	@Test

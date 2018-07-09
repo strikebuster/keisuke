@@ -2,7 +2,8 @@ package keisuke.count.step.format;
 
 import static keisuke.count.option.CountOptionConstant.*;
 
-import keisuke.count.step.Formatter;
+import keisuke.StepCountResult;
+import keisuke.count.Formatter;
 
 /**
  * フォーマッタのインスタンスを作成するためのファクトリクラス。
@@ -19,7 +20,7 @@ public final class FormatterFactory {
 	 * @param format フォーマット
 	 * @return フォーマッタのインスタンス
 	 */
-	public static Formatter getFormatter(final String format) {
+	public static Formatter<StepCountResult[]> getFormatter(final String format) {
 		// nullの場合はデフォルトフォーマット
 		if (format == null || format.isEmpty()) {
 			return new TextFormatter();

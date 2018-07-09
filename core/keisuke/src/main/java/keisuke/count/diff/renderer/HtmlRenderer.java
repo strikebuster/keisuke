@@ -1,11 +1,16 @@
 package keisuke.count.diff.renderer;
 
+import static keisuke.count.diff.renderer.RendererConstant.*;
+import static keisuke.util.StringUtil.LINE_SEP;
+import static keisuke.util.StringUtil.SYSTEM_ENCODING;
+
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
-import static keisuke.count.diff.renderer.RendererConstant.*;
 import keisuke.count.diff.AbstractDiffResultForCount;
 import keisuke.count.diff.DiffFolderResult;
 import keisuke.count.util.DateUtil;
+import keisuke.count.util.EncodeUtil;
 
 
 /**
@@ -14,62 +19,61 @@ import keisuke.count.util.DateUtil;
 public class HtmlRenderer extends AbstractRenderer {
 
 	/** {@inheritDoc} */
-	public byte[] render(final DiffFolderResult result) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("<html>\n");
-		sb.append("<head>\n");
-		sb.append("<title>");
-		sb.append(this.getMessageText(MSG_DIFF_RND_TITLE));
-		sb.append("</title>\n");
-		sb.append("<script type=\"text/javascript\">\n");
-		sb.append("function switchDir(dirId){\n");
-		sb.append("  var trList = document.getElementsByTagName('tr');\n");
-		sb.append("  for(var i=0;i<trList.length;i++){\n");
-		sb.append("    var className = trList[i].className;\n");
-		sb.append("    if(className != null && className.indexOf(dirId) == 0){\n");
-		sb.append("      if(trList[i].style.display == 'none'){\n");
-		sb.append("        if(className == dirId){\n");
-		sb.append("          trList[i].style.display = '';\n");
-		sb.append("        }\n");
-		sb.append("      } else {\n");
-		sb.append("        trList[i].style.display = 'none';\n");
-		sb.append("      }\n");
-		sb.append("    }\n");
-		sb.append("  }\n");
-		sb.append("}\n");
-		sb.append("\n");
-		sb.append("function showAll(){\n");
-		sb.append("  var trList = document.getElementsByTagName('tr');\n");
-		sb.append("  for(var i=0;i<trList.length;i++){\n");
-		sb.append("    if(trList[i].className != ''){\n");
-		sb.append("      trList[i].style.display = '';\n");
-		sb.append("    }\n");
-		sb.append("  }\n");
-		sb.append("}\n");
-		sb.append("\n");
-		sb.append("function hideAll(){\n");
-		sb.append("  var trList = document.getElementsByTagName('tr');\n");
-		sb.append("  for(var i=0;i<trList.length;i++){\n");
-		sb.append("    if(trList[i].className != ''){\n");
-		sb.append("      trList[i].style.display = 'none';\n");
-		sb.append("    }\n");
-		sb.append("  }\n");
-		sb.append("}\n");
-		sb.append("</script>\n");
-		sb.append("</head>\n");
-		sb.append("<body>\n");
-
+	public byte[] format(final DiffFolderResult result) {
+		if (result == null) {
+			return null;
+		}
+		StringBuffer sb = new StringBuffer();
+		sb.append("<html>").append(LINE_SEP);
+		sb.append("<head>").append(LINE_SEP);
+		sb.append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=\"")
+			.append(SYSTEM_ENCODING).append("\">").append(LINE_SEP);
+		sb.append("<title>").append(this.getMessageText(MSG_DIFF_RND_TITLE))
+			.append("</title>").append(LINE_SEP);
+		sb.append("<script type=\"text/javascript\">").append(LINE_SEP);
+		sb.append("function switchDir(dirId){").append(LINE_SEP);
+		sb.append("  var trList = document.getElementsByTagName('tr');").append(LINE_SEP);
+		sb.append("  for(var i=0;i<trList.length;i++){").append(LINE_SEP);
+		sb.append("    var className = trList[i].className;").append(LINE_SEP);
+		sb.append("    if(className != null && className.indexOf(dirId) == 0){").append(LINE_SEP);
+		sb.append("      if(trList[i].style.display == 'none'){").append(LINE_SEP);
+		sb.append("        if(className == dirId){").append(LINE_SEP);
+		sb.append("          trList[i].style.display = '';").append(LINE_SEP);
+		sb.append("        }").append(LINE_SEP);
+		sb.append("      } else {").append(LINE_SEP);
+		sb.append("        trList[i].style.display = 'none';").append(LINE_SEP);
+		sb.append("      }").append(LINE_SEP);
+		sb.append("    }").append(LINE_SEP);
+		sb.append("  }").append(LINE_SEP);
+		sb.append("}").append(LINE_SEP);
+		sb.append(LINE_SEP);
+		sb.append("function showAll(){").append(LINE_SEP);
+		sb.append("  var trList = document.getElementsByTagName('tr');").append(LINE_SEP);
+		sb.append("  for(var i=0;i<trList.length;i++){").append(LINE_SEP);
+		sb.append("    if(trList[i].className != ''){").append(LINE_SEP);
+		sb.append("      trList[i].style.display = '';").append(LINE_SEP);
+		sb.append("    }").append(LINE_SEP);
+		sb.append("  }").append(LINE_SEP);
+		sb.append("}").append(LINE_SEP);
+		sb.append(LINE_SEP);
+		sb.append("function hideAll(){").append(LINE_SEP);
+		sb.append("  var trList = document.getElementsByTagName('tr');").append(LINE_SEP);
+		sb.append("  for(var i=0;i<trList.length;i++){").append(LINE_SEP);
+		sb.append("    if(trList[i].className != ''){").append(LINE_SEP);
+		sb.append("      trList[i].style.display = 'none';").append(LINE_SEP);
+		sb.append("    }").append(LINE_SEP);
+		sb.append("  }").append(LINE_SEP);
+		sb.append("}").append(LINE_SEP);
+		sb.append("</script>").append(LINE_SEP);
+		sb.append("</head>").append(LINE_SEP);
+		sb.append("<body>").append(LINE_SEP);
 		sb.append(this.getMessageText(MSG_DIFF_RND_TIME));
-		sb.append("：").append(DateUtil.formatDate(new Date())).append("\n");
+		sb.append("：").append(DateUtil.formatDate(new Date())).append(LINE_SEP);
 		sb.append("<input type=\"button\" onclick=\"showAll();\" value=\"");
-		sb.append(this.getMessageText(MSG_DIFF_RND_EXPAND));
-		sb.append("\">");
+		sb.append(this.getMessageText(MSG_DIFF_RND_EXPAND)).append("\">");
 		sb.append("<input type=\"button\" onclick=\"hideAll();\" value=\"");
-		sb.append(this.getMessageText(MSG_DIFF_RND_HIDE));
-		sb.append("\">");
-
-		sb.append("<table border=\"1\" width=\"100%\">\n");
-
+		sb.append(this.getMessageText(MSG_DIFF_RND_HIDE)).append("\">");
+		sb.append("<table border=\"1\" width=\"100%\">").append(LINE_SEP);
 		sb.append("<tr><th width=\"80%\">");
 		sb.append(this.getMessageText(MSG_DIFF_RND_PATH));
 		sb.append("</th><th width=\"10%\">");
@@ -78,22 +82,24 @@ public class HtmlRenderer extends AbstractRenderer {
 		sb.append(this.getMessageText(MSG_DIFF_RND_INCREASE));
 		sb.append("</th><th>");
 		sb.append(this.getMessageText(MSG_DIFF_RND_DECREASE));
-		sb.append("</th></tr>\n");
-
+		sb.append("</th></tr>").append(LINE_SEP);
 		for (AbstractDiffResultForCount obj : result.getSortedChildren()) {
-			this.renderLine(null, obj, sb, 0);
+			sb.append(this.renderLine(null, obj, 0));
 		}
-
-		sb.append("</table>\n");
-
-		sb.append("</body>\n");
-		sb.append("</html>\n");
-
-		return sb.toString().getBytes();
+		sb.append("</table>").append(LINE_SEP);
+		sb.append("</body>").append(LINE_SEP);
+		sb.append("</html>").append(LINE_SEP);
+		try {
+			return sb.toString().getBytes(SYSTEM_ENCODING);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
-	private void renderLine(final DiffFolderResult parent, final AbstractDiffResultForCount obj,
-			final StringBuilder sb, final int nest) {
+	private String renderLine(final DiffFolderResult parent, final AbstractDiffResultForCount obj,
+			final int nest) {
+		StringBuffer sb = new StringBuffer();
 		if (obj instanceof DiffFolderResult && nest == 0) {
 			sb.append("<tr>");
 		} else {
@@ -106,15 +112,15 @@ public class HtmlRenderer extends AbstractRenderer {
 		}
 		if (obj instanceof DiffFolderResult) {
 			sb.append("<a href=\"javascript:switchDir('").append(obj.hashCodeName()).append("')\">");
-			sb.append(obj.nodeName() + "/");
+			sb.append(EncodeUtil.xmlEscape(obj.nodeName() + "/"));
 			sb.append("</a>");
 		} else {
-			sb.append(obj.nodeName());
+			sb.append(EncodeUtil.xmlEscape(obj.nodeName()));
 		}
 		sb.append("</td>");
 
 		sb.append("<td>");
-		sb.append(this.getStatusLabelOf(obj.status()));
+		sb.append(EncodeUtil.xmlEscape(this.getStatusLabelOf(obj.status())));
 		sb.append("</td>");
 
 		sb.append("<td style=\"text-align: right;\">");
@@ -125,14 +131,24 @@ public class HtmlRenderer extends AbstractRenderer {
 		sb.append(obj.deletedSteps());
 		sb.append("</td>");
 
-		sb.append("</tr>\n");
+		sb.append("</tr>").append(LINE_SEP);
 
 		if (obj instanceof DiffFolderResult) {
 			DiffFolderResult folder = (DiffFolderResult) obj;
 			for (AbstractDiffResultForCount child : folder.getSortedChildren()) {
-				this.renderLine(folder, child, sb, nest + 1);
+				sb.append(this.renderLine(folder, child, nest + 1));
 			}
 		}
+		return sb.toString();
 	}
 
+	/** {@inheritDoc} */
+	public boolean isText() {
+		return true;
+	}
+
+	/** {@inheritDoc} */
+	public String textEncoding() {
+		return SYSTEM_ENCODING;
+	}
 }

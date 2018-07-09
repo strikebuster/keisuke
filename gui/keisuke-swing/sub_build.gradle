@@ -11,7 +11,7 @@ plugins {
 
 group = 'keisuke'
 //name : 'keisuke-swing'
-version = '1.3.0'
+version = '1.4.0'
 //version = '1.x.x-SNAPSHOT'
 
 description = """keisuke-swing : GUI constructed with Swing for keisuke.count"""
@@ -127,6 +127,7 @@ jar {
 }
 
 def suffixFatJar = 'jar-with-local-dependencies'
+//def suffixFatJar = 'jar-with-dependencies'
 
 shadowJar {
     baseName = project.name
@@ -137,7 +138,7 @@ shadowJar {
     }
     dependencies {
         include(dependency(jstandDesktop))
-	exclude(project(coreProject))
+        exclude(project(coreProject))
     }
     dependsOn build
 }

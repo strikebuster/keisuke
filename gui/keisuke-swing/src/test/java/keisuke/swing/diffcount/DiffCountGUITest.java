@@ -35,8 +35,11 @@ import java.util.List;
 public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 
 	private static final int FORMAT_TEXT_IDX = 0;
-	private static final int FORMAT_HTML_IDX = 1;
+	private static final int FORMAT_CSV_IDX = 1;
 	private static final int FORMAT_EXCEL_IDX = 2;
+	private static final int FORMAT_XML_IDX = 3;
+	private static final int FORMAT_JSON_IDX = 4;
+	private static final int FORMAT_HTML_IDX = 5;
 
 	private FrameFixture frame;
 
@@ -320,8 +323,8 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 	}
 
 	@Test
-	public void countDiffJavaUsingHtmlFormat() {
-		System.out.println("## DiffCountGUI ## countDiffJavaUsingHtmlFormat ##");
+	public void countDiffJavaUsingTextFormat() {
+		System.out.println("## DiffCountGUI ## countDiffJavaUsingTextFormat ##");
 		String oldRoot = "test/data/java/root1";
 		String newRoot = "test/data/java/root2";
 
@@ -338,7 +341,7 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		assertThat(frame.textBox(NEW_DIR_TEXTFIELD).text(), endsWith(newRoot));
 
 		// HTMLフォーマットを選択
-		frame.comboBox(FORMAT_SELECT).selectItem(FORMAT_HTML_IDX);
+		frame.comboBox(FORMAT_SELECT).selectItem(FORMAT_TEXT_IDX);
 		sleep(SLEEPTIME);
 		// 計測実行しテキスト形式で表示
 		frame.button(COUNT_BUTTON).requireEnabled(Timeout.timeout(WAITTIME)).click();
@@ -346,9 +349,40 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 
 		String text = frame.textBox(RESULT_TEXT).requireEnabled(Timeout.timeout(WAITTIME)).text();
 		//System.out.println(text);
-		URL expected = this.getClass().getResource("DiffCount_java.html");
-		assertThat(htmlToRemoveMutableIdFrom(actualTextOf(text, withoutHeadLines(HTML_IGNORE_LINES))),
-				is(equalTo(htmlToRemoveMutableIdFrom(contentOf(expected)))));
+		URL expected = this.getClass().getResource("DiffCount_java.txt");
+		assertThat(actualTextOf(text, withoutHeadLines(TEXT_IGNORE_LINES)),
+				is(equalTo(contentOf(expected))));
+	}
+
+	@Test
+	public void countDiffJavaUsingCsvFormat() {
+		System.out.println("## DiffCountGUI ## countDiffJavaUsingCsvFormat ##");
+		String oldRoot = "test/data/java/root1";
+		String newRoot = "test/data/java/root2";
+
+		// 旧バージョンのDir入力
+		chooseFile(frame, frame.button(OLD_DIR_BUTTON), FILE_CHOOSER + "-" + OLD_DIR_BUTTON,
+				".", oldRoot, frame.textBox(OLD_DIR_TEXTFIELD));
+		//System.out.println(frame.textBox(OLD_DIR_TEXTFIELD).text());
+		assertThat(frame.textBox(OLD_DIR_TEXTFIELD).text(), endsWith(oldRoot));
+
+		// 新バージョンのDir入力
+		chooseFile(frame, frame.button(NEW_DIR_BUTTON), FILE_CHOOSER + "-" + NEW_DIR_BUTTON,
+				".", newRoot, frame.textBox(NEW_DIR_TEXTFIELD));
+		//System.out.println(frame.textBox(NEW_DIR_TEXTFIELD).text());
+		assertThat(frame.textBox(NEW_DIR_TEXTFIELD).text(), endsWith(newRoot));
+
+		// HTMLフォーマットを選択
+		frame.comboBox(FORMAT_SELECT).selectItem(FORMAT_CSV_IDX);
+		sleep(SLEEPTIME);
+		// 計測実行しテキスト形式で表示
+		frame.button(COUNT_BUTTON).requireEnabled(Timeout.timeout(WAITTIME)).click();
+		sleep(SLEEPVERYLONGTIME);
+
+		String text = frame.textBox(RESULT_TEXT).requireEnabled(Timeout.timeout(WAITTIME)).text();
+		//System.out.println(text);
+		URL expected = this.getClass().getResource("DiffCount_java.csv");
+		assertThat(actualTextOf(text, 0), is(equalTo(contentOf(expected))));
 	}
 
 	@Test
@@ -391,6 +425,100 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 	}
 
 	@Test
+	public void countDiffJavaUsingXmlFormat() {
+		System.out.println("## DiffCountGUI ## countDiffJavaUsingXmlFormat ##");
+		String oldRoot = "test/data/java/root1";
+		String newRoot = "test/data/java/root2";
+
+		// 旧バージョンのDir入力
+		chooseFile(frame, frame.button(OLD_DIR_BUTTON), FILE_CHOOSER + "-" + OLD_DIR_BUTTON,
+				".", oldRoot, frame.textBox(OLD_DIR_TEXTFIELD));
+		//System.out.println(frame.textBox(OLD_DIR_TEXTFIELD).text());
+		assertThat(frame.textBox(OLD_DIR_TEXTFIELD).text(), endsWith(oldRoot));
+
+		// 新バージョンのDir入力
+		chooseFile(frame, frame.button(NEW_DIR_BUTTON), FILE_CHOOSER + "-" + NEW_DIR_BUTTON,
+				".", newRoot, frame.textBox(NEW_DIR_TEXTFIELD));
+		//System.out.println(frame.textBox(NEW_DIR_TEXTFIELD).text());
+		assertThat(frame.textBox(NEW_DIR_TEXTFIELD).text(), endsWith(newRoot));
+
+		// HTMLフォーマットを選択
+		frame.comboBox(FORMAT_SELECT).selectItem(FORMAT_XML_IDX);
+		sleep(SLEEPTIME);
+		// 計測実行しテキスト形式で表示
+		frame.button(COUNT_BUTTON).requireEnabled(Timeout.timeout(WAITTIME)).click();
+		sleep(SLEEPVERYLONGTIME);
+
+		String text = frame.textBox(RESULT_TEXT).requireEnabled(Timeout.timeout(WAITTIME)).text();
+		//System.out.println(text);
+		URL expected = this.getClass().getResource("DiffCount_java.xml");
+		assertThat(actualTextOf(text, 0), is(equalTo(contentOf(expected))));
+	}
+
+	@Test
+	public void countDiffJavaUsingJsonFormat() {
+		System.out.println("## DiffCountGUI ## countDiffJavaUsingJsonFormat ##");
+		String oldRoot = "test/data/java/root1";
+		String newRoot = "test/data/java/root2";
+
+		// 旧バージョンのDir入力
+		chooseFile(frame, frame.button(OLD_DIR_BUTTON), FILE_CHOOSER + "-" + OLD_DIR_BUTTON,
+				".", oldRoot, frame.textBox(OLD_DIR_TEXTFIELD));
+		//System.out.println(frame.textBox(OLD_DIR_TEXTFIELD).text());
+		assertThat(frame.textBox(OLD_DIR_TEXTFIELD).text(), endsWith(oldRoot));
+
+		// 新バージョンのDir入力
+		chooseFile(frame, frame.button(NEW_DIR_BUTTON), FILE_CHOOSER + "-" + NEW_DIR_BUTTON,
+				".", newRoot, frame.textBox(NEW_DIR_TEXTFIELD));
+		//System.out.println(frame.textBox(NEW_DIR_TEXTFIELD).text());
+		assertThat(frame.textBox(NEW_DIR_TEXTFIELD).text(), endsWith(newRoot));
+
+		// HTMLフォーマットを選択
+		frame.comboBox(FORMAT_SELECT).selectItem(FORMAT_JSON_IDX);
+		sleep(SLEEPTIME);
+		// 計測実行しテキスト形式で表示
+		frame.button(COUNT_BUTTON).requireEnabled(Timeout.timeout(WAITTIME)).click();
+		sleep(SLEEPVERYLONGTIME);
+
+		String text = frame.textBox(RESULT_TEXT).requireEnabled(Timeout.timeout(WAITTIME)).text();
+		//System.out.println(text);
+		URL expected = this.getClass().getResource("DiffCount_java.json");
+		assertThat(actualTextOf(text, 0), is(equalTo(contentOf(expected))));
+	}
+
+	@Test
+	public void countDiffJavaUsingHtmlFormat() {
+		System.out.println("## DiffCountGUI ## countDiffJavaUsingHtmlFormat ##");
+		String oldRoot = "test/data/java/root1";
+		String newRoot = "test/data/java/root2";
+
+		// 旧バージョンのDir入力
+		chooseFile(frame, frame.button(OLD_DIR_BUTTON), FILE_CHOOSER + "-" + OLD_DIR_BUTTON,
+				".", oldRoot, frame.textBox(OLD_DIR_TEXTFIELD));
+		//System.out.println(frame.textBox(OLD_DIR_TEXTFIELD).text());
+		assertThat(frame.textBox(OLD_DIR_TEXTFIELD).text(), endsWith(oldRoot));
+
+		// 新バージョンのDir入力
+		chooseFile(frame, frame.button(NEW_DIR_BUTTON), FILE_CHOOSER + "-" + NEW_DIR_BUTTON,
+				".", newRoot, frame.textBox(NEW_DIR_TEXTFIELD));
+		//System.out.println(frame.textBox(NEW_DIR_TEXTFIELD).text());
+		assertThat(frame.textBox(NEW_DIR_TEXTFIELD).text(), endsWith(newRoot));
+
+		// HTMLフォーマットを選択
+		frame.comboBox(FORMAT_SELECT).selectItem(FORMAT_HTML_IDX);
+		sleep(SLEEPTIME);
+		// 計測実行しテキスト形式で表示
+		frame.button(COUNT_BUTTON).requireEnabled(Timeout.timeout(WAITTIME)).click();
+		sleep(SLEEPVERYLONGTIME);
+
+		String text = frame.textBox(RESULT_TEXT).requireEnabled(Timeout.timeout(WAITTIME)).text();
+		//System.out.println(text);
+		URL expected = this.getClass().getResource("DiffCount_java.html");
+		assertThat(htmlToRemoveMutableIdFrom(actualTextOf(text, withoutHeadLines(HTML_IGNORE_LINES))),
+				is(equalTo(htmlToRemoveMutableIdFrom(contentOf(expected)))));
+	}
+
+	@Test
 	public void countDiffMiscSourcesIncludingMiscCommentsInSjis() {
 		System.out.println("## DiffCountGUI ## countDiffMiscSourcesIncludingMiscCommentsInSjis ##");
 		String oldRoot = "test/data/commentS/root1";
@@ -420,7 +548,18 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		//System.out.println(text);
 		URL expected = this.getClass().getResource("DiffCount_commentS.txt");
 		assertThat(actualTextOf(text, withoutHeadLines(TEXT_IGNORE_LINES)),
-				is(equalTo(htmlToRemoveMutableIdFrom(contentOf(expected)))));
+				is(equalTo(contentOf(expected))));
+
+		// encodingを削除して再実行
+		frame.textBox(ENCODING_TEXT).deleteText();
+		sleep(SLEEPTIME);
+		frame.button(COUNT_BUTTON).requireEnabled(Timeout.timeout(WAITTIME)).click();
+		sleep(SLEEPVERYLONGTIME);
+		text = frame.textBox(RESULT_TEXT).requireEnabled(Timeout.timeout(WAITTIME)).text();
+		//System.out.println(text);
+		//エンコードがデフォルトのUTF-8になっても結果が同じだった
+		//assertThat(actualTextOf(text, withoutHeadLines(TEXT_IGNORE_LINES)),
+		//		is(not(equalTo(contentOf(expected)))));
 	}
 
 	@Test
@@ -459,6 +598,17 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		String text = frame.textBox(RESULT_TEXT).requireEnabled(Timeout.timeout(WAITTIME)).text();
 		//System.out.println(text);
 		URL expected = this.getClass().getResource("DiffCount_java_rule.txt");
+		assertThat(actualTextOf(text, withoutHeadLines(TEXT_IGNORE_LINES)),
+				is(equalTo(contentOf(expected))));
+
+		// Xml定義を削除して再計測
+		frame.textBox(XML_TEXT).deleteText();
+		sleep(SLEEPTIME);
+		frame.button(COUNT_BUTTON).requireEnabled(Timeout.timeout(WAITTIME)).click();
+		sleep(SLEEPLONGTIME);
+		text = frame.textBox(RESULT_TEXT).requireEnabled(Timeout.timeout(WAITTIME)).text();
+		//System.out.println(text);
+		expected = this.getClass().getResource("DiffCount_java.txt");
 		assertThat(actualTextOf(text, withoutHeadLines(TEXT_IGNORE_LINES)),
 				is(equalTo(contentOf(expected))));
 	}

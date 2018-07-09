@@ -15,6 +15,7 @@ public abstract class AbstractCountMainProc extends AbstractMainProc {
 	private String srcEncoding = System.getProperty("file.encoding");
 	private String xmlFileName = null;
 	private String formatType = "";
+	private Formatter<?> formatter = null;
 
 	protected AbstractCountMainProc() { }
 
@@ -149,7 +150,47 @@ public abstract class AbstractCountMainProc extends AbstractMainProc {
 	}
 
 	/**
+	 * Formatterを設定します
+	 * @param obj Formatterインスタンス
+	 */
+	protected void setFormatter(final Formatter<?> obj) {
+		this.formatter = obj;
+	}
+
+	/**
+	 * 設定されたFormatterインスタンスを返す
+	 * @return Formatterインスタンス
+	 */
+	protected Formatter<?> formatter() {
+		return this.formatter;
+	}
+
+	/**
+	 * 設定されたフォーマットが返す出力がテキスト形式であるか真偽を返す.
+	 * @return テキスト形式であれば	true
+	 */
+	public boolean isTextAsOutput() {
+		if (this.formatter == null) {
+			return false;
+		}
+		return this.formatter.isText();
+	}
+
+	/**
+	 * 設定されたフォーマットがテキストの場合に文字エンコードを返す.
+	 * テキスト形式でない場合はnullを返す
+	 * @return エンコード名
+	 */
+	public String encodingAsOutput() {
+		if (this.formatter == null) {
+			return null;
+		}
+		return this.formatter.textEncoding();
+	}
+
+	/**
 	 * オプションや計測対象ファイル名を設定後に、ステップ計測と結果出力を実行する
+	 * 結果出力先がnull指定の場合は、結果出力は省略する
 	 * @param filenames 計測対象ファイル名配列
 	 * @param output 結果出力先
 	 * @throws IOException ファイル入出力で異常があれば発行する

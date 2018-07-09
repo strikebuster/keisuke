@@ -1,74 +1,82 @@
 package keisuke.count.step.format;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+//import static keisuke.count.step.format.FormatConstant.MSG_COUNT_FMT_UNDEF;
+import static keisuke.util.StringUtil.LINE_SEP;
+
+import java.io.UnsupportedEncodingException;
 
 import keisuke.StepCountResult;
-import keisuke.count.step.Formatter;
+import keisuke.count.FormatEnum;
 import keisuke.count.util.EncodeUtil;
 
 /**
  * カウント結果をJSON形式でフォーマットします。
  */
-public class JsonFormatter implements Formatter {
+public class JsonFormatter extends AbstractFormatter {
 
-	/** {@inheritDoc} */
+	JsonFormatter() {
+		super(FormatEnum.JSON);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * <br>
+	 * stepcounter互換とするためキー名は固定で踏襲する
+	 */
 	public byte[] format(final StepCountResult[] results) {
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		try {
-			Writer writer = new OutputStreamWriter(out, "UTF-8");
-			writer.append("[");
-			boolean first = true;
-			for (StepCountResult result : results) {
-				if (first) {
-					writer.append("\n");
-				} else {
-					writer.append(",\n");
-				}
-				writer.append("\t{ ");
-				writer.append("\"name\": \"");
-				writer.append(EncodeUtil.unicodeEscape(result.filePath()));
-				writer.append("\", ");
-				// 未対応の形式をフォーマット
-				if (result.sourceType() == null || result.sourceType().length() == 0) {
-					writer.append("\"type\": \"unknown\"");
-				// 正常にカウントされたものをフォーマット
-				} else {
-					writer.append("\"type\": \"");
-					writer.append(EncodeUtil.unicodeEscape(result.sourceType()));
-					writer.append("\", ");
-					if (result.sourceCategory() != null && result.sourceCategory().length() > 0) {
-						writer.append("\"category\": \"");
-						writer.append(EncodeUtil.unicodeEscape(result.sourceCategory()));
-						writer.append("\", ");
-					}
-
-					writer.append("\"step\": ")
-						.append(Long.toString(result.execSteps()))
-						.append(", ");
-					writer.append("\"none\": ")
-						.append(Long.toString(result.blancSteps()))
-						.append(", ");
-					writer.append("\"comment\": ")
-						.append(Long.toString(result.commentSteps()))
-						.append(", ");
-					writer.append("\"total\": ")
-						.append(Long.toString(result.sumSteps()))
-						.append(" ");
-				}
-				writer.append("}");
-
-				first = false;
-			}
-			writer.write("\n]\n");
-			writer.flush();
-		} catch (IOException e) {
-			// not happen
-			e.printStackTrace();
+		if (results == null) {
+			return null;
 		}
-		return out.toByteArray();
+		StringBuffer sb = new StringBuffer();
+		sb.append("[");
+		boolean first = true;
+		for (StepCountResult result : results) {
+			if (first) {
+				first = false;
+			} else {
+				sb.append(',');
+			}
+			sb.append(LINE_SEP);
+			sb.append("\t{ \"name\": \"");
+			sb.append(EncodeUtil.unicodeEscape(result.filePath()));
+			sb.append("\", ");
+			// 未対応の形式をフォーマット
+			if (result.sourceType() == null || result.sourceType().length() == 0) {
+				//sb.append("\"type\": \"unknown\"");
+				sb.append("\"type\": \"");
+				//sb.append(this.getMessageText(MSG_COUNT_FMT_UNDEF));
+				sb.append("unknown"); // stepcounter互換で固定
+				sb.append("\"");
+			// 正常にカウントされたものをフォーマット
+			} else {
+				sb.append("\"type\": \"");
+				sb.append(EncodeUtil.unicodeEscape(result.sourceType()));
+				sb.append("\", ");
+				if (result.sourceCategory() != null && result.sourceCategory().length() > 0) {
+					sb.append("\"category\": \"");
+					sb.append(EncodeUtil.unicodeEscape(result.sourceCategory()));
+					sb.append("\", ");
+				}
+
+				sb.append("\"step\": ");
+				sb.append(Long.toString(result.execSteps()));
+				sb.append(", \"none\": ");
+				sb.append(Long.toString(result.blancSteps()));
+				sb.append(", \"comment\": ");
+				sb.append(Long.toString(result.commentSteps()));
+				sb.append(", \"total\": ");
+				sb.append(Long.toString(result.sumSteps()));
+			}
+			sb.append(" }");
+		}
+		sb.append(LINE_SEP + "]" + LINE_SEP);
+		try {
+			// JSON data encoding must be UTF-8
+			return sb.toString().getBytes(this.textEncoding());
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 }

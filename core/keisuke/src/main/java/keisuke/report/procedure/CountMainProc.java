@@ -5,8 +5,7 @@ import static keisuke.report.option.ReportOptionConstant.*;
 import static keisuke.report.property.MessageConstant.*;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
@@ -83,8 +82,7 @@ public final class CountMainProc extends AbstractReportMainProc {
 			if (infile == null) {
 				reader = new BufferedReader(new InputStreamReader(System.in));
 			} else {
-				reader = new BufferedReader(new InputStreamReader(
-						new FileInputStream(new File(infile))));
+				reader = new BufferedReader(new FileReader(infile));
 			}
 			int linectr = 0;
 			while ((line = reader.readLine()) != null) {
@@ -120,12 +118,10 @@ public final class CountMainProc extends AbstractReportMainProc {
 			LogUtil.errorLog("Read error : " + infile);
 			throw new RuntimeException(e);
 		} finally {
-			if (reader != null && infile != null) {
-				try {
-					reader.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+			try {
+				if (infile != null && reader != null) reader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
 	}
@@ -134,31 +130,21 @@ public final class CountMainProc extends AbstractReportMainProc {
 		this.reportEditor().setColumnOrderFrom(this.columnMap());
 		StringBuilder sb = new StringBuilder();
 		// 出力グループの表題
-		sb.append(this.messageMap().get(MSG_COUNT_SUBJECT_HEAD));
-		sb.append("\n");
+		sb.append(this.messageMap().get(MSG_COUNT_SUBJECT_HEAD)).append('\n');
 		// 列タイトルの出力
-		String line = this.reportEditor().makeColumnTitlesLine();
-		sb.append(line);
-		sb.append("\n");
+		sb.append(this.reportEditor().makeColumnTitlesLine()).append('\n');
 		// 言語毎の集計結果の出力
 		for (Entry<String, CountResultForReport> entry : this.resultMap.entrySet()) {
 			String langkey = entry.getKey();
 			StepCountResultForReport result = (StepCountResultForReport) entry.getValue();
 			// 列毎の値を出力
 			String langlabel = this.classifier().getClassifyNameForReport(langkey);
-			line = this.reportEditor().makeColumnValuesLineFrom(langlabel, result);
-			sb.append(line);
-			sb.append("\n");
+			sb.append(this.reportEditor().makeColumnValuesLineFrom(langlabel, result)).append('\n');
 		}
 		// 出力グループの表題
-		sb.append(this.messageMap().get(MSG_COUNT_SUBJECT_UNSUPPORT));
-		sb.append("\n");
-		line = this.reportEditor().makeOnlyFilesNumTitleLine();
-		sb.append(line);
-		sb.append("\n");
-		sb.append("ALL , ");
-		sb.append(this.ignoreFiles);
-		sb.append("\n");
+		sb.append(this.messageMap().get(MSG_COUNT_SUBJECT_UNSUPPORT)).append('\n');
+		sb.append(this.reportEditor().makeOnlyFilesNumTitleLine()).append('\n');
+		sb.append("ALL , ").append(this.ignoreFiles).append('\n');
 		// 出力結果の保管
 		this.setReportText(sb.toString());
 	}

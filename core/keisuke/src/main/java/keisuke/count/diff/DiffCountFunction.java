@@ -33,7 +33,7 @@ public class DiffCountFunction {
 		this.encoding = encode;
 		// 言語カウンターのファクトリ生成
 		this.factory = new XmlDefinedStepCounterFactory();
-		if (xmlfile != null) {
+		if (xmlfile != null && !xmlfile.isEmpty()) {
 			this.factory.appendCustomizeXml(xmlfile);
 		}
 	}

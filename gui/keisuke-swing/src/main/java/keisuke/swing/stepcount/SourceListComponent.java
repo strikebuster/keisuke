@@ -16,18 +16,18 @@ class SourceListComponent {
 	private StepCountGUI root;
 	private JLabel label;
 	private SourceListUnit sourceList;
-	private AddButtonUnit addButton;
-	private RemoveButtonUnit removeButton;
-	private HiddenAddingUnit hiddenAdding;
+	private AddButtonElement addButton;
+	private RemoveButtonElement removeButton;
+	private HiddenAddingElement hiddenAdding;
 
 	SourceListComponent(final StepCountGUI owner) {
 		this.root = owner;
 		this.label = new JLabel("Target source directories/files");
 		this.sourceList = new SourceListUnit(this);
-		this.addButton = new AddButtonUnit(this);
-		this.removeButton = new RemoveButtonUnit(this);
+		this.addButton = new AddButtonElement(this);
+		this.removeButton = new RemoveButtonElement(this);
 		this.removeButton.setDisable();
-		this.hiddenAdding = new HiddenAddingUnit(this);
+		this.hiddenAdding = new HiddenAddingElement(this);
 		this.sourceList.listPane().setEnabled(true);
 	}
 

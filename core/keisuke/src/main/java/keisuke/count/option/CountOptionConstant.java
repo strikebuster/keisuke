@@ -1,5 +1,7 @@
 package keisuke.count.option;
 
+import keisuke.count.FormatEnum;
+
 /**
  * Defined constants of keisuke.count.option.*
  * オプション引数の文字列定義
@@ -17,12 +19,12 @@ public final class CountOptionConstant {
 	public static final String OPT_SORT = "sort";
 	public static final String OPT_XML = "xml";
 
-	public static final String OPTVAL_TEXT = "text";
-	public static final String OPTVAL_CSV = "csv";
-	public static final String OPTVAL_EXCEL = "excel";
-	public static final String OPTVAL_XML = "xml";
-	public static final String OPTVAL_JSON = "json";
-	public static final String OPTVAL_HTML = "html";
+	public static final String OPTVAL_TEXT = FormatEnum.TEXT.toString();
+	public static final String OPTVAL_CSV = FormatEnum.CSV.toString();
+	public static final String OPTVAL_EXCEL = FormatEnum.EXCEL.toString();
+	public static final String OPTVAL_XML = FormatEnum.XML.toString();
+	public static final String OPTVAL_JSON = FormatEnum.JSON.toString();
+	public static final String OPTVAL_HTML = FormatEnum.HTML.toString();
 
 	public static final String OPTVAL_SORT_ON = "on";
 	public static final String OPTVAL_SORT_OS = "os";

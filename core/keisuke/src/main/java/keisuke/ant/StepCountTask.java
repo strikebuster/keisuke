@@ -2,9 +2,7 @@ package keisuke.ant;
 
 import static keisuke.count.option.CountOptionConstant.OPTVAL_SORT_ON;
 import static keisuke.count.option.CountOptionConstant.OPTVAL_SORT_OS;
-import static keisuke.count.option.CountOptionConstant.OPT_SORT;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -23,12 +21,7 @@ import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.ResourceCollection;
 
 import keisuke.StepCountResult;
-import keisuke.count.StepCountResultForCount;
-import keisuke.count.StepCounter;
-import keisuke.count.language.XmlDefinedStepCounterFactory;
-import keisuke.count.option.StepCountOption;
-import keisuke.count.step.Formatter;
-import keisuke.count.step.format.FormatterFactory;
+import keisuke.count.step.StepCountProceduralFunc;
 import keisuke.count.util.FileNameUtil;
 
 /**
@@ -39,8 +32,11 @@ public class StepCountTask extends AbstractCountTask {
 	private boolean showDirectory = false;
 	private String sortType = OPTVAL_SORT_ON;
 	private boolean directoryAsCategory = false;
-	private XmlDefinedStepCounterFactory factory = null;
+	// handling FileSet and FileList
 	private List<ResourceCollection> resourceCollections = new ArrayList<ResourceCollection>();
+	private File baseDir = null;
+	// results of counting resources
+	private List<StepCountResult> countResults = null;
 	// Ant Task attributes
 	private boolean failonerror = true;
 	private boolean defaultExcludes = true;
@@ -107,152 +103,56 @@ public class StepCountTask extends AbstractCountTask {
     }
 
     /**
-	 * ステップ数測定を実行します。
-	 * 基点ディレクトリ名をカテゴリとして設定するAnt I/F固有のオプション機能があるため
-	 * keisuke.count.StepCountFunctionを呼び出さずに、同様の処理を
-	 * このメソッドで実装する。
-	 *
-	 * @see org.apache.tools.ant.Task#execute()
-	 * @throws BuildException when one of some exception occured
-	 */
+   	 * ステップ数測定を実行します。
+   	 * 基点ディレクトリ名をカテゴリとして設定するAnt I/F固有のオプション機能があるため
+   	 * keisuke.count.StepCountProcの汎用I/Fでなく専用I/Fを呼び出す。
+   	 *
+   	 * @see org.apache.tools.ant.Task#execute()
+   	 * @throws BuildException when one of some exception occured
+   	 */
     @Override
-	public void execute() throws BuildException {
-    	StepCountOption optdef = new StepCountOption();
-    	if (!optdef.valuesAs(OPT_SORT).contains(this.sortType)) {
-    		throw new BuildException(this.sortType + " is invalid sort value.");
-    	}
-    	Formatter formatter = FormatterFactory.getFormatter(this.formatType());
-    	if (formatter == null) {
-			throw new BuildException(this.formatType() + " is invalid format value.");
-		}
-
-		this.factory = new XmlDefinedStepCounterFactory();
-    	if (this.xmlFileName() != null && !this.xmlFileName().isEmpty()) {
-    		this.factory.appendCustomizeXml(this.xmlFileName());
-    	}
+    public void execute() throws BuildException {
     	OutputStream out = null;
     	try {
 	    	if (this.outputFile() != null) {
 	    		try {
-					out = new BufferedOutputStream(new FileOutputStream(this.outputFile()));
+	    			out = new FileOutputStream(this.outputFile());
 				} catch (FileNotFoundException e) {
 					throw new BuildException("fail to open " + this.outputFile().getPath(), e);
 				}
 	    	} else {
 	    		out = System.out;
 	    	}
+	    	// タスクで指定されたファイルをカウントする
+	    	this.countAllResources();
 
-	    	List<StepCountResult> results = new ArrayList<StepCountResult>();
-
-	    	for (ResourceCollection resource : this.resourceCollections) {
-		    	File baseDir = null;
-		    	String baseFullPath = null;
-		    	FileList fileList = null;
-		    	FileSet fileSet = null;
-
-	    		if (resource instanceof FileList && resource.isFilesystemOnly()) {
-	    			fileList = (FileList) resource;
-	    			baseDir = fileList.getDir(this.getProject());
-	    		} else if (resource instanceof FileSet && resource.isFilesystemOnly()) {
-	    			fileSet = (FileSet) resource;
-	    			fileSet.setDefaultexcludes(this.defaultExcludes);
-	                baseDir = fileSet.getDir();
-	    		} else {
-	    			throw new BuildException("Only FileSystem resources are supported.");
-	    		}
-	    		// 基点ディレクトリのチェック
-	    		if (!baseDir.exists()) {
-	    			String msg = "basedir '" + baseDir.getPath() + "' does not exist!";
-	    			if (this.failonerror) {
-	    				throw new BuildException(msg);
-	    			} else {
-	    				log("Warning: " + msg, Project.MSG_WARN);
-	    				continue;
-	    			}
-	    		}
-	    		try {
-					if (this.showDirectory) {
-						baseFullPath = baseDir.getCanonicalPath().replace('\\', '/');
-					}
-				} catch (IOException e) {
-					if (this.failonerror) {
-                        throw new BuildException("I/O Error: " + baseDir, e);
-                    } else {
-                        log("Warning: " + getMessage(e), Project.MSG_WARN);
-                        continue;
-                    }
-				}
-	    		// resource内の全ファイル名を取得
-	    		String[] fnameArray = null;
-	    		if (fileList != null) {
-   					fnameArray = fileList.getFiles(this.getProject());
-	    		} else if (fileSet != null) {
-	    			DirectoryScanner dirScanner = null;
-	                try {
-	                    dirScanner = fileSet.getDirectoryScanner();
-	                } catch (BuildException e) {
-	                    if (this.failonerror
-	                    		|| !this.getMessage(e).endsWith(DirectoryScanner.DOES_NOT_EXIST_POSTFIX)) {
-	                        throw e;
-	                    } else {
-	                        log("Warning: " + getMessage(e), Project.MSG_WARN);
-	                        continue;
-	                    }
-	                }
-	                fnameArray = dirScanner.getIncludedFiles();
-	    		}
-
-	    		//this.debugLog("basePath = " + basePath);
-	    		if (fnameArray == null) {
-	    			continue;
-	    		}
-	    		for (String name : fnameArray) {
-	    			File file = null;
-	    			try {
-	    				file = new File(baseDir, name);
-	    				StepCountResultForCount result = this.count(file);
-	    				if (this.showDirectory) {
-	    					result.setBaseDirPath(baseFullPath);
-	    					// filelist|filesetのdir指定ディレクトリからのファイルパスに上書きします。
-	    					result.setFilePathAsSubPathFromBase();
-	    				}
-	    				if (directoryAsCategory) {
-	    					result.setSourceCategory(baseDir.getName());
-	    				}
-	    				results.add((StepCountResult) result);
-	    				//this.debugLog(result.filePath());
-	    			} catch (IOException e) {
-	    				if (this.failonerror) {
-	    					throw new BuildException("I/O Error: " + file, e);
-	    				} else {
-	    					log("Warning: " + getMessage(e), Project.MSG_WARN);
-	    					continue;
-	    				}
-	    			}
-	    		}
-	    	}
-
-	    	log("" + this.resourceCollections.size() + " target directories / " + results.size() + " files.\n",
-	    			Project.MSG_INFO);
-
+	    	log("" + this.resourceCollections.size() + " target directories / " + this.countResults.size()
+	    			+ " files.\n", Project.MSG_INFO);
+	    	// カウント結果のソート
 	    	if (this.sortType.equals(OPTVAL_SORT_ON)) {
-				Collections.sort(results, new Comparator<StepCountResult>() {
+				Collections.sort(this.countResults, new Comparator<StepCountResult>() {
 					public int compare(final StepCountResult o1, final StepCountResult o2) {
 						return FileNameUtil.compareInCodeOrder(o1.filePath(), o2.filePath());
 					}
 				});
 			} else if (this.sortType.equals(OPTVAL_SORT_OS)) {
-				Collections.sort(results, new Comparator<StepCountResult>() {
+				Collections.sort(this.countResults, new Comparator<StepCountResult>() {
 					public int compare(final StepCountResult o1, final StepCountResult o2) {
 						return FileNameUtil.compareInOsOrder(o1.filePath(), o2.filePath());
 					}
 				});
 			}
-
-	    	out.write(formatter.format(results.toArray(new StepCountResult[results.size()])));
-	    	out.flush();
+	    	// 結果を出力する
+	    	StepCountProceduralFunc procFunc = new StepCountProceduralFunc();
+	    	procFunc.doFormattingAndWritingAbout(this.countResults,	out, this.formatType());
+    	} catch (BuildException e) {
+			throw e;
+    	} catch (IllegalArgumentException e) {
+			throw new BuildException(e.getMessage(), e);
     	} catch (IOException e) {
 			throw new BuildException("I/O Error", e);
+    	} catch (Exception e) {
+			throw new BuildException("Error", e);
     	} finally {
     		try {
     			if (out != null && out != System.out) out.close();
@@ -262,13 +162,88 @@ public class StepCountTask extends AbstractCountTask {
     	}
     }
 
-    private StepCountResultForCount count(final File file) throws IOException {
-		StepCounter counter = this.factory.getCounter(file.getName());
-		if (counter != null) {
-			return counter.count(file, this.sourceEncoding());
+    private void countAllResources() throws BuildException {
+    	this.countResults = new ArrayList<StepCountResult>();
+
+    	for (ResourceCollection resource : this.resourceCollections) {
+	    	String[] fnameArray = this.convertToArray(resource);
+	    	if (fnameArray == null) {
+	    		continue;
+	    	}
+    		try {
+		    	this.countResults.addAll(this.getCountingResult(fnameArray));
+    		} catch (Exception e) {
+				if (this.failonerror) {
+					throw new BuildException(e.getMessage(), e);
+				} else {
+					log("Warning: " + getMessage(e), Project.MSG_WARN);
+					continue;
+				}
+			}
+    	}
+    }
+
+    private String[] convertToArray(final ResourceCollection resource) throws BuildException {
+    	FileList fileList = null;
+    	FileSet fileSet = null;
+    	String[] fnameArray = null;
+
+    	if (resource == null) {
+    		return null;
+    	}
+    	// resourceの種類を判定しファイル名抽出の前処理
+		if (resource instanceof FileList && resource.isFilesystemOnly()) {
+			fileList = (FileList) resource;
+			this.baseDir = fileList.getDir(this.getProject());
+		} else if (resource instanceof FileSet && resource.isFilesystemOnly()) {
+			fileSet = (FileSet) resource;
+			fileSet.setDefaultexcludes(this.defaultExcludes);
+            this.baseDir = fileSet.getDir();
 		} else {
-			return new StepCountResultForCount(file, file.getName(), null, null, 0, 0, 0);
+			throw new BuildException("Only FileSystem resources are supported.");
 		}
+		// 基点ディレクトリのチェック
+		if (!this.baseDir.exists()) {
+			String msg = "basedir '" + this.baseDir.getPath() + "' does not exist!";
+			if (this.failonerror) {
+				throw new BuildException(msg);
+			} else {
+				log("Warning: " + msg, Project.MSG_WARN);
+				return fnameArray;
+			}
+		}
+		// resource内の全ファイル名を取得
+		if (fileList != null) {
+				fnameArray = fileList.getFiles(this.getProject());
+		} else if (fileSet != null) {
+			DirectoryScanner dirScanner = null;
+            try {
+                dirScanner = fileSet.getDirectoryScanner();
+            } catch (BuildException e) {
+                if (this.failonerror
+                		|| !this.getMessage(e).endsWith(DirectoryScanner.DOES_NOT_EXIST_POSTFIX)) {
+                    throw e;
+                } else {
+                    log("Warning: " + getMessage(e), Project.MSG_WARN);
+                    return fnameArray;
+                }
+            }
+            fnameArray = dirScanner.getIncludedFiles();
+		}
+		//this.debugLog("basePath = " + basePath);
+		return fnameArray;
+    }
+
+    private List<StepCountResult> getCountingResult(final String[] fnameArray) throws IllegalArgumentException {
+    	if (fnameArray == null) {
+    		return null;
+    	}
+    	StepCountProceduralFunc procFunc = new StepCountProceduralFunc();
+    	procFunc.setSourceEncoding(this.sourceEncoding());
+    	procFunc.setXmlFileName(this.xmlFileName());
+    	procFunc.setShowDirectory(this.showDirectory);
+    	procFunc.setSortOrder(this.sortType);
+    	return procFunc.getResultOfCountingFileSet(this.baseDir, fnameArray, this.directoryAsCategory);
     }
 
     private String getMessage(final Exception ex) {

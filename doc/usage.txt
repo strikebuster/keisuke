@@ -1,6 +1,16 @@
 # コマンドラインの使用方法
 
 #
+# コマンド共通の説明
+#
+出力ファイルについて
+　エンコード	内容がテキストデータの場合、文字エンコードは基本的に環境依存となります
+		HTML形式やXML形式のデータの場合もタグでのエンコード指定を含めて環境依存のものとなります
+		ただし、JSON形式のデータの場合はUTF-8固定です
+
+　改行コード	内容がテキストデータの場合、改行コードは環境依存となります
+
+#
 # StepCount　
 #	行数計測
 #
@@ -31,17 +41,25 @@ usage: StepCount <infile> [<infile2> ..] [-?] [-e <arg>] [-f <arg>] [-o　<arg>]
 # DiffCount
 #	差分行数計測
 #
-java -cp keisuke-x.x.x-jar-with-dependencies.jar keisuke.count.DiffCount ディレクトリ ディレクトリ [オプション]
+java -cp keisuke-x.x.x-jar-with-dependencies.jar keisuke.count.DiffCount 新ディレクトリ 旧ディレクトリ [オプション]
 #
 usage: DiffCount <newDir> <oldDir> [-?] [-e <arg>] [-f <arg>] [-o <arg>] [-x <arg>]
  <newDir>              新リビジョンのソースの格納ディレクトリ
  <oldDir>              旧リビジョンのソースの格納ディレクトリ
+			※jp.sf.amateras.stepcounter.diffcount.MainのCLIとの互換のため
+			　通常のdiffと引数の順が逆であることに注意
  -?,--help             コマンドライン引数説明の表示
  -e,--encoding <arg>   ソースファイルのエンコード指定（Javaで指定するもの）
  -f,--format <arg>     結果出力時のフォーマット
 			'text'	テキスト形式（未指定時のデフォルト値）
-			'html'	HTML形式
+			'csv'	CSV形式
 			'excel'	EXCEL形式
+			'xml'	XML形式
+			'json'	JSON形式
+			'html'	HTML形式
+			※結果にディレクトリ集計を含むものと含まずにファイルのみとなるものに別れます
+			　ディレクトリ集計を含むもの： text, xml, html
+			　ファイルのみのもの：       csv, excel, json
  -o,--output <arg>     計測結果出力ファイル（未指定時は標準出力）
  -x,--xml <arg>        言語定義XMLファイル、指定時は内部デフォルト定義を先に読んでから、
 			指定された定義を上書き追加する

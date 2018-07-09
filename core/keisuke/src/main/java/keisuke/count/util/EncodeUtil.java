@@ -124,4 +124,32 @@ public final class EncodeUtil {
 		}
 		return sb.toString();
 	}
+
+	/**
+	 * 文字列をCSVの値としてエスケープした文字列を返す
+	 * @param str 文字列
+	 * @return CSVの値としてエスケープした文字列
+	 */
+	public static String csvEscape(final String str) {
+		if (str == null || str.isEmpty()) {
+			return "";
+		}
+		// 文字列にカンマかダブルクォートがなければそのまま返す
+		int idxComma = str.indexOf('\"');
+		int idxWquot = str.indexOf(',');
+		if (idxComma < 0 && idxWquot < 0) {
+			return str;
+		}
+		StringBuffer sb = new StringBuffer('\"');
+		for (int i = 0; i < str.length(); i++) {
+			char ch = str.charAt(i);
+			if (ch == '\"') {
+				sb.append("\"\"");
+			} else {
+				sb.append(ch);
+			}
+		}
+		sb.append('\"');
+		return sb.toString();
+	}
 }

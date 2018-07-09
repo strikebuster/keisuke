@@ -1,8 +1,8 @@
 package keisuke.count.diff.renderer;
 
 import keisuke.MessageMap;
+import keisuke.count.Formatter;
 import keisuke.count.diff.DiffFolderResult;
-import keisuke.count.diff.Renderer;
 import keisuke.report.property.MessageDefine;
 
 import keisuke.DiffStatusEnum;
@@ -12,7 +12,7 @@ import keisuke.DiffStatusLabelsImpl;
 /**
  * 差分計測結果の出力整形をするI/Fを実装する抽象基底クラス
  */
-public abstract class AbstractRenderer implements Renderer {
+public abstract class AbstractRenderer implements Formatter<DiffFolderResult> {
 
 	private MessageMap messageMap = null;
 	private DiffStatusLabels diffStatusLabels = null;
@@ -60,7 +60,16 @@ public abstract class AbstractRenderer implements Renderer {
 		return this.diffStatusLabels.getLabelOf(status);
 	}
 
-	/** {@inheritDoc} */
-	public abstract byte[] render(DiffFolderResult result);
+	/**
+	 * {@inheritDoc}
+	 * <br>
+	 * 引数は差分計測結果
+	 */
+	public abstract byte[] format(DiffFolderResult result);
 
+	/** {@inheritDoc} */
+	public abstract boolean isText();
+
+	/** {@inheritDoc} */
+	public abstract String textEncoding();
 }

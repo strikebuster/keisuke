@@ -20,11 +20,11 @@ public class SaveAsButtonUnit extends AbstractChooseFileUnit {
 	private static final String INIT_MSG = "save result if you want.";
 	private ResultViewComponent parent;
 	private File choosedFile = null;
-	private HiddenSavingUnit hiddenSaving;
+	private HiddenSavingElement hiddenSaving;
 
 	SaveAsButtonUnit(final ResultViewComponent owner) {
 		this.parent = owner;
-		this.hiddenSaving = new HiddenSavingUnit(this);
+		this.hiddenSaving = new HiddenSavingElement(this);
 		super.initialize(INIT_MSG, SAVE_TEXT, SAVE_BUTTON, SAVE_CHOOSER, ChooseFileEnum.SAVE);
 		super.setLabelName(SAVE_LABEL);
 		this.textField().setEditable(false);

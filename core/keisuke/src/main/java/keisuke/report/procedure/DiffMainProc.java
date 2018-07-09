@@ -2,15 +2,15 @@ package keisuke.report.procedure;
 
 import static keisuke.report.option.ReportOptionConstant.*;
 import static keisuke.report.property.MessageConstant.*;
+import static keisuke.util.StringUtil.LINE_SEP;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -138,8 +138,7 @@ public final class DiffMainProc extends AbstractReportMainProc {
 			if (infile == null) {
 				reader = new BufferedReader(new InputStreamReader(System.in));
 			} else {
-				reader = new BufferedReader(new InputStreamReader(
-						new FileInputStream(new File(infile))));
+				reader = new BufferedReader(new FileReader(infile));
 			}
 			int linectr = 0;
 			String line = null;
@@ -190,17 +189,17 @@ public final class DiffMainProc extends AbstractReportMainProc {
 					} else if (diffstat == DiffStatusEnum.ADDED) {
 						if (this.aoutfile != null) {
 							// 新規ファイルリスト出力ON
-							sbaout.append("/"); //StepCounterの仕様に合わせ先頭に"/"
-							sbaout.append(strpath);
-							sbaout.append("\n");
+							// StepCounterの仕様に合わせ先頭に"/"
+							// ファイル出力用文字列で今後処理もしないので改行コードをシステム用に
+							sbaout.append("/").append(strpath).append(LINE_SEP);
 							alinectr++;
 						}
 					} else if (diffstat == DiffStatusEnum.MODIFIED) {
 						if (this.moutfile != null) {
 							// 修正ファイルリスト出力ON
-							sbmout.append("/"); //StepCounterの仕様に合わせ先頭に"/"
-							sbmout.append(strpath);
-							sbmout.append("\n");
+							// StepCounterの仕様に合わせ先頭に"/"
+							// ファイル出力用文字列で今後処理もしないので改行コードをシステム用に
+							sbmout.append("/").append(strpath).append(LINE_SEP);
 							mlinectr++;
 						}
 					} else if (diffstat == DiffStatusEnum.DROPED) {
@@ -249,12 +248,10 @@ public final class DiffMainProc extends AbstractReportMainProc {
 			LogUtil.errorLog("Read error : " + infile);
 			throw new RuntimeException(e);
 		} finally {
-			if (reader != null && infile != null) {
-				try {
-					reader.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+			try {
+				if (infile != null && reader != null) reader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
 	}
@@ -262,15 +259,11 @@ public final class DiffMainProc extends AbstractReportMainProc {
 	private void reportDiff() {
 		this.reportEditor().setColumnOrderFrom(this.columnMap());
 		StringBuilder sb = new StringBuilder();
-		String line;
 		// 追加ファイル
 		// 出力グループの表題
-		sb.append(this.messageMap().get(MSG_DIFF_SUBJECT_ADD));
-		sb.append("\n");
+		sb.append(this.messageMap().get(MSG_DIFF_SUBJECT_ADD)).append('\n');
 		// 列タイトルの出力
-		line = this.reportEditor().makeColumnTitlesLine();
-		sb.append(line);
-		sb.append("\n");
+		sb.append(this.reportEditor().makeColumnTitlesLine()).append('\n');
 		// 言語毎の集計結果の出力
 		for (Entry<String, CountResultForReport> entry : this.resultMap.entrySet()) {
 			String langkey = entry.getKey();
@@ -279,18 +272,13 @@ public final class DiffMainProc extends AbstractReportMainProc {
 						.sumOfResultFor(DiffStatusEnum.ADDED);
 			// 列毎の値を出力
 			String langlabel = this.classifier().getClassifyNameForReport(langkey);
-			line = this.reportEditor().makeColumnValuesLineFrom(langlabel, elem);
-			sb.append(line);
-			sb.append("\n");
+			sb.append(this.reportEditor().makeColumnValuesLineFrom(langlabel, elem)).append('\n');
 		}
 		// 修正ファイル
 		// 出力グループの表題
-		sb.append(this.messageMap().get(MSG_DIFF_SUBJECT_MODIFY));
-		sb.append("\n");
+		sb.append(this.messageMap().get(MSG_DIFF_SUBJECT_MODIFY)).append('\n');
 		// 列タイトルの出力
-		line = this.reportEditor().makeColumnTitlesLine();
-		sb.append(line);
-		sb.append("\n");
+		sb.append(this.reportEditor().makeColumnTitlesLine()).append('\n');
 		// 言語毎の集計結果の出力
 		for (Entry<String, CountResultForReport> entry : this.resultMap.entrySet()) {
 			String langkey = entry.getKey();
@@ -299,19 +287,14 @@ public final class DiffMainProc extends AbstractReportMainProc {
 						.sumOfResultFor(DiffStatusEnum.MODIFIED);
 			// 列毎の値を出力
 			String langlabel = this.classifier().getClassifyNameForReport(langkey);
-			line = this.reportEditor().makeColumnValuesLineFrom(langlabel, elem);
-			sb.append(line);
-			sb.append("\n");
+			sb.append(this.reportEditor().makeColumnValuesLineFrom(langlabel, elem)).append('\n');
 		}
 
 		// 廃止ファイル
 		// 出力グループの表題
-		sb.append(this.messageMap().get(MSG_DIFF_SUBJECT_DROP));
-		sb.append("\n");
+		sb.append(this.messageMap().get(MSG_DIFF_SUBJECT_DROP)).append('\n');
 		// 列タイトルの出力
-		line = this.reportEditor().makeColumnTitlesLine();
-		sb.append(line);
-		sb.append("\n");
+		sb.append(this.reportEditor().makeColumnTitlesLine()).append('\n');
 		// 言語毎の集計結果の出力
 		for (Entry<String, CountResultForReport> entry : this.resultMap.entrySet()) {
 			String langkey = entry.getKey();
@@ -320,19 +303,14 @@ public final class DiffMainProc extends AbstractReportMainProc {
 						.sumOfResultFor(DiffStatusEnum.DROPED);
 			// 列毎の値を出力
 			String langlabel = this.classifier().getClassifyNameForReport(langkey);
-			line = this.reportEditor().makeColumnValuesLineFrom(langlabel, elem);
-			sb.append(line);
-			sb.append("\n");
+			sb.append(this.reportEditor().makeColumnValuesLineFrom(langlabel, elem)).append('\n');
 		}
 
 		// 修正なしファイル
 		// 出力グループの表題
-		sb.append(this.messageMap().get(MSG_DIFF_SUBJECT_UNCHANGE));
-		sb.append("\n");
+		sb.append(this.messageMap().get(MSG_DIFF_SUBJECT_UNCHANGE)).append('\n');
 		// 列タイトルの出力
-		line = this.reportEditor().makeOnlyFilesNumTitleLine();
-		sb.append(line);
-		sb.append("\n");
+		sb.append(this.reportEditor().makeOnlyFilesNumTitleLine()).append('\n');
 		// オプションで出力レベルを指定されている
 		if (this.unchangeByLang) {
 			// 言語毎の集計結果の出力 -nochange detail
@@ -343,27 +321,20 @@ public final class DiffMainProc extends AbstractReportMainProc {
 							.sumOfResultFor(DiffStatusEnum.UNCHANGED);
 				// 列毎の値を出力
 				String langlabel = this.classifier().getClassifyNameForReport(langkey);
-				line = this.reportEditor().makeOnlyFilesNumColumnValueLineFrom(langlabel, elem);
-				sb.append(line);
-				sb.append("\n");
+				sb.append(this.reportEditor().makeOnlyFilesNumColumnValueLineFrom(langlabel, elem))
+					.append('\n');
 			}
 		} else {
 			// 言語区別なしで合計の出力 -nochange total
-			sb.append("ALL , ");
-			sb.append(this.unchangeFiles);
-			//sb.append(" , 0 , 0 , 0\n");
-			sb.append("\n");
+			sb.append("ALL , ").append(this.unchangeFiles)
+				//.append(" , 0 , 0 , 0")
+				.append('\n');
 		}
 		// 計測対象外ファイル
 		// 出力グループの表題
-		sb.append(this.messageMap().get(MSG_DIFF_SUBJECT_UNSUPPORT));
-		sb.append("\n");
-		line = this.reportEditor().makeOnlyFilesNumTitleLine();
-		sb.append(line);
-		sb.append("\n");
-		sb.append("ALL , ");
-		sb.append(this.ignoreFiles);
-		sb.append("\n");
+		sb.append(this.messageMap().get(MSG_DIFF_SUBJECT_UNSUPPORT)).append('\n');
+		sb.append(this.reportEditor().makeOnlyFilesNumTitleLine()).append('\n');
+		sb.append("ALL , ").append(this.ignoreFiles).append('\n');
 		// 出力結果の保管
 		this.setReportText(sb.toString());
 	}
@@ -372,9 +343,9 @@ public final class DiffMainProc extends AbstractReportMainProc {
 		if (this.aoutfile != null) {
 			BufferedWriter writer = null;
 			try {
-				// 出力ファイル
-				writer = new BufferedWriter(new OutputStreamWriter(
-						new FileOutputStream(new File(this.aoutfile))));
+				// デフォルトエンコーディングでファイルに出力
+				// 改行コードは既にシステム依存のもので作成済み
+				writer = new BufferedWriter(new FileWriter(new File(this.aoutfile)));
 				writer.write(this.aoutText);
 			} catch (IOException e) {
 				LogUtil.errorLog("Write error : " + this.aoutfile);
@@ -392,9 +363,9 @@ public final class DiffMainProc extends AbstractReportMainProc {
 		if (this.moutfile != null) {
 			BufferedWriter writer = null;
 			try {
-				// 出力ファイル
-				writer = new BufferedWriter(new OutputStreamWriter(
-						new FileOutputStream(new File(this.moutfile))));
+				// デフォルトエンコーディングでファイルに出力
+				// 改行コードは既にシステム依存のもので作成済み
+				writer = new BufferedWriter(new FileWriter(new File(this.moutfile)));
 				writer.write(this.moutText);
 			} catch (IOException e) {
 				LogUtil.errorLog("Write error : " + this.moutfile);

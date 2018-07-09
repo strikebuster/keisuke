@@ -1,33 +1,47 @@
 package keisuke.count.step.format;
 
 import static keisuke.count.step.format.FormatConstant.*;
+import static keisuke.util.StringUtil.SYSTEM_ENCODING;
 
 import keisuke.MessageMap;
 import keisuke.StepCountResult;
-import keisuke.count.step.Formatter;
+import keisuke.count.FormatEnum;
+import keisuke.count.Formatter;
 import keisuke.report.property.MessageDefine;
 
 /**
  * ステップ計測結果を出力形式に整形する
  */
-public abstract class AbstractFormatter implements Formatter {
+public abstract class AbstractFormatter implements Formatter<StepCountResult[]> {
 
+	private FormatEnum formatEnum;
 	private MessageMap messageMap;
+
+	protected AbstractFormatter() { }
 
 	/**
 	 * コンストラクター
-	 * メッセージ定義の設定を行う
+	 * フォーマット種類とメッセージ定義の設定を行う
+	 * @param format FormatEnumインスタンス
 	 */
-	public AbstractFormatter() {
+	protected AbstractFormatter(final FormatEnum format) {
+		this.formatEnum = format;
 		this.messageMap = new MessageDefine(MSG_COUNT_FMT_PREFIX).getMessageMap();
 	}
 
+	/**
+	 * フォーマッタが対応するFormatEnum列挙子の要素を返す
+	 * @return FormatEnum列挙子の要素
+	 */
+	protected FormatEnum formatEnum() {
+		return this.formatEnum;
+	}
 	/**
 	 * ステップ計測結果の出力形式で使用する定形文言を返す
 	 * @param key 定形文言の種類を示すキー
 	 * @return 表示用定形文言
 	 */
-	public String getMessageText(final String key) {
+	protected String getMessageText(final String key) {
 		if (key == null) {
 			return "";
 		}
@@ -35,9 +49,24 @@ public abstract class AbstractFormatter implements Formatter {
 	}
 
 	/**
-	 * ステップ計測結果を出力形式に整形したバイト配列を返す
-	 * @param results ステップ計測結果の配列
-	 * @return 出力形式に整形されたバイト配列
+	 * {@inheritDoc}
+	 * <br>
+	 * 引数はステップ計測結果の配列
 	 */
 	public abstract byte[] format(StepCountResult[] results);
+
+	/** {@inheritDoc} */
+	public boolean isText() {
+		return this.formatEnum.isTextData();
+	}
+
+	/** {@inheritDoc} */
+	public String textEncoding() {
+		String encoding = this.formatEnum.stableEncoding();
+		if (encoding != null && encoding.isEmpty()) {
+			// 空文字列の場合は環境依存
+			return SYSTEM_ENCODING;
+		}
+		return encoding;
+	}
 }

@@ -20,8 +20,11 @@ public class DiffCountOption extends AbstractCommandOption {
 	private static OptionValues format = new OptionValues();
 	static {
 		format.add(OPTVAL_TEXT);
-		format.add(OPTVAL_HTML);
+		format.add(OPTVAL_CSV);
 		format.add(OPTVAL_EXCEL);
+		format.add(OPTVAL_XML);
+		format.add(OPTVAL_JSON);
+		format.add(OPTVAL_HTML);
 	}
 
 	public DiffCountOption() {

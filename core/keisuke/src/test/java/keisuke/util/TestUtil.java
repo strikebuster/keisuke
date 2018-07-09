@@ -1,5 +1,8 @@
 package keisuke.util;
 
+import static keisuke.util.StringUtil.ORIGINAL_ENCODING;
+import static keisuke.util.StringUtil.SYSTEM_ENCODING;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,10 +20,16 @@ import keisuke.report.ReportColumn;
  * Util Class for Test of keisuke.* .
  */
 public class TestUtil {
-	protected static final String DEFAULT_ENCODING = System.getProperty("file.encoding");
 
 	protected TestUtil() { }
 
+	/**
+	 * Mapの内容を文字列に出力する.
+	 * Mapのkey毎に改行するが、改行コードは'\n'固定.
+	 * keyとvalueの間は'\t'で区切る.
+	 * @param map 表示したいMapインスタンス
+	 * @return Mapの内容を表示する文字列
+	 */
 	public static String contentOf(final Map<?, ?> map) {
 		if (map == null || map.isEmpty()) {
 			return "";
@@ -50,19 +59,63 @@ public class TestUtil {
 		return sb.toString();
 	}
 
+	/**
+	 * keisukeのリソースファイルの内容を文字列に格納して返す.
+	 * ファイルのエンコードは"UTF-8"固定.
+	 * @param url リソースファイルのURL
+	 * @return ファイルの内容の文字列
+	 */
 	public static String contentOf(final URL url) {
-		return contentOf(new File(url.getFile()));
+		return contentOf(new File(url.getFile()), ORIGINAL_ENCODING, 0);
 	}
 
+	/**
+	 * テスト実行した環境で作成される出力ファイルの内容を文字列に格納して返す.
+	 * ファイルのエンコードは環境依存.
+	 * @param file 実行により出力されたファイル
+	 * @return ファイルの内容の文字列
+	 */
 	public static String contentOf(final File file) {
-		return contentOf(file, 0);
+		return contentOf(file, SYSTEM_ENCODING, 0);
 	}
 
+	/**
+	 * テスト実行した環境で作成される出力ファイルの内容から先頭のN行を取り除いて文字列に格納して返す.
+	 * 取り除く行数を指定する.
+	 * ファイルのエンコードは環境依存.
+	 * @param file 実行により出力されたファイル
+	 * @param ignorelines 取り除く先頭の行数
+	 * @return ファイルの内容の文字列
+	 */
 	public static String contentOf(final File file, final int ignorelines) {
+		return contentOf(file, SYSTEM_ENCODING, ignorelines);
+	}
+
+	/**
+	 * テスト実行した環境で作成される出力ファイルの内容を文字列に格納して返す.
+	 * ファイルのエンコードは出力ファイル形式に依存するので指定する.
+	 * @param file 実行により出力されたファイル
+	 * @param encoding 出力ファイル用のエンコード名
+	 * @return ファイルの内容の文字列
+	 */
+	public static String contentOf(final File file, final String encoding) {
+		return contentOf(file, encoding, 0);
+	}
+
+	/**
+	 * テスト実行した環境で作成される出力ファイルの内容から先頭のN行を取り除いて文字列に格納して返す.
+	 * 取り除く行数を指定する.
+	 * ファイルのエンコードは出力ファイル形式に依存するので指定する.
+	 * @param file 実行により出力されたファイル
+	 * @param encoding 出力ファイル用のエンコード名
+	 * @param ignorelines 取り除く先頭の行数
+	 * @return ファイルの内容の文字列
+	 */
+	public static String contentOf(final File file, final String encoding, final int ignorelines) {
 		BufferedReader reader = null;
 		try {
 			reader = new BufferedReader(new InputStreamReader(
-					new FileInputStream(file), DEFAULT_ENCODING));
+					new FileInputStream(file), encoding));
 		} catch (FileNotFoundException ex) {
 			ex.printStackTrace();
 			return null;
@@ -81,7 +134,7 @@ public class TestUtil {
 					System.out.println("[TEST] ignore : " + line);
 					continue;
 				}
-				sb.append(line).append("\n");
+				sb.append(line).append('\n');
 			}
 		} catch (IOException ex) {
 			ex.printStackTrace();

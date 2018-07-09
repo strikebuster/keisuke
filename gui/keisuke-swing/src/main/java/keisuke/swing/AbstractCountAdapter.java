@@ -1,10 +1,12 @@
 package keisuke.swing;
 
+import static keisuke.util.StringUtil.SYSTEM_ENCODING;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+//import java.io.UnsupportedEncodingException;
 
 import keisuke.count.AbstractCountMainProc;
-import keisuke.util.StringUtil;
+//import keisuke.util.StringUtil;
 
 /**
  * Swing画面からStepCountProc/DiffCountProcを呼び出すためのAdapterの
@@ -57,26 +59,23 @@ public class AbstractCountAdapter {
 	}
 
 	/**
-	 * 計測対象に対し計測を実行して結果のフォーマット済みテキストを返す
-	 * @param files 計測対象ファイル名を指定する配列
-	 * @return 計測結果テキスト
+	 * フォーマットで指定する出力がテキスト形式か真偽を返す
+	 * @return 出力がテキスト形式であればtrue
 	 */
-	public String getCountingResultAsText(final String[] files) {
-		String outText = "";
-		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		try {
-			this.countProc().doCountingAndWriting(files, stream);
-			outText = stream.toString();
-		} catch (IOException ioEx) {
-			outText = ioEx.toString();
-		} finally {
-			try {
-				stream.close();
-			} catch (Throwable t) {
-				t.printStackTrace();
-			}
+	public boolean isTextAsOutput() {
+		return this.countProc.isTextAsOutput();
+	}
+
+	/**
+	 * フォーマットで指定する出力のテキストの文字エンコードを返す
+	 * @return 文字エンコード名
+	 */
+	public String encodingAsOutput() {
+		String str = this.countProc.encodingAsOutput();
+		if (str == null || str.isEmpty()) {
+			return SYSTEM_ENCODING;
 		}
-		return StringUtil.normalizeLineSeparator(outText);
+		return str;
 	}
 
 	/**
@@ -91,8 +90,8 @@ public class AbstractCountAdapter {
 		try {
 			this.countProc().doCountingAndWriting(files, stream);
 			outData = stream.toByteArray();
-		} catch (IOException ioEx) {
-			outData = ioEx.toString().getBytes();
+		} catch (IOException e) {
+			outData = e.toString().getBytes();
 		} finally {
 			try {
 				stream.close();
@@ -102,4 +101,30 @@ public class AbstractCountAdapter {
 		}
 		return outData;
 	}
+
+	/*
+	 * 計測対象に対し計測を実行して結果のフォーマット済みテキストを返す
+	 * @param files 計測対象ファイル名を指定する配列
+	 * @return 計測結果テキスト
+	 *
+	public String getCountingResultAsText(final String[] files) {
+		String outText = "";
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		try {
+			this.countProc().doCountingAndWriting(files, stream);
+			outText = stream.toString(this.encodingAsOutput());
+		} catch (UnsupportedEncodingException e) {
+			outText = e.toString();
+		} catch (IOException e) {
+			outText = e.toString();
+		} finally {
+			try {
+				stream.close();
+			} catch (Throwable t) {
+				t.printStackTrace();
+			}
+		}
+		//return StringUtil.normalizeLineSeparator(outText);
+		return outText;
+	}*/
 }

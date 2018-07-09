@@ -1,10 +1,10 @@
 package keisuke.swing.diffcount;
 
 import static keisuke.count.diff.DiffCountProc.MSG_DIFF_PREFIXES;
-import static keisuke.count.option.CountOptionConstant.OPTVAL_EXCEL;
 import static keisuke.swing.GUIConstant.MSG_EXCUSE_BINARY;
 
 import java.awt.Container;
+import java.io.UnsupportedEncodingException;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -84,11 +84,15 @@ public class DiffCountGUI extends AbstractMainGUI {
 	 */
 	protected void showCountingResult() {
 		String xml = this.commander().xmlFileName();
-		if (xml != null && !xml.isEmpty()) {
+		if (xml == null || xml.isEmpty()) {
+			this.diffCounter.setXml(null);
+		} else {
 			this.diffCounter.setXml(xml);
 		}
 		String encoding = this.commander().encoding();
-		if (encoding != null && !encoding.isEmpty()) {
+		if (encoding == null || encoding.isEmpty()) {
+			this.diffCounter.setEncoding(null);
+		} else {
 			this.diffCounter.setEncoding(encoding);
 		}
 		String format = this.commander().format();
@@ -96,15 +100,22 @@ public class DiffCountGUI extends AbstractMainGUI {
 		String[] dirs = new String[2];
 		dirs[0] = this.rootDirs.oldDirName();
 		dirs[1] = this.rootDirs.newDirName();
-		if (format.equals(OPTVAL_EXCEL)) {
-			this.setResultBytes(this.diffCounter.getCountingResultAsBytes(dirs));
-			((DiffResultViewComponent) this.resultView())
-				.refreshWith(MSG_EXCUSE_BINARY, this.diffCounter.getCountedResultAsRaw());
-		} else {
-			String text = this.diffCounter.getCountingResultAsText(dirs);
-			this.setResultBytes(text.getBytes());
+		this.setResultBytes(this.diffCounter.getCountingResultAsBytes(dirs));
+		if (this.diffCounter.isTextAsOutput()) {
+			String text = "";
+			//text = this.diffCounter.getCountingResultAsText(dirs);
+			try {
+				//this.setResultBytes(text.getBytes(this.diffCounter.encodingAsOutput()));
+				text = new String(this.resultBytes(), this.diffCounter.encodingAsOutput());
+			} catch (UnsupportedEncodingException e) {
+				text = e.toString();
+			}
 			((DiffResultViewComponent) this.resultView())
 				.refreshWith(text, this.diffCounter.getCountedResultAsRaw());
+		} else {
+			//this.setResultBytes(this.diffCounter.getCountingResultAsBytes(dirs));
+			((DiffResultViewComponent) this.resultView())
+				.refreshWith(MSG_EXCUSE_BINARY, this.diffCounter.getCountedResultAsRaw());
 		}
 	}
 

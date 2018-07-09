@@ -1,6 +1,5 @@
 package keisuke.ant;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -9,12 +8,7 @@ import java.io.OutputStream;
 
 import org.apache.tools.ant.BuildException;
 
-import keisuke.count.diff.DiffCountFunction;
-import keisuke.count.diff.DiffFolderResult;
-import keisuke.count.diff.Renderer;
-import keisuke.count.diff.renderer.RendererFactory;
-import keisuke.report.property.MessageDefine;
-import static keisuke.count.diff.DiffCountProc.MSG_DIFF_PREFIXES;
+import keisuke.count.diff.DiffCountProc;
 
 /**
  * 差分ステップ数計測(keisuke.count.DiffCount)を実行するAntタスク
@@ -23,8 +17,6 @@ public class DiffCountTask extends AbstractCountTask {
 
 	private File srcdir = null;
 	private File olddir = null;
-	private MessageDefine msgDef = null;
-	private DiffFolderResult diffResult;
 
 	/**
 	 * 現在のソースディレクトリを指定します。
@@ -48,32 +40,32 @@ public class DiffCountTask extends AbstractCountTask {
 	 * @throws BuildException when one of some exception occured
 	 */
     @Override
-	public void execute() throws BuildException {
-        this.validateAttributes();
-        this.msgDef = new MessageDefine(MSG_DIFF_PREFIXES);
-        Renderer renderer = RendererFactory.getRenderer(this.formatType(), this.msgDef);
-		if (renderer == null) {
-			throw new BuildException(this.formatType() + " is invalid format value.");
-		}
-
-		DiffCountFunction diffcounter = new DiffCountFunction(this.sourceEncoding(), this.xmlFileName());
-		this.diffResult = diffcounter.countDiffBetween(this.olddir, this.srcdir);
-
-		OutputStream out = null;
+    public void execute() throws BuildException {
+    	this.validateAttributes();
+    	OutputStream out = null;
     	try {
-	    	if (this.outputFile() != null) {
+    		if (this.outputFile() != null) {
 	    		try {
-					out = new BufferedOutputStream(new FileOutputStream(this.outputFile()));
+					out =  new FileOutputStream(this.outputFile());
 				} catch (FileNotFoundException e) {
 					throw new BuildException("fail to open " + this.outputFile().getPath(), e);
 				}
 	    	} else {
 	    		out = System.out;
 	    	}
-	    	out.write(renderer.render(this.diffResult));
-			out.flush();
+    		DiffCountProc proc = new DiffCountProc();
+        	proc.setSourceEncoding(this.sourceEncoding());
+        	proc.setXmlFileName(this.xmlFileName());
+        	proc.setFormat(this.formatType());
+			proc.doCountingAndWriting(this.olddir.getCanonicalPath(), this.srcdir.getCanonicalPath(), out);
+    	} catch (BuildException e) {
+			throw e;
+    	} catch (IllegalArgumentException e) {
+			throw new BuildException(e.getMessage(), e);
     	} catch (IOException e) {
 			throw new BuildException("I/O Error", e);
+    	} catch (Exception e) {
+    		throw new BuildException(e);
     	} finally {
     		try {
     			if (out != null && out != System.out) out.close();
@@ -81,7 +73,7 @@ public class DiffCountTask extends AbstractCountTask {
 				throw new BuildException("I/O Error", e);
 			}
     	}
-	}
+    }
 
     /**
      * 属性値が不正でないか検証する.

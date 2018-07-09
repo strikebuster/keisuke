@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import keisuke.StepCountResult;
+import keisuke.count.FormatEnum;
 import keisuke.count.util.ExcelUtil;
 import keisuke.count.util.LocaleUtil;
 import keisuke.util.LogUtil;
@@ -27,26 +28,31 @@ public class ExcelFormatter extends AbstractFormatter {
 	private static final String XLS_DATA_RESULT = "results";
 	private static final String XLS_DATA_CATEGORY = "categories";
 
+	ExcelFormatter() {
+		super(FormatEnum.EXCEL);
+	}
+
 	/** {@inheritDoc} */
 	public byte[] format(final StepCountResult[] results) {
-		String xlsTemplate = XLS_PREFIX + LocaleUtil.getLocalePostfix() + XLS_EXTENSION;
-		//LogUtil.debugLog("xlsTemplate = " + xlsTemplate);
-		URL url = this.getClass().getResource(xlsTemplate);
-		if (url == null) {
-			xlsTemplate = XLS_PREFIX + XLS_EXTENSION;
+		if (results == null) {
+			return null;
 		}
-		//LogUtil.debugLog("xlsTemplate = " + xlsTemplate);
 		InputStream in = null;
 		try {
+			String xlsTemplate = XLS_PREFIX + LocaleUtil.getLocalePostfix() + XLS_EXTENSION;
+			//LogUtil.debugLog("xlsTemplate = " + xlsTemplate);
+			URL url = this.getClass().getResource(xlsTemplate);
+			if (url == null) {
+				xlsTemplate = XLS_PREFIX + XLS_EXTENSION;
+			}
+			//LogUtil.debugLog("xlsTemplate = " + xlsTemplate);
 			in = this.getClass().getResourceAsStream(xlsTemplate);
 			CountResultCompatible[] dtoArray = this.createResultDtoFrom(results);
 			CategoryStepDtoCompatible[] categories = this.createCategoryDtoFrom(results);
 			Map<String, Object> data = new HashMap<String, Object>();
 			data.put(XLS_DATA_RESULT, dtoArray);
 			data.put(XLS_DATA_CATEGORY, categories);
-
 			return ExcelUtil.makeExcelData(in, data);
-
 		} catch (Exception ex) {
 			LogUtil.errorLog("fail to make excel data");
 			throw new RuntimeException(ex);

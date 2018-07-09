@@ -1,8 +1,11 @@
 package keisuke.util;
 
+import static keisuke.util.StringUtil.SYSTEM_ENCODING;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Capturing System.out/err during a test.
@@ -46,7 +49,12 @@ public abstract class StdxxxCapture {
 	 */
 	public String getCapturedString(final PrintStream stream) {
 		stream.flush();
-		this.messageText = this.actualMessage.toString();
+		try {
+			this.messageText = this.actualMessage.toString(SYSTEM_ENCODING);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return null;
+		}
 		return this.messageText;
 	}
 
