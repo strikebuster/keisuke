@@ -147,7 +147,7 @@ public class DiffMainProcTest {
 		assertThat(dproc.argMapEntity().size(), is(greaterThanOrEqualTo(expectedNumber)));
 		assertThat(dproc.argMapEntity(), hasEntry(ARG_INPUT, "test/data/diff01.txt"));
 		assertThat(dproc.argMapEntity(), hasEntry(OPT_UNCHANGE, OPTVAL_TOTAL));
-		assertThat(dproc.reportText(), is(equalTo(contentOf(expected))));
+		assertThat(dproc.reportText(), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -240,7 +240,7 @@ public class DiffMainProcTest {
 				"--" + OPT_XML, "test/data/ktestf.xml"};
 		dproc.main(args);
 
-		assertThat(dproc.reportText(), is(equalTo(contentOf(expected))));
+		assertThat(dproc.reportText(), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -274,7 +274,7 @@ public class DiffMainProcTest {
 		String[] args = {"-c", OPTVAL_FW + "rails", "-x", "test/data/ktestl.xml", "test/data/diff01.txt"};
 		dproc.main(args);
 
-		assertThat(dproc.reportText(), is(equalTo(contentOf(expected))));
+		assertThat(dproc.reportText(), is(equalTo(textContentOf(expected))));
 
 		String errMessage = capture.getCapturedString();
 		capture.finish();
@@ -294,7 +294,7 @@ public class DiffMainProcTest {
 		String[] args = {"-c", OPTVAL_FW + "spring", "-x", "test/data/ktestf.xml", "test/data/diff01.txt"};
 		dproc.main(args);
 
-		assertThat(dproc.reportText(), is(equalTo(contentOf(expected))));
+		assertThat(dproc.reportText(), is(equalTo(textContentOf(expected))));
 
 		String errMessage = capture.getCapturedString();
 		capture.finish();
@@ -310,7 +310,7 @@ public class DiffMainProcTest {
 		String[] args = {"test/data/diff01.txt"};
 		dproc.main(args);
 
-		assertThat(dproc.reportText(), is(equalTo(contentOf(expected))));
+		assertThat(dproc.reportText(), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -322,7 +322,7 @@ public class DiffMainProcTest {
 		String[] args = {"test/data/dummy.csv"};
 		dproc.main(args);
 
-		assertThat(dproc.reportText(), is(equalTo(contentOf(expected))));
+		assertThat(dproc.reportText(), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -335,7 +335,7 @@ public class DiffMainProcTest {
 		dproc.main(args);
 
 		File actual = new File("test/out/add03.txt");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(textContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -349,7 +349,7 @@ public class DiffMainProcTest {
 		dproc.main(args);
 
 		File actual = new File("test/out/modify04.txt");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(textContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -362,7 +362,7 @@ public class DiffMainProcTest {
 				"test/data/ktest.properties"};
 		dproc.main(args);
 
-		assertThat(dproc.reportText(), is(equalTo(contentOf(expected))));
+		assertThat(dproc.reportText(), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -374,7 +374,7 @@ public class DiffMainProcTest {
 		String[] args = {"test/data/diff01.txt", "-c", OPTVAL_LANGUAGE};
 		dproc.main(args);
 
-		assertThat(dproc.reportText(), is(equalTo(contentOf(expected))));
+		assertThat(dproc.reportText(), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -386,7 +386,7 @@ public class DiffMainProcTest {
 		String[] args = {"-c", OPTVAL_LANGGROUP, "test/data/diff01.txt"};
 		dproc.main(args);
 
-		assertThat(dproc.reportText(), is(equalTo(contentOf(expected))));
+		assertThat(dproc.reportText(), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -399,7 +399,7 @@ public class DiffMainProcTest {
 		String[] args = {"test/data/diff01.txt", "-x", "test/data/ktestl.xml", "-c", OPTVAL_LANGUAGE};
 		dproc.main(args);
 
-		assertThat(dproc.reportText(), is(equalTo(contentOf(expected))));
+		assertThat(dproc.reportText(), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -412,7 +412,7 @@ public class DiffMainProcTest {
 		String[] args = {"-x", "test/data/ktestl.xml", "-c", OPTVAL_LANGGROUP, "test/data/diff01.txt"};
 		dproc.main(args);
 
-		assertThat(dproc.reportText(), is(equalTo(contentOf(expected))));
+		assertThat(dproc.reportText(), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -424,7 +424,7 @@ public class DiffMainProcTest {
 		String[] args = {"-c", OPTVAL_FW + "ow", "-x", "test/data/ktestf2.xml", "test/data/diff01.txt"};
 		dproc.main(args);
 
-		assertThat(dproc.reportText(), is(equalTo(contentOf(expected))));
+		assertThat(dproc.reportText(), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -437,7 +437,7 @@ public class DiffMainProcTest {
 		String[] args = {"-x", "test/data/ktestf.xml", "-c", OPTVAL_FW + "ow", "test/data/diff01.txt"};
 		dproc.main(args);
 
-		assertThat(dproc.reportText(), is(equalTo(contentOf(expected))));
+		assertThat(dproc.reportText(), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -449,7 +449,7 @@ public class DiffMainProcTest {
 		String[] args = {"-c", OPTVAL_FW + "o3w", "-x", "test/data/ktestf2.xml", "test/data/diff01.txt"};
 		dproc.main(args);
 
-		assertThat(dproc.reportText(), is(equalTo(contentOf(expected))));
+		assertThat(dproc.reportText(), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -461,7 +461,7 @@ public class DiffMainProcTest {
 		String[] args = {"-c", OPTVAL_FW + "struts", "test/data/diff01.txt"};
 		dproc.main(args);
 
-		assertThat(dproc.reportText(), is(equalTo(contentOf(expected))));
+		assertThat(dproc.reportText(), is(equalTo(textContentOf(expected))));
 	}
 
 }

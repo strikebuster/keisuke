@@ -104,11 +104,12 @@ public class DiffCountFunction {
 				}
 				oldName = oldFile.getName();
 				//LogUtil.debugLog("OLD node : " + parent.filePath() + "/" + oldName);
-				if (FileNameUtil.compare(newName, oldName) == 0) { // 一致
+				if (FileNameUtil.compareInOsOrder(newName, oldName) == 0) { // 一致
 					found = true;
 					oldidx++;
 					break;
-				} else if (FileNameUtil.compare(newName, oldName) < 0) { // oldが大きい==oldにはない==新規
+				} else if (FileNameUtil.compareInOsOrder(newName, oldName) < 0) {
+					// oldが大きい==oldにはない==新規
 					// oldidxは進めずに次のnewidxと比較する
 					break;
 				} else { // oldが小さい==newにはない==削除

@@ -224,7 +224,7 @@ public class GUITestUtil extends CountTestUtil {
 		}
 		String[][] table = null;
 		int valueSize = 0;
-		String[] lines = csv.split("[\\n\\r]");
+		String[] lines = csv.split("\r\n?|\n");
 		for (int i = 0; i < lines.length; i++) {
 			String[] values = lines[i].split(",");
 			if (i == 0) {
@@ -321,4 +321,20 @@ public class GUITestUtil extends CountTestUtil {
 		return array;
 	}
 
+	/**
+	 * パス文字列に含まれる'/'をWindowsで実行された場合は'\'に変換した文字列にして返す。
+	 * Windowsでなければ変換なしでそのままの文字列を返す。
+	 * @param orgPath パスの文字列
+	 * @return OS依存のパス区切り文字に変換後の文字列
+	 */
+	public static String pathForLocalSystem(final String orgPath) {
+		if (orgPath == null || orgPath.isEmpty()) {
+			return orgPath;
+		}
+		if (nameOfSystemOS().startsWith("Windows")) {
+			return orgPath.replaceAll("/", "\\\\");
+		} else {
+			return orgPath;
+		}
+	}
 }

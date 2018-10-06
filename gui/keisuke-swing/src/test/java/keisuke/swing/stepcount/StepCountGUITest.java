@@ -106,8 +106,10 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 		// check choosed sources
 		if (nameOfSystemOS().startsWith("Windows")) {
 			// maybe
-			assertThat(actual, is(array(endsWith(srcRoot1), endsWith(srcRoot22),
-					endsWith(srcRoot21), endsWith(srcRoot23))));
+			assertThat(actual, is(array(endsWith(pathForLocalSystem(srcRoot1)),
+					endsWith(pathForLocalSystem(srcRoot22)),
+					endsWith(pathForLocalSystem(srcRoot21)),
+					endsWith(pathForLocalSystem(srcRoot23)))));
 		} else {
 			assertThat(actual, is(array(endsWith(srcRoot1), endsWith(srcRoot22),
 					endsWith(srcRoot23), endsWith(srcRoot21))));
@@ -123,8 +125,8 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 		actual = frame.list(SOURCE_LIST).contents();
 		//System.out.println("After removing 2nd and 3rd:\n" + contentOf(actual));
 		if (nameOfSystemOS().startsWith("Windows")) {
-			// maybe
-			assertThat(actual, is(array(endsWith(srcRoot1), endsWith(srcRoot23))));
+			assertThat(actual, is(array(endsWith(pathForLocalSystem(srcRoot1)),
+					endsWith(pathForLocalSystem(srcRoot23)))));
 		} else {
 			assertThat(actual, is(array(endsWith(srcRoot1), endsWith(srcRoot21))));
 		}
@@ -147,7 +149,7 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 				parentPathOf(srcRoot), fileNames, frame.list(SOURCE_LIST));
 		String[] actual = frame.list(SOURCE_LIST).requireEnabled(Timeout.timeout(WAITTIME)).contents();
 		//System.out.println(contentOf(actual));
-		assertThat(actual, is(array(endsWith(srcRoot))));
+		assertThat(actual, is(array(endsWith(pathForLocalSystem(srcRoot)))));
 
 		// 選択＆削除して、ソースリストが空であること検査
 		int[] removeIndecies = {0};
@@ -188,7 +190,7 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 				parentPathOf(srcRoot), fileNames, frame.list(SOURCE_LIST));
 		String[] actual = frame.list(SOURCE_LIST).requireEnabled(Timeout.timeout(WAITTIME)).contents();
 		//System.out.println(contentOf(actual));
-		assertThat(actual, is(array(endsWith(srcRoot))));
+		assertThat(actual, is(array(endsWith(pathForLocalSystem(srcRoot)))));
 
 		// ソース選択後のボタンの状態を検査
 		stat = frame.button(REMOVE_BUTTON).target.isEnabled();
@@ -208,7 +210,7 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 		String text = frame.textBox(RESULT_TEXT).text();
 		//System.out.println(text);
 		URL expected = this.getClass().getResource("StepCount_java.txt");
-		assertThat(text, is(equalTo(contentOf(expected))));
+		assertThat(text, is(equalTo(textContentOf(expected))));
 
 		// 計測後のボタンの状態を検査
 		stat = frame.button(COUNT_BUTTON).target.isEnabled();
@@ -229,7 +231,7 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 		removeFile(saveFile);
 		chooseFile(frame, frame.button(SAVE_BUTTON), SAVE_CHOOSER,
 				".", saveFile, frame.textBox(HIDDEN_SAVING));
-		assertThat(contentOf(new File(saveFile)), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(new File(saveFile)), is(equalTo(textContentOf(expected))));
 
 		// 保存後のボタン・ラベルなどの状態を検査
 		stat = frame.button(SAVE_BUTTON).target.isEnabled();
@@ -237,7 +239,7 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 		stat = frame.textBox(SAVE_TEXT).target.isEnabled();
 		assertThat(stat, is(true));
 		path = frame.textBox(SAVE_TEXT).target.getText();
-		assertThat(path, endsWith(saveFile));
+		assertThat(path, endsWith(pathForLocalSystem(saveFile)));
 		stat = frame.label(SAVE_LABEL).target.isEnabled();
 		assertThat(stat, is(true));
 		msg = frame.label(SAVE_LABEL).target.getText();
@@ -263,7 +265,7 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 				parentPathOf(srcRoot), fileNames, frame.list(SOURCE_LIST));
 		String[] actualSrc = frame.list(SOURCE_LIST).contents();
 		//System.out.println(contentOf(actualSrc));
-		assertThat(actualSrc, is(array(endsWith(srcRoot))));
+		assertThat(actualSrc, is(array(endsWith(pathForLocalSystem(srcRoot)))));
 
 		// ソース選択後のボタンの状態を検査
 		boolean stat = frame.button(COUNT_BUTTON).target.isEnabled();
@@ -281,7 +283,7 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 		sleep(SLEEPLONGTIME);
 		String text = frame.textBox(RESULT_TEXT).text();
 		//System.out.println(text);
-		assertThat(text, is(equalTo(contentOf(expected))));
+		assertThat(text, is(equalTo(textContentOf(expected))));
 
 		// 計測後のボタンの状態を検査
 		stat = frame.button(COUNT_BUTTON).target.isEnabled();
@@ -333,7 +335,7 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 				parentPathOf(srcRoot), fileNames, frame.list(SOURCE_LIST));
 		String[] actualSrc = frame.list(SOURCE_LIST).contents();
 		//System.out.println(contentOf(actualSrc));
-		assertThat(actualSrc, is(array(endsWith(srcRoot))));
+		assertThat(actualSrc, is(array(endsWith(pathForLocalSystem(srcRoot)))));
 
 		// 計測実施
 		frame.button(COUNT_BUTTON).requireEnabled(Timeout.timeout(WAITTIME)).click();
@@ -344,14 +346,14 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 		chooseFile(frame, frame.button(SAVE_BUTTON), SAVE_CHOOSER,
 				".", saveFile1st, frame.textBox(HIDDEN_SAVING));
 		URL expected1st = this.getClass().getResource("StepCount_java.txt");
-		assertThat(contentOf(new File(saveFile1st)), is(equalTo(contentOf(expected1st))));
+		assertThat(rawContentOf(new File(saveFile1st)), is(equalTo(textContentOf(expected1st))));
 		// 保存後の状態を検査
 		boolean stat = frame.button(SAVE_BUTTON).target.isEnabled();
 		assertThat(stat, is(true));
 		stat = frame.textBox(SAVE_TEXT).target.isEnabled();
 		assertThat(stat, is(true));
 		String path = frame.textBox(SAVE_TEXT).target.getText();
-		assertThat(path, endsWith(saveFile1st));
+		assertThat(path, endsWith(pathForLocalSystem(saveFile1st)));
 		stat = frame.label(SAVE_LABEL).target.isEnabled();
 		assertThat(stat, is(true));
 		String msg = frame.label(SAVE_LABEL).target.getText();
@@ -367,7 +369,7 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 		stat = frame.textBox(SAVE_TEXT).target.isEnabled();
 		assertThat(stat, is(true));
 		path = frame.textBox(SAVE_TEXT).target.getText();
-		assertThat(path, endsWith(saveFile1st));
+		assertThat(path, endsWith(pathForLocalSystem(saveFile1st)));
 		stat = frame.label(SAVE_LABEL).target.isEnabled();
 		assertThat(stat, is(true));
 		msg = frame.label(SAVE_LABEL).target.getText();
@@ -404,14 +406,14 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 		chooseFile(frame, frame.button(SAVE_BUTTON), SAVE_CHOOSER,
 				".", saveFile2nd, frame.textBox(HIDDEN_SAVING));
 		URL expected2nd = this.getClass().getResource("StepCount_java_showdir.txt");
-		assertThat(contentOf(new File(saveFile2nd)), is(equalTo(contentOf(expected2nd))));
+		assertThat(rawContentOf(new File(saveFile2nd)), is(equalTo(textContentOf(expected2nd))));
 		// 保存後の状態を検査
 		stat = frame.button(SAVE_BUTTON).target.isEnabled();
 		assertThat(stat, is(true));
 		stat = frame.textBox(SAVE_TEXT).target.isEnabled();
 		assertThat(stat, is(true));
 		path = frame.textBox(SAVE_TEXT).target.getText();
-		assertThat(path, is(endsWith(saveFile2nd)));
+		assertThat(path, is(endsWith(pathForLocalSystem(saveFile2nd))));
 		stat = frame.label(SAVE_LABEL).target.isEnabled();
 		assertThat(stat, is(true));
 		msg = frame.label(SAVE_LABEL).target.getText();
@@ -426,7 +428,7 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 		stat = frame.textBox(SAVE_TEXT).target.isEnabled();
 		assertThat(stat, is(false));
 		path = frame.textBox(SAVE_TEXT).target.getText();
-		assertThat(path, endsWith(saveFile2nd));
+		assertThat(path, endsWith(pathForLocalSystem(saveFile2nd)));
 		stat = frame.label(SAVE_LABEL).target.isEnabled();
 		assertThat(stat, is(false));
 		msg = frame.label(SAVE_LABEL).target.getText();
@@ -444,7 +446,7 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 				parentPathOf(srcRoot), fileNames, frame.list(SOURCE_LIST));
 		String[] actual = frame.list(SOURCE_LIST).contents();
 		//System.out.println(contentOf(actual));
-		assertThat(actual, is(array(endsWith(srcRoot))));
+		assertThat(actual, is(array(endsWith(pathForLocalSystem(srcRoot)))));
 		boolean stat = frame.button(COUNT_BUTTON).target.isEnabled();
 		assertThat(stat, is(true));
 		frame.comboBox(FORMAT_SELECT).selectItem(FORMAT_CSV_IDX);
@@ -454,7 +456,7 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 		String text = frame.textBox(RESULT_TEXT).text();
 		//System.out.println(text);
 		URL expected = this.getClass().getResource("StepCount_java.csv");
-		assertThat(text, is(equalTo(contentOf(expected))));
+		assertThat(text, is(equalTo(textContentOf(expected))));
 		stat = frame.button(COUNT_BUTTON).target.isEnabled();
 		assertThat(stat, is(false));
 	}
@@ -470,7 +472,7 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 				parentPathOf(srcRoot), fileNames, frame.list(SOURCE_LIST));
 		String[] actual = frame.list(SOURCE_LIST).contents();
 		//System.out.println(contentOf(actual));
-		assertThat(actual, is(array(endsWith(srcRoot))));
+		assertThat(actual, is(array(endsWith(pathForLocalSystem(srcRoot)))));
 		boolean stat = frame.button(COUNT_BUTTON).target.isEnabled();
 		assertThat(stat, is(true));
 		frame.comboBox(FORMAT_SELECT).selectItem(FORMAT_CSV_IDX);
@@ -492,7 +494,7 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 		URL expected = this.getClass().getResource("StepCount_java_showdir.csv");
 		String text = frame.textBox(RESULT_TEXT).text();
 		//System.out.println(text);
-		assertThat(text, is(equalTo(contentOf(expected))));
+		assertThat(text, is(equalTo(textContentOf(expected))));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -507,7 +509,8 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 				null, fileNames, frame.list(SOURCE_LIST));
 		String[] actual = frame.list(SOURCE_LIST).contents();
 		//System.out.println(contentOf(actual));
-		assertThat(actual, is(array(endsWith(srcFile1), endsWith(srcFile2))));
+		assertThat(actual, is(array(endsWith(pathForLocalSystem(srcFile1)),
+				endsWith(pathForLocalSystem(srcFile2)))));
 		frame.checkBox(SHOWDIR_CHECK).click();
 		sleep(SLEEPTIME);
 		frame.comboBox(FORMAT_SELECT).selectItem(FORMAT_CSV_IDX);
@@ -517,7 +520,7 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 		String text = frame.textBox(RESULT_TEXT).text();
 		//System.out.println(text);
 		URL expected = this.getClass().getResource("StepCount_java_files_showdir.csv");
-		assertThat(text, is(equalTo(contentOf(expected))));
+		assertThat(text, is(equalTo(textContentOf(expected))));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -531,7 +534,7 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 				parentPathOf(srcRoot), fileNames, frame.list(SOURCE_LIST));
 		String[] actual = frame.list(SOURCE_LIST).contents();
 		//System.out.println(contentOf(actual));
-		assertThat(actual, is(array(endsWith(srcRoot))));
+		assertThat(actual, is(array(endsWith(pathForLocalSystem(srcRoot)))));
 		frame.comboBox(FORMAT_SELECT).selectItem(FORMAT_CSV_IDX);
 		sleep(SLEEPTIME);
 		frame.comboBox(SORT_SELECT).selectItem(SORT_OFF_IDX);
@@ -540,8 +543,13 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 		sleep(SLEEPLONGTIME);
 		String text = frame.textBox(RESULT_TEXT).text();
 		//System.out.println(text);
-		URL expected = this.getClass().getResource("StepCount_java_nosort.csv");
-		assertThat(text, is(equalTo(contentOf(expected))));
+		URL expected;
+		if (nameOfSystemOS().startsWith("Windows")) {
+			expected = this.getClass().getResource("StepCount_java_nosort_win.csv");
+		} else {
+			expected = this.getClass().getResource("StepCount_java_nosort.csv");
+		}
+		assertThat(text, is(equalTo(textContentOf(expected))));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -555,7 +563,7 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 				parentPathOf(srcRoot), fileNames, frame.list(SOURCE_LIST));
 		String[] actual = frame.list(SOURCE_LIST).contents();
 		//System.out.println(contentOf(actual));
-		assertThat(actual, is(array(endsWith(srcRoot))));
+		assertThat(actual, is(array(endsWith(pathForLocalSystem(srcRoot)))));
 		frame.comboBox(FORMAT_SELECT).selectItem(FORMAT_CSV_IDX);
 		sleep(SLEEPTIME);
 		frame.comboBox(SORT_SELECT).selectItem(SORT_OS_IDX);
@@ -566,12 +574,11 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 		//System.out.println(text);
 		URL expected;
 		if (nameOfSystemOS().startsWith("Windows")) {
-			// maybe
-			expected = this.getClass().getResource("StepCount_java_sortOS_Win.csv");
+			expected = this.getClass().getResource("StepCount_java_sortOS_win.csv");
 		} else {
 			expected = this.getClass().getResource("StepCount_java_sortOS.csv");
 		}
-		assertThat(text, is(equalTo(contentOf(expected))));
+		assertThat(text, is(equalTo(textContentOf(expected))));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -585,7 +592,7 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 				parentPathOf(srcRoot), fileNames, frame.list(SOURCE_LIST));
 		String[] actual = frame.list(SOURCE_LIST).contents();
 		//System.out.println(contentOf(actual));
-		assertThat(actual, is(array(endsWith(srcRoot))));
+		assertThat(actual, is(array(endsWith(pathForLocalSystem(srcRoot)))));
 		frame.checkBox(SHOWDIR_CHECK).click();
 		sleep(SLEEPTIME);
 		frame.comboBox(FORMAT_SELECT).selectItem(FORMAT_XML_IDX);
@@ -595,7 +602,7 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 		String text = frame.textBox(RESULT_TEXT).text();
 		//System.out.println(text);
 		URL expected = this.getClass().getResource("StepCount_java_showdir.xml");
-		assertThat(text, is(equalTo(contentOf(expected))));
+		assertThat(text, is(equalTo(textContentOf(expected))));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -609,7 +616,7 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 				parentPathOf(srcRoot), fileNames, frame.list(SOURCE_LIST));
 		String[] actual = frame.list(SOURCE_LIST).contents();
 		//System.out.println(contentOf(actual));
-		assertThat(actual, is(array(endsWith(srcRoot))));
+		assertThat(actual, is(array(endsWith(pathForLocalSystem(srcRoot)))));
 		frame.checkBox(SHOWDIR_CHECK).click();
 		sleep(SLEEPTIME);
 		frame.comboBox(FORMAT_SELECT).selectItem(FORMAT_JSON_IDX);
@@ -619,7 +626,7 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 		String text = frame.textBox(RESULT_TEXT).text();
 		//System.out.println(text);
 		URL expected = this.getClass().getResource("StepCount_java_showdir.json");
-		assertThat(text, is(equalTo(contentOf(expected))));
+		assertThat(text, is(equalTo(textContentOf(expected))));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -633,7 +640,7 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 				parentPathOf(srcRoot), fileNames, frame.list(SOURCE_LIST));
 		String[] actual = frame.list(SOURCE_LIST).contents();
 		//System.out.println(contentOf(actual));
-		assertThat(actual, is(array(endsWith(srcRoot))));
+		assertThat(actual, is(array(endsWith(pathForLocalSystem(srcRoot)))));
 		frame.checkBox(SHOWDIR_CHECK).click();
 		sleep(SLEEPTIME);
 		frame.comboBox(FORMAT_SELECT).selectItem(FORMAT_EXCEL_IDX);
@@ -666,7 +673,7 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 				parentPathOf(srcRoot), fileNames, frame.list(SOURCE_LIST));
 		String[] actual = frame.list(SOURCE_LIST).contents();
 		//System.out.println(contentOf(actual));
-		assertThat(actual, is(array(endsWith(srcRoot))));
+		assertThat(actual, is(array(endsWith(pathForLocalSystem(srcRoot)))));
 		// エンコードを指定
 		frame.textBox(ENCODING_TEXT).deleteText();
 		frame.textBox(ENCODING_TEXT).enterText("Windows-31J");
@@ -680,7 +687,7 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 		String text = frame.textBox(RESULT_TEXT).text();
 		//System.out.println(text);
 		URL expected = this.getClass().getResource("StepCount_commentS_showdir.csv");
-		assertThat(text, is(equalTo(contentOf(expected))));
+		assertThat(text, is(equalTo(textContentOf(expected))));
 
 		// エンコードを削除して再計測
 		frame.textBox(ENCODING_TEXT).deleteText();
@@ -704,13 +711,13 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 				parentPathOf(srcRoot), fileNames, frame.list(SOURCE_LIST));
 		String[] actual = frame.list(SOURCE_LIST).contents();
 		//System.out.println(contentOf(actual));
-		assertThat(actual, is(array(endsWith(srcRoot))));
+		assertThat(actual, is(array(endsWith(pathForLocalSystem(srcRoot)))));
 
 		// Xml定義を選択
 		String xmlFile = "test/data/ktestl2.xml";
 		chooseFile(frame, frame.button(XML_BUTTON), XML_CHOOSER, ".", xmlFile, frame.textBox(XML_TEXT));
 		//System.out.println(frame.textBox(XML_TEXT).text());
-		assertThat(frame.textBox(XML_TEXT).text(), endsWith(xmlFile));
+		assertThat(frame.textBox(XML_TEXT).text(), endsWith(pathForLocalSystem(xmlFile)));
 
 		frame.checkBox(SHOWDIR_CHECK).click();
 		frame.comboBox(FORMAT_SELECT).selectItem(FORMAT_CSV_IDX);
@@ -721,7 +728,7 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 		String text = frame.textBox(RESULT_TEXT).text();
 		//System.out.println(text);
 		URL expected = this.getClass().getResource("RuleCount_java_showdir.csv");
-		assertThat(text, is(equalTo(contentOf(expected))));
+		assertThat(text, is(equalTo(textContentOf(expected))));
 
 		// Xml定義を削除して再度実行
 		frame.textBox(XML_TEXT).deleteText();
@@ -731,6 +738,6 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 		text = frame.textBox(RESULT_TEXT).text();
 		//System.out.println(text);
 		expected = this.getClass().getResource("StepCount_java_showdir.csv");
-		assertThat(text, is(equalTo(contentOf(expected))));
+		assertThat(text, is(equalTo(textContentOf(expected))));
 	}
 }

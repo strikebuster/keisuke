@@ -1,5 +1,0 @@
-/root1/cobol/COPY.cbl,COBOL,,4,0,0,4
-/root1/cobol/FXABPATTERN.COB,COBOL,,246,0,132,378
-/root1/cobol/FXCDPATTERN.COB,COBOL,,175,6,101,282
-/root1/cobol/frabpattern.cbf,COBOL,,252,30,105,387
-/root1/cobol/frcdpattern.cbf,COBOL,,180,26,76,282

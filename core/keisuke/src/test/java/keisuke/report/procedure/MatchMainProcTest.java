@@ -95,7 +95,7 @@ public class MatchMainProcTest {
 			capture.finish();
 		}
 
-		assertThat(mproc.reportText(), is(equalTo(contentOf(expected))));
+		assertThat(mproc.reportText(), is(equalTo(textContentOf(expected))));
 		assertThat(errMessage, containsString("Write error"));
 		if (firedException != null) {
 			assertThat(firedException.getMessage(), containsString(expectedMsg));
@@ -142,7 +142,7 @@ public class MatchMainProcTest {
 		String[] args = {"test/data/match_ma01_sorted.csv", "test/data/match_tr01_sorted.txt"};
 		mproc.main(args);
 
-		assertThat(mproc.reportText(), is(equalTo(contentOf(expected))));
+		assertThat(mproc.reportText(), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -160,7 +160,7 @@ public class MatchMainProcTest {
 		mproc.main(args);
 
 		File actual = new File("test/out/match03.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(textContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -178,6 +178,6 @@ public class MatchMainProcTest {
 		mproc.main(args);
 
 		File actual = new File("test/out/match04.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(textContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 }

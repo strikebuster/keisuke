@@ -41,9 +41,8 @@ public class StepCountProceduralFunc extends StepCountProc {
 			final boolean isCategory) throws IllegalArgumentException {
 		this.validateSortOption(this.sortOrder());
 		StepCountFunction stepcounter = new StepCountFunction(this.sourceEncoding(), this.xmlFileName());
-		if (this.sortOrder().equals(OPTVAL_SORT_OS)) {
-			stepcounter.setSortingOsOrder();
-		}
+		stepcounter.setSortingOrder(this.sortOrder());
+
 		List<StepCountResultForCount> list =
 				stepcounter.countFileSet(baseDir, filePaths, this.isShowDirectory(), isCategory);
 		if (this.sortOrder().equals(OPTVAL_SORT_ON)) {

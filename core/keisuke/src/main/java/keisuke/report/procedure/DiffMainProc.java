@@ -261,9 +261,9 @@ public final class DiffMainProc extends AbstractReportMainProc {
 		StringBuilder sb = new StringBuilder();
 		// 追加ファイル
 		// 出力グループの表題
-		sb.append(this.messageMap().get(MSG_DIFF_SUBJECT_ADD)).append('\n');
+		sb.append(this.messageMap().get(MSG_DIFF_SUBJECT_ADD)).append(LINE_SEP);
 		// 列タイトルの出力
-		sb.append(this.reportEditor().makeColumnTitlesLine()).append('\n');
+		sb.append(this.reportEditor().makeColumnTitlesLine()).append(LINE_SEP);
 		// 言語毎の集計結果の出力
 		for (Entry<String, CountResultForReport> entry : this.resultMap.entrySet()) {
 			String langkey = entry.getKey();
@@ -272,13 +272,13 @@ public final class DiffMainProc extends AbstractReportMainProc {
 						.sumOfResultFor(DiffStatusEnum.ADDED);
 			// 列毎の値を出力
 			String langlabel = this.classifier().getClassifyNameForReport(langkey);
-			sb.append(this.reportEditor().makeColumnValuesLineFrom(langlabel, elem)).append('\n');
+			sb.append(this.reportEditor().makeColumnValuesLineFrom(langlabel, elem)).append(LINE_SEP);
 		}
 		// 修正ファイル
 		// 出力グループの表題
-		sb.append(this.messageMap().get(MSG_DIFF_SUBJECT_MODIFY)).append('\n');
+		sb.append(this.messageMap().get(MSG_DIFF_SUBJECT_MODIFY)).append(LINE_SEP);
 		// 列タイトルの出力
-		sb.append(this.reportEditor().makeColumnTitlesLine()).append('\n');
+		sb.append(this.reportEditor().makeColumnTitlesLine()).append(LINE_SEP);
 		// 言語毎の集計結果の出力
 		for (Entry<String, CountResultForReport> entry : this.resultMap.entrySet()) {
 			String langkey = entry.getKey();
@@ -287,14 +287,14 @@ public final class DiffMainProc extends AbstractReportMainProc {
 						.sumOfResultFor(DiffStatusEnum.MODIFIED);
 			// 列毎の値を出力
 			String langlabel = this.classifier().getClassifyNameForReport(langkey);
-			sb.append(this.reportEditor().makeColumnValuesLineFrom(langlabel, elem)).append('\n');
+			sb.append(this.reportEditor().makeColumnValuesLineFrom(langlabel, elem)).append(LINE_SEP);
 		}
 
 		// 廃止ファイル
 		// 出力グループの表題
-		sb.append(this.messageMap().get(MSG_DIFF_SUBJECT_DROP)).append('\n');
+		sb.append(this.messageMap().get(MSG_DIFF_SUBJECT_DROP)).append(LINE_SEP);
 		// 列タイトルの出力
-		sb.append(this.reportEditor().makeColumnTitlesLine()).append('\n');
+		sb.append(this.reportEditor().makeColumnTitlesLine()).append(LINE_SEP);
 		// 言語毎の集計結果の出力
 		for (Entry<String, CountResultForReport> entry : this.resultMap.entrySet()) {
 			String langkey = entry.getKey();
@@ -303,14 +303,14 @@ public final class DiffMainProc extends AbstractReportMainProc {
 						.sumOfResultFor(DiffStatusEnum.DROPED);
 			// 列毎の値を出力
 			String langlabel = this.classifier().getClassifyNameForReport(langkey);
-			sb.append(this.reportEditor().makeColumnValuesLineFrom(langlabel, elem)).append('\n');
+			sb.append(this.reportEditor().makeColumnValuesLineFrom(langlabel, elem)).append(LINE_SEP);
 		}
 
 		// 修正なしファイル
 		// 出力グループの表題
-		sb.append(this.messageMap().get(MSG_DIFF_SUBJECT_UNCHANGE)).append('\n');
+		sb.append(this.messageMap().get(MSG_DIFF_SUBJECT_UNCHANGE)).append(LINE_SEP);
 		// 列タイトルの出力
-		sb.append(this.reportEditor().makeOnlyFilesNumTitleLine()).append('\n');
+		sb.append(this.reportEditor().makeOnlyFilesNumTitleLine()).append(LINE_SEP);
 		// オプションで出力レベルを指定されている
 		if (this.unchangeByLang) {
 			// 言語毎の集計結果の出力 -nochange detail
@@ -322,19 +322,19 @@ public final class DiffMainProc extends AbstractReportMainProc {
 				// 列毎の値を出力
 				String langlabel = this.classifier().getClassifyNameForReport(langkey);
 				sb.append(this.reportEditor().makeOnlyFilesNumColumnValueLineFrom(langlabel, elem))
-					.append('\n');
+					.append(LINE_SEP);
 			}
 		} else {
 			// 言語区別なしで合計の出力 -nochange total
 			sb.append("ALL , ").append(this.unchangeFiles)
 				//.append(" , 0 , 0 , 0")
-				.append('\n');
+				.append(LINE_SEP);
 		}
 		// 計測対象外ファイル
 		// 出力グループの表題
-		sb.append(this.messageMap().get(MSG_DIFF_SUBJECT_UNSUPPORT)).append('\n');
-		sb.append(this.reportEditor().makeOnlyFilesNumTitleLine()).append('\n');
-		sb.append("ALL , ").append(this.ignoreFiles).append('\n');
+		sb.append(this.messageMap().get(MSG_DIFF_SUBJECT_UNSUPPORT)).append(LINE_SEP);
+		sb.append(this.reportEditor().makeOnlyFilesNumTitleLine()).append(LINE_SEP);
+		sb.append("ALL , ").append(this.ignoreFiles).append(LINE_SEP);
 		// 出力結果の保管
 		this.setReportText(sb.toString());
 	}

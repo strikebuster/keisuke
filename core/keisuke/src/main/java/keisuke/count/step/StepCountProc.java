@@ -140,9 +140,8 @@ public class StepCountProc extends AbstractCountMainProc {
 	/** {@inheritDoc} */
 	protected void executeCounting() throws IOException {
 		StepCountFunction stepcounter = new StepCountFunction(this.sourceEncoding(), this.xmlFileName());
-		if (this.sortType.equals(OPTVAL_SORT_OS)) {
-			stepcounter.setSortingOsOrder();
-		}
+		stepcounter.setSortingOrder(this.sortType);
+
 		List<StepCountResultForCount> list = stepcounter.countAll(this.pathArray);
 		if (this.showDirectory) {
 			for (StepCountResultForCount result : list) {

@@ -2,6 +2,7 @@ package keisuke.count.step;
 
 import static keisuke.count.CountTestUtil.*;
 import static keisuke.count.option.CountOptionConstant.*;
+import static keisuke.util.TestUtil.nameOfSystemOS;
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.fail;
@@ -139,7 +140,7 @@ public class StepCountTest {
 		System.out.println("## StepCount ## countJavaUsingCsvFormat ##");
 		String newRoot = "test/data/java/root1";
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_java.txt");
+				.getResource("StepCounterTest_testCount_java.csv");
 
 		String[] args = {"--" + OPT_SHOWDIR, "-format", "csv", "-encoding", "UTF-8",
 				"-output", "test/out/count_java.csv", newRoot};
@@ -147,7 +148,7 @@ public class StepCountTest {
 		stepcount.main(args);
 
 		File actual = new File("test/out/count_java.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -155,8 +156,6 @@ public class StepCountTest {
 		System.out.println("## StepCount ## countJavaUsingCsvFormatAndSortOff ##");
 		String newRoot = "test/data/java/root1";
 		// ソートoffでも引数が１つなら文字列順ソートになるのでデフォルトと同じ
-		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_java.txt");
 
 		String[] args = {"-showDirectory", "-format", "csv", "-encoding", "UTF-8",
 				"--" + OPT_SORT, "off", "-output", "test/out/count_java_nosort.csv", newRoot};
@@ -164,7 +163,13 @@ public class StepCountTest {
 		stepcount.main(args);
 
 		File actual = new File("test/out/count_java_nosort.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		URL expected;
+		if (nameOfSystemOS().startsWith("Windows")) {
+			expected = this.getClass().getResource("StepCounterTest_testCount_java_nosort_win.csv");
+		} else {
+			expected = this.getClass().getResource("StepCounterTest_testCount_java.csv");
+		}
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -173,7 +178,7 @@ public class StepCountTest {
 		String newRoot = "test/data/java/root1";
 		// ファイル名だけで文字列ソート順になる
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_java_nodir.txt");
+				.getResource("StepCounterTest_testCount_java_nodir.csv");
 
 		String[] args = {"-f", "csv", "-e", "UTF-8",
 				"-o", "test/out/count_java_nodir.csv", newRoot};
@@ -181,7 +186,7 @@ public class StepCountTest {
 		stepcount.main(args);
 
 		File actual = new File("test/out/count_java_nodir.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -189,8 +194,6 @@ public class StepCountTest {
 		System.out.println("## StepCount ## countJavaUsingCsvFormatAndSortOffWithoutShowDirectory ##");
 		String newRoot = "test/data/java/root1";
 		// ソートなしの場合、showDirectory指定した場合のソートなしの順番と同じになる
-		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_java_nodir_nosort.txt");
 
 		String[] args = {"-f", "csv", "-e", "UTF-8", "-S", "off",
 				"-o", "test/out/count_java_nodir_nosort.csv", newRoot};
@@ -198,7 +201,13 @@ public class StepCountTest {
 		stepcount.main(args);
 
 		File actual = new File("test/out/count_java_nodir_nosort.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		URL expected;
+		if (nameOfSystemOS().startsWith("Windows")) {
+			expected = this.getClass().getResource("StepCounterTest_testCount_java_nodir_nosort_win.csv");
+		} else {
+			expected = this.getClass().getResource("StepCounterTest_testCount_java_nodir_nosort.csv");
+		}
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -207,7 +216,7 @@ public class StepCountTest {
 		String newRoot = "test/data/java/root1";
 		// ディレクトリ付きパス名で文字列ソート順になる
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_java_files.txt");
+				.getResource("StepCounterTest_testCount_java_files.csv");
 
 		String[] args = {"-s", "-format", "csv", "-encoding", "UTF-8",
 				"-output", "test/out/count_java_files.csv",
@@ -216,7 +225,7 @@ public class StepCountTest {
 		stepcount.main(args);
 
 		File actual = new File("test/out/count_java_files.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -226,7 +235,7 @@ public class StepCountTest {
 		String newRoot = "test/data/java/root1";
 		// ファイル名だけで文字列ソート順になる
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_java_nodir_files.txt");
+				.getResource("StepCounterTest_testCount_java_nodir_files.csv");
 
 		String[] args = {"-format", "csv", "-encoding", "UTF-8",
 				"-output", "test/out/count_java_nodir_files.csv",
@@ -235,7 +244,7 @@ public class StepCountTest {
 		stepcount.main(args);
 
 		File actual = new File("test/out/count_java_nodir_files.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -245,7 +254,7 @@ public class StepCountTest {
 		String newRoot = "test/data/java/root1";
 		// ファイルを引数で渡したときにソートなしの場合、引数の指定順になる
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_java_nodir_files_nosort.txt");
+				.getResource("StepCounterTest_testCount_java_nodir_files_nosort.csv");
 
 		String[] args = {"-format", "csv", "-encoding", "UTF-8", "-sort", "off",
 				"-output", "test/out/count_java_nodir_files_nosort.csv",
@@ -254,7 +263,7 @@ public class StepCountTest {
 		stepcount.main(args);
 
 		File actual = new File("test/out/count_java_nodir_files_nosort.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -263,7 +272,7 @@ public class StepCountTest {
 				+ "countJavaUsingCsvFormatWithoutShowDirectoryWhenAFileIsGiven ##");
 		String newRoot = "test/data/java/root1";
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_java_nodir_afile.txt");
+				.getResource("StepCounterTest_testCount_java_nodir_afile.csv");
 
 		String[] args = {"-format", "csv", "-encoding", "UTF-8",
 				"-output", "test/out/count_java_nodir_afile.csv",
@@ -272,7 +281,7 @@ public class StepCountTest {
 		stepcount.main(args);
 
 		File actual = new File("test/out/count_java_nodir_afile.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -283,7 +292,7 @@ public class StepCountTest {
 
 		String newRoot = "test/data/java/root1";
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_java_en.txt");
+				.getResource("StepCounterTest_testCount_java_en.csv");
 
 		String[] args = {"-s", "-f", "csv", "-e", "UTF-8",
 				"-o", "test/out/count_java_en.csv", newRoot};
@@ -294,7 +303,7 @@ public class StepCountTest {
 			Locale.setDefault(org);
 		}
 		File actual = new File("test/out/count_java_en.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -302,14 +311,14 @@ public class StepCountTest {
 		System.out.println("## StepCount ## countJavaUsingTextFormat ##");
 		String newRoot = "test/data/java/root1";
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_java_text.txt");
+				.getResource("StepCounterTest_testCount_java.txt");
 
 		String[] args = {"-showDirectory", "-encoding", "UTF-8",
 				"-output", "test/out/count_java.txt", newRoot};
 		StepCountProc stepcount = new StepCountProc();
 		stepcount.main(args);
 		File actual = new File("test/out/count_java.txt");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -320,7 +329,7 @@ public class StepCountTest {
 
 		String newRoot = "test/data/java/root1";
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_java_text_en.txt");
+				.getResource("StepCounterTest_testCount_java_en.txt");
 
 		String[] args = {"--showDirectory", "--encoding", "UTF-8",
 				"--output", "test/out/count_java_en.txt", newRoot};
@@ -331,7 +340,7 @@ public class StepCountTest {
 			Locale.setDefault(org);
 		}
 		File actual = new File("test/out/count_java_en.txt");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -348,7 +357,7 @@ public class StepCountTest {
 
 		File actual = new File("test/out/count_java.json");
 		// JSON形式ではエンコードはUTF-8固定
-		assertThat(contentOf(actual, "UTF-8"), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual, "UTF-8"), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -372,7 +381,7 @@ public class StepCountTest {
 		}
 		File actual = new File("test/out/count_java_en.json");
 		// JSON形式ではエンコードはUTF-8固定
-		assertThat(contentOf(actual, "UTF-8"), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual, "UTF-8"), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -388,7 +397,7 @@ public class StepCountTest {
 		stepcount.main(args);
 
 		File actual = new File("test/out/count_java.xml");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -411,7 +420,7 @@ public class StepCountTest {
 			Locale.setDefault(org);
 		}
 		File actual = new File("test/out/count_java_en.xml");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -457,7 +466,7 @@ public class StepCountTest {
 		System.out.println("## StepCount ## countJavaUsingCsvFormatWhenScmDirectoriesExist ##");
 		String newRoot = "test/data/java/root4";
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_java_scm.txt");
+				.getResource("StepCounterTest_testCount_java_scm.csv");
 
 		String[] args = {"-showDirectory", "-format", "csv", "-encoding", "UTF-8",
 				"-output", "test/out/count_java_scm.csv", newRoot};
@@ -465,7 +474,7 @@ public class StepCountTest {
 		stepcount.main(args);
 
 		File actual = new File("test/out/count_java_scm.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -473,14 +482,14 @@ public class StepCountTest {
 		System.out.println("## StepCount ## countWebCodingInUtf ##");
 		String newRoot = "test/data/web/root1";
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_web.txt");
+				.getResource("StepCounterTest_testCount_web.csv");
 
 		String[] args = {"-showDirectory", "-format", "csv", "-encoding", "UTF-8",
 				"-output", "test/out/count_web.csv", newRoot};
 		StepCount.main(args);
 
 		File actual = new File("test/out/count_web.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -488,14 +497,14 @@ public class StepCountTest {
 		System.out.println("## StepCount ## countWebCodingInSjis ##");
 		String newRoot = "test/data/web/root1S";
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_webS.txt");
+				.getResource("StepCounterTest_testCount_webS.csv");
 
 		String[] args = {"-showDirectory", "-format", "csv", "-encoding", "Windows-31J",
 				"-output", "test/out/count_webS.csv", newRoot};
 		StepCount.main(args);
 
 		File actual = new File("test/out/count_webS.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -503,14 +512,14 @@ public class StepCountTest {
 		System.out.println("## StepCount ## countC ##");
 		String newRoot = "test/data/c/root1";
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_c.txt");
+				.getResource("StepCounterTest_testCount_c.csv");
 
 		String[] args = {"-showDirectory", "-format", "csv", "-encoding", "Shift_JIS",
 				"-output", "test/out/count_c.csv", newRoot};
 		StepCount.main(args);
 
 		File actual = new File("test/out/count_c.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -518,14 +527,14 @@ public class StepCountTest {
 		System.out.println("## StepCount ## countMiscSourcesIncludingMiscCommentsInSjis ##");
 		String newRoot = "test/data/commentS/root1";
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_commentS.txt");
+				.getResource("StepCounterTest_testCount_commentS.csv");
 
 		String[] args = {"-showDirectory", "-format", "csv", "-encoding", "Windows-31J",
 				"-output", "test/out/count_commentS.csv", newRoot};
 		StepCount.main(args);
 
 		File actual = new File("test/out/count_commentS.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -533,14 +542,14 @@ public class StepCountTest {
 		System.out.println("## StepCount ## countMiscSourcesIncludingMiscCommentsInSjis(2) ##");
 		String newRoot = "test/data/commentS/root10";
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_commentS2.txt");
+				.getResource("StepCounterTest_testCount_commentS2.csv");
 
 		String[] args = {"-showDirectory", "-format", "csv", "-encoding", "Windows-31J",
 				"-output", "test/out/count_commentS2.csv", newRoot};
 		StepCount.main(args);
 
 		File actual = new File("test/out/count_commentS2.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -548,14 +557,14 @@ public class StepCountTest {
 		System.out.println("## StepCount ## countMiscSourcesIncludigMiscCommentsInUtf ##");
 		String newRoot = "test/data/commentU/root1";
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_commentU.txt");
+				.getResource("StepCounterTest_testCount_commentU.csv");
 
 		String[] args = {"-showDirectory", "-format", "csv", "-encoding", "UTF-8",
 				"-output", "test/out/count_commentU.csv", newRoot};
 		StepCount.main(args);
 
 		File actual = new File("test/out/count_commentU.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -563,14 +572,14 @@ public class StepCountTest {
 		System.out.println("## StepCount ## countMiscSourcesIncludigMiscCommentsInUtf(2) ##");
 		String newRoot = "test/data/commentU/root10";
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_commentU2.txt");
+				.getResource("StepCounterTest_testCount_commentU2.csv");
 
 		String[] args = {"-showDirectory", "-format", "csv", "-encoding", "UTF-8",
 				"-output", "test/out/count_commentU2.csv", newRoot};
 		StepCount.main(args);
 
 		File actual = new File("test/out/count_commentU2.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	// これ以下のテスト用のデータは未公開
@@ -579,14 +588,14 @@ public class StepCountTest {
 		System.out.println("## StepCount ## countCobol ##");
 		String newRoot = "test/data/cobol/root1";
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_cobol.txt");
+				.getResource("StepCounterTest_testCount_cobol.csv");
 
 		String[] args = {"-showDirectory", "-format", "csv", "-encoding", "Shift_JIS",
 				"-output", "test/out/count_cobol.csv", newRoot};
 		StepCount.main(args);
 
 		File actual = new File("test/out/count_cobol.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -594,14 +603,14 @@ public class StepCountTest {
 		System.out.println("## StepCount ## countOW ##");
 		String newRoot = "test/data/ow/root1";
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_ow.txt");
+				.getResource("StepCounterTest_testCount_ow.csv");
 
 		String[] args = {"-showDirectory", "-format", "csv", "-encoding", "UTF-8",
 				"-output", "test/out/count_ow.csv", newRoot};
 		StepCount.main(args);
 
 		File actual = new File("test/out/count_ow.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 }

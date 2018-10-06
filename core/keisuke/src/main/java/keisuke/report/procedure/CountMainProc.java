@@ -3,6 +3,7 @@ package keisuke.report.procedure;
 import static keisuke.count.step.format.FormatConstant.*;
 import static keisuke.report.option.ReportOptionConstant.*;
 import static keisuke.report.property.MessageConstant.*;
+import static keisuke.util.StringUtil.LINE_SEP;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -130,21 +131,21 @@ public final class CountMainProc extends AbstractReportMainProc {
 		this.reportEditor().setColumnOrderFrom(this.columnMap());
 		StringBuilder sb = new StringBuilder();
 		// 出力グループの表題
-		sb.append(this.messageMap().get(MSG_COUNT_SUBJECT_HEAD)).append('\n');
+		sb.append(this.messageMap().get(MSG_COUNT_SUBJECT_HEAD)).append(LINE_SEP);
 		// 列タイトルの出力
-		sb.append(this.reportEditor().makeColumnTitlesLine()).append('\n');
+		sb.append(this.reportEditor().makeColumnTitlesLine()).append(LINE_SEP);
 		// 言語毎の集計結果の出力
 		for (Entry<String, CountResultForReport> entry : this.resultMap.entrySet()) {
 			String langkey = entry.getKey();
 			StepCountResultForReport result = (StepCountResultForReport) entry.getValue();
 			// 列毎の値を出力
 			String langlabel = this.classifier().getClassifyNameForReport(langkey);
-			sb.append(this.reportEditor().makeColumnValuesLineFrom(langlabel, result)).append('\n');
+			sb.append(this.reportEditor().makeColumnValuesLineFrom(langlabel, result)).append(LINE_SEP);
 		}
 		// 出力グループの表題
-		sb.append(this.messageMap().get(MSG_COUNT_SUBJECT_UNSUPPORT)).append('\n');
-		sb.append(this.reportEditor().makeOnlyFilesNumTitleLine()).append('\n');
-		sb.append("ALL , ").append(this.ignoreFiles).append('\n');
+		sb.append(this.messageMap().get(MSG_COUNT_SUBJECT_UNSUPPORT)).append(LINE_SEP);
+		sb.append(this.reportEditor().makeOnlyFilesNumTitleLine()).append(LINE_SEP);
+		sb.append("ALL , ").append(this.ignoreFiles).append(LINE_SEP);
 		// 出力結果の保管
 		this.setReportText(sb.toString());
 	}

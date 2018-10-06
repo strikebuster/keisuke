@@ -1,6 +1,7 @@
 package keisuke.ant;
 
-import static keisuke.util.TestUtil.contentOf;
+import static keisuke.util.TestUtil.rawContentOf;
+import static keisuke.util.TestUtil.textContentOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
@@ -175,7 +176,7 @@ public class DiffReportTaskTest {
 		System.out.println(driver.getStdout());
 
 		File actual = new File("test/out/ant_diffreport.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -193,7 +194,7 @@ public class DiffReportTaskTest {
 		System.out.println(driver.getStdout());
 
 		File actual = new File("test/out/ant_diffreport_usingLanguage.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -211,7 +212,7 @@ public class DiffReportTaskTest {
 		System.out.println(driver.getStdout());
 
 		File actual = new File("test/out/ant_diffreport_usingCustomRule.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -229,7 +230,7 @@ public class DiffReportTaskTest {
 		System.out.println(driver.getStdout());
 
 		File actual = new File("test/out/ant_diffreport_usingProp.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -250,7 +251,7 @@ public class DiffReportTaskTest {
 		System.out.println(driver.getStdout());
 
 		File actual = new File("test/out/ant_diffreport_usingInvalidFw.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 		assertThat(errMessage, containsString("not found Framework definition"));
 	}
 
@@ -271,9 +272,9 @@ public class DiffReportTaskTest {
 		System.out.println(driver.getStdout());
 
 		File actualA = new File("test/out/ant_diffreport_aout.csv");
-		assertThat(contentOf(actualA), is(equalTo(contentOf(expectedA))));
+		assertThat(rawContentOf(actualA), is(equalTo(textContentOf(expectedA))));
 		File actualM = new File("test/out/ant_diffreport_mout.csv");
-		assertThat(contentOf(actualM), is(equalTo(contentOf(expectedM))));
+		assertThat(rawContentOf(actualM), is(equalTo(textContentOf(expectedM))));
 	}
 
 	@Test
@@ -291,6 +292,6 @@ public class DiffReportTaskTest {
 		System.out.println(driver.getStdout());
 
 		File actual = new File("test/out/ant_diffreport_total.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 }

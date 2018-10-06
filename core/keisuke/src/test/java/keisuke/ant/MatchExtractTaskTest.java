@@ -1,6 +1,7 @@
 package keisuke.ant;
 
-import static keisuke.util.TestUtil.contentOf;
+import static keisuke.util.TestUtil.rawContentOf;
+import static keisuke.util.TestUtil.textContentOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -138,6 +139,6 @@ public class MatchExtractTaskTest {
 		System.out.println(driver.getStdout());
 
 		File actual = new File("test/out/ant_match.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 }

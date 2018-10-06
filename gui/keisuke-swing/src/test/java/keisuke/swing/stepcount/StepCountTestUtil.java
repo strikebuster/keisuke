@@ -145,7 +145,7 @@ final class StepCountTestUtil {
 		}
 		Arrays.sort(filearray, new Comparator<File>() {
 			public int compare(final File o1, final File o2) {
-				return FileNameUtil.compare(o1.getAbsolutePath(), o2.getAbsolutePath());
+				return FileNameUtil.compareInOsOrder(o1.getAbsolutePath(), o2.getAbsolutePath());
 			}
 		});
 		return filearray;
@@ -157,7 +157,7 @@ final class StepCountTestUtil {
 		}
 		Arrays.sort(strarray, new Comparator<String>() {
 			public int compare(final String o1, final String o2) {
-				return FileNameUtil.compare(o1, o2);
+				return FileNameUtil.compareInOsOrder(o1, o2);
 			}
 		});
 		return strarray;

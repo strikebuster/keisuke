@@ -12,7 +12,7 @@ plugins {
 
 group = 'keisuke'
 //name : 'keisuke' as single project
-version = '1.4.0'
+version = '1.4.1'
 //version = '1.x.x-SNAPSHOT'
 
 description = """keisuke : counts source code steps like as stepcounter"""

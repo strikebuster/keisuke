@@ -1,5 +1,7 @@
 package keisuke.count.step;
 
+import static keisuke.count.option.CountOptionConstant.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,7 +18,7 @@ import keisuke.util.LogUtil;
  */
 class StepCountFunction {
 
-	private boolean sortingOsOrder = false;
+	private String sortingOrder = OPTVAL_SORT_ON;
 	private String encoding = null;
 	private XmlDefinedStepCounterFactory factory = null;
 
@@ -42,9 +44,13 @@ class StepCountFunction {
 
 	/**
 	 * ファイルリストのソート順を文字列順でなくOSファイル名順に設定する
+	 * @param order ソート順
 	 */
-	void setSortingOsOrder() {
-		this.sortingOsOrder = true;
+	void setSortingOrder(final String order) {
+		if (order == null || order.isEmpty()) {
+			return;
+		}
+		this.sortingOrder = order;
 	}
 
 	/**
@@ -120,10 +126,14 @@ class StepCountFunction {
 			if (FileNameUtil.checkToBeIgnored(file)) {
 				return new ArrayList<StepCountResultForCount>();
 			}
-			if (this.sortingOsOrder) {
+			if (this.sortingOrder.equals(OPTVAL_SORT_ON)) {
+				return this.countEveryNodes(FileNameUtil.sortInCodeOrder(file.listFiles()));
+			} else if (this.sortingOrder.equals(OPTVAL_SORT_OS)) {
 				return this.countEveryNodes(FileNameUtil.sortInOsOrder(file.listFiles()));
 			} else {
-				return this.countEveryNodes(FileNameUtil.sortInCodeOrder(file.listFiles()));
+				//listFiles()の順番は不明なのでOS順にする
+				//return this.countEveryNodes(file.listFiles());
+				return this.countEveryNodes(FileNameUtil.sortInOsOrder(file.listFiles()));
 			}
 		} else {
 			ArrayList<StepCountResultForCount> list = new ArrayList<StepCountResultForCount>();

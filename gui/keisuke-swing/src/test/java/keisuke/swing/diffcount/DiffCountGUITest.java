@@ -22,6 +22,7 @@ import static keisuke.swing.GUIConstant.*;
 import static keisuke.swing.GUITestUtil.*;
 import static keisuke.swing.diffcount.DiffCountGUIConstant.*;
 import static keisuke.swing.diffcount.DiffCountTestUtil.*;
+import static keisuke.util.TestUtil.nameOfSystemOS;
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
 
@@ -94,7 +95,7 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		chooseFile(frame, frame.button(OLD_DIR_BUTTON), FILE_CHOOSER + "-" + OLD_DIR_BUTTON,
 				".", oldRoot, frame.textBox(OLD_DIR_TEXTFIELD));
 		//System.out.println(frame.textBox(OLD_DIR_TEXTFIELD).text());
-		assertThat(frame.textBox(OLD_DIR_TEXTFIELD).text(), endsWith(oldRoot));
+		assertThat(frame.textBox(OLD_DIR_TEXTFIELD).text(), endsWith(pathForLocalSystem(oldRoot)));
 
 		// 入力後にボタンの状態を検査
 		stat = frame.button(COUNT_BUTTON).target.isEnabled();
@@ -110,7 +111,7 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		chooseFile(frame, frame.button(NEW_DIR_BUTTON), FILE_CHOOSER + "-" + NEW_DIR_BUTTON,
 				".", newRoot, frame.textBox(NEW_DIR_TEXTFIELD));
 		//System.out.println(frame.textBox(NEW_DIR_TEXTFIELD).text());
-		assertThat(frame.textBox(NEW_DIR_TEXTFIELD).text(), endsWith(newRoot));
+		assertThat(frame.textBox(NEW_DIR_TEXTFIELD).text(), endsWith(pathForLocalSystem(newRoot)));
 
 		// 入力後にボタンの状態を検査
 		stat = frame.button(COUNT_BUTTON).target.isEnabled();
@@ -140,7 +141,8 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		String text = frame.textBox(RESULT_TEXT).requireEnabled(Timeout.timeout(WAITTIME)).text();
 		//System.out.println(text);
 		URL expected = this.getClass().getResource("DiffCount_java.txt");
-		assertThat(actualTextOf(text, withoutHeadLines(TEXT_IGNORE_LINES)), is(equalTo(contentOf(expected))));
+		assertThat(actualTextOf(text, withoutHeadLines(TEXT_IGNORE_LINES)),
+				is(equalTo(textContentOf(expected))));
 		// 計測後のトータル表示ラベルの検査
 		stat = total.target.isEnabled();
 		assertThat(stat, is(true));
@@ -175,8 +177,8 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		removeFile(saveFile);
 		chooseFile(frame, frame.button(SAVE_BUTTON), SAVE_CHOOSER,
 				".", saveFile, frame.textBox(HIDDEN_SAVING));
-		assertThat(contentOf(new File(saveFile), withoutHeadLines(TEXT_IGNORE_LINES)),
-				is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(new File(saveFile), withoutHeadLines(TEXT_IGNORE_LINES)),
+				is(equalTo(textContentOf(expected))));
 
 		// 保存後のボタン・ラベルなどの状態を検査
 		stat = frame.button(SAVE_BUTTON).target.isEnabled();
@@ -184,7 +186,7 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		stat = frame.textBox(SAVE_TEXT).target.isEnabled();
 		assertThat(stat, is(true));
 		path = frame.textBox(SAVE_TEXT).target.getText();
-		assertThat(path, endsWith(saveFile));
+		assertThat(path, endsWith(pathForLocalSystem(saveFile)));
 		stat = frame.label(SAVE_LABEL).target.isEnabled();
 		assertThat(stat, is(true));
 		msg = frame.label(SAVE_LABEL).target.getText();
@@ -212,13 +214,13 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		chooseFile(frame, frame.button(OLD_DIR_BUTTON), FILE_CHOOSER + "-" + OLD_DIR_BUTTON,
 				".", oldRoot, frame.textBox(OLD_DIR_TEXTFIELD));
 		//System.out.println(frame.textBox(OLD_DIR_TEXTFIELD).text());
-		assertThat(frame.textBox(OLD_DIR_TEXTFIELD).text(), endsWith(oldRoot));
+		assertThat(frame.textBox(OLD_DIR_TEXTFIELD).text(), endsWith(pathForLocalSystem(oldRoot)));
 
 		// 新バージョンのDir入力
 		chooseFile(frame, frame.button(NEW_DIR_BUTTON), FILE_CHOOSER + "-" + NEW_DIR_BUTTON,
 				".", newRoot, frame.textBox(NEW_DIR_TEXTFIELD));
 		//System.out.println(frame.textBox(NEW_DIR_TEXTFIELD).text());
-		assertThat(frame.textBox(NEW_DIR_TEXTFIELD).text(), endsWith(newRoot));
+		assertThat(frame.textBox(NEW_DIR_TEXTFIELD).text(), endsWith(pathForLocalSystem(newRoot)));
 
 		// 計測実行しテーブル形式で表示
 		frame.button(COUNT_BUTTON).requireEnabled(Timeout.timeout(WAITTIME)).click();
@@ -272,7 +274,14 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		sleep(SLEEPTIME);
 		actual = table.contents();
 		//System.out.println(contentOf(actual));
-		URL expectedAll = this.getClass().getResource("DiffCount_java_all.csv");
+		URL expectedAll;
+		if (nameOfSystemOS().startsWith("Windows")) {
+			expectedAll = this.getClass()
+					.getResource("DiffCount_java_all_win.csv");
+		} else {
+			expectedAll = this.getClass()
+					.getResource("DiffCount_java_all.csv");
+		}
 		assertThat(contentOf(actual), is(equalTo(contentOf(expectedAll))));
 
 		// ツリー折りたたみ表示
@@ -294,13 +303,13 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		chooseFile(frame, frame.button(OLD_DIR_BUTTON), FILE_CHOOSER + "-" + OLD_DIR_BUTTON,
 				".", oldRoot, frame.textBox(OLD_DIR_TEXTFIELD));
 		//System.out.println(frame.textBox(OLD_DIR_TEXTFIELD).text());
-		assertThat(frame.textBox(OLD_DIR_TEXTFIELD).text(), endsWith(oldRoot));
+		assertThat(frame.textBox(OLD_DIR_TEXTFIELD).text(), endsWith(pathForLocalSystem(oldRoot)));
 
 		// 新バージョンのDir入力
 		chooseFile(frame, frame.button(NEW_DIR_BUTTON), FILE_CHOOSER + "-" + NEW_DIR_BUTTON,
 				".", newRoot, frame.textBox(NEW_DIR_TEXTFIELD));
 		//System.out.println(frame.textBox(NEW_DIR_TEXTFIELD).text());
-		assertThat(frame.textBox(NEW_DIR_TEXTFIELD).text(), endsWith(newRoot));
+		assertThat(frame.textBox(NEW_DIR_TEXTFIELD).text(), endsWith(pathForLocalSystem(newRoot)));
 
 		// 計測実行しテーブル形式で表示
 		frame.button(COUNT_BUTTON).requireEnabled(Timeout.timeout(WAITTIME)).click();
@@ -317,9 +326,9 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		JTableFixture table = frame.table(RESULT_TABLE);
 		String[][] actual = table.contents();
 		//System.out.println(contentOf(actual));
-		URL expected = this.getClass()
+		URL expectedData = this.getClass()
 				.getResource("DiffCount_java_nodiff_top.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(contentOf(actual), is(equalTo(contentOf(expectedData))));
 	}
 
 	@Test
@@ -332,13 +341,13 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		chooseFile(frame, frame.button(OLD_DIR_BUTTON), FILE_CHOOSER + "-" + OLD_DIR_BUTTON,
 				".", oldRoot, frame.textBox(OLD_DIR_TEXTFIELD));
 		//System.out.println(frame.textBox(OLD_DIR_TEXTFIELD).text());
-		assertThat(frame.textBox(OLD_DIR_TEXTFIELD).text(), endsWith(oldRoot));
+		assertThat(frame.textBox(OLD_DIR_TEXTFIELD).text(), endsWith(pathForLocalSystem(oldRoot)));
 
 		// 新バージョンのDir入力
 		chooseFile(frame, frame.button(NEW_DIR_BUTTON), FILE_CHOOSER + "-" + NEW_DIR_BUTTON,
 				".", newRoot, frame.textBox(NEW_DIR_TEXTFIELD));
 		//System.out.println(frame.textBox(NEW_DIR_TEXTFIELD).text());
-		assertThat(frame.textBox(NEW_DIR_TEXTFIELD).text(), endsWith(newRoot));
+		assertThat(frame.textBox(NEW_DIR_TEXTFIELD).text(), endsWith(pathForLocalSystem(newRoot)));
 
 		// HTMLフォーマットを選択
 		frame.comboBox(FORMAT_SELECT).selectItem(FORMAT_TEXT_IDX);
@@ -351,7 +360,7 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		//System.out.println(text);
 		URL expected = this.getClass().getResource("DiffCount_java.txt");
 		assertThat(actualTextOf(text, withoutHeadLines(TEXT_IGNORE_LINES)),
-				is(equalTo(contentOf(expected))));
+				is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -364,13 +373,13 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		chooseFile(frame, frame.button(OLD_DIR_BUTTON), FILE_CHOOSER + "-" + OLD_DIR_BUTTON,
 				".", oldRoot, frame.textBox(OLD_DIR_TEXTFIELD));
 		//System.out.println(frame.textBox(OLD_DIR_TEXTFIELD).text());
-		assertThat(frame.textBox(OLD_DIR_TEXTFIELD).text(), endsWith(oldRoot));
+		assertThat(frame.textBox(OLD_DIR_TEXTFIELD).text(), endsWith(pathForLocalSystem(oldRoot)));
 
 		// 新バージョンのDir入力
 		chooseFile(frame, frame.button(NEW_DIR_BUTTON), FILE_CHOOSER + "-" + NEW_DIR_BUTTON,
 				".", newRoot, frame.textBox(NEW_DIR_TEXTFIELD));
 		//System.out.println(frame.textBox(NEW_DIR_TEXTFIELD).text());
-		assertThat(frame.textBox(NEW_DIR_TEXTFIELD).text(), endsWith(newRoot));
+		assertThat(frame.textBox(NEW_DIR_TEXTFIELD).text(), endsWith(pathForLocalSystem(newRoot)));
 
 		// HTMLフォーマットを選択
 		frame.comboBox(FORMAT_SELECT).selectItem(FORMAT_CSV_IDX);
@@ -381,8 +390,15 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 
 		String text = frame.textBox(RESULT_TEXT).requireEnabled(Timeout.timeout(WAITTIME)).text();
 		//System.out.println(text);
-		URL expected = this.getClass().getResource("DiffCount_java.csv");
-		assertThat(actualTextOf(text, 0), is(equalTo(contentOf(expected))));
+		URL expected;
+		if (nameOfSystemOS().startsWith("Windows")) {
+			expected = this.getClass()
+					.getResource("DiffCount_java_win.csv");
+		} else {
+			expected = this.getClass()
+					.getResource("DiffCount_java.csv");
+		}
+		assertThat(actualTextOf(text, 0), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -395,13 +411,13 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		chooseFile(frame, frame.button(OLD_DIR_BUTTON), FILE_CHOOSER + "-" + OLD_DIR_BUTTON,
 				".", oldRoot, frame.textBox(OLD_DIR_TEXTFIELD));
 		//System.out.println(frame.textBox(OLD_DIR_TEXTFIELD).text());
-		assertThat(frame.textBox(OLD_DIR_TEXTFIELD).text(), endsWith(oldRoot));
+		assertThat(frame.textBox(OLD_DIR_TEXTFIELD).text(), endsWith(pathForLocalSystem(oldRoot)));
 
 		// 新バージョンのDir入力
 		chooseFile(frame, frame.button(NEW_DIR_BUTTON), FILE_CHOOSER + "-" + NEW_DIR_BUTTON,
 				".", newRoot, frame.textBox(NEW_DIR_TEXTFIELD));
 		//System.out.println(frame.textBox(NEW_DIR_TEXTFIELD).text());
-		assertThat(frame.textBox(NEW_DIR_TEXTFIELD).text(), endsWith(newRoot));
+		assertThat(frame.textBox(NEW_DIR_TEXTFIELD).text(), endsWith(pathForLocalSystem(newRoot)));
 
 		// EXCELフォーマットを選択
 		frame.comboBox(FORMAT_SELECT).selectItem(FORMAT_EXCEL_IDX);
@@ -434,13 +450,13 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		chooseFile(frame, frame.button(OLD_DIR_BUTTON), FILE_CHOOSER + "-" + OLD_DIR_BUTTON,
 				".", oldRoot, frame.textBox(OLD_DIR_TEXTFIELD));
 		//System.out.println(frame.textBox(OLD_DIR_TEXTFIELD).text());
-		assertThat(frame.textBox(OLD_DIR_TEXTFIELD).text(), endsWith(oldRoot));
+		assertThat(frame.textBox(OLD_DIR_TEXTFIELD).text(), endsWith(pathForLocalSystem(oldRoot)));
 
 		// 新バージョンのDir入力
 		chooseFile(frame, frame.button(NEW_DIR_BUTTON), FILE_CHOOSER + "-" + NEW_DIR_BUTTON,
 				".", newRoot, frame.textBox(NEW_DIR_TEXTFIELD));
 		//System.out.println(frame.textBox(NEW_DIR_TEXTFIELD).text());
-		assertThat(frame.textBox(NEW_DIR_TEXTFIELD).text(), endsWith(newRoot));
+		assertThat(frame.textBox(NEW_DIR_TEXTFIELD).text(), endsWith(pathForLocalSystem(newRoot)));
 
 		// HTMLフォーマットを選択
 		frame.comboBox(FORMAT_SELECT).selectItem(FORMAT_XML_IDX);
@@ -452,7 +468,7 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		String text = frame.textBox(RESULT_TEXT).requireEnabled(Timeout.timeout(WAITTIME)).text();
 		//System.out.println(text);
 		URL expected = this.getClass().getResource("DiffCount_java.xml");
-		assertThat(actualTextOf(text, 0), is(equalTo(contentOf(expected))));
+		assertThat(actualTextOf(text, 0), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -465,13 +481,13 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		chooseFile(frame, frame.button(OLD_DIR_BUTTON), FILE_CHOOSER + "-" + OLD_DIR_BUTTON,
 				".", oldRoot, frame.textBox(OLD_DIR_TEXTFIELD));
 		//System.out.println(frame.textBox(OLD_DIR_TEXTFIELD).text());
-		assertThat(frame.textBox(OLD_DIR_TEXTFIELD).text(), endsWith(oldRoot));
+		assertThat(frame.textBox(OLD_DIR_TEXTFIELD).text(), endsWith(pathForLocalSystem(oldRoot)));
 
 		// 新バージョンのDir入力
 		chooseFile(frame, frame.button(NEW_DIR_BUTTON), FILE_CHOOSER + "-" + NEW_DIR_BUTTON,
 				".", newRoot, frame.textBox(NEW_DIR_TEXTFIELD));
 		//System.out.println(frame.textBox(NEW_DIR_TEXTFIELD).text());
-		assertThat(frame.textBox(NEW_DIR_TEXTFIELD).text(), endsWith(newRoot));
+		assertThat(frame.textBox(NEW_DIR_TEXTFIELD).text(), endsWith(pathForLocalSystem(newRoot)));
 
 		// HTMLフォーマットを選択
 		frame.comboBox(FORMAT_SELECT).selectItem(FORMAT_JSON_IDX);
@@ -482,8 +498,15 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 
 		String text = frame.textBox(RESULT_TEXT).requireEnabled(Timeout.timeout(WAITTIME)).text();
 		//System.out.println(text);
-		URL expected = this.getClass().getResource("DiffCount_java.json");
-		assertThat(actualTextOf(text, 0), is(equalTo(contentOf(expected))));
+		URL expected;
+		if (nameOfSystemOS().startsWith("Windows")) {
+			expected = this.getClass()
+					.getResource("DiffCount_java_win.json");
+		} else {
+			expected = this.getClass()
+					.getResource("DiffCount_java.json");
+		}
+		assertThat(actualTextOf(text, 0), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -496,13 +519,13 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		chooseFile(frame, frame.button(OLD_DIR_BUTTON), FILE_CHOOSER + "-" + OLD_DIR_BUTTON,
 				".", oldRoot, frame.textBox(OLD_DIR_TEXTFIELD));
 		//System.out.println(frame.textBox(OLD_DIR_TEXTFIELD).text());
-		assertThat(frame.textBox(OLD_DIR_TEXTFIELD).text(), endsWith(oldRoot));
+		assertThat(frame.textBox(OLD_DIR_TEXTFIELD).text(), endsWith(pathForLocalSystem(oldRoot)));
 
 		// 新バージョンのDir入力
 		chooseFile(frame, frame.button(NEW_DIR_BUTTON), FILE_CHOOSER + "-" + NEW_DIR_BUTTON,
 				".", newRoot, frame.textBox(NEW_DIR_TEXTFIELD));
 		//System.out.println(frame.textBox(NEW_DIR_TEXTFIELD).text());
-		assertThat(frame.textBox(NEW_DIR_TEXTFIELD).text(), endsWith(newRoot));
+		assertThat(frame.textBox(NEW_DIR_TEXTFIELD).text(), endsWith(pathForLocalSystem(newRoot)));
 
 		// HTMLフォーマットを選択
 		frame.comboBox(FORMAT_SELECT).selectItem(FORMAT_HTML_IDX);
@@ -515,7 +538,7 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		//System.out.println(text);
 		URL expected = this.getClass().getResource("DiffCount_java.html");
 		assertThat(htmlToRemoveMutableIdFrom(actualTextOf(text, withoutHeadLines(HTML_IGNORE_LINES))),
-				is(equalTo(htmlToRemoveMutableIdFrom(contentOf(expected)))));
+				is(equalTo(htmlToRemoveMutableIdFrom(textContentOf(expected)))));
 	}
 
 	@Test
@@ -528,13 +551,13 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		chooseFile(frame, frame.button(OLD_DIR_BUTTON), FILE_CHOOSER + "-" + OLD_DIR_BUTTON,
 				".", oldRoot, frame.textBox(OLD_DIR_TEXTFIELD));
 		//System.out.println(frame.textBox(OLD_DIR_TEXTFIELD).text());
-		assertThat(frame.textBox(OLD_DIR_TEXTFIELD).text(), endsWith(oldRoot));
+		assertThat(frame.textBox(OLD_DIR_TEXTFIELD).text(), endsWith(pathForLocalSystem(oldRoot)));
 
 		// 新バージョンのDir入力
 		chooseFile(frame, frame.button(NEW_DIR_BUTTON), FILE_CHOOSER + "-" + NEW_DIR_BUTTON,
 				".", newRoot, frame.textBox(NEW_DIR_TEXTFIELD));
 		//System.out.println(frame.textBox(NEW_DIR_TEXTFIELD).text());
-		assertThat(frame.textBox(NEW_DIR_TEXTFIELD).text(), endsWith(newRoot));
+		assertThat(frame.textBox(NEW_DIR_TEXTFIELD).text(), endsWith(pathForLocalSystem(newRoot)));
 
 		// encodingを選択
 		frame.textBox(ENCODING_TEXT).deleteText();
@@ -548,7 +571,7 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		//System.out.println(text);
 		URL expected = this.getClass().getResource("DiffCount_commentS.txt");
 		assertThat(actualTextOf(text, withoutHeadLines(TEXT_IGNORE_LINES)),
-				is(equalTo(contentOf(expected))));
+				is(equalTo(textContentOf(expected))));
 
 		// encodingを削除して再実行
 		frame.textBox(ENCODING_TEXT).deleteText();
@@ -572,13 +595,13 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		chooseFile(frame, frame.button(OLD_DIR_BUTTON), FILE_CHOOSER + "-" + OLD_DIR_BUTTON,
 				".", oldRoot, frame.textBox(OLD_DIR_TEXTFIELD));
 		//System.out.println(frame.textBox(OLD_DIR_TEXTFIELD).text());
-		assertThat(frame.textBox(OLD_DIR_TEXTFIELD).text(), endsWith(oldRoot));
+		assertThat(frame.textBox(OLD_DIR_TEXTFIELD).text(), endsWith(pathForLocalSystem(oldRoot)));
 
 		// 新バージョンのDir入力
 		chooseFile(frame, frame.button(NEW_DIR_BUTTON), FILE_CHOOSER + "-" + NEW_DIR_BUTTON,
 				".", newRoot, frame.textBox(NEW_DIR_TEXTFIELD));
 		//System.out.println(frame.textBox(NEW_DIR_TEXTFIELD).text());
-		assertThat(frame.textBox(NEW_DIR_TEXTFIELD).text(), endsWith(newRoot));
+		assertThat(frame.textBox(NEW_DIR_TEXTFIELD).text(), endsWith(pathForLocalSystem(newRoot)));
 
 		// 計測実行しテーブル形式で表示
 		frame.button(COUNT_BUTTON).requireEnabled(Timeout.timeout(WAITTIME)).click();
@@ -591,7 +614,7 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		String xmlFile = "test/data/ktestl2.xml";
 		chooseFile(frame, frame.button(XML_BUTTON), XML_CHOOSER, ".", xmlFile, frame.textBox(XML_TEXT));
 		//System.out.println(frame.textBox(XML_TEXT).text());
-		assertThat(frame.textBox(XML_TEXT).text(), endsWith(xmlFile));
+		assertThat(frame.textBox(XML_TEXT).text(), endsWith(pathForLocalSystem(xmlFile)));
 		// 計測実行しテキスト形式で表示
 		frame.button(COUNT_BUTTON).requireEnabled(Timeout.timeout(WAITTIME)).click();
 		sleep(SLEEPVERYLONGTIME);
@@ -599,7 +622,7 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		//System.out.println(text);
 		URL expected = this.getClass().getResource("DiffCount_java_rule.txt");
 		assertThat(actualTextOf(text, withoutHeadLines(TEXT_IGNORE_LINES)),
-				is(equalTo(contentOf(expected))));
+				is(equalTo(textContentOf(expected))));
 
 		// Xml定義を削除して再計測
 		frame.textBox(XML_TEXT).deleteText();
@@ -610,7 +633,7 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		//System.out.println(text);
 		expected = this.getClass().getResource("DiffCount_java.txt");
 		assertThat(actualTextOf(text, withoutHeadLines(TEXT_IGNORE_LINES)),
-				is(equalTo(contentOf(expected))));
+				is(equalTo(textContentOf(expected))));
 	}
 
 	/*

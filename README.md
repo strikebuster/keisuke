@@ -80,6 +80,12 @@ keisuke.count.DiffCountの引数およびオプションで指定する値は、
 
 - - -
 ### 更新履歴
+###### Version 1.4.1(2018/10/6)
+* バグ修正  
+・CountReportとDiffReportとMatchExtractの出力において改行コードが環境依存になっていなかったバグを修正  
+* 内部的な改変  
+・Windowsでビルドする際にテストエラーにならないようテストコードや期待値データを修正  
+
 ###### Version 1.4.0(2018/7/9)
 * 機能追加  
 ・DiffCountの出力形式にCSV,JSON,XMLを追加  

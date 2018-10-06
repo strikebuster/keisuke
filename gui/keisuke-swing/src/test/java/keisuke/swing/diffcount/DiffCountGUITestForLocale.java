@@ -89,13 +89,13 @@ public final class DiffCountGUITestForLocale extends FestSwingJUnitTestCase {
 		chooseFile(frame, frame.button(OLD_DIR_BUTTON), FILE_CHOOSER + "-" + OLD_DIR_BUTTON,
 				".", oldRoot, frame.textBox(OLD_DIR_TEXTFIELD));
 		//System.out.println(frame.textBox(OLD_DIR_TEXTFIELD).text());
-		assertThat(frame.textBox(OLD_DIR_TEXTFIELD).text(), endsWith(oldRoot));
+		assertThat(frame.textBox(OLD_DIR_TEXTFIELD).text(), endsWith(pathForLocalSystem(oldRoot)));
 
 		// 新バージョンのDir入力
 		chooseFile(frame, frame.button(NEW_DIR_BUTTON), FILE_CHOOSER + "-" + NEW_DIR_BUTTON,
 				".", newRoot, frame.textBox(NEW_DIR_TEXTFIELD));
 		//System.out.println(frame.textBox(NEW_DIR_TEXTFIELD).text());
-		assertThat(frame.textBox(NEW_DIR_TEXTFIELD).text(), endsWith(newRoot));
+		assertThat(frame.textBox(NEW_DIR_TEXTFIELD).text(), endsWith(pathForLocalSystem(newRoot)));
 
 		// 計測前のトータル表示ラベルの状態を検査
 		JLabelFixture total = frame.label(TOTAL_LABEL);
@@ -109,7 +109,8 @@ public final class DiffCountGUITestForLocale extends FestSwingJUnitTestCase {
 		sleep(SLEEPVERYLONGTIME);
 		String text = frame.textBox(RESULT_TEXT).requireEnabled(Timeout.timeout(WAITTIME)).text();
 		//System.out.println(text);
-		assertThat(actualTextOf(text, withoutHeadLines(TEXT_IGNORE_LINES)), is(equalTo(contentOf(expected))));
+		assertThat(actualTextOf(text, withoutHeadLines(TEXT_IGNORE_LINES)),
+				is(equalTo(textContentOf(expected))));
 		// 計測後のトータル表示ラベルの検査
 		URL expectedCsv = this.getClass().getResource("DiffCount_java_top_en.csv");
 		String[][] expectedArray = convertToTableArrayFrom(contentOf(expectedCsv));
@@ -131,13 +132,13 @@ public final class DiffCountGUITestForLocale extends FestSwingJUnitTestCase {
 		chooseFile(frame, frame.button(OLD_DIR_BUTTON), FILE_CHOOSER + "-" + OLD_DIR_BUTTON,
 				 ".", oldRoot, frame.textBox(OLD_DIR_TEXTFIELD));
 		//System.out.println(frame.textBox(OLD_DIR_TEXTFIELD).text());
-		assertThat(frame.textBox(OLD_DIR_TEXTFIELD).text(), endsWith(oldRoot));
+		assertThat(frame.textBox(OLD_DIR_TEXTFIELD).text(), endsWith(pathForLocalSystem(oldRoot)));
 
 		// 新バージョンのDir入力
 		chooseFile(frame, frame.button(NEW_DIR_BUTTON), FILE_CHOOSER + "-" + NEW_DIR_BUTTON,
 				 ".", newRoot, frame.textBox(NEW_DIR_TEXTFIELD));
 		//System.out.println(frame.textBox(NEW_DIR_TEXTFIELD).text());
-		assertThat(frame.textBox(NEW_DIR_TEXTFIELD).text(), endsWith(newRoot));
+		assertThat(frame.textBox(NEW_DIR_TEXTFIELD).text(), endsWith(pathForLocalSystem(newRoot)));
 
 		// 計測実行しテーブル形式で表示
 		frame.button(COUNT_BUTTON).requireEnabled(Timeout.timeout(WAITTIME)).click();
@@ -152,15 +153,15 @@ public final class DiffCountGUITestForLocale extends FestSwingJUnitTestCase {
 		//System.out.println(actual);
 		assertThat(actualLabel, contains(expectedHeader));
 		// 表の内容の検査
-		URL expected = this.getClass().getResource("DiffCount_java_top_en.csv");
+		URL expectedData = this.getClass().getResource("DiffCount_java_top_en.csv");
 		String[][] actual = table.contents();
 		//System.out.println(contentOf(actual));
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(contentOf(actual), is(equalTo(contentOf(expectedData))));
 		// トータル表示ラベルの検査
 		JLabelFixture total = frame.label(TOTAL_LABEL);
 		boolean stat = total.target.isEnabled();
 		assertThat(stat, is(true));
-		String[][] expectedArray = convertToTableArrayFrom(contentOf(expected));
+		String[][] expectedArray = convertToTableArrayFrom(contentOf(expectedData));
 		String expectedStatus = deriveTotalStatusFrom(expectedArray);
 		long expectedAdded = deriveTotalAddedStepsFrom(expectedArray);
 		long expectedDeleted = deriveTotalDeletedStepsFrom(expectedArray);

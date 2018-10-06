@@ -147,15 +147,17 @@ public final class FileNameUtil {
 		if (basePath == null || basePath.isEmpty()) {
 			return fullPath;
 		}
+		// fullPathがbasePathを含むことをチェック
 		int pos = fullPath.indexOf(basePath);
-		// 正常な値の組み合わせでない場合はファイルの絶対パスを返す
-		if (pos != 0) {
-			return fullPath;
-		} else if (fullPath.length() == basePath.length()) {
-			return fullPath;
+		if (pos == 0 && fullPath.length() > basePath.length()) {
+			if (fullPath.charAt(basePath.length()) == '/') {
+				return null;
+			} else if (basePath.charAt(basePath.length() - 1) == '/') {
+				return null;
+			}
 		}
-		// 正常な場合にはnullを返す
-		return null;
+		// 正常な値の組み合わせでない場合はファイルの絶対パスを返す
+		return fullPath;
 	}
 
 	private static boolean isRootDirectory(final String path) {
@@ -183,20 +185,23 @@ public final class FileNameUtil {
 		if (currentPath == null || currentPath.isEmpty()) {
 			return targetPath + "/";
 		}
+		int pos = 0;
+		while (currentPath.charAt(pos) == targetPath.charAt(pos)) {
+			pos++;
+			if (pos >= currentPath.length() || pos >= targetPath.length()) {
+				break;
+			}
+		}
+		if (pos == 0) {
+			// 絶対パスの先頭が違うのでWindowsでドライブが異なる場合
+			return targetPath + "/";
+		}
 		if (isRootDirectory(currentPath)) {
 			if (targetPath.startsWith(currentPath)) {
 				return targetPath.substring(currentPath.length()) + "/";
-			} else {
-				// Windowsでドライブが異なる場合はこちら
-				return targetPath + "/";
 			}
 		}
-		if (isRootDirectory(targetPath)) {
-			if (!currentPath.startsWith(targetPath)) {
-				// Windowsでドライブが異なる場合
-				return targetPath + "/";
-			}
-		}
+
 		String[] targetDirs = targetPath.split("/");
 		if (targetDirs.length == 0) {
 			// targetPath == "/"
@@ -286,16 +291,6 @@ public final class FileNameUtil {
 	}
 
 	/**
-	 * OSの違いによる大文字小文字の扱いに対応したファイル名比較結果を返す
-	 * @param name1 ファイル名文字列
-	 * @param name2 ファイル名文字列
-	 * @return name1が大きければ正の整数、小さければ負の整数、同じなら0
-	 */
-	public static int compare(final String name1, final String name2) {
-		return compareInOsOrder(name1, name2);
-	}
-
-	/**
 	 * ファイル配列に対しOSの違いによる大文字小文字の扱いに対応したソートを
 	 * 実行した結果の配列を返す
 	 * @param filearray ファイル配列
@@ -329,11 +324,15 @@ public final class FileNameUtil {
 		if (dependingOs) {
 			Arrays.sort(filearray, new Comparator<File>() {
 				public int compare(final File o1, final File o2) {
-					return FileNameUtil.compare(o1.getName(), o2.getName());
+					return FileNameUtil.compareInOsOrder(o1.getName(), o2.getName());
 				}
 			});
 		} else {
-			Arrays.sort(filearray);
+			Arrays.sort(filearray, new Comparator<File>() {
+				public int compare(final File o1, final File o2) {
+					return FileNameUtil.compareInCodeOrder(o1.getName(), o2.getName());
+				}
+			});
 		}
 		return filearray;
 	}

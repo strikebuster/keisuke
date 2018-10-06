@@ -149,7 +149,7 @@ public class CountMainProcTest {
 		String[] args = {"-class", OPTVAL_LANGUAGE, "-xml", "test/data/ktestf.xml", "test/data/count01.csv"};
 		cproc.main(args);
 
-		assertThat(cproc.reportText(), is(equalTo(contentOf(expected))));
+		assertThat(cproc.reportText(), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -166,7 +166,7 @@ public class CountMainProcTest {
 				"test/data/count01.csv"};
 		cproc.main(args);
 
-		assertThat(cproc.reportText(), is(equalTo(contentOf(expected))));
+		assertThat(cproc.reportText(), is(equalTo(textContentOf(expected))));
 
 		String errMessage = capture.getCapturedString();
 		capture.finish();
@@ -187,7 +187,7 @@ public class CountMainProcTest {
 				"test/data/count01.csv"};
 		cproc.main(args);
 
-		assertThat(cproc.reportText(), is(equalTo(contentOf(expected))));
+		assertThat(cproc.reportText(), is(equalTo(textContentOf(expected))));
 
 		String errMessage = capture.getCapturedString();
 		capture.finish();
@@ -203,7 +203,7 @@ public class CountMainProcTest {
 		String[] args = {"test/data/count01.csv"};
 		cproc.main(args);
 
-		assertThat(cproc.reportText(), is(equalTo(contentOf(expected))));
+		assertThat(cproc.reportText(), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -215,7 +215,7 @@ public class CountMainProcTest {
 		String[] args = {"test/data/dummy.csv"};
 		cproc.main(args);
 
-		assertThat(cproc.reportText(), is(equalTo(contentOf(expected))));
+		assertThat(cproc.reportText(), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -227,7 +227,7 @@ public class CountMainProcTest {
 		String[] args = {"--" + OPT_PROP, "test/data/ktest.properties", "test/data/count01.csv"};
 		cproc.main(args);
 
-		assertThat(cproc.reportText(), is(equalTo(contentOf(expected))));
+		assertThat(cproc.reportText(), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -239,7 +239,7 @@ public class CountMainProcTest {
 		String[] args = {"-" + OPT_CLASS, OPTVAL_EXTENSION, "test/data/count01.csv"};
 		cproc.main(args);
 
-		assertThat(cproc.reportText(), is(equalTo(contentOf(expected))));
+		assertThat(cproc.reportText(), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -251,7 +251,7 @@ public class CountMainProcTest {
 		String[] args = {"-c", OPTVAL_LANGUAGE, "test/data/count01.csv"};
 		cproc.main(args);
 
-		assertThat(cproc.reportText(), is(equalTo(contentOf(expected))));
+		assertThat(cproc.reportText(), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -263,7 +263,7 @@ public class CountMainProcTest {
 		String[] args = {"test/data/count01.csv", "-c", OPTVAL_LANGGROUP};
 		cproc.main(args);
 
-		assertThat(cproc.reportText(), is(equalTo(contentOf(expected))));
+		assertThat(cproc.reportText(), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -276,7 +276,7 @@ public class CountMainProcTest {
 		String[] args = {"-c", OPTVAL_LANGUAGE, "-" + OPT_XML, "test/data/ktestl.xml", "test/data/count01.csv"};
 		cproc.main(args);
 
-		assertThat(cproc.reportText(), is(equalTo(contentOf(expected))));
+		assertThat(cproc.reportText(), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -289,7 +289,7 @@ public class CountMainProcTest {
 		String[] args = {"-c", OPTVAL_LANGGROUP, "test/data/count01.csv", "-x", "test/data/ktestl.xml"};
 		cproc.main(args);
 
-		assertThat(cproc.reportText(), is(equalTo(contentOf(expected))));
+		assertThat(cproc.reportText(), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -301,7 +301,7 @@ public class CountMainProcTest {
 		String[] args = {"-c", OPTVAL_FW + "ow", "-x", "test/data/ktestf2.xml", "test/data/count01.csv"};
 		cproc.main(args);
 
-		assertThat(cproc.reportText(), is(equalTo(contentOf(expected))));
+		assertThat(cproc.reportText(), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -314,7 +314,7 @@ public class CountMainProcTest {
 		String[] args = {"-c", OPTVAL_FW + "ow", "-x", "test/data/ktestf.xml", "test/data/count01.csv"};
 		cproc.main(args);
 
-		assertThat(cproc.reportText(), is(equalTo(contentOf(expected))));
+		assertThat(cproc.reportText(), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -326,7 +326,7 @@ public class CountMainProcTest {
 		String[] args = {"-c", OPTVAL_FW + "o3w", "-x", "test/data/ktestf2.xml", "test/data/count01.csv"};
 		cproc.main(args);
 
-		assertThat(cproc.reportText(), is(equalTo(contentOf(expected))));
+		assertThat(cproc.reportText(), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -338,7 +338,7 @@ public class CountMainProcTest {
 		String[] args = {"-c", OPTVAL_FW + "spring", "test/data/count01.csv"};
 		cproc.main(args);
 
-		assertThat(cproc.reportText(), is(equalTo(contentOf(expected))));
+		assertThat(cproc.reportText(), is(equalTo(textContentOf(expected))));
 	}
 
 }

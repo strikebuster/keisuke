@@ -1,7 +1,0 @@
-/root1/C/dataOutput.c,C,,22,3,3,28
-/root1/C/dataOutput.h,h,,6,3,2,11
-/root1/C/factorial.c,C,,25,8,0,33
-/root1/C/hello.c,C,,5,1,0,6
-/root1/C/main.c,C,,17,1,0,18
-/root1/C/studentDatabase.c,C,,38,4,9,51
-/root1/C/studentDatabase.h,h,,16,6,7,29

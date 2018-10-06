@@ -1,6 +1,7 @@
 package keisuke;
 
-import static keisuke.util.TestUtil.contentOf;
+import static keisuke.util.TestUtil.rawContentOf;
+import static keisuke.util.TestUtil.textContentOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -39,8 +40,7 @@ public class DiffReportTest {
 			outMessage = capture.getCapturedString();
 			capture.finish();
 		}
-
-		assertThat(outMessage, is(equalTo(contentOf(expected))));
+		assertThat(outMessage, is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -52,6 +52,6 @@ public class DiffReportTest {
 		DiffReport.main(args);
 
 		File actual = new File("test/out/diffrep02.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 }

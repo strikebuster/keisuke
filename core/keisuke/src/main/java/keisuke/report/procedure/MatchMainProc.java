@@ -9,6 +9,7 @@ import keisuke.report.ProcedureType;
 import keisuke.util.LogUtil;
 
 import static keisuke.report.option.ReportOptionConstant.*;
+import static keisuke.util.StringUtil.LINE_SEP;
 
 /**
  * Class of main procedure to extract the matching files from result of StepCount.
@@ -125,7 +126,7 @@ public final class MatchMainProc extends AbstractReportMainProc {
 			    	LogUtil.errorLog("it is not found in master : " + pathTr);
 			    	break;
 			    }
-			    sb.append(lineMa).append('\n');
+			    sb.append(lineMa).append(LINE_SEP);
 			}
 			if (lineTr == null) {
 				// 正常にTRファイル処理終了

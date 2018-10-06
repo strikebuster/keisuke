@@ -143,7 +143,8 @@ public class DiffCountTest {
 		diffcount.main(args);
 
 		File actual = new File("test/out/diff_java.txt");
-		assertThat(contentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)),
+				is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -166,7 +167,8 @@ public class DiffCountTest {
 			Locale.setDefault(org);
 		}
 		File actual = new File("test/out/diff_java_en.txt");
-		assertThat(contentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)),
+				is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -174,8 +176,7 @@ public class DiffCountTest {
 		System.out.println("## DiffCount ## countDiffJavaUsingCsvFormat ##");
 		String oldRoot = "test/data/java/root1";
 		String newRoot = "test/data/java/root2";
-		URL expected = this.getClass()
-				.getResource("diffCount_java.csv");
+		URL expected;
 
 		String[] args = {"-e", "UTF-8", "-f", "csv",
 				"-o", "test/out/diff_java.csv", newRoot, oldRoot};
@@ -183,7 +184,14 @@ public class DiffCountTest {
 		diffcount.main(args);
 
 		File actual = new File("test/out/diff_java.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		if (nameOfSystemOS().startsWith("Windows")) {
+			expected = this.getClass()
+					.getResource("diffCount_java_win.csv");
+		} else {
+			expected = this.getClass()
+					.getResource("diffCount_java.csv");
+		}
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -194,8 +202,7 @@ public class DiffCountTest {
 
 		String oldRoot = "test/data/java/root1";
 		String newRoot = "test/data/java/root2";
-		URL expected = this.getClass()
-				.getResource("diffCount_java_en.csv");
+		URL expected;
 
 		String[] args = {"-e", "UTF-8", "-f", "csv",
 				"-o", "test/out/diff_java_en.csv", newRoot, oldRoot};
@@ -206,7 +213,14 @@ public class DiffCountTest {
 			Locale.setDefault(org);
 		}
 		File actual = new File("test/out/diff_java_en.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		if (nameOfSystemOS().startsWith("Windows")) {
+			expected = this.getClass()
+					.getResource("diffCount_java_en_win.csv");
+		} else {
+			expected = this.getClass()
+					.getResource("diffCount_java_en.csv");
+		}
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -223,8 +237,8 @@ public class DiffCountTest {
 		diffcount.main(args);
 
 		File actual = new File("test/out/diff_java.html");
-		assertThat(htmlToRemoveMutableIdFrom(contentOf(actual, withoutHeadLines(HTML_IGNORE_LINES))),
-				is(equalTo(htmlToRemoveMutableIdFrom(contentOf(expected)))));
+		assertThat(htmlToRemoveMutableIdFrom(rawContentOf(actual, withoutHeadLines(HTML_IGNORE_LINES))),
+				is(equalTo(htmlToRemoveMutableIdFrom(textContentOf(expected)))));
 	}
 
 	@Test
@@ -247,8 +261,8 @@ public class DiffCountTest {
 			Locale.setDefault(org);
 		}
 		File actual = new File("test/out/diff_java_en.html");
-		assertThat(htmlToRemoveMutableIdFrom(contentOf(actual, withoutHeadLines(HTML_IGNORE_LINES))),
-				is(equalTo(htmlToRemoveMutableIdFrom(contentOf(expected)))));
+		assertThat(htmlToRemoveMutableIdFrom(rawContentOf(actual, withoutHeadLines(HTML_IGNORE_LINES))),
+				is(equalTo(htmlToRemoveMutableIdFrom(textContentOf(expected)))));
 	}
 
 	@Test
@@ -305,7 +319,7 @@ public class DiffCountTest {
 		diffcount.main(args);
 
 		File actual = new File("test/out/diff_java.xml");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -328,7 +342,7 @@ public class DiffCountTest {
 			Locale.setDefault(org);
 		}
 		File actual = new File("test/out/diff_java_en.xml");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -336,8 +350,7 @@ public class DiffCountTest {
 		System.out.println("## DiffCount ## countDiffJavaUsingJsonFormat ##");
 		String oldRoot = "test/data/java/root1";
 		String newRoot = "test/data/java/root2";
-		URL expected = this.getClass()
-				.getResource("diffCount_java.json");
+		URL expected;
 
 		String[] args = {"-e", "UTF-8", "-f", "json",
 				"-o", "test/out/diff_java.json", newRoot, oldRoot};
@@ -345,8 +358,15 @@ public class DiffCountTest {
 		diffcount.main(args);
 
 		File actual = new File("test/out/diff_java.json");
+		if (nameOfSystemOS().startsWith("Windows")) {
+			expected = this.getClass()
+					.getResource("diffCount_java_win.json");
+		} else {
+			expected = this.getClass()
+					.getResource("diffCount_java.json");
+		}
 		// JSON形式ではエンコードはUTF-8固定
-		assertThat(contentOf(actual, "UTF-8"), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual, "UTF-8"), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -357,8 +377,7 @@ public class DiffCountTest {
 
 		String oldRoot = "test/data/java/root1";
 		String newRoot = "test/data/java/root2";
-		URL expected = this.getClass()
-				.getResource("diffCount_java_en.json");
+		URL expected;
 
 		String[] args = {"-e", "UTF-8", "-f", "json",
 				"-o", "test/out/diff_java_en.json", newRoot, oldRoot};
@@ -369,8 +388,15 @@ public class DiffCountTest {
 			Locale.setDefault(org);
 		}
 		File actual = new File("test/out/diff_java_en.json");
+		if (nameOfSystemOS().startsWith("Windows")) {
+			expected = this.getClass()
+					.getResource("diffCount_java_en_win.json");
+		} else {
+			expected = this.getClass()
+					.getResource("diffCount_java_en.json");
+		}
 		// JSON形式ではエンコードはUTF-8固定
-		assertThat(contentOf(actual, "UTF-8"), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual, "UTF-8"), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -387,7 +413,8 @@ public class DiffCountTest {
 		diffcount.main(args);
 
 		File actual = new File("test/out/diff_java2.txt");
-		assertThat(contentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)),
+				is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -404,7 +431,8 @@ public class DiffCountTest {
 		diffcount.main(args);
 
 		File actual = new File("test/out/diff_java3.txt");
-		assertThat(contentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)),
+				is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -421,7 +449,8 @@ public class DiffCountTest {
 		diffcount.main(args);
 
 		File actual = new File("test/out/diff_java_scm.txt");
-		assertThat(contentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)),
+				is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -438,7 +467,8 @@ public class DiffCountTest {
 		diffcount.main(args);
 
 		File actual = new File("test/out/diff_web.txt");
-		assertThat(contentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)),
+				is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -455,7 +485,8 @@ public class DiffCountTest {
 		diffcount.main(args);
 
 		File actual = new File("test/out/diff_webS.txt");
-		assertThat(contentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)),
+				is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -471,7 +502,8 @@ public class DiffCountTest {
 		DiffCount.main(args);
 
 		File actual = new File("test/out/diff_c.txt");
-		assertThat(contentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)),
+				is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -487,7 +519,8 @@ public class DiffCountTest {
 		DiffCount.main(args);
 
 		File actual = new File("test/out/diff_commentS.txt");
-		assertThat(contentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)),
+				is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -503,7 +536,8 @@ public class DiffCountTest {
 		DiffCount.main(args);
 
 		File actual = new File("test/out/diff_commentS2.txt");
-		assertThat(contentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)),
+				is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -519,7 +553,8 @@ public class DiffCountTest {
 		DiffCount.main(args);
 
 		File actual = new File("test/out/diff_commentU.txt");
-		assertThat(contentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)),
+				is(equalTo(textContentOf(expected))));
 	}
 
 
@@ -536,7 +571,8 @@ public class DiffCountTest {
 		DiffCount.main(args);
 
 		File actual = new File("test/out/diff_commentU2.txt");
-		assertThat(contentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)),
+				is(equalTo(textContentOf(expected))));
 	}
 
 	// これ以下のテスト用データは未公開
@@ -553,7 +589,8 @@ public class DiffCountTest {
 		DiffCount.main(args);
 
 		File actual = new File("test/out/diff_cobol.txt");
-		assertThat(contentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)),
+				is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -569,7 +606,8 @@ public class DiffCountTest {
 		DiffCount.main(args);
 
 		File actual = new File("test/out/diff_ow.txt");
-		assertThat(contentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)),
+				is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -585,7 +623,8 @@ public class DiffCountTest {
 		DiffCount.main(args);
 
 		File actual = new File("test/out/diff_ow2.txt");
-		assertThat(contentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)),
+				is(equalTo(textContentOf(expected))));
 	}
 
 }

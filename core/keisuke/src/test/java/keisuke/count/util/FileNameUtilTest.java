@@ -175,6 +175,8 @@ public class FileNameUtilTest {
 		String expected = "/var/dir/work/src/main/java/keisuke/count/util/FileNameUtil.java";
 
 		String actual = FileNameUtil.getSubPathFromBottomOfBase(fullPath, basePath);
+		assertThat(actual, is(equalTo(expected)));
+		/* Windowsでも同じ結果が得られる
 		if (!nameOfSystemOS().startsWith("Windows")) {
 			assertThat(actual, is(equalTo(expected)));
 		} else {
@@ -183,6 +185,7 @@ public class FileNameUtilTest {
 			System.out.println("--- actual=" + actual);
 			assertThat(actual, is(not(equalTo(expected))));
 		}
+		*/
 	}
 
 	@Test
@@ -323,6 +326,8 @@ public class FileNameUtilTest {
 		String expected = "D:/var/dir/work/src/main/java/keisuke/count/util/FileNameUtil.java";
 
 		String actual = FileNameUtil.getSubPathFromTopOfBase(fullPath, basePath, currentPath);
+		assertThat(actual, is(equalTo(expected)));
+		/* Unixでも同じ結果が得られる
 		if (nameOfSystemOS().startsWith("Windows")) {
 			assertThat(actual, is(equalTo(expected)));
 		} else {
@@ -331,6 +336,7 @@ public class FileNameUtilTest {
 			System.out.println("--- actual=" + actual);
 			assertThat(actual, is(not(equalTo(expected))));
 		}
+		*/
 	}
 
 	@Test

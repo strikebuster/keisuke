@@ -1,7 +1,8 @@
 package keisuke;
 
 import static keisuke.report.option.ReportOptionConstant.OPT_OUT;
-import static keisuke.util.TestUtil.contentOf;
+import static keisuke.util.TestUtil.rawContentOf;
+import static keisuke.util.TestUtil.textContentOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
@@ -44,7 +45,7 @@ public class MatchExtractTest {
 
 		String outMessage = capture.getCapturedString();
 		capture.finish();
-		assertThat(outMessage, is(equalTo(contentOf(expected))));
+		assertThat(outMessage, is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -62,7 +63,7 @@ public class MatchExtractTest {
 		MatchExtract.main(args);
 
 		File actual = new File("test/out/extract02.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -80,7 +81,7 @@ public class MatchExtractTest {
 		MatchExtract.main(args);
 
 		File actual = new File("test/out/extract03.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -106,7 +107,7 @@ public class MatchExtractTest {
 		}
 
 		File actual = new File("test/out/extract04.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 		assertThat(errMessage, containsString("ignore the argument"));
 	}
 }

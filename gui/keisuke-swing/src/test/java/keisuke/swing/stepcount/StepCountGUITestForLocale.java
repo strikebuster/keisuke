@@ -90,7 +90,7 @@ public final class StepCountGUITestForLocale extends FestSwingJUnitTestCase {
 				parentPathOf(srcRoot), fileNames, frame.list(SOURCE_LIST));
 		String[] actual = frame.list(SOURCE_LIST).contents();
 		//System.out.println(contentOf(actual));
-		assertThat(actual, is(array(endsWith(srcRoot))));
+		assertThat(actual, is(array(endsWith(pathForLocalSystem(srcRoot)))));
 		boolean stat = frame.button(COUNT_BUTTON).target.isEnabled();
 		assertThat(stat, is(true));
 		frame.comboBox(FORMAT_SELECT).selectItem(FORMAT_CSV_IDX);
@@ -110,7 +110,7 @@ public final class StepCountGUITestForLocale extends FestSwingJUnitTestCase {
 		//System.out.println(text);
 		URL expected = this.getClass()
 				.getResource("StepCount_java_showdir_en.csv");
-		assertThat(text, is(equalTo(contentOf(expected))));
+		assertThat(text, is(equalTo(textContentOf(expected))));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -124,7 +124,7 @@ public final class StepCountGUITestForLocale extends FestSwingJUnitTestCase {
 				parentPathOf(srcRoot), fileNames, frame.list(SOURCE_LIST));
 		String[] actual = frame.list(SOURCE_LIST).contents();
 		//System.out.println(contentOf(actual));
-		assertThat(actual, is(array(endsWith(srcRoot))));
+		assertThat(actual, is(array(endsWith(pathForLocalSystem(srcRoot)))));
 		boolean stat = frame.button(COUNT_BUTTON).target.isEnabled();
 		assertThat(stat, is(true));
 		stat = frame.radioButton(FORMAT_RADIO).target.isEnabled();
@@ -139,7 +139,7 @@ public final class StepCountGUITestForLocale extends FestSwingJUnitTestCase {
 		String text = frame.textBox(RESULT_TEXT).text();
 		//System.out.println(text);
 		URL expected = this.getClass().getResource("StepCount_java_en.txt");
-		assertThat(text, is(equalTo(contentOf(expected))));
+		assertThat(text, is(equalTo(textContentOf(expected))));
 		// ボタンの状態を検査
 		stat = frame.button(COUNT_BUTTON).target.isEnabled();
 		assertThat(stat, is(false));

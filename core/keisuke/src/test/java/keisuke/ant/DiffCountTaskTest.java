@@ -2,6 +2,7 @@ package keisuke.ant;
 
 import static keisuke.count.CountTestUtil.*;
 import static keisuke.count.diff.DiffCountTestConstant.*;
+import static keisuke.util.TestUtil.nameOfSystemOS;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -102,15 +103,15 @@ public class DiffCountTaskTest {
 		System.out.println(driver.getStdout());
 
 		File actual = new File("test/out/ant_diff_java.txt");
-		assertThat(contentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)),
+				is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
 	public void countDiffJavaUsingCsvFormat() throws Exception {
 		System.out.println("## DiffCountTask ## countDiffJavaUsingCsvFormat ##");
 		String targetName = "DiffJavaUsingCsvFormat";
-		URL expected = this.getClass()
-				.getResource("../count/diff/diffCount_java.csv");
+		URL expected;
 
 		AntTaskTestDriver driver = new AntTaskTestDriver();
 		driver.configureProject(projfile);
@@ -120,7 +121,14 @@ public class DiffCountTaskTest {
 		System.out.println(driver.getStdout());
 
 		File actual = new File("test/out/ant_diff_java.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		if (!nameOfSystemOS().startsWith("Windows")) {
+			expected = this.getClass()
+					.getResource("../count/diff/diffCount_java.csv");
+		} else {
+			expected = this.getClass()
+					.getResource("../count/diff/diffCount_java_win.csv");
+		}
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -138,6 +146,7 @@ public class DiffCountTaskTest {
 		System.out.println(driver.getStdout());
 
 		File actual = new File("test/out/ant_diff_java_usingCustomRule.txt");
-		assertThat(contentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)),
+				is(equalTo(textContentOf(expected))));
 	}
 }

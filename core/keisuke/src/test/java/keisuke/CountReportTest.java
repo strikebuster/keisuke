@@ -1,7 +1,8 @@
 package keisuke;
 
 import static keisuke.report.option.ReportOptionConstant.OPT_OUT;
-import static keisuke.util.TestUtil.contentOf;
+import static keisuke.util.TestUtil.rawContentOf;
+import static keisuke.util.TestUtil.textContentOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -40,8 +41,7 @@ public class CountReportTest {
 			outMessage = capture.getCapturedString();
 			capture.finish();
 		}
-
-		assertThat(outMessage, is(equalTo(contentOf(expected))));
+		assertThat(outMessage, is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -49,11 +49,11 @@ public class CountReportTest {
 		System.out.println("## CountReportTest ## count02 ## countUsingDefaultAndOutOption ##");
 		URL expected = this.getClass().getResource("report/procedure/CountTest_count01.csv");
 
-		String[] args = {"test/data/count01.csv", "--" + OPT_OUT, "test/out/coutrep02.csv"};
+		String[] args = {"test/data/count01.csv", "--" + OPT_OUT, "test/out/countrep02.csv"};
 		CountReport.main(args);
 
-		File actual = new File("test/out/coutrep02.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		File actual = new File("test/out/countrep02.csv");
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 }

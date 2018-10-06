@@ -2,7 +2,8 @@ package keisuke.count.diff;
 
 import static keisuke.count.CountTestUtil.withoutHeadLines;
 import static keisuke.count.diff.DiffCountTestConstant.TEXT_IGNORE_LINES;
-import static keisuke.util.TestUtil.contentOf;
+import static keisuke.util.TestUtil.rawContentOf;
+import static keisuke.util.TestUtil.textContentOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -65,6 +66,7 @@ public class DiffCountUsingCustomRuleTest {
 		DiffCount.main(args);
 
 		File actual = new File("test/out/rule_diff_java.txt");
-		assertThat(contentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)),
+				is(equalTo(textContentOf(expected))));
 	}
 }

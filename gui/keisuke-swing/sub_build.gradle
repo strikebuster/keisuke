@@ -11,7 +11,7 @@ plugins {
 
 group = 'keisuke'
 //name : 'keisuke-swing'
-version = '1.4.0'
+version = '1.4.1'
 //version = '1.x.x-SNAPSHOT'
 
 description = """keisuke-swing : GUI constructed with Swing for keisuke.count"""

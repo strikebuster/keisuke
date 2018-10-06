@@ -1,6 +1,7 @@
 package keisuke.ant;
 
-import static keisuke.util.TestUtil.contentOf;
+import static keisuke.util.TestUtil.rawContentOf;
+import static keisuke.util.TestUtil.textContentOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
@@ -176,7 +177,7 @@ public class CountReportTaskTest {
 		System.out.println(driver.getStdout());
 
 		File actual = new File("test/out/ant_countreport.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -194,7 +195,7 @@ public class CountReportTaskTest {
 		System.out.println(driver.getStdout());
 
 		File actual = new File("test/out/ant_countreport_usingLanguage.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -212,7 +213,7 @@ public class CountReportTaskTest {
 		System.out.println(driver.getStdout());
 
 		File actual = new File("test/out/ant_countreport_usingCustomRule.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -230,7 +231,7 @@ public class CountReportTaskTest {
 		System.out.println(driver.getStdout());
 
 		File actual = new File("test/out/ant_countreport_usingProp.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -250,7 +251,7 @@ public class CountReportTaskTest {
 		System.out.println(driver.getStdout());
 
 		File actual = new File("test/out/ant_countreport_usingInvalidFw.csv");
-		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 		assertThat(errMessage, containsString("not found Framework definition"));
 	}
 }
