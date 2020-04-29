@@ -12,6 +12,8 @@ public final class GUIConstant {
 	public static final String XML_BUTTON = "xml_button";
 	public static final String XML_CHOOSER = "xml_choose";
 	public static final String FORMAT_SELECT = "format_box";
+	public static final String SORT_SELECT = "sort_box";
+	public static final String PATH_SELECT = "path_box";
 	public static final String COUNT_BUTTON = "count_button";
 
 	public static final String RESULT_TEXT = "result_text";

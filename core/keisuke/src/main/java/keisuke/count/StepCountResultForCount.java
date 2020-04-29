@@ -10,6 +10,8 @@ import keisuke.count.util.FileNameUtil;
  */
 public class StepCountResultForCount extends StepCountResult {
 
+	private static final long serialVersionUID = 1L; // since ver.2.0.0
+
 	private File file;
 	private String baseDirPath = null;
 	private String specifiedFilePath = null;
@@ -52,31 +54,39 @@ public class StepCountResultForCount extends StepCountResult {
 	}
 
 	/**
-	 * 計測対象ファイルの基点ディレクトリ名からの相対パス文字列を返す
-	 * パスには基点ディレクトリ自身を含む
-	 * @return 相対パス文字列
+	 * 計測対象ファイルのパス表記を指定されたスタイルで設定する
+	 * @param style パス表記スタイル
 	 */
-	public String getSubPathFromBase() {
-		//ファイルパス指定がある場合はそれを優先
+	public void setFilePathAsPathStyle(final PathStyleEnum style) {
+		if (style.equals(PathStyleEnum.NO)) {
+			return;
+		}
 		if (this.specifiedFilePath != null) {
-			return this.specifiedFilePath;
+			//ファイルパス指定がある場合はそれを優先
+			this.setFilePath(this.specifiedFilePath);
+			return;
 		}
 		String path = null;
 		try {
 			path = this.file.getCanonicalPath().replace('\\', '/');
 		} catch (Exception e) {
-			return "*fail to get path*/" + this.filePath();
+			//ファイルの絶対パスが取得できないのでエラーメッセージ付きの表記
+			this.setFilePath("*fail to get path*/" + this.filePath());
+			return;
 		}
 		if (this.baseDirPath == null) {
-			return path;
+			//基点ディレクトリがnullのため絶対パスを設定
+			this.setFilePath(path);
+			return;
 		}
-		return FileNameUtil.getSubPathFromBottomOfBase(path, this.baseDirPath);
-	}
-
-	/**
-	 * 計測対象ファイルの基点ディレクトリ名からの相対パス文字列をファイルパスに設定する
-	 */
-	public void setFilePathAsSubPathFromBase() {
-		this.setFilePath(this.getSubPathFromBase());
+		if (style.equals(PathStyleEnum.BASE)) {
+			this.setFilePath(FileNameUtil.getSubPathFromBottomOfBase(path, this.baseDirPath));
+		} else if (style.equals(PathStyleEnum.SUB)) {
+			this.setFilePath(FileNameUtil.getRelativePath(path, this.baseDirPath));
+		} else if (style.equals(PathStyleEnum.SHOWDIR)) {
+			StringBuffer sb = new StringBuffer();
+			sb.append('/').append(FileNameUtil.getSubPathFromBottomOfBase(path, this.baseDirPath));
+			this.setFilePath(sb.toString());
+		}
 	}
 }

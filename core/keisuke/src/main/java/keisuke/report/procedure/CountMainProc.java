@@ -40,14 +40,8 @@ public final class CountMainProc extends AbstractReportMainProc {
 		}
 		//this.argMap().debugMap();
 		this.setSomeFromProperties(this.argMap().get(OPT_PROP));
-		String ctype = this.argMap().get(OPT_CLASS);
-		if (ctype == null) {
-			ctype = OPTVAL_EXTENSION;
-		} else if (!this.commandOption().valuesAs(OPT_CLASS).contains(ctype)) {
-			LogUtil.errorLog("'" + ctype + "' is invalid option value for '" + OPT_CLASS + "'.");
-			throw new IllegalArgumentException("invalid option value");
-		}
-		this.setClassifierFromXml(ctype, this.argMap().get(OPT_XML));
+		String classify = this.argMap().get(OPT_CLASS);
+		this.setClassifierFromXml(classify, this.argMap().get(OPT_XML));
 		this.setOutputFileName(this.argMap().get(OPT_OUT));
 		this.aggregateFrom(this.argMap().get(ARG_INPUT));
 	}

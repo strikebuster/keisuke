@@ -1,5 +1,9 @@
 package keisuke.count;
 
+import static keisuke.count.option.CountOptionConstant.OPT_FORMAT;
+import static keisuke.count.option.CountOptionConstant.OPT_PATH;
+import static keisuke.count.option.CountOptionConstant.OPT_SORT;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -15,9 +19,18 @@ public abstract class AbstractCountMainProc extends AbstractMainProc {
 	private String srcEncoding = System.getProperty("file.encoding");
 	private String xmlFileName = null;
 	private String formatType = "";
+	private FormatEnum formatEnum = null;
 	private Formatter<?> formatter = null;
+	private String pathStyleName = "";
+	private PathStyleEnum pathStyleEnum = null;
+	private String sortType = "";
+	private SortOrderEnum sortOrderEnum = null;
 
-	protected AbstractCountMainProc() { }
+	protected AbstractCountMainProc() {
+		this.setDefaultFormat();
+		this.setDefaultPathStyle();
+		this.setDefaultSortOrder();
+	}
 
 	/**
 	 * StepCount/DiffCountの主処理メソッド
@@ -60,6 +73,21 @@ public abstract class AbstractCountMainProc extends AbstractMainProc {
 			}
 		}
 	}
+
+	/**
+	 * 出力形式オプションのデフォルト値を設定する
+	 */
+	protected abstract void setDefaultFormat();
+
+	/**
+	 * パス表記方法オプションのデフォルト値を設定する
+	 */
+	protected abstract void setDefaultPathStyle();
+
+	/**
+	 * ソート順オプションのデフォルト値を設定する
+	 */
+	protected abstract void setDefaultSortOrder();
 
 	/**
 	 * 計測対象のファイルまたはディレクトリを引数から設定する
@@ -122,15 +150,191 @@ public abstract class AbstractCountMainProc extends AbstractMainProc {
 	 * @param format 出力フォーマット
 	 */
 	public void setFormat(final String format) {
+		if (format == null || format.isEmpty()) {
+			return;
+		}
+		this.validateFormatOption(format);
 		this.formatType = format;
+		if (format.equals(FormatEnum.TEXT.value())) {
+			this.formatEnum = FormatEnum.TEXT;
+		} else if (format.equals(FormatEnum.CSV.value())) {
+			this.formatEnum = FormatEnum.CSV;
+		} else if (format.equals(FormatEnum.EXCEL.value())) {
+			this.formatEnum = FormatEnum.EXCEL;
+		} else if (format.equals(FormatEnum.HTML.value())) {
+			this.formatEnum = FormatEnum.HTML;
+		} else if (format.equals(FormatEnum.JSON.value())) {
+			this.formatEnum = FormatEnum.JSON;
+		} else if (format.equals(FormatEnum.XML.value())) {
+			this.formatEnum = FormatEnum.XML;
+		}
+	}
+
+	/**
+	 * 結果出力のフォーマットを設定します
+	 * @param format 出力フォーマット
+	 */
+	protected void setFormatEnum(final FormatEnum format) {
+		this.formatEnum = format;
 	}
 
 	/**
 	 * 結果出力のフォーマットを返す
-	 * @return format 出力フォーマット
+	 * @return 出力フォーマット
 	 */
-	protected String format() {
+	protected FormatEnum format() {
+		return this.formatEnum;
+	}
+
+	/**
+	 * 結果出力のフォーマット名称を返す
+	 * @return 出力フォーマット名称
+	 */
+	protected String formatType() {
 		return this.formatType;
+	}
+
+	/**
+	 * フォーマットオプションの値としてチェックして不当な場合は例外を投げる
+	 * @param format フォーマット名
+	 * @throws IllegalArgumentException フォーマット名が不正の場合に発行
+	 */
+	protected void validateFormatOption(final String format) throws IllegalArgumentException {
+		if (format == null || format.isEmpty()) {
+			return;
+		}
+		if (!this.commandOption().valuesAs(OPT_FORMAT).contains(format)) {
+			throw new IllegalArgumentException(format + " is invalid format value.");
+		}
+	}
+
+	/**
+	 * 結果出力のパス表記方法を設定します
+	 * @param style パス表記方法
+	 */
+	public void setPathStyle(final String style) {
+		if (style == null || style.isEmpty()) {
+			return;
+		}
+		if (style.equals(PathStyleEnum.SHOWDIR.value())) {
+			this.pathStyleName = style;
+			this.pathStyleEnum = PathStyleEnum.SHOWDIR;
+			return;
+		}
+		this.validatePathOption(style);
+		this.pathStyleName = style;
+		if (style.equals(PathStyleEnum.BASE.value())) {
+			this.pathStyleEnum = PathStyleEnum.BASE;
+		} else if (style.equals(PathStyleEnum.SUB.value())) {
+			this.pathStyleEnum = PathStyleEnum.SUB;
+		} else if (style.equals(PathStyleEnum.NO.value())) {
+			this.pathStyleEnum = PathStyleEnum.NO;
+		}
+	}
+
+	/**
+	 * パス表記方法の値を設定する
+	 * @param style パス表記方法の値
+	 */
+	protected void setPathStyleEnum(final PathStyleEnum style) {
+		this.pathStyleEnum = style;
+	}
+
+	/**
+	 * 結果出力のパス表記方法を返す
+	 * @return パス表記方法
+	 */
+	protected PathStyleEnum pathStyle() {
+		return this.pathStyleEnum;
+	}
+
+	/**
+	 * 結果出力のパス表記方法の名称を返す
+	 * @return パス表記方法の名称
+	 */
+	protected String pathStyleName() {
+		return this.pathStyleName;
+	}
+
+	/**
+	 * 結果出力のバス表記にディレクトリを含むか真偽を返す
+	 * @return ディレクトリを含む場合はtrue
+	 */
+	protected boolean isWithDirectory() {
+		return this.pathStyleEnum.hasDirectory();
+	}
+
+	/**
+	 * パス表記オプションの値としてチェックして不当な場合は例外を投げる
+	 * @param path パス表記方法
+	 * @throws IllegalArgumentException パス表記方法が不正の場合に発行
+	 */
+	protected void validatePathOption(final String path) throws IllegalArgumentException {
+		if (path == null || path.isEmpty()) {
+			return;
+		}
+		if (!this.commandOption().valuesAs(OPT_PATH).contains(path)) {
+			throw new IllegalArgumentException(path + " is invalid path value.");
+		}
+	}
+
+	/**
+	 * 結果出力のソート順をセットします
+	 * @param order ソート順
+	 */
+	public void setSortOrder(final String order) {
+		if (order == null || order.isEmpty()) {
+			return;
+		}
+		this.validateSortOption(order);
+		this.sortType = order;
+		if (order.equals(SortOrderEnum.ON.value())) {
+			this.sortOrderEnum = SortOrderEnum.ON;
+		} else if (order.equals(SortOrderEnum.OS.value())) {
+			this.sortOrderEnum = SortOrderEnum.OS;
+		} else if (order.equals(SortOrderEnum.NODE.value())) {
+			this.sortOrderEnum = SortOrderEnum.NODE;
+		} else if (order.equals(SortOrderEnum.OFF.value())) {
+			this.sortOrderEnum = SortOrderEnum.OFF;
+		}
+	}
+
+	/**
+	 * 結果出力のソート順の値をセットします
+	 * @param order ソート順の値
+	 */
+	protected void setSortOrderEnum(final SortOrderEnum order) {
+		this.sortOrderEnum = order;
+	}
+
+	/**
+	 * 結果出力のソート順の値を返す
+	 * @return ソート順の値
+	 */
+	protected SortOrderEnum sortOrder() {
+		return this.sortOrderEnum;
+	}
+
+	/**
+	 * 結果出力のソート順の名称を返す
+	 * @return ソート順の名称
+	 */
+	protected String sortType() {
+		return this.sortType;
+	}
+
+	/**
+	 * ソートオプションの値としてチェックして不当な場合は例外を投げる
+	 * @param sort ソート順
+	 * @throws IllegalArgumentException ソート順が不正の場合に発行
+	 */
+	protected void validateSortOption(final String sort) throws IllegalArgumentException {
+		if (sort == null || sort.isEmpty()) {
+			return;
+		}
+		if (!this.commandOption().valuesAs(OPT_SORT).contains(sort)) {
+			throw new IllegalArgumentException(sort + " is invalid sort value.");
+		}
 	}
 
 	/**

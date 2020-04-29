@@ -1,9 +1,13 @@
 package keisuke;
 
+import java.io.Serializable;
+
 /**
  * ソースコードファイルの差分ステップ数計測結果の基本クラス
  */
-public class DiffCountResult {
+public class DiffCountResult implements Serializable {
+
+	private static final long serialVersionUID = 1L; // since ver.2.0.0
 
 	private String nodeName = "";
 	private String filePath = "";
@@ -13,6 +17,15 @@ public class DiffCountResult {
 	private long deletedSteps = 0;
 
 	public DiffCountResult() { }
+
+	public DiffCountResult(final String node, final String path, final boolean isfile,
+			final DiffStatusEnum status, final long added, final long deleted) {
+		this.setNodeName(node);
+		this.setFilePath(path);
+		this.setIsFile(isfile);
+		this.setDiffStatus(status);
+		this.setSteps(added, deleted);
+	}
 
 	/**
 	 * DiffCount結果の対象ノードがファイルかチェックする

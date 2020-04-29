@@ -11,7 +11,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import keisuke.count.AbstractCountMainProc;
+import keisuke.count.FormatEnum;
 import keisuke.count.Formatter;
+import keisuke.count.PathStyleEnum;
+import keisuke.count.SortOrderEnum;
 import keisuke.count.diff.renderer.RendererFactory;
 import keisuke.count.option.DiffCountOption;
 import keisuke.report.property.MessageDefine;
@@ -29,10 +32,29 @@ public class DiffCountProc extends AbstractCountMainProc {
 	private File oldSrcdir = null;
 	private MessageDefine msgDef = null;
 	private DiffFolderResult diffResult;
-	//private Formatter<DiffFolderResult> formatter = null;
 
 	public DiffCountProc() {
+		super();
 		this.setCommandOption(new DiffCountOption());
+	}
+
+	/** {@inheritDoc} */
+	protected void setDefaultFormat() {
+		// DiffCountのformatオプションのデフォルトはTEXT
+		this.setFormatEnum(FormatEnum.TEXT);
+	}
+
+	/** {@inheritDoc} */
+	protected void setDefaultPathStyle() {
+		// DiffCountのpathオプションのデフォルトはBASE
+		this.setPathStyleEnum(PathStyleEnum.BASE);
+	}
+
+	/** {@inheritDoc} */
+	protected void setDefaultSortOrder() {
+		// DiffCountのsortオプションのデフォルトはnull
+		// デフォルト値のままであればRendererFactoryがformatに応じて再設定する
+		this.setSortOrderEnum(null); // 実際にはnullが設定されるのでなく変更されない
 	}
 
 	/** {@inheritDoc} */
@@ -70,6 +92,8 @@ public class DiffCountProc extends AbstractCountMainProc {
 		String encoding = this.argMap().get(OPT_ENCODE);
 		String outfile = this.argMap().get(OPT_OUTPUT);
 		String format = this.argMap().get(OPT_FORMAT);
+		String path = this.argMap().get(OPT_PATH);
+		String sort = this.argMap().get(OPT_SORT);
 		String xmlfile = this.argMap().get(OPT_XML);
 		// 対象ファイルのエンコード指定を設定
 		if (encoding != null && encoding.length() > 0) {
@@ -77,17 +101,35 @@ public class DiffCountProc extends AbstractCountMainProc {
 		}
 		// 出力フォーマットの指定
 		// フォーマットを設定
-		if (format == null) {
-			format = OPTVAL_TEXT;
-		} else {
+		if (format != null) {
 			try {
 				this.validateFormatOption(format);
 			} catch (IllegalArgumentException e) {
 				LogUtil.errorLog("'" + format + "' is invalid option value for '" + OPT_FORMAT + "'.");
 				throw e;
 			}
+			this.setFormat(format);
 		}
-		this.setFormat(format);
+		// 出力のパス表記方法の指定
+		if (path != null) {
+			try {
+				this.validatePathOption(path);
+			} catch (IllegalArgumentException e) {
+				LogUtil.errorLog("'" + path + "' is invalid option value for '" + OPT_PATH + "'.");
+				throw e;
+			}
+			this.setPathStyle(path);
+		}
+		// ソート順の指定
+		if (sort != null) {
+			try {
+				this.validateSortOption(sort);
+			} catch (IllegalArgumentException e) {
+				LogUtil.errorLog("'" + sort + "' is invalid option value for '" + OPT_SORT + "'.");
+				throw e;
+			}
+			this.setSortOrder(sort);
+		}
 		// カスタマイズしたXML定義ファイル指定
 		if (xmlfile != null) {
 			this.setXmlFileName(xmlfile);
@@ -113,19 +155,27 @@ public class DiffCountProc extends AbstractCountMainProc {
 			throw new IllegalArgumentException(prefix + " directory is not specified.");
 		}
 		File dirFile = new File(dirname);
-		if (!dirFile.isDirectory()) {
-			throw new IllegalArgumentException(dirname + " is not directory.");
-		}
-		return dirFile;
+		return this.validateDirectory(prefix, dirFile);
 	}
 
-	private void validateFormatOption(final String format) {
-		if (format == null || format.isEmpty()) {
-			return;
+	private void validateAndSetNewDirectory(final File dirFile) {
+		this.validateDirectory("new", dirFile);
+		this.setNewDirectory(dirFile);
+	}
+
+	private void validateAndSetOldDirectory(final File dirFile) {
+		this.validateDirectory("old", dirFile);
+		this.setOldDirectory(dirFile);
+	}
+
+	private File validateDirectory(final String prefix, final File dirFile) {
+		if (dirFile == null) {
+			throw new IllegalArgumentException(prefix + " directory is null.");
 		}
-		if (!this.commandOption().valuesAs(OPT_FORMAT).contains(format)) {
-			throw new IllegalArgumentException(format + " is invalid format value.");
+		if (!dirFile.isDirectory()) {
+			throw new IllegalArgumentException(dirFile.getPath() + " is not directory.");
 		}
+		return dirFile;
 	}
 
 	/**
@@ -135,20 +185,27 @@ public class DiffCountProc extends AbstractCountMainProc {
 	protected void executeCounting() throws IOException {
 		this.msgDef = new MessageDefine(MSG_DIFF_PREFIXES);
 		DiffCountFunction diffcounter = new DiffCountFunction(this.sourceEncoding(), this.xmlFileName());
+		if (this.sortOrder() == SortOrderEnum.OFF) {
+			// 未指定の場合はOS順で計測し、出力時は形式毎に決まる
+			diffcounter.setSortingOrder(SortOrderEnum.OS);
+		} else {
+			diffcounter.setSortingOrder(this.sortOrder());
+		}
 		this.diffResult = diffcounter.countDiffBetween(this.oldSrcdir, this.srcdir);
 	}
 
 	/** {@inheritDoc} */
 	protected void writeResults() throws IOException {
 		// フォーマッタを設定
-		Formatter<DiffFolderResult> renderer = RendererFactory.getFormatter(this.format(), this.msgDef);
+		Formatter<DiffFolderResult> renderer
+			= RendererFactory.getFormatter(this.format(), this.msgDef, this.pathStyle(), this.sortOrder());
 		this.setFormatter(renderer);
 		if (renderer == null) {
 			throw new RuntimeException("fail to get a formatter");
 		}
 		this.outputStream().write(renderer.format(this.diffResult));
 		this.outputStream().flush();
-		//LogUtil.debugLog(outputFile.getAbsolutePath() + "にカウント結果を出力しました。");
+		//LogUtil.debugLog("カウント結果を出力しました。");
 	}
 
 	/**
@@ -167,6 +224,22 @@ public class DiffCountProc extends AbstractCountMainProc {
 		this.oldSrcdir = dir;
 	}
 
+	/**
+	 * 計測結果データを格納しているルートオブジェクトをセットします
+	 * @param result 計測結果のルートオブジェクト
+	 */
+	protected void setResult(final DiffFolderResult result) {
+		this.diffResult = result;
+	}
+
+	/**
+	 * 計測結果を格納している木構造データのルートを返す
+	 * @return 木構造データのルート
+	 */
+	public DiffFolderResult getResultAsRawData() {
+		return this.diffResult;
+	}
+
 	/** {@inheritDoc} */
 	public void doCountingAndWriting(final String[] filenames, final OutputStream output) throws IOException {
 		if (filenames == null || filenames.length < 2) {
@@ -175,6 +248,7 @@ public class DiffCountProc extends AbstractCountMainProc {
 		}
 		doCountingAndWriting(filenames[0], filenames[1], output);
 	}
+
 	/**
 	 * オプションや計測対象ファイル名を設定後に、差分ステップ計測と結果出力を実行する
 	 * @param olddir 計測対象の旧バージョンのディレクトリ
@@ -185,25 +259,35 @@ public class DiffCountProc extends AbstractCountMainProc {
 	public void doCountingAndWriting(final String olddir, final String newdir,
 					final OutputStream output) throws IOException {
 		// 旧バージョンDir
+		File oldDirFile = this.validateAndGetDirectory("old", olddir);
+		// 新バージョンDir
+		File newDirFile = this.validateAndGetDirectory("new", newdir);
+		// 計測と出力
+		this.doCountingAndWriting(oldDirFile, newDirFile, output);
+	}
+
+	/**
+	 * オプションや計測対象ファイル名を設定後に、差分ステップ計測と結果出力を実行する
+	 * @param olddir 計測対象の旧バージョンのディレクトリ
+	 * @param newdir 計測対象の新バージョンのディレクトリ
+	 * @param output 結果出力先
+	 * @throws IOException ファイル入出力で異常があれば発行する
+	 */
+	public void doCountingAndWriting(final File olddir, final File newdir,
+					final OutputStream output) throws IOException {
+		// 旧バージョンDir
 		this.validateAndSetOldDirectory(olddir);
 		// 新バージョンDir
 		this.validateAndSetNewDirectory(newdir);
 		// 計測と出力
-		if (output != null) {
-			this.setOutputStream(output);
-		}
+		this.validatePathOption(this.pathStyleName());
+		this.validateSortOption(this.sortType());
 		this.executeCounting();
 		if (output != null) {
-			this.validateFormatOption(this.format());
+			this.setOutputStream(output);
+			this.validateFormatOption(this.formatType());
 			this.writeResults();
 		}
 	}
 
-	/**
-	 * 計測結果を格納している木構造データのルートを返す
-	 * @return 木構造データのルート
-	 */
-	public DiffFolderResult getResultAsRawData() {
-		return this.diffResult;
-	}
 }

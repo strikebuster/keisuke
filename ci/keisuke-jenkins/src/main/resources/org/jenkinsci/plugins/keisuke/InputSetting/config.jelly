@@ -1,0 +1,49 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+	<j:set var="myname" value="keisuke" />
+	<j:set var="selectedMode" value="${instance.countingModeEnum}" />
+	<f:entry title="${%unitName}" field="unitName">
+		<f:textbox/>
+	</f:entry>
+	<f:entry title="${%sourceDir}" field="sourceDirectory">
+		<f:textbox/>
+	</f:entry>
+	<f:entry title="${%encoding}" field="encoding">
+		<f:textbox default="${descriptor.defaultEncoding}"/>
+	</f:entry>
+	<f:advanced>
+		<f:entry title="${%xmlPath}" field="xmlPath">
+			<f:textbox default="${descriptor.defaultXmlPath}"/>
+		</f:entry>
+		<f:entry>
+			<f:radioBlock title="${%countStepSimply}" name="countingMode" value="step_simply"
+				checked="${instance.countingMode=='step_simply'||selectedMode==null}"
+				inline="true" help="/plugin/${myname}/InputSetting/help-stepSimply.html">
+			</f:radioBlock>
+		</f:entry>
+		<f:entry>
+			<f:radioBlock title="${%countFileSet}" name="countingMode" value="file_set" checked="${instance.countingMode=='file_set'}"
+				inline="true" help="/plugin/${myname}/InputSetting/help-fileSet.html">
+				<f:entry title="${%includes}" field="includePattern">
+					<f:textbox/>
+				</f:entry>
+				<f:entry title="${%excludes}" field="excludePattern">
+					<f:textbox/>
+				</f:entry>
+			</f:radioBlock>
+		</f:entry>
+		<f:entry>
+			<f:radioBlock title="${%countDiffToo}" name="countingMode" value="diff_too" checked="${instance.countingMode=='diff_too'}"
+				inline="true" help="/plugin/${myname}/InputSetting/help-diffToo.html">
+				<f:entry title="${%oldSourceDir}" field="oldSourceDirectory">
+					<f:textbox/>
+				</f:entry>
+			</f:radioBlock>
+		</f:entry>
+	</f:advanced>
+	<f:entry title="">
+		<div align="right">
+			<f:repeatableDeleteButton name="deleteButton"/>
+		</div>
+	</f:entry>
+</j:jelly>

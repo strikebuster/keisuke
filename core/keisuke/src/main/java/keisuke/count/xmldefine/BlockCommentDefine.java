@@ -32,7 +32,7 @@ public class BlockCommentDefine extends AbstractBlockDefine {
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
+		StringBuffer sb = new StringBuffer();
 		sb.append(super.toString());
 		sb.append(",");
 		sb.append(this.getNest());

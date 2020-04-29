@@ -1,5 +1,6 @@
 package keisuke.swing.diffcount;
 
+import static keisuke.count.util.FileNameUtil.getCanonicalOrAbsolutePath;
 import static keisuke.swing.diffcount.DiffCountGUIConstant.FILE_CHOOSER;
 
 import java.awt.Container;
@@ -115,7 +116,7 @@ class RootDirectoryUnit {
 		String name = ((JButton) event.getSource()).getName();
 		File file = this.chooseFolder(name);
 		if (file != null) {
-			this.dirField.setText(file.getAbsolutePath());
+			this.dirField.setText(getCanonicalOrAbsolutePath(file));
 		}
 	}
 

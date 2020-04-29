@@ -59,6 +59,22 @@ public class AbstractCountAdapter {
 	}
 
 	/**
+	 * ソート種類を設定する
+	 * @param sort ソート種類文字列
+	 */
+	public void setSort(final String sort) {
+		this.countProc.setSortOrder(sort);
+	}
+
+	/**
+	 * パス表記スタイルを設定する
+	 * @param path パス表記スタイル
+	 */
+	public void setPath(final String path) {
+		this.countProc.setPathStyle(path);
+	}
+
+	/**
 	 * フォーマットで指定する出力がテキスト形式か真偽を返す
 	 * @return 出力がテキスト形式であればtrue
 	 */

@@ -1,0 +1,8 @@
+<?jelly escape-by-default='true'?>
+<div>
+  Keisuke plugin can count the number of lines(steps) in source code files.<br/>
+  This is like <a href="https://github.com/jenkinsci/stepcounter-plugin/">"StepCounter Plugin"</a>.<br/>
+  The main difference is the internal using tool for counting lines.<br/>
+  "StepCounter Plugin" uses <a href="https://github.com/takezoe/stepcounter">"stepcounter"</a>,
+  whereas this uses <a href="https://github.com/strikebuster/keisuke">"keisuke"</a>.<br/>
+</div>

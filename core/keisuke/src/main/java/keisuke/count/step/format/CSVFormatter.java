@@ -1,6 +1,5 @@
 package keisuke.count.step.format;
 
-import static keisuke.count.step.format.FormatConstant.*;
 import static keisuke.util.StringUtil.LINE_SEP;
 
 import java.io.UnsupportedEncodingException;
@@ -27,21 +26,20 @@ public class CSVFormatter extends AbstractFormatter {
 		StringBuffer sb = new StringBuffer();
 		for (int i = 0; i < results.length; i++) {
 			StepCountResult result = results[i];
+			sb.append(result.filePath()).append(",");
+			sb.append(this.getSourceType(result.sourceType())).append(",");
+			sb.append(EncodeUtil.csvEscape(result.sourceCategory())).append(",");
 			// 未対応の形式をフォーマット
-			if (result.sourceType() == null) {
-				sb.append(result.filePath()).append(",");
-				sb.append(this.getMessageText(MSG_COUNT_FMT_UNDEF)).append(",");
-				sb.append(",,,,").append(LINE_SEP);
+			if (result.isUnsupported()) {
+				sb.append(",,,");
 			// 正常にカウントされたものをフォーマット
 			} else {
-				sb.append(result.filePath()).append(",");
-				sb.append(result.sourceType()).append(",");
-				sb.append(EncodeUtil.csvEscape(result.sourceCategory())).append(",");
 				sb.append(Long.toString(result.execSteps())).append(",");
 				sb.append(Long.toString(result.blancSteps())).append(",");
 				sb.append(Long.toString(result.commentSteps())).append(",");
-				sb.append(Long.toString(result.sumSteps())).append(LINE_SEP);
+				sb.append(Long.toString(result.sumSteps()));
 			}
+			sb.append(LINE_SEP);
 		}
 		try {
 			return sb.toString().getBytes(this.textEncoding());

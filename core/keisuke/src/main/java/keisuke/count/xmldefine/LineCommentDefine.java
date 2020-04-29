@@ -70,7 +70,7 @@ public class LineCommentDefine {
 	 * @return コメント開始記号の定義表記
 	 */
 	public String getStartDefineString() {
-		StringBuilder sb = new StringBuilder();
+		StringBuffer sb = new StringBuffer();
 		if (this.needHead) {
 			sb.append("^");
 			if (this.lineDelimiter != null && this.lineDelimiter.length() > 0) {
@@ -97,7 +97,7 @@ public class LineCommentDefine {
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
+		StringBuffer sb = new StringBuffer();
 		sb.append(this.start);
 		sb.append(",");
 		sb.append(this.needHead);

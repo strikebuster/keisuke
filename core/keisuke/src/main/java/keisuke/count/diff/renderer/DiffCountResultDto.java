@@ -1,6 +1,8 @@
 package keisuke.count.diff.renderer;
 
+import keisuke.DiffStatusEnum;
 import keisuke.DiffStatusLabels;
+import keisuke.count.PathStyleEnum;
 import keisuke.count.diff.DiffFileResult;
 
 /**
@@ -10,19 +12,25 @@ import keisuke.count.diff.DiffFileResult;
 public class DiffCountResultDto extends DiffFileResult implements DiffResultCompatible {
 
 	private String statusText = null;
+	private PathStyleEnum pathStyle;
 
-	public DiffCountResultDto(final DiffFileResult result, final DiffStatusLabels statusLabels) {
+	public DiffCountResultDto(final DiffFileResult result, final DiffStatusLabels statusLabels,
+			final PathStyleEnum style) {
 		super(result.nodeName(), result.status(), result.getParent());
-		this.setFilePath(result.pathFromTop());
 		this.setSourceType(result.sourceType());
 		this.setSourceCategory(result.sourceCategory());
 		this.setSteps(result.addedSteps(), result.deletedSteps());
-		this.statusText = statusLabels.getLabelOf(result.status());
+		if (result.isUnsupported()) {
+			this.statusText = statusLabels.getLabelOf(DiffStatusEnum.UNSUPPORTED);
+		} else {
+			this.statusText = statusLabels.getLabelOf(result.status());
+		}
+		this.pathStyle = style;
 	}
 
 	/** {@inheritDoc} */
 	public String getPath() {
-		return this.filePath();
+		return this.filePath(this.pathStyle);
 	}
 
 	/** {@inheritDoc} */

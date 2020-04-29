@@ -35,6 +35,7 @@ public final class DiffMainProc extends AbstractReportMainProc {
 	//private String[] statusArray = null;
 	private DiffStatusLabels statusText = null;
 	private CountResultForReportMap resultMap = null;
+	private String formatType = OPTVAL_TEXT;
 	private boolean unchangeByLang = true;
 	private int unchangeFiles = 0; // 変更なしファイルの合計本数
 	private int ignoreFiles = 0; // 計測対象外ファイル本数
@@ -57,19 +58,76 @@ public final class DiffMainProc extends AbstractReportMainProc {
 		//this.argMap().debugMap();
 		this.setSomeFromProperties(this.argMap().get(OPT_PROP));
 
-		String ctype = this.argMap().get(OPT_CLASS);
-		if (ctype == null) {
-			ctype = OPTVAL_EXTENSION;
-		} else if (!this.commandOption().valuesAs(OPT_CLASS).contains(ctype)) {
-			LogUtil.errorLog("'" + ctype + "' is invalid option value for '" + OPT_CLASS + "'.");
-			throw new IllegalArgumentException("invalid option value");
-		}
-		this.setClassifierFromXml(ctype, this.argMap().get(OPT_XML));
+		String classify = this.argMap().get(OPT_CLASS);
+		String format = this.argMap().get(OPT_FORMAT);
+		String unchange = this.argMap().get(OPT_UNCHANGE);
+		// 集計分類の指定
+		this.setClassifierFromXml(classify, this.argMap().get(OPT_XML));
+		// 入力フォーマットの指定
+		this.setFormat(format);
+		// 変更なしファイルの集計モードの指定
+		this.setUnchangeMode(unchange);
+		// 入出力ファイルの指定
 		this.setAddedListFileName(this.argMap().get(OPT_AOUT));
 		this.setModifiedListFileName(this.argMap().get(OPT_MOUT));
-		this.setUnchangeMode(this.argMap().get(OPT_UNCHANGE));
 		this.setOutputFileName(this.argMap().get(OPT_OUT));
 		this.aggregateFrom(this.argMap().get(ARG_INPUT));
+	}
+
+	/**
+	 * 入力ファイルのフォーマットを設定します
+	 * @param format 入力フォーマット
+	 */
+	public void setFormat(final String format) {
+		this.validateFormatOption(format);
+		if (format == null || format.isEmpty()) {
+			this.formatType = OPTVAL_TEXT;
+		} else {
+			this.formatType = format;
+		}
+	}
+
+	/**
+	 * フォーマットオプションの値としてチェックして不当な場合は例外を投げる
+	 * @param format フォーマット名
+	 * @throws IllegalArgumentException フォーマット名が不正の場合に発行
+	 */
+	protected void validateFormatOption(final String format) throws IllegalArgumentException {
+		if (format == null || format.isEmpty()) {
+			return;
+		}
+		if (!this.commandOption().valuesAs(OPT_FORMAT).contains(format)) {
+			LogUtil.errorLog("'" + format + "' is invalid format value.");
+			throw new IllegalArgumentException(format + " is invalid format value.");
+		}
+	}
+
+	/**
+	 * 変更なしファイルの集計モードを設定する
+	 * @param mode 変更なしファイルの集計モード( detail | total )
+	 */
+	public void setUnchangeMode(final String mode) {
+		this.validateUnchangeOption(mode);
+		if (mode != null && mode.equals(OPTVAL_TOTAL)) {
+			this.unchangeByLang = false;
+		} else {
+			this.unchangeByLang = true;
+		}
+	}
+
+	/**
+	 * 変更なしファイルの集計モードオプションの値としてチェックして不当な場合は例外を投げる
+	 * @param mode 変更なしファイルの集計モード
+	 * @throws IllegalArgumentException フォーマット名が不正の場合に発行
+	 */
+	protected void validateUnchangeOption(final String mode) throws IllegalArgumentException {
+		if (mode == null || mode.isEmpty()) {
+			return;
+		}
+		if (!this.commandOption().valuesAs(OPT_UNCHANGE).contains(mode)) {
+			LogUtil.errorLog("'" + mode + "' is invalid unchange value.");
+			throw new IllegalArgumentException(mode + " is invalid unchange value.");
+		}
 	}
 
 	/**
@@ -86,21 +144,6 @@ public final class DiffMainProc extends AbstractReportMainProc {
 	 */
 	public void setModifiedListFileName(final String filename) {
 		this.moutfile = filename;
-	}
-
-	/**
-	 * 変更なしファイルの集計モードを設定する
-	 * @param mode 変更なしファイルの集計モード( detail | total )
-	 */
-	public void setUnchangeMode(final String mode) {
-		if (mode != null) {
-			if (mode.equals(OPTVAL_TOTAL)) {
-				this.unchangeByLang = false;
-			} else if (!this.commandOption().valuesAs(OPT_UNCHANGE).contains(mode)) {
-				LogUtil.errorLog("'" + mode + "' is invalid option value for '" + OPT_UNCHANGE + "'.");
-				throw new IllegalArgumentException("invalid option value");
-			}
-		}
 	}
 
 	/**
@@ -129,121 +172,27 @@ public final class DiffMainProc extends AbstractReportMainProc {
 
 	private void aggregateDiff(final String infile) {
 		BufferedReader reader = null;
-		StringBuilder sbaout = new StringBuilder();
-		StringBuilder sbmout = new StringBuilder();
-		int alinectr = 0;
-		int mlinectr = 0;
 		try {
-			// 入力ファイル：StepCounter.DiffCountのTXT形式出力
 			if (infile == null) {
 				reader = new BufferedReader(new InputStreamReader(System.in));
 			} else {
 				reader = new BufferedReader(new FileReader(infile));
 			}
 			int linectr = 0;
-			String line = null;
-			// 無効な冒頭の行をスキップ
-			while ((line = reader.readLine()) != null) {
-				// ファイル1行毎の処理
-				linectr += 1;
-				if (line.equals("--")) {
-					//LogUtil.debugLog("skip lines in diffcount output = " + linectr );
-					break;
+			if (this.formatType.equals(OPTVAL_TEXT)) {
+				// 入力ファイル：StepCounter.DiffCountのTEXT形式出力
+				String line = null;
+				// 無効な冒頭の行をスキップ
+				while ((line = reader.readLine()) != null) {
+					// ファイル1行毎の処理
+					linectr++;
+					if (line.equals("--")) {
+						//LogUtil.debugLog("skip lines in diffcount output = " + linectr);
+						break;
+					}
 				}
 			}
-			PathDepthList pathNodeList = new PathDepthList();
-
-			while ((line = reader.readLine()) != null) {
-				// ファイル1行毎の処理
-				linectr++;
-				// 行の解析結果をDiffCountResultに保持
-		        DiffCountResultForReport result = null;
-				try {
-					result = new DiffCountResultForReport(line, linectr);
-				} catch (IllegalFormattedLineException e) {
-					continue;
-		        }
-				// ノード名でパスリストを更新
-		        try {
-		        	pathNodeList.setNodeIntoDepth(result.nodeName(), result.depth());
-		        } catch (Exception e) {
-		        	LogUtil.warningLog("illegal path depth = " + line);
-		        }
-		        // ノードがファイルの場合は以下の処理実施
-				if (result.isFile()) {
-					// 	ファイルの処理
-			        // 言語（拡張子）のマッチング処理
-			        // パス文字列作成
-			        String strpath = pathNodeList.toString();
-			        result.setFilePath(strpath);
-			        //LogUtil.debugLog("path = " + strpath +
-			        //		" [" + stat + "] (add)" + numadd + " (del)" + numdel);
-
-			        // 変更ステータスで仕分けて対象ファイルの処理
-					DiffStatusEnum diffstat
-							= this.statusText.whichDiffStatusIs(result.statusText());
-					result.setDiffStatus(diffstat);
-					if (diffstat == null) {
-						LogUtil.warningLog("unknown status in " + line);
-						continue;
-					} else if (diffstat == DiffStatusEnum.ADDED) {
-						if (this.aoutfile != null) {
-							// 新規ファイルリスト出力ON
-							// StepCounterの仕様に合わせ先頭に"/"
-							// ファイル出力用文字列で今後処理もしないので改行コードをシステム用に
-							sbaout.append("/").append(strpath).append(LINE_SEP);
-							alinectr++;
-						}
-					} else if (diffstat == DiffStatusEnum.MODIFIED) {
-						if (this.moutfile != null) {
-							// 修正ファイルリスト出力ON
-							// StepCounterの仕様に合わせ先頭に"/"
-							// ファイル出力用文字列で今後処理もしないので改行コードをシステム用に
-							sbmout.append("/").append(strpath).append(LINE_SEP);
-							mlinectr++;
-						}
-					} else if (diffstat == DiffStatusEnum.DROPED) {
-						int nop = 0; // 処理なし
-					} else if (diffstat == DiffStatusEnum.UNCHANGED) { // 変更なし
-						this.unchangeFiles++;
-						//LogUtil.debugLog("Unchange: " + line);
-						// 変更なしファイルを言語別集計しないならループ内スキップ
-						if (!this.unchangeByLang) {
-							//LogUtil.debugLog(
-							//		"Unchange files not to be classified");
-							continue;
-						}
-					} else if (diffstat == DiffStatusEnum.UNSUPPORTED) { // サポート対象外
-						this.ignoreFiles++;
-						//LogUtil.debugLog("Unsupport: " + line);
-						// サポート対象外ファイルをループ内スキップ
-						continue;
-					} else {
-						LogUtil.warningLog("unknown status in " + line);
-						continue;
-					}
-
-					// 分類キーの取得
-			        String classify = this.classifier().getClassifyName(strpath);
-			        result.setClassify(classify);
-					// 分類キーでの集計
-			        DiffCountResultsAssortedStatus resultsAssorted;
-					if (!this.resultMap.containsKey(classify)) {
-						// 新しい分類種別のキーを追加
-						resultsAssorted = new DiffCountResultsAssortedStatus(classify);
-					} else {
-						resultsAssorted
-							= (DiffCountResultsAssortedStatus) this.resultMap.get(classify);
-					}
-					resultsAssorted.add(result);
-					this.resultMap.put(classify, resultsAssorted);
-				}
-			}
-			this.aoutText = sbaout.toString();
-			this.moutText = sbmout.toString();
-			//LogUtil.debugLog("Input Lines = " + linectr);
-			//LogUtil.debugLog("AOut Lines = " + alinectr);
-			//LogUtil.debugLog("MOut Lines = " + mlinectr);
+			this.aggregateDiff(reader, linectr);
 		} catch (IOException e) {
 			LogUtil.errorLog("Read error : " + infile);
 			throw new RuntimeException(e);
@@ -254,6 +203,115 @@ public final class DiffMainProc extends AbstractReportMainProc {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	private void aggregateDiff(final BufferedReader reader, final int skippedLines) throws IOException {
+		if (reader == null) {
+			return;
+		}
+		StringBuilder sbaout = new StringBuilder();
+		StringBuilder sbmout = new StringBuilder();
+		int alinectr = 0;
+		int mlinectr = 0;
+
+		int linectr = skippedLines;
+		String line = null;
+		PathDepthList pathNodeList = new PathDepthList();
+
+		while ((line = reader.readLine()) != null) {
+			// ファイル1行毎の処理
+			linectr++;
+			// 行の解析結果をDiffCountResultに保持
+			DiffCountResultForReport result = null;
+			try {
+				result = new DiffCountResultForReport(line, this.formatType);
+			} catch (IllegalFormattedLineException e) {
+				continue;
+			}
+			if (!OPTVAL_CSV.equals(this.formatType)) {
+				// CSVではないテキスト形式の場合にノード名でパスリストを更新し、パスを設定する
+				try {
+					pathNodeList.setNodeIntoDepth(result.nodeName(), result.depth());
+				} catch (Exception e) {
+					LogUtil.warningLog("illegal path depth = " + line);
+				}
+				// TEXT形式の場合は、V.1.x互換で先頭に'/'を付与する
+				StringBuilder sb = new StringBuilder();
+				sb.append("/").append(pathNodeList.toString());
+				result.setFilePath(sb.toString());
+			}
+			//LogUtil.debugLog("path = " + result.filePath() + " [" + result.statusText()
+			//		+ "] (add)" + result.addedSteps() + " (del)" + result.deletedSteps());
+			// ノードがファイルの場合は以下の処理実施
+			if (result.isFile()) {
+				// 	ファイルの処理
+				// 言語（拡張子）のマッチング処理
+
+				// 変更ステータスで仕分けて対象ファイルの処理
+				DiffStatusEnum diffstat
+					= this.statusText.whichDiffStatusIs(result.statusText());
+				result.setDiffStatus(diffstat);
+				if (diffstat == null) {
+					LogUtil.warningLog("unknown status in " + line);
+					continue;
+				} else if (diffstat == DiffStatusEnum.ADDED) {
+					if (this.aoutfile != null) {
+						// 新規ファイルリスト出力ON
+						// StepCounterの仕様に合わせ先頭に"/"
+						// ファイル出力用文字列で今後処理もしないので改行コードをシステム用に
+						sbaout.append(result.filePath()).append(LINE_SEP);
+						alinectr++;
+					}
+				} else if (diffstat == DiffStatusEnum.MODIFIED) {
+					if (this.moutfile != null) {
+						// 修正ファイルリスト出力ON
+						// StepCounterの仕様に合わせ先頭に"/"
+						// ファイル出力用文字列で今後処理もしないので改行コードをシステム用に
+						sbmout.append(result.filePath()).append(LINE_SEP);
+						mlinectr++;
+					}
+				} else if (diffstat == DiffStatusEnum.DROPED) {
+					int nop = 0; // 処理なし
+				} else if (diffstat == DiffStatusEnum.UNCHANGED) { // 変更なし
+					this.unchangeFiles++;
+					//LogUtil.debugLog("Unchange: " + line);
+					// 変更なしファイルを言語別集計しないならループ内スキップ
+					if (!this.unchangeByLang) {
+						//LogUtil.debugLog(
+						//		"Unchange files not to be classified");
+						continue;
+					}
+				} else if (diffstat == DiffStatusEnum.UNSUPPORTED) { // サポート対象外
+					this.ignoreFiles++;
+					//LogUtil.debugLog("Unsupport: " + line);
+					// サポート対象外ファイルをループ内スキップ
+					continue;
+				} else {
+					LogUtil.warningLog("unknown status in " + line);
+					continue;
+				}
+
+				// 分類キーの取得
+				String classify = this.classifier().getClassifyName(result.filePath());
+				result.setClassify(classify);
+				// 分類キーでの集計
+				DiffCountResultsAssortedStatus resultsAssorted;
+				if (!this.resultMap.containsKey(classify)) {
+					// 新しい分類種別のキーを追加
+					resultsAssorted = new DiffCountResultsAssortedStatus(classify);
+				} else {
+					resultsAssorted
+					= (DiffCountResultsAssortedStatus) this.resultMap.get(classify);
+				}
+				resultsAssorted.add(result);
+				this.resultMap.put(classify, resultsAssorted);
+			}
+		}
+		this.aoutText = sbaout.toString();
+		this.moutText = sbmout.toString();
+		//LogUtil.debugLog("Input Lines = " + linectr);
+		//LogUtil.debugLog("AOut Lines = " + alinectr);
+		//LogUtil.debugLog("MOut Lines = " + mlinectr);
 	}
 
 	private void reportDiff() {

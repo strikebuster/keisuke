@@ -8,6 +8,7 @@ import java.util.List;
 
 import keisuke.DiffStatusEnum;
 import keisuke.count.NakedSourceCode;
+import keisuke.count.SortOrderEnum;
 import keisuke.count.StepCutter;
 import keisuke.count.language.XmlDefinedStepCounterFactory;
 import keisuke.count.util.FileNameUtil;
@@ -20,6 +21,7 @@ import keisuke.util.StringUtil;
  */
 public class DiffCountFunction {
 
+	private SortOrderEnum sortingOrder = SortOrderEnum.OS;
 	private String encoding = null;
 	private XmlDefinedStepCounterFactory factory = null;
 
@@ -39,6 +41,23 @@ public class DiffCountFunction {
 	}
 
 	/**
+	 * ファイルリストのソート順を設定する
+	 * @param order ソート順
+	 */
+	protected void setSortingOrder(final SortOrderEnum order) {
+		this.sortingOrder = order;
+	}
+
+	private boolean isOsOrder() {
+		if (this.sortingOrder == SortOrderEnum.ON) {
+			// "on"
+			return false;
+		}
+		// "os" & "node"　
+		return true;
+	}
+
+	/**
 	 * 2つのディレクトリ配下のソースコードの差分をカウントします。
 	 *
 	 * @param oldRoot 変更前のソースツリーのルートディレクトリ
@@ -50,36 +69,42 @@ public class DiffCountFunction {
 		DiffFolderResult root = new DiffFolderResult(newRoot.getName(),
 				DiffStatusEnum.MODIFIED,	// 暫定で変更と設定し、後で再評価する
 				null);
-
+		//root.setFilePath(root.nodeName()); // ルートのパスにノード名を設定
 		this.makeDiffResultAboutSubFolder(root, oldRoot, newRoot);
-
 		return root;
+	}
+
+	private List<File> createSortedFileList(final File folder) {
+		List<File> list = new ArrayList<File>();
+		if (folder == null) {
+			return list;
+		}
+		File[] array;
+		if (this.isOsOrder()) {
+			array = FileNameUtil.sortInOsOrder(folder.listFiles());
+			// SORT順はUNIXとWindowsで異なる、Windowsは大文字小文字区別なし
+		} else {
+			array = FileNameUtil.sortInCodeOrder(folder.listFiles());
+		}
+		if (array != null) {
+			Collections.addAll(list, array);
+		}
+		return list;
+	}
+
+	private int compareInSortOrder(final String o1, final String o2) {
+		if (this.isOsOrder()) {
+			return FileNameUtil.compareInOsOrder(o1, o2);
+		} else {
+			return FileNameUtil.compareInCodeOrder(o1, o2);
+		}
 	}
 
 	private void makeDiffResultAboutSubFolder(final DiffFolderResult parent, final File oldFolder,
 			final File newFolder) {
-		File[] oldFiles = null;
-		if (oldFolder != null) {
-			oldFiles = oldFolder.listFiles();
-		}
-		if (oldFiles == null) {
-			oldFiles = new File[0];
-		}
-		List<File> oldList = new ArrayList<File>();
-		Collections.addAll(oldList, oldFiles);
-		Collections.sort(oldList);
 
-		File[] newFiles = null;
-		if (newFolder != null) {
-			newFiles = newFolder.listFiles();
-		}
-		if (newFiles == null) {
-			newFiles = new File[0];
-		}
-		List<File> newList = new ArrayList<File>();
-		Collections.addAll(newList, newFiles);
-		Collections.sort(newList);
-		// SORT順はUNIXとWindowsで異なる、Windowsは大文字小文字区別なし
+		List<File> oldList = this.createSortedFileList(oldFolder);
+		List<File> newList = this.createSortedFileList(newFolder);
 
 		int newidx = 0;
 		int oldidx = 0;
@@ -104,21 +129,23 @@ public class DiffCountFunction {
 				}
 				oldName = oldFile.getName();
 				//LogUtil.debugLog("OLD node : " + parent.filePath() + "/" + oldName);
-				if (FileNameUtil.compareInOsOrder(newName, oldName) == 0) { // 一致
+				int comp = this.compareInSortOrder(newName, oldName);
+				if (comp == 0) { // 一致
 					found = true;
 					oldidx++;
 					break;
-				} else if (FileNameUtil.compareInOsOrder(newName, oldName) < 0) {
+				} else if (comp < 0) {
 					// oldが大きい==oldにはない==新規
 					// oldidxは進めずに次のnewidxと比較する
 					break;
 				} else { // oldが小さい==newにはない==削除
 					//LogUtil.debugLog("OLD is REMOVED");
-					result = createDiffResult(parent, oldFile, null, DiffStatusEnum.DROPED);
+					result = this.createDiffResult(parent, oldFile, null, DiffStatusEnum.DROPED);
 					parent.addChild(result);
 					// ディレクトリの場合は再帰的に処理
 					if (oldFile.isDirectory()) {
-						makeDiffResultAboutSubFolder((DiffFolderResult) result, oldFile, null);
+						this.makeDiffResultAboutSubFolder(
+								(DiffFolderResult) result, oldFile, null);
 					}
 				}
 				oldidx++;
@@ -126,7 +153,7 @@ public class DiffCountFunction {
 			if (!found) {
 				// oldになかったので「新規」
 				//LogUtil.debugLog("NEW is ADDED");
-				result = createDiffResult(parent, null, newFile, DiffStatusEnum.ADDED);
+				result = this.createDiffResult(parent, null, newFile, DiffStatusEnum.ADDED);
 				parent.addChild(result);
 			} else {
 				// oldにあったのでファイルとディレクトリの組み合わせが合っていれば
@@ -135,24 +162,25 @@ public class DiffCountFunction {
 				//LogUtil.debugLog("NEW == OLD");
 				if ((oldFile.isFile() && newFile.isFile())
 						|| (oldFile.isDirectory() && newFile.isDirectory())) {
-					result = createDiffResult(parent, oldFile, newFile, DiffStatusEnum.MODIFIED);
+					result = this.createDiffResult(
+							parent, oldFile, newFile, DiffStatusEnum.MODIFIED);
 					parent.addChild(result);
 				} else if (newFile.isDirectory()) {
 					// oldがファイルでnewがディレクトリ
-					result = createDiffResult(parent, null, newFile, DiffStatusEnum.ADDED);
+					result = this.createDiffResult(parent, null, newFile, DiffStatusEnum.ADDED);
 					parent.addChild(result);
 
-					AbstractDiffResultForCount result2 = createDiffResult(parent, oldFile, null,
-							DiffStatusEnum.DROPED);
+					AbstractDiffResultForCount result2
+						= this.createDiffResult(parent, oldFile, null, DiffStatusEnum.DROPED);
 					parent.addChild(result2);
 				} else {
 					// newがファイルでoldがディレクトリ
-					AbstractDiffResultForCount result2 = createDiffResult(parent, oldFile, null,
-							DiffStatusEnum.DROPED);
+					AbstractDiffResultForCount result2
+						= this.createDiffResult(parent, oldFile, null, DiffStatusEnum.DROPED);
 					parent.addChild(result2);
-					makeDiffResultAboutSubFolder((DiffFolderResult) result2, oldFile, null);
+					this.makeDiffResultAboutSubFolder((DiffFolderResult) result2, oldFile, null);
 
-					result = createDiffResult(parent, null, newFile, DiffStatusEnum.ADDED);
+					result = this.createDiffResult(parent, null, newFile, DiffStatusEnum.ADDED);
 					parent.addChild(result);
 
 				}
@@ -160,10 +188,10 @@ public class DiffCountFunction {
 			// ディレクトリの場合は再帰的に処理
 			if (newFile.isDirectory()) {
 				if (found) {
-					makeDiffResultAboutSubFolder((DiffFolderResult) result,
+					this.makeDiffResultAboutSubFolder((DiffFolderResult) result,
 							new File(oldFolder, newName), newFile);
 				} else {
-					makeDiffResultAboutSubFolder((DiffFolderResult) result, null, newFile);
+					this.makeDiffResultAboutSubFolder((DiffFolderResult) result, null, newFile);
 				}
 			}
 			newidx++;
@@ -178,7 +206,7 @@ public class DiffCountFunction {
 			oldName = oldFile.getName();
 			//LogUtil.debugLog("OLD node : " + parent.filePath() + "/" + oldName);
 			//LogUtil.debugLog("OLD is REMOVED");
-			result = createDiffResult(parent, oldFile, null, DiffStatusEnum.DROPED);
+			result = this.createDiffResult(parent, oldFile, null, DiffStatusEnum.DROPED);
 			parent.addChild(result);
 			// ディレクトリの場合は再帰的に処理
 			if (oldFile.isDirectory()) {
@@ -186,7 +214,6 @@ public class DiffCountFunction {
 			}
 			oldidx++;
 		}
-
 	}
 
 	private AbstractDiffResultForCount createDiffResult(final DiffFolderResult parent,
@@ -205,7 +232,12 @@ public class DiffCountFunction {
 				}
 			} else {
 				// カッターが取得できなかった場合はサポート対象外とする
-				diffResult = new DiffFileResult(fileName, DiffStatusEnum.UNSUPPORTED, parent);
+				//diffResult = new DiffFileResult(fileName, DiffStatusEnum.UNSUPPORTED, parent);
+				if (status == DiffStatusEnum.ADDED) {
+					diffResult = new DiffFileResult(fileName, status, parent);
+				} else {
+					diffResult = new DiffFileResult(fileName, DiffStatusEnum.UNSUPPORTED, parent);
+				}
 			}
 			return diffResult;
 
@@ -221,10 +253,18 @@ public class DiffCountFunction {
 					} catch (Exception ex) {
 						throw new RuntimeException(ex);
 					}
+				} else {
+					LogUtil.warningLog("Unexpected old file that status is not DROPED : "
+							+ parent.filePath() + "/" + fileName);
 				}
 			} else {
 				// カッターが取得できなかった場合はサポート対象外とする
-				diffResult = new DiffFileResult(fileName, DiffStatusEnum.UNSUPPORTED, parent);
+				//diffResult = new DiffFileResult(fileName, DiffStatusEnum.UNSUPPORTED, parent);
+				if (status == DiffStatusEnum.DROPED) {
+					diffResult = new DiffFileResult(fileName, status, parent);
+				} else {
+					diffResult = new DiffFileResult(fileName, DiffStatusEnum.UNSUPPORTED, parent);
+				}
 			}
 			return diffResult;
 

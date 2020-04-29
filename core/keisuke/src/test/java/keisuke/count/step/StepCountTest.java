@@ -5,24 +5,18 @@ import static keisuke.count.option.CountOptionConstant.*;
 import static keisuke.util.TestUtil.nameOfSystemOS;
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.net.URL;
 import java.util.Locale;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import keisuke.count.StepCount;
-import keisuke.util.StderrCapture;
-import keisuke.util.StdoutCapture;
 
 /**
  * Test class of StepCounter.
- *
  */
 public class StepCountTest {
 
@@ -32,255 +26,207 @@ public class StepCountTest {
 	@After
 	public void tearDown() throws Exception { }
 
-	@Rule
-    public ExpectedException thrownEx = ExpectedException.none();
-
 	@Test
-	public void handleHelpOption() throws Exception {
-		System.out.println("## StepCount ## arg01 ## handleHelpOption ##");
-		//URL expected = this.getClass().getResource("empty.txt");
-
-		String[] args = {"-?", "xxx"};
-		StepCountProc stepcount = new StepCountProc();
-		stepcount.main(args);
-
-		//assertThat(contentOf(stepcount.argMap()), is(equalTo(contentOf(expected))));
-		assertThat(stepcount.argMapEntity(), is(nullValue()));
-	}
-
-	@Test
-	public void handleIllegalOption() throws Exception {
-		System.out.println("## StepCount ## arg02 ## handleIllegalOption ##");
-		String expected = "fail to parse";
-		thrownEx.expect(RuntimeException.class);
-		thrownEx.expectMessage(expected);
-
-		String[] args = {"-zzz", "-s", "-e", "EUC-JP"};
-		StepCountProc stepcount = new StepCountProc();
-		stepcount.main(args);
-
-		fail("Should throw Exception : " + expected);
-	}
-
-	@Test
-	public void handleOptionsButSourceRootIsNotGiven() throws Exception {
-		System.out.println("## StepCount ## arg03 ## handleOptionsButSourceRootIsNotGiven ##");
-
-		StdoutCapture outCapture = new StdoutCapture();
-		StderrCapture errCapture = new StderrCapture();
-		String outMessage = null;
-		String errMessage = null;
-		Exception firedException = null;
-		String expected = "no file argument";
-
-		String[] args = {"-s", "-e", "EUC-JP", "-f", "xml", "-x", "test/data/ktestl2.xml"};
-		StepCountProc stepcount = new StepCountProc();
-		try {
-			stepcount.main(args);
-		} catch (Exception e) {
-			firedException = e;
-		} finally {
-			outMessage = outCapture.getCapturedString();
-			outCapture.finish();
-			errMessage = errCapture.getCapturedString();
-			errCapture.finish();
-		}
-
-		final int expectedNumber = 4;
-		assertThat(stepcount.argMapEntity().size(), is(expectedNumber));
-		assertThat(stepcount.argMapEntity(), hasEntry("showDirectory", "true"));
-		assertThat(stepcount.argMapEntity(), hasEntry("xml", "test/data/ktestl2.xml"));
-		assertThat(stepcount.argMapEntity(), hasEntry("format", "xml"));
-		assertThat(stepcount.argMapEntity(), hasEntry("encoding", "EUC-JP"));
-
-		assertThat(outMessage, containsString("usage"));
-		assertThat(errMessage, containsString("not specified source path"));
-		if (firedException != null) {
-			assertThat(firedException.getMessage(), containsString(expected));
-		} else {
-			// Not reach here because exception is expected to be occured
-			fail("Should throw Exception : " + expected);
-		}
-	}
-
-	@Test
-	public void handleOptionsButInvalidFormat() throws Exception {
-		System.out.println("## StepCount ## arg04 ## handleOptionsButInvalidFormat ##");
+	public void countJavaUsingCsvFormatAndBasePath() throws Exception {
+		System.out.println("## StepCount ## countJavaUsingCsvFormatAndBasePath ##");
 		String newRoot = "test/data/java/root1";
-		String expected = "invalid format value";
-		thrownEx.expect(RuntimeException.class);
-		thrownEx.expectMessage(expected);
-
-		String[] args = {"--" + OPT_FORMAT, "html", "--" + OPT_ENCODE, "UTF-8",
-				"--" + OPT_OUTPUT, "test/out/count_arg04.html", newRoot};
-		StepCountProc stepcount = new StepCountProc();
-		stepcount.main(args);
-
-		fail("Should throw Exception : " + expected);
-	}
-
-	@Test
-	public void handleOptionsButInvalidSort() throws Exception {
-		System.out.println("## StepCount ## arg05 ## handleOptionsButInvalidSort ##");
-		String newRoot = "test/data/java/root1";
-		String expected = "invalid sort value";
-		thrownEx.expect(RuntimeException.class);
-		thrownEx.expectMessage(expected);
-
-		String[] args = {"--" + OPT_SORT, "abc", "-encoding", "UTF-8",
-				"-output", "test/out/count_arg05.txt", newRoot};
-		StepCountProc stepcount = new StepCountProc();
-		stepcount.main(args);
-
-		fail("Should throw Exception : " + expected);
-	}
-
-	@Test
-	public void countJavaUsingCsvFormat() throws Exception {
-		System.out.println("## StepCount ## countJavaUsingCsvFormat ##");
-		String newRoot = "test/data/java/root1";
+		String outFileName = "test/out/count_java_basePath.csv";
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_java.csv");
+				.getResource("stepCount_java_basePath.csv");
 
-		String[] args = {"--" + OPT_SHOWDIR, "-format", "csv", "-encoding", "UTF-8",
-				"-output", "test/out/count_java.csv", newRoot};
+		String[] args = {"--" + OPT_PATH, "base", "-format", "csv", "-encoding", "UTF-8",
+				"-output", outFileName, newRoot};
 		StepCountProc stepcount = new StepCountProc();
 		stepcount.main(args);
 
-		File actual = new File("test/out/count_java.csv");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
-	public void countJavaUsingCsvFormatAndSortOff() throws Exception {
-		System.out.println("## StepCount ## countJavaUsingCsvFormatAndSortOff ##");
+	public void countJavaUsingCsvFormatAndSubPath() throws Exception {
+		System.out.println("## StepCount ## countJavaUsingCsvFormatAndSubPath ##");
 		String newRoot = "test/data/java/root1";
-		// ソートoffでも引数が１つなら文字列順ソートになるのでデフォルトと同じ
+		String outFileName = "test/out/count_java_subPath.csv";
+		URL expected = this.getClass()
+				.getResource("stepCount_java_subPath.csv");
 
-		String[] args = {"-showDirectory", "-format", "csv", "-encoding", "UTF-8",
-				"--" + OPT_SORT, "off", "-output", "test/out/count_java_nosort.csv", newRoot};
+		String[] args = {"--" + OPT_PATH, "sub", "-format", "csv", "-encoding", "UTF-8",
+				"-output", outFileName, newRoot};
 		StepCountProc stepcount = new StepCountProc();
 		stepcount.main(args);
 
-		File actual = new File("test/out/count_java_nosort.csv");
-		URL expected;
-		if (nameOfSystemOS().startsWith("Windows")) {
-			expected = this.getClass().getResource("StepCounterTest_testCount_java_nosort_win.csv");
-		} else {
-			expected = this.getClass().getResource("StepCounterTest_testCount_java.csv");
-		}
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
-	public void countJavaUsingCsvFormatWithoutShowDirectory() throws Exception {
-		System.out.println("## StepCount ## countJavaUsingCsvFormatWithoutShowDirectory ##");
+	public void countJavaUsingCsvFormatAndNoPathWithShowDir() throws Exception {
+		System.out.println("## StepCount ## countJavaUsingCsvFormatAndNoPathWithShowDir ##");
 		String newRoot = "test/data/java/root1";
+		String outFileName = "test/out/count_java_noPath.csv";
+		URL expected = this.getClass()
+				.getResource("stepCount_java_noPath.csv");
+
+		String[] args = {"--" + OPT_SHOWDIR, "--" + OPT_PATH, "no", "-format", "csv", "-encoding", "UTF-8",
+				"-output", outFileName, newRoot};
+		StepCountProc stepcount = new StepCountProc();
+		stepcount.main(args);
+
+		File actual = new File(outFileName);
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
+	}
+
+	@Test
+	public void countJavaUsingCsvFormatWithoutPath() throws Exception {
+		System.out.println("## StepCount ## countJavaUsingCsvFormatWithoutPath ##");
+		String newRoot = "test/data/java/root1";
+		String outFileName = "test/out/count_java.csv";
 		// ファイル名だけで文字列ソート順になる
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_java_nodir.csv");
+				.getResource("stepCount_java_noPath.csv");
 
-		String[] args = {"-f", "csv", "-e", "UTF-8",
-				"-o", "test/out/count_java_nodir.csv", newRoot};
+		String[] args = {"-f", "csv", "-e", "UTF-8", "-o", outFileName, newRoot};
 		StepCountProc stepcount = new StepCountProc();
 		stepcount.main(args);
 
-		File actual = new File("test/out/count_java_nodir.csv");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
-	public void countJavaUsingCsvFormatAndSortOffWithoutShowDirectory() throws Exception {
-		System.out.println("## StepCount ## countJavaUsingCsvFormatAndSortOffWithoutShowDirectory ##");
+	public void countJavaUsingCsvFormatAndNoPath() throws Exception {
+		System.out.println("## StepCount ## countJavaUsingCsvFormatAndNoPath ##");
 		String newRoot = "test/data/java/root1";
+		String outFileName = "test/out/count_java_noPath.csv";
+		// ファイル名だけで文字列ソート順になる
+		URL expected = this.getClass()
+				.getResource("stepCount_java_noPath.csv");
+
+		String[] args = {"-p", "no", "-f", "csv", "-e", "UTF-8", "-o", outFileName, newRoot};
+		StepCountProc stepcount = new StepCountProc();
+		stepcount.main(args);
+
+		File actual = new File(outFileName);
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
+	}
+
+	@Test
+	public void countJavaUsingCsvFormatAndBasePathAndSortOff() throws Exception {
+		System.out.println("## StepCount ## countJavaUsingCsvFormatAndBasePathAndSortOff ##");
+		String newRoot = "test/data/java/root1";
+		String outFileName = "test/out/count_java_basePath_noSort.csv";
+		// ソートoffでも引数が１つなら文字列順ソートになるのでデフォルトと同じ
+
+		String[] args = {"-path", "base", "-format", "csv", "-encoding", "UTF-8",
+				"--" + OPT_SORT, "off", "-output", outFileName, newRoot};
+		StepCountProc stepcount = new StepCountProc();
+		stepcount.main(args);
+
+		File actual = new File(outFileName);
+		URL expected;
+		if (nameOfSystemOS().startsWith("Windows")) {
+			expected = this.getClass().getResource("stepCount_java_basePath_noSort_win.csv");
+		} else {
+			expected = this.getClass().getResource("stepCount_java_basePath.csv");
+		}
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
+	}
+
+	@Test
+	public void countJavaUsingCsvFormatAndSortOffWithoutPath() throws Exception {
+		System.out.println("## StepCount ## countJavaUsingCsvFormatAndSortOffWithoutPath ##");
+		String newRoot = "test/data/java/root1";
+		String outFileName = "test/out/count_java_noSort.csv";
 		// ソートなしの場合、showDirectory指定した場合のソートなしの順番と同じになる
 
 		String[] args = {"-f", "csv", "-e", "UTF-8", "-S", "off",
-				"-o", "test/out/count_java_nodir_nosort.csv", newRoot};
+				"-o", outFileName, newRoot};
 		StepCountProc stepcount = new StepCountProc();
 		stepcount.main(args);
 
-		File actual = new File("test/out/count_java_nodir_nosort.csv");
+		File actual = new File(outFileName);
 		URL expected;
 		if (nameOfSystemOS().startsWith("Windows")) {
-			expected = this.getClass().getResource("StepCounterTest_testCount_java_nodir_nosort_win.csv");
+			expected = this.getClass().getResource("stepCount_java_noPath_noSort_win.csv");
 		} else {
-			expected = this.getClass().getResource("StepCounterTest_testCount_java_nodir_nosort.csv");
+			expected = this.getClass().getResource("stepCount_java_noPath_noSort.csv");
 		}
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
-	public void countJavaUsingCsvFormatWhenFilesAreGiven() throws Exception {
-		System.out.println("## StepCount ## countJavaUsingCsvFormatWhenFilesAreGiven ##");
+	public void countJavaUsingCsvFormatAndBasePathWhenFilesAreGiven() throws Exception {
+		System.out.println("## StepCount ## countJavaUsingCsvFormatAndBasePathWhenFilesAreGiven ##");
 		String newRoot = "test/data/java/root1";
+		String outFileName = "test/out/count_java_files_basePath.csv";
 		// ディレクトリ付きパス名で文字列ソート順になる
+		// ファイルが引数のときはディレクトリパスは編集しない。-p base, -p sub, -s は同じ結果
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_java_files.csv");
+				.getResource("stepCount_java_files_path.csv");
 
-		String[] args = {"-s", "-format", "csv", "-encoding", "UTF-8",
-				"-output", "test/out/count_java_files.csv",
+		String[] args = {"-s", "-format", "csv", "-encoding", "UTF-8", "-output", outFileName,
 				newRoot + "/test/Utils.java", newRoot + "/src/StringUtil.java"};
 		StepCountProc stepcount = new StepCountProc();
 		stepcount.main(args);
 
-		File actual = new File("test/out/count_java_files.csv");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
-	public void countJavaUsingCsvFormatWithoutShowDirectoryWhenFilesAreGiven() throws Exception {
+	public void countJavaUsingCsvFormatWithoutPathWhenFilesAreGiven() throws Exception {
 		System.out.println("## StepCount ## "
-				+ "countJavaUsingCsvFormatWithoutShowDirectoryWhenFilesAreGiven ##");
+				+ "countJavaUsingCsvFormatWithoutPathWhenFilesAreGiven ##");
 		String newRoot = "test/data/java/root1";
+		String outFileName = "test/out/count_java_files.csv";
 		// ファイル名だけで文字列ソート順になる
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_java_nodir_files.csv");
+				.getResource("stepCount_java_files_noPath.csv");
 
-		String[] args = {"-format", "csv", "-encoding", "UTF-8",
-				"-output", "test/out/count_java_nodir_files.csv",
+		String[] args = {"-format", "csv", "-encoding", "UTF-8", "-output", outFileName,
 				newRoot + "/test/Utils.java", newRoot + "/src/StringUtil.java"};
 		StepCountProc stepcount = new StepCountProc();
 		stepcount.main(args);
 
-		File actual = new File("test/out/count_java_nodir_files.csv");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
-	public void countJavaUsingCsvFormatAndSortOffWithoutShowDirectoryWhenFilesAreGiven() throws Exception {
+	public void countJavaUsingCsvFormatAndSortOffWithoutPathWhenFilesAreGiven() throws Exception {
 		System.out.println("## StepCount ## "
-				+ "countJavaUsingCsvFormatAndSortOffWithoutShowDirectoryWhenFilesAreGiven ##");
+				+ "countJavaUsingCsvFormatAndSortOffWithoutPathWhenFilesAreGiven ##");
 		String newRoot = "test/data/java/root1";
+		String outFileName = "test/out/count_java_files_noSort.csv";
 		// ファイルを引数で渡したときにソートなしの場合、引数の指定順になる
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_java_nodir_files_nosort.csv");
+				.getResource("stepCount_java_files_noPath_noSort.csv");
 
-		String[] args = {"-format", "csv", "-encoding", "UTF-8", "-sort", "off",
-				"-output", "test/out/count_java_nodir_files_nosort.csv",
+		String[] args = {"-format", "csv", "-encoding", "UTF-8", "-sort", "off", "-output", outFileName,
 				newRoot + "/test/Utils.java", newRoot + "/src/StringUtil.java"};
 		StepCountProc stepcount = new StepCountProc();
 		stepcount.main(args);
 
-		File actual = new File("test/out/count_java_nodir_files_nosort.csv");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
-	public void countJavaUsingCsvFormatWithoutShowDirectoryWhenAFileIsGiven() throws Exception {
+	public void countJavaUsingCsvFormatWithoutPathWhenAFileIsGiven() throws Exception {
 		System.out.println("## StepCount ## "
-				+ "countJavaUsingCsvFormatWithoutShowDirectoryWhenAFileIsGiven ##");
+				+ "countJavaUsingCsvFormatWithoutPathWhenAFileIsGiven ##");
 		String newRoot = "test/data/java/root1";
+		String outFileName = "test/out/count_java_afile.csv";
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_java_nodir_afile.csv");
+				.getResource("stepCount_java_afile_noPath.csv");
 
-		String[] args = {"-format", "csv", "-encoding", "UTF-8",
-				"-output", "test/out/count_java_nodir_afile.csv",
+		String[] args = {"-format", "csv", "-encoding", "UTF-8", "-output", outFileName,
 				newRoot + "/src/StringUtil.java"};
 		StepCountProc stepcount = new StepCountProc();
 		stepcount.main(args);
 
-		File actual = new File("test/out/count_java_nodir_afile.csv");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
@@ -291,325 +237,351 @@ public class StepCountTest {
 		Locale.setDefault(Locale.ENGLISH);
 
 		String newRoot = "test/data/java/root1";
+		String outFileName = "test/out/count_java_basePath_en.csv";
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_java_en.csv");
+				.getResource("stepCount_java_basePath_en.csv");
 
-		String[] args = {"-s", "-f", "csv", "-e", "UTF-8",
-				"-o", "test/out/count_java_en.csv", newRoot};
+		String[] args = {"-p", "base", "-f", "csv", "-e", "UTF-8",
+				"-o", outFileName, newRoot};
 		StepCountProc stepcount = new StepCountProc();
 		try {
 			stepcount.main(args);
 		} finally {
 			Locale.setDefault(org);
 		}
-		File actual = new File("test/out/count_java_en.csv");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
-	public void countJavaUsingDefaultFormatWhichIsText() throws Exception {
+	public void countJavaUsingDefaultFormatWhichIsTextAndBasePath() throws Exception {
 		System.out.println("## StepCount ## countJavaUsingTextFormat ##");
 		String newRoot = "test/data/java/root1";
+		String outFileName = "test/out/count_java_basePath.txt";
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_java.txt");
+				.getResource("stepCount_java_basePath.txt");
 
-		String[] args = {"-showDirectory", "-encoding", "UTF-8",
-				"-output", "test/out/count_java.txt", newRoot};
+		String[] args = {"-path", "base", "-encoding", "UTF-8",
+				"-output", outFileName, newRoot};
 		StepCountProc stepcount = new StepCountProc();
 		stepcount.main(args);
-		File actual = new File("test/out/count_java.txt");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
-	public void countJavaUsingTextFormatWhenLocaleIsEnglish() throws Exception {
+	public void countJavaUsingTextFormatAndBasePathWhenLocaleIsEnglish() throws Exception {
 		System.out.println("## StepCount ## countJavaUsingTextFormatWhenLocaleIsEnglish ##");
 		Locale org = Locale.getDefault();
 		Locale.setDefault(Locale.ENGLISH);
 
 		String newRoot = "test/data/java/root1";
+		String outFileName = "test/out/count_java_basePath_en.txt";
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_java_en.txt");
+				.getResource("stepCount_java_basePath_en.txt");
 
-		String[] args = {"--showDirectory", "--encoding", "UTF-8",
-				"--output", "test/out/count_java_en.txt", newRoot};
+		String[] args = {"--path", "base", "--encoding", "UTF-8",
+				"--output", outFileName, newRoot};
 		StepCountProc stepcount = new StepCountProc();
 		try {
 			stepcount.main(args);
 		} finally {
 			Locale.setDefault(org);
 		}
-		File actual = new File("test/out/count_java_en.txt");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
-	public void countJavaUsingJsonFormat() throws Exception {
-		System.out.println("## StepCount ## countJavaUsingJsonFormat ##");
+	public void countJavaUsingJsonFormatAndSubPath() throws Exception {
+		System.out.println("## StepCount ## countJavaUsingJsonFormatAndSubPath ##");
 		String newRoot = "test/data/java/root1";
+		String outFileName = "test/out/count_java_subPath.json";
 		URL expected = this.getClass().getResource(
-				"StepCounterTest_testCount_java.json");
+				"stepCount_java_subPath.json");
 
-		String[] args = {"-showDirectory", "-format", "json", "-encoding", "UTF-8",
-				"-output", "test/out/count_java.json", newRoot};
+		String[] args = {"-p", "sub", "-format", "json", "-encoding", "UTF-8",
+				"-output", outFileName, newRoot};
 		StepCountProc stepcount = new StepCountProc();
 		stepcount.main(args);
 
-		File actual = new File("test/out/count_java.json");
+		File actual = new File(outFileName);
 		// JSON形式ではエンコードはUTF-8固定
 		assertThat(rawContentOf(actual, "UTF-8"), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
-	public void countJavaUsingJsonFormatWhenLocaleIsEnglish() throws Exception {
-		System.out.println("## StepCount ## countJavaUsingJsonFormatWhenLocaleIsEnglish ##");
+	public void countJavaUsingJsonFormatAndBasePathWhenLocaleIsEnglish() throws Exception {
+		System.out.println("## StepCount ## countJavaUsingJsonFormatAndBasePathWhenLocaleIsEnglish ##");
 
 		Locale org = Locale.getDefault();
 		Locale.setDefault(Locale.ENGLISH);
 
 		String newRoot = "test/data/java/root1";
+		String outFileName = "test/out/count_java_basePath_en.json";
+		// 出力結果は英語でも日本語でも同じ
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_java_en.json");
+				.getResource("stepCount_java_basePath_en.json");
 
-		String[] args = {"-s", "--format", "json", "-encoding", "UTF-8",
-				"--output", "test/out/count_java_en.json", newRoot};
+		String[] args = {"-p", "base", "--format", "json", "-encoding", "UTF-8",
+				"--output", outFileName, newRoot};
 		StepCountProc stepcount = new StepCountProc();
 		try {
 			stepcount.main(args);
 		} finally {
 			Locale.setDefault(org);
 		}
-		File actual = new File("test/out/count_java_en.json");
+		File actual = new File(outFileName);
 		// JSON形式ではエンコードはUTF-8固定
 		assertThat(rawContentOf(actual, "UTF-8"), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
-	public void countJavaUsingXmlFormat() throws Exception {
-		System.out.println("## StepCount ## countJavaUsingXmlFormat ##");
+	public void countJavaUsingXmlFormatAndSubPath() throws Exception {
+		System.out.println("## StepCount ## countJavaUsingXmlFormatAndSubPath ##");
 		String newRoot = "test/data/java/root1";
+		String outFileName = "test/out/count_java_subPath.xml";
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_java.xml");
+				.getResource("stepCount_java_subPath.xml");
 
-		String[] args = {"-showDirectory", "-format", "xml", "-encoding", "UTF-8",
-				"-output", "test/out/count_java.xml", newRoot};
+		String[] args = {"-path", "sub", "-format", "xml", "-encoding", "UTF-8",
+				"-output", outFileName, newRoot};
 		StepCountProc stepcount = new StepCountProc();
 		stepcount.main(args);
 
-		File actual = new File("test/out/count_java.xml");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
-	public void countJavaUsingXmlFormatWhenLocaleIsEnglish() throws Exception {
-		System.out.println("## StepCount ## countJavaUsingXmlFormatWhenLocaleIsEnglish ##");
+	public void countJavaUsingXmlFormatAndBasePathWhenLocaleIsEnglish() throws Exception {
+		System.out.println("## StepCount ## countJavaUsingXmlFormatAndBasePathWhenLocaleIsEnglish ##");
 
 		Locale org = Locale.getDefault();
 		Locale.setDefault(Locale.ENGLISH);
 
 		String newRoot = "test/data/java/root1";
+		String outFileName = "test/out/count_java_basePath_en.xml";
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_java_en.xml");
+				.getResource("stepCount_java_basePath_en.xml");
 
-		String[] args = {"-showDirectory", "-format", "xml", "-encoding", "UTF-8",
-				"-output", "test/out/count_java_en.xml", newRoot};
+		String[] args = {"-path", "base", "-format", "xml", "-encoding", "UTF-8",
+				"-output", outFileName, newRoot};
 		StepCountProc stepcount = new StepCountProc();
 		try {
 			stepcount.main(args);
 		} finally {
 			Locale.setDefault(org);
 		}
-		File actual = new File("test/out/count_java_en.xml");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
-	public void countJavaUsingExcelFormat() throws Exception {
-		System.out.println("## StepCount ## countJavaUsingExcelFormat ##");
+	public void countJavaUsingExcelFormatAndSubPath() throws Exception {
+		System.out.println("## StepCount ## countJavaUsingExcelFormatAndSubPath ##");
 		String newRoot = "test/data/java/root1";
+		String outFileName = "test/out/count_java_subPath.xls";
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_java.xls");
+				.getResource("stepCount_java_subPath.xls");
 
-		String[] args = {"-showDirectory", "-format", "excel", "-encoding", "UTF-8",
-				"-output", "test/out/count_java.xls", newRoot};
+		String[] args = {"-path", "sub", "-format", "excel", "-encoding", "UTF-8",
+				"-output", outFileName, newRoot};
 		StepCountProc stepcount = new StepCountProc();
 		stepcount.main(args);
 
-		File actual = new File("test/out/count_java.xls");
-		assertThat(binaryContentOf(actual), is(equalTo(binaryContentOf(expected))));
+		File actual = new File(outFileName);
+		//assertThat(binaryContentOf(actual), is(equalTo(binaryContentOf(expected))));
+		assertThat(excelContentOf(actual), is(equalTo(excelContentOf(expected))));
 	}
 
 	@Test
-	public void countJavaUsingExcelFormatWhenLocaleIsEnglish() throws Exception {
-		System.out.println("## StepCount ## countJavaUsingExcelFormatWhenLocaleIsEnglish ##");
+	public void countJavaUsingExcelFormatAndBasePathWhenLocaleIsEnglish() throws Exception {
+		System.out.println("## StepCount ## countJavaUsingExcelFormatAndBasePathWhenLocaleIsEnglish ##");
 		Locale org = Locale.getDefault();
 		Locale.setDefault(Locale.ENGLISH);
 
 		String newRoot = "test/data/java/root1";
+		String outFileName = "test/out/count_java_basePath_en.xls";
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_java_en.xls");
+				.getResource("stepCount_java_basePath_en.xls");
 
-		String[] args = {"-showDirectory", "-format", "excel", "-encoding", "UTF-8",
-				"-output", "test/out/count_java_en.xls", newRoot};
+		String[] args = {"-path", "base", "-format", "excel", "-encoding", "UTF-8",
+				"-output", outFileName, newRoot};
 		StepCountProc stepcount = new StepCountProc();
 		try {
 			stepcount.main(args);
 		} finally {
 			Locale.setDefault(org);
 		}
-		File actual = new File("test/out/count_java_en.xls");
-		assertThat(binaryContentOf(actual), is(equalTo(binaryContentOf(expected))));
+		File actual = new File(outFileName);
+		//assertThat(binaryContentOf(actual), is(equalTo(binaryContentOf(expected))));
+		assertThat(excelContentOf(actual), is(equalTo(excelContentOf(expected))));
 	}
 
 	@Test
-	public void countJavaUsingCsvFormatWhenScmDirectoriesExist() throws Exception {
-		System.out.println("## StepCount ## countJavaUsingCsvFormatWhenScmDirectoriesExist ##");
+	public void countJavaUsingCsvFormatAndBasePathWhenScmDirectoriesExist() throws Exception {
+		System.out.println("## StepCount ## countJavaUsingCsvFormatAndBasePathWhenScmDirectoriesExist ##");
 		String newRoot = "test/data/java/root4";
+		String outFileName = "test/out/count_java_basePath_scm.csv";
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_java_scm.csv");
+				.getResource("stepCount_java_basePath_scm.csv");
 
-		String[] args = {"-showDirectory", "-format", "csv", "-encoding", "UTF-8",
-				"-output", "test/out/count_java_scm.csv", newRoot};
+		String[] args = {"-p", "base", "-format", "csv", "-encoding", "UTF-8",
+				"-output", outFileName, newRoot};
 		StepCountProc stepcount = new StepCountProc();
 		stepcount.main(args);
 
-		File actual = new File("test/out/count_java_scm.csv");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
-	public void countWebCodingInUtf() throws Exception {
-		System.out.println("## StepCount ## countWebCodingInUtf ##");
+	public void countWebCodingInUtfUsingCsvFormatAndSubPath() throws Exception {
+		System.out.println("## StepCount ## countWebCodingInUtfUsingCsvFormatAndSubPath ##");
 		String newRoot = "test/data/web/root1";
+		String outFileName = "test/out/count_web_subPath.csv";
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_web.csv");
+				.getResource("stepCount_web_subPath.csv");
 
-		String[] args = {"-showDirectory", "-format", "csv", "-encoding", "UTF-8",
-				"-output", "test/out/count_web.csv", newRoot};
+		String[] args = {"-p", "sub", "-format", "csv", "-encoding", "UTF-8",
+				"-output", outFileName, newRoot};
 		StepCount.main(args);
 
-		File actual = new File("test/out/count_web.csv");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
-	public void countWebCodingInSjis() throws Exception {
-		System.out.println("## StepCount ## countWebCodingInSjis ##");
+	public void countWebCodingInSjisUsingCsvFormatAndBasePath() throws Exception {
+		System.out.println("## StepCount ## countWebCodingInSjisUsingCsvFormatAndBasePath ##");
 		String newRoot = "test/data/web/root1S";
+		String outFileName = "test/out/count_webS_basePath_scm.csv";
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_webS.csv");
+				.getResource("stepCount_webS_basePath.csv");
 
-		String[] args = {"-showDirectory", "-format", "csv", "-encoding", "Windows-31J",
-				"-output", "test/out/count_webS.csv", newRoot};
+		String[] args = {"-p", "base", "-format", "csv", "-encoding", "Windows-31J",
+				"-output", outFileName, newRoot};
 		StepCount.main(args);
 
-		File actual = new File("test/out/count_webS.csv");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
-	public void countC() throws Exception {
-		System.out.println("## StepCount ## countC ##");
+	public void countCUsingCsvFormatAndSubPath() throws Exception {
+		System.out.println("## StepCount ## countCUsingCsvFormatAndSubPath ##");
 		String newRoot = "test/data/c/root1";
+		String outFileName = "test/out/count_c_subPath.csv";
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_c.csv");
+				.getResource("stepCount_c_subPath.csv");
 
-		String[] args = {"-showDirectory", "-format", "csv", "-encoding", "Shift_JIS",
-				"-output", "test/out/count_c.csv", newRoot};
+		String[] args = {"-p", "sub", "-format", "csv", "-encoding", "Shift_JIS",
+				"-output", outFileName, newRoot};
 		StepCount.main(args);
 
-		File actual = new File("test/out/count_c.csv");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
-	public void countMiscSourcesIncludingMiscCommentsInSjis() throws Exception {
-		System.out.println("## StepCount ## countMiscSourcesIncludingMiscCommentsInSjis ##");
+	public void countMiscSourcesIncludingMiscCommentsInSjisUsingCsvFormatAndBasePath() throws Exception {
+		System.out.println("## StepCount ## "
+				+ "countMiscSourcesIncludingMiscCommentsInSjisUsingCsvFormatAndBasePath ##");
 		String newRoot = "test/data/commentS/root1";
+		String outFileName = "test/out/count_commentS_basePath.csv";
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_commentS.csv");
+				.getResource("stepCount_commentS_basePath.csv");
 
-		String[] args = {"-showDirectory", "-format", "csv", "-encoding", "Windows-31J",
-				"-output", "test/out/count_commentS.csv", newRoot};
+		String[] args = {"-p", "base", "-format", "csv", "-encoding", "Windows-31J",
+				"-output", outFileName, newRoot};
 		StepCount.main(args);
 
-		File actual = new File("test/out/count_commentS.csv");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
-	public void countMiscSourcesIncludingMiscCommentsInSjis2() throws Exception {
-		System.out.println("## StepCount ## countMiscSourcesIncludingMiscCommentsInSjis(2) ##");
+	public void countMiscSourcesIncludingMiscCommentsInSjis2UsingCsvFormatAndBasePath() throws Exception {
+		System.out.println("## StepCount ## "
+				+ "countMiscSourcesIncludingMiscCommentsInSjis(2)UsingCsvFormatAndBasePath ##");
 		String newRoot = "test/data/commentS/root10";
+		String outFileName = "test/out/count_commentS2_basePath.csv";
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_commentS2.csv");
+				.getResource("stepCount_commentS2_basePath.csv");
 
-		String[] args = {"-showDirectory", "-format", "csv", "-encoding", "Windows-31J",
-				"-output", "test/out/count_commentS2.csv", newRoot};
+		String[] args = {"-p", "base", "-format", "csv", "-encoding", "Windows-31J",
+				"-output", outFileName, newRoot};
 		StepCount.main(args);
 
-		File actual = new File("test/out/count_commentS2.csv");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
-	public void countMiscSourcesIncludigMiscCommentsInUtf() throws Exception {
-		System.out.println("## StepCount ## countMiscSourcesIncludigMiscCommentsInUtf ##");
+	public void countMiscSourcesIncludigMiscCommentsInUtfUsingCsvFormatAndBasePath() throws Exception {
+		System.out.println("## StepCount ## "
+				+ "countMiscSourcesIncludigMiscCommentsInUtfUsingCsvFormatAndBasePath ##");
 		String newRoot = "test/data/commentU/root1";
+		String outFileName = "test/out/count_commentU_basePath.csv";
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_commentU.csv");
+				.getResource("stepCount_commentU_basePath.csv");
 
-		String[] args = {"-showDirectory", "-format", "csv", "-encoding", "UTF-8",
-				"-output", "test/out/count_commentU.csv", newRoot};
+		String[] args = {"-path", "base", "-format", "csv", "-encoding", "UTF-8",
+				"-output", outFileName, newRoot};
 		StepCount.main(args);
 
-		File actual = new File("test/out/count_commentU.csv");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
-	public void countMiscSourcesIncludigMiscCommentsInUtf2() throws Exception {
-		System.out.println("## StepCount ## countMiscSourcesIncludigMiscCommentsInUtf(2) ##");
+	public void countMiscSourcesIncludigMiscCommentsInUtf2UsingCsvFormatAndBasePath() throws Exception {
+		System.out.println("## StepCount ## "
+				+ "countMiscSourcesIncludigMiscCommentsInUtf(2)UsingCsvFormatAndBasePath ##");
 		String newRoot = "test/data/commentU/root10";
+		String outFileName = "test/out/count_commentU2_basePath.csv";
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_commentU2.csv");
+				.getResource("stepCount_commentU2_basePath.csv");
 
-		String[] args = {"-showDirectory", "-format", "csv", "-encoding", "UTF-8",
-				"-output", "test/out/count_commentU2.csv", newRoot};
+		String[] args = {"-path", "base", "-format", "csv", "-encoding", "UTF-8",
+				"-output", outFileName, newRoot};
 		StepCount.main(args);
 
-		File actual = new File("test/out/count_commentU2.csv");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	// これ以下のテスト用のデータは未公開
 	@Test
-	public void countCobol() throws Exception {
-		System.out.println("## StepCount ## countCobol ##");
+	public void countCobolUsingCsvFormatAndSubPath() throws Exception {
+		System.out.println("## StepCount ## countCobolUsingCsvFormatAndSubPath ##");
 		String newRoot = "test/data/cobol/root1";
+		String outFileName = "test/out/count_cobol_subPath.csv";
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_cobol.csv");
+				.getResource("stepCount_cobol_subPath.csv");
 
-		String[] args = {"-showDirectory", "-format", "csv", "-encoding", "Shift_JIS",
-				"-output", "test/out/count_cobol.csv", newRoot};
+		String[] args = {"-p", "sub", "-format", "csv", "-encoding", "Shift_JIS",
+				"-output", outFileName, newRoot};
 		StepCount.main(args);
 
-		File actual = new File("test/out/count_cobol.csv");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
-	public void countOW() throws Exception {
-		System.out.println("## StepCount ## countOW ##");
+	public void countOWUsingCsvFormatAndBasePath() throws Exception {
+		System.out.println("## StepCount ## countOWUsingCsvFormatAndBasePath ##");
 		String newRoot = "test/data/ow/root1";
+		String outFileName = "test/out/count_ow_basePath.csv";
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_ow.csv");
+				.getResource("stepCount_ow_basePath.csv");
 
-		String[] args = {"-showDirectory", "-format", "csv", "-encoding", "UTF-8",
-				"-output", "test/out/count_ow.csv", newRoot};
+		String[] args = {"-path", "base", "-format", "csv", "-encoding", "UTF-8",
+				"-output", outFileName, newRoot};
 		StepCount.main(args);
 
-		File actual = new File("test/out/count_ow.csv");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 

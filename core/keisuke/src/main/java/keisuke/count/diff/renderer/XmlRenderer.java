@@ -4,7 +4,9 @@ import static keisuke.util.StringUtil.LINE_SEP;
 import static keisuke.util.StringUtil.SYSTEM_ENCODING;
 
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
+import keisuke.count.SortOrderEnum;
 import keisuke.count.diff.AbstractDiffResultForCount;
 import keisuke.count.diff.DiffFileResult;
 import keisuke.count.diff.DiffFolderResult;
@@ -71,7 +73,13 @@ public class XmlRenderer extends AbstractRenderer {
 		sb.append("added=\"").append(result.addedSteps()).append("\" ");
 		sb.append("deleted=\"").append(result.deletedSteps()).append("\" >").append(LINE_SEP);
 
-		for (AbstractDiffResultForCount obj : result.getSortedChildren()) {
+		List<AbstractDiffResultForCount> children = null;
+		if (this.sortOrder() == SortOrderEnum.NODE) {
+			children = result.getSortedChildren();
+		} else {
+			children = result.getChildren();
+		}
+		for (AbstractDiffResultForCount obj : children) {
 			sb.append(this.getXmlLineAbout(obj, nest + 1));
 		}
 		for (int i = 0; i < nest; i++) {
@@ -94,14 +102,18 @@ public class XmlRenderer extends AbstractRenderer {
 		}
 		sb.append("<file ");
 		sb.append("name=\"").append(EncodeUtil.xmlEscape(result.nodeName())).append("\" ");
-		sb.append("type=\"").append(EncodeUtil.xmlEscape(result.sourceType())).append("\" ");
-		if (result.sourceCategory() != null && result.sourceCategory().length() > 0) {
+		sb.append("type=\"").append(EncodeUtil.xmlEscape(this.getSourceType(result.sourceType())))
+			.append("\" ");
+		if (result.sourceCategory() != null && !result.sourceCategory().isEmpty()) {
 			sb.append("category=\"").append(EncodeUtil.xmlEscape(result.sourceCategory())).append("\" ");
 		}
 		sb.append("status=\"").append(EncodeUtil.xmlEscape(this.getStatusLabelOf(result.status())))
 			.append("\" ");
-		sb.append("added=\"").append(result.addedSteps()).append("\" ");
-		sb.append("deleted=\"").append(result.deletedSteps()).append("\" />").append(LINE_SEP);
+		if (!result.isUnsupported()) {
+			sb.append("added=\"").append(result.addedSteps()).append("\" ");
+			sb.append("deleted=\"").append(result.deletedSteps()).append("\" ");
+		}
+		sb.append("/>").append(LINE_SEP);
 		return sb.toString();
 	}
 

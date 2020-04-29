@@ -1,0 +1,8 @@
+root2/src/jp/sf/hoge.txt,Text,,削除,0,0
+root2/src/jp/FileObj.java,Java,,変更,1,1
+root2/src/JavaCutter.java,Java,Cutter,変更,1,0
+root2/src/Status.java,Java,,新規,4,0
+root2/src/StringUtil.java,Java,,削除,0,42
+root2/test/Utils,未対応,,サポート対象外,,
+root2/test/Utils.java,Java,,変更なし,0,0
+root2/test/Utils.txt,Text,,変更なし,0,0

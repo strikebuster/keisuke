@@ -1,0 +1,10 @@
+[
+	{ "name": "src\/JavaCutter.java", "type": "Java", "category": "Cutter", "status": "変更", "added": 1, "deleted": 0 },
+	{ "name": "src\/Status.java", "type": "Java", "status": "新規", "added": 4, "deleted": 0 },
+	{ "name": "src\/StringUtil.java", "type": "Java", "status": "削除", "added": 0, "deleted": 42 },
+	{ "name": "src\/jp\/FileObj.java", "type": "Java", "status": "変更", "added": 1, "deleted": 1 },
+	{ "name": "src\/jp\/sf\/hoge.txt", "type": "Text", "status": "削除", "added": 0, "deleted": 0 },
+	{ "name": "test\/Utils", "type": "未対応", "status": "サポート対象外" },
+	{ "name": "test\/Utils.java", "type": "Java", "status": "変更なし", "added": 0, "deleted": 0 },
+	{ "name": "test\/Utils.txt", "type": "Text", "status": "変更なし", "added": 0, "deleted": 0 }
+]

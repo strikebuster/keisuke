@@ -14,4 +14,10 @@
 /gui/keisuke-swing/target
 /gui/keisuke-swing/test/data
 /gui/keisuke-swing/test/out
+/ci/keisuke-jenkins/bin
+/ci/keisuke-jenkins/build
+/ci/keisuke-jenkins/target
+/ci/keisuke-jenkins/test/data
+/ci/keisuke-jenkins/test/out
+/ci/keisuke-jenkins/work
 

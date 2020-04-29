@@ -1,6 +1,5 @@
 package keisuke.count.step.format;
 
-//import static keisuke.count.step.format.FormatConstant.MSG_COUNT_FMT_UNDEF;
 import static keisuke.util.StringUtil.LINE_SEP;
 
 import java.io.UnsupportedEncodingException;
@@ -37,35 +36,20 @@ public class JsonFormatter extends AbstractFormatter {
 				sb.append(',');
 			}
 			sb.append(LINE_SEP);
-			sb.append("\t{ \"name\": \"");
-			sb.append(EncodeUtil.unicodeEscape(result.filePath()));
-			sb.append("\", ");
-			// 未対応の形式をフォーマット
-			if (result.sourceType() == null || result.sourceType().length() == 0) {
-				//sb.append("\"type\": \"unknown\"");
-				sb.append("\"type\": \"");
-				//sb.append(this.getMessageText(MSG_COUNT_FMT_UNDEF));
-				sb.append("unknown"); // stepcounter互換で固定
-				sb.append("\"");
-			// 正常にカウントされたものをフォーマット
-			} else {
-				sb.append("\"type\": \"");
-				sb.append(EncodeUtil.unicodeEscape(result.sourceType()));
-				sb.append("\", ");
-				if (result.sourceCategory() != null && result.sourceCategory().length() > 0) {
-					sb.append("\"category\": \"");
-					sb.append(EncodeUtil.unicodeEscape(result.sourceCategory()));
-					sb.append("\", ");
-				}
-
-				sb.append("\"step\": ");
-				sb.append(Long.toString(result.execSteps()));
-				sb.append(", \"none\": ");
-				sb.append(Long.toString(result.blancSteps()));
-				sb.append(", \"comment\": ");
-				sb.append(Long.toString(result.commentSteps()));
-				sb.append(", \"total\": ");
-				sb.append(Long.toString(result.sumSteps()));
+			sb.append("\t{ \"name\": \"")
+				.append(EncodeUtil.unicodeEscape(result.filePath())).append("\", ");
+			sb.append("\"type\": \"")
+				.append(EncodeUtil.unicodeEscape(this.getSourceType(result.sourceType())))
+				.append("\"");
+			if (result.sourceCategory() != null && !result.sourceCategory().isEmpty()) {
+				sb.append(", \"category\": \"")
+					.append(EncodeUtil.unicodeEscape(result.sourceCategory())).append("\"");
+			}
+			if (!result.isUnsupported()) {
+				sb.append(", \"step\": ").append(Long.toString(result.execSteps()));
+				sb.append(", \"none\": ").append(Long.toString(result.blancSteps()));
+				sb.append(", \"comment\": ").append(Long.toString(result.commentSteps()));
+				sb.append(", \"total\": ").append(Long.toString(result.sumSteps()));
 			}
 			sb.append(" }");
 		}

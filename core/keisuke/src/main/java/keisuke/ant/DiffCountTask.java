@@ -57,7 +57,9 @@ public class DiffCountTask extends AbstractCountTask {
         	proc.setSourceEncoding(this.sourceEncoding());
         	proc.setXmlFileName(this.xmlFileName());
         	proc.setFormat(this.formatType());
-			proc.doCountingAndWriting(this.olddir.getCanonicalPath(), this.srcdir.getCanonicalPath(), out);
+        	proc.setPathStyle(this.pathStyleName());
+        	proc.setSortOrder(this.sortType());
+			proc.doCountingAndWriting(this.olddir, this.srcdir, out);
     	} catch (BuildException e) {
 			throw e;
     	} catch (IllegalArgumentException e) {

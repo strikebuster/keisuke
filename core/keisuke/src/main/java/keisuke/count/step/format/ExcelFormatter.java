@@ -1,7 +1,5 @@
 package keisuke.count.step.format;
 
-import static keisuke.count.step.format.FormatConstant.*;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -15,7 +13,7 @@ import java.util.Map;
 import keisuke.StepCountResult;
 import keisuke.count.FormatEnum;
 import keisuke.count.util.ExcelUtil;
-import keisuke.count.util.LocaleUtil;
+import keisuke.util.LocaleUtil;
 import keisuke.util.LogUtil;
 
 /**
@@ -24,7 +22,7 @@ import keisuke.util.LogUtil;
 public class ExcelFormatter extends AbstractFormatter {
 
 	private static final String XLS_PREFIX = "ExcelFormatter";
-	private static final String XLS_EXTENSION = ".xls";
+	private static final String XLS_EXTENSION = "." + FormatEnum.EXCEL.fileExtension();
 	private static final String XLS_DATA_RESULT = "results";
 	private static final String XLS_DATA_CATEGORY = "categories";
 
@@ -72,14 +70,14 @@ public class ExcelFormatter extends AbstractFormatter {
 		StepCountResultDto[] dtoArray = new StepCountResultDto[results.length];
 		for (int i = 0; i < results.length; i++) {
 			StepCountResult result = results[i];
+			dtoArray[i] = new StepCountResultDto(result);
 			if (result.sourceCategory() == null) {
 				// カテゴリ・ファイルタイプが無指定の場合はnullから空文字に修正する。(fishplate対応)
-				result.setSourceCategory("");
+				dtoArray[i].setSourceCategory("");
 			}
-			if (result.sourceType() == null) {
-				result.setSourceType(this.getMessageText(MSG_COUNT_FMT_UNDEF));
+			if (result.isUnsupported()) {
+				dtoArray[i].setSourceType(this.getSourceType(result.sourceType()));
 			}
-			dtoArray[i] = new StepCountResultDto(result);
 		}
 		return dtoArray;
 	}

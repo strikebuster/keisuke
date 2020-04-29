@@ -1,7 +1,11 @@
 package keisuke.count.diff.renderer;
 
+import static keisuke.count.diff.renderer.RendererConstant.MSG_DIFF_RND_UNDEF;
+
 import keisuke.MessageMap;
 import keisuke.count.Formatter;
+import keisuke.count.PathStyleEnum;
+import keisuke.count.SortOrderEnum;
 import keisuke.count.diff.DiffFolderResult;
 import keisuke.report.property.MessageDefine;
 
@@ -16,6 +20,8 @@ public abstract class AbstractRenderer implements Formatter<DiffFolderResult> {
 
 	private MessageMap messageMap = null;
 	private DiffStatusLabels diffStatusLabels = null;
+	private PathStyleEnum pathStyle = PathStyleEnum.BASE;
+	private SortOrderEnum sortOrder = SortOrderEnum.OS;
 
 	protected AbstractRenderer() {	}
 
@@ -52,12 +58,70 @@ public abstract class AbstractRenderer implements Formatter<DiffFolderResult> {
 	}
 
 	/**
+	 * パス表記スタイルを設定する
+	 * @param style パス表記スタイル
+	 */
+	public void setPathStyle(final PathStyleEnum style) {
+		this.pathStyle = style;
+	}
+
+	/**
+	 * パス表記スタイルを返す
+	 * @return パス表記スタイル
+	 */
+	protected PathStyleEnum pathStyle() {
+		return this.pathStyle;
+	}
+
+	/**
+	 * ソート順を設定する
+	 * @param order ソート順
+	 */
+	public void setSortOrder(final SortOrderEnum order) {
+		this.sortOrder = order;
+	}
+
+	/**
+	 * ソート順を返す
+	 * @return ソート順
+	 */
+	protected SortOrderEnum sortOrder() {
+		return this.sortOrder;
+	}
+
+	/**
 	 * 変更ステータスに対するメッセージ定義の文言を返す
 	 * @param status 変更ステータス
 	 * @return メッセージ定義の文言
 	 */
 	protected String getStatusLabelOf(final DiffStatusEnum status) {
 		return this.diffStatusLabels.getLabelOf(status);
+	}
+
+	/**
+	 * 変更ステータスに対するメッセージ定義の文言を返す
+	 * ただしソースタイプが未対応の場合は変更ステータスに依らずUNSUPPORTEDの定義文言を返す
+	 * @param status 変更ステータス
+	 * @param unsupported 未対応フラグ
+	 * @return メッセージ定義の文言
+	 */
+	protected String getStatusLabelOf(final DiffStatusEnum status, final boolean unsupported) {
+		if (unsupported) {
+			return this.diffStatusLabels.getLabelOf(DiffStatusEnum.UNSUPPORTED);
+		}
+		return this.diffStatusLabels.getLabelOf(status);
+	}
+
+	/**
+	 * ソースコードタイプを返す
+	 * @param type 計測結果のソースコードタイプ
+	 * @return ソースコードタイプ
+	 */
+	protected String getSourceType(final String type) {
+		if (type == null) {
+			return this.messageMap.get(MSG_DIFF_RND_UNDEF);
+		}
+		return type;
 	}
 
 	/**

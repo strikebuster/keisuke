@@ -12,7 +12,10 @@ import java.util.List;
 
 import keisuke.StepCountResult;
 import keisuke.count.AbstractCountMainProc;
+import keisuke.count.FormatEnum;
 import keisuke.count.Formatter;
+import keisuke.count.PathStyleEnum;
+import keisuke.count.SortOrderEnum;
 import keisuke.count.StepCountResultForCount;
 import keisuke.count.option.StepCountOption;
 import keisuke.count.step.format.FormatterFactory;
@@ -26,12 +29,29 @@ import keisuke.util.LogUtil;
 public class StepCountProc extends AbstractCountMainProc {
 
 	private String[] pathArray;
-	private boolean showDirectory = false;
-	private String sortType = OPTVAL_SORT_ON;
 	private StepCountResult[] resultsArray;
 
 	public StepCountProc() {
+		super();
 		this.setCommandOption(new StepCountOption());
+	}
+
+	/** {@inheritDoc} */
+	protected void setDefaultFormat() {
+		// StepCountのformatオプションのデフォルトはTEXT
+		this.setFormatEnum(FormatEnum.TEXT);
+	}
+
+	/** {@inheritDoc} */
+	protected void setDefaultPathStyle() {
+		// StepCountのpathオプションのデフォルトはNO
+		this.setPathStyleEnum(PathStyleEnum.NO);
+	}
+
+	/** {@inheritDoc} */
+	protected void setDefaultSortOrder() {
+		// StepCountのsortオプションのデフォルトはON
+		this.setSortOrderEnum(SortOrderEnum.ON);
 	}
 
 	/** {@inheritDoc} */
@@ -54,6 +74,7 @@ public class StepCountProc extends AbstractCountMainProc {
 		String outfile = this.argMap().get(OPT_OUTPUT);
 		String format = this.argMap().get(OPT_FORMAT);
 		String show = this.argMap().get(OPT_SHOWDIR);
+		String path = this.argMap().get(OPT_PATH);
 		String sort = this.argMap().get(OPT_SORT);
 		String xmlfile = this.argMap().get(OPT_XML);
 		// 対象ファイルのエンコード指定を設定
@@ -61,33 +82,39 @@ public class StepCountProc extends AbstractCountMainProc {
 			this.setSourceEncoding(encoding);
 		}
 		// 出力フォーマットの指定
-		if (format == null) {
-			format = OPTVAL_TEXT;
-		} else {
+		if (format != null) {
 			try {
 				this.validateFormatOption(format);
 			} catch (IllegalArgumentException e) {
 				LogUtil.errorLog("'" + format + "' is invalid option value for '" + OPT_FORMAT + "'.");
 				throw e;
 			}
+			this.setFormat(format);
 		}
-		this.setFormat(format);
 		// 出力にディレクトリパスを付けるかを設定
 		if ("true".equalsIgnoreCase(show)) {
 			this.setShowDirectory(true);
 		}
+		// 出力のパス表記方法の指定
+		if (path != null) {
+			try {
+				this.validatePathOption(path);
+			} catch (IllegalArgumentException e) {
+				LogUtil.errorLog("'" + path + "' is invalid option value for '" + OPT_PATH + "'.");
+				throw e;
+			}
+			this.setPathStyle(path);
+		}
 		// ソート順の指定
-		if (sort == null) {
-			sort = OPTVAL_SORT_ON;
-		} else {
+		if (sort != null) {
 			try {
 				this.validateSortOption(sort);
 			} catch (IllegalArgumentException e) {
 				LogUtil.errorLog("'" + sort + "' is invalid option value for '" + OPT_SORT + "'.");
 				throw e;
 			}
+			this.setSortOrder(sort);
 		}
-		this.setSortOrder(sort);
 		// カスタマイズしたXML定義ファイル指定
 		if (xmlfile != null) {
 			this.setXmlFileName(xmlfile);
@@ -109,58 +136,32 @@ public class StepCountProc extends AbstractCountMainProc {
 		}
 	}
 
-	/**
-	 * フォーマットオプションの値としてチェックして不当な場合は例外を投げる
-	 * @param format フォーマット名
-	 * @throws IllegalArgumentException フォーマット名が不正の場合に発行
-	 */
-	protected void validateFormatOption(final String format) throws IllegalArgumentException {
-		if (format == null || format.isEmpty()) {
-			return;
-		}
-		if (!this.commandOption().valuesAs(OPT_FORMAT).contains(format)) {
-			throw new IllegalArgumentException(format + " is invalid format value.");
-		}
-	}
-
-	/**
-	 * ソートオプションの値としてチェックして不当な場合は例外を投げる
-	 * @param sort ソート順
-	 * @throws IllegalArgumentException ソート順が不正の場合に発行
-	 */
-	protected void validateSortOption(final String sort) throws IllegalArgumentException {
-		if (sort == null || sort.isEmpty()) {
-			return;
-		}
-		if (!this.commandOption().valuesAs(OPT_SORT).contains(sort)) {
-			throw new IllegalArgumentException(sort + " is invalid sort value.");
-		}
-	}
-
 	/** {@inheritDoc} */
 	protected void executeCounting() throws IOException {
 		StepCountFunction stepcounter = new StepCountFunction(this.sourceEncoding(), this.xmlFileName());
-		stepcounter.setSortingOrder(this.sortType);
+		stepcounter.setSortingOrder(this.sortOrder());
 
 		List<StepCountResultForCount> list = stepcounter.countAll(this.pathArray);
-		if (this.showDirectory) {
+		if (this.isWithDirectory()) {
 			for (StepCountResultForCount result : list) {
 				// 指定したディレクトリからのファイルパスに上書きします。
-				result.setFilePath(result.getSubPathFromBase());
+				result.setFilePathAsPathStyle(this.pathStyle());
 			}
-		}
-		if (this.sortType.equals(OPTVAL_SORT_ON)) {
-			Collections.sort(list, new Comparator<StepCountResult>() {
-				public int compare(final StepCountResult o1, final StepCountResult o2) {
-					return FileNameUtil.compareInCodeOrder(o1.filePath(), o2.filePath());
-				}
-			});
-		} else if (this.sortType.equals(OPTVAL_SORT_OS)) {
-			Collections.sort(list, new Comparator<StepCountResult>() {
-				public int compare(final StepCountResult o1, final StepCountResult o2) {
-					return FileNameUtil.compareInOsOrder(o1.filePath(), o2.filePath());
-				}
-			});
+		} else {
+			// ディレクトリ含むパスでソートされているのでファイル名のみでソートし直す
+			if (this.sortOrder() == SortOrderEnum.ON) {
+				Collections.sort(list, new Comparator<StepCountResult>() {
+					public int compare(final StepCountResult o1, final StepCountResult o2) {
+						return FileNameUtil.compareInCodeOrder(o1.filePath(), o2.filePath());
+					}
+				});
+			} else if (this.sortOrder() == SortOrderEnum.OS) {
+				Collections.sort(list, new Comparator<StepCountResult>() {
+					public int compare(final StepCountResult o1, final StepCountResult o2) {
+						return FileNameUtil.compareInOsOrder(o1.filePath(), o2.filePath());
+					}
+				});
+			}
 		}
 		this.resultsArray = (StepCountResult[]) list.toArray(new StepCountResultForCount[list.size()]);
 	}
@@ -179,34 +180,12 @@ public class StepCountProc extends AbstractCountMainProc {
 
 	/**
 	 * 引数で指定したディレクトリからの階層を表示するか設定します
-	 * @param show ファイル名にディレクトリパス付ける場合はtrue
+	 * @param showDir ファイル名にディレクトリパス付ける場合はtrue
 	 */
-	public void setShowDirectory(final boolean show) {
-		this.showDirectory = show;
-	}
-
-	/**
-	 * 出力するファイル名にディレクトリパスを付けるかの真偽を返す
-	 * @return ファイル名にディレクトリパス付ける場合はtrue
-	 */
-	protected boolean isShowDirectory() {
-		return this.showDirectory;
-	}
-
-	/**
-	 * 結果出力のソート順をセットします
-	 * @param order ソート順
-	 */
-	public void setSortOrder(final String order) {
-		this.sortType = order;
-	}
-
-	/**
-	 * 結果出力のソート順を返す
-	 * @return ソート順
-	 */
-	protected String sortOrder() {
-		return this.sortType;
+	public void setShowDirectory(final boolean showDir) {
+		if (showDir) {
+			this.setPathStyle(OPTVAL_PATH_SHOWDIR);
+		}
 	}
 
 	/**
@@ -239,10 +218,10 @@ public class StepCountProc extends AbstractCountMainProc {
 		if (output != null) {
 			this.setOutputStream(output);
 		}
-		this.validateSortOption(this.sortType);
+		// validateはset時に実施するのでここではしない。実施するとGUIで設定する互換用の値がエラーになる。
 		this.executeCounting();
 		if (output != null) {
-			this.validateFormatOption(this.format());
+			this.validateFormatOption(this.formatType());
 			this.writeResults();
 		}
 	}

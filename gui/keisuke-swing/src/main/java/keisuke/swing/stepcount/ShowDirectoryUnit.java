@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 
 /**
  * ShowDirectory指定用部品
+ * ver.2.0.0以降では使用しない
  */
 class ShowDirectoryUnit {
 

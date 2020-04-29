@@ -46,7 +46,7 @@ public class LanguageElementWithRule extends LanguageElement {
 	/** {@inheritDoc} */
 	@Override
 	public String debug() {
-		StringBuilder sb = new StringBuilder();
+		StringBuffer sb = new StringBuffer();
 		sb.append(super.debug());
 		sb.append("[DEBUG] LanguageElementWithRule : countRule\n");
 		if (this.countRule != null) {

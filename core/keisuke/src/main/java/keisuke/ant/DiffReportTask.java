@@ -15,6 +15,7 @@ public class DiffReportTask extends AbstractReportTask {
 	private String addedListFileName = null;
 	private String modifiedListFileName = null;
 	private String unchangeMode = null;
+	private String formatType = null;
 
 	/**
 	 * 差分結果から追加されたファイルのリストを出力するファイル名を設定する
@@ -42,6 +43,14 @@ public class DiffReportTask extends AbstractReportTask {
 	}
 
 	/**
+	 * 入力ファイルのフォーマット形式がtextかcsvのいずれであるかを設定する
+	 * @param format textかcsv
+	 */
+	public void setFormat(final String format) {
+		this.formatType = format;
+	}
+
+	/**
 	 * 差分ステップ数計測結果集計を実行します。
 	 * @see org.apache.tools.ant.Task#execute()
 	 * @throws BuildException when one of some exception occured
@@ -58,6 +67,7 @@ public class DiffReportTask extends AbstractReportTask {
 			throw new BuildException(ctype + " is invalid classify value.");
 		}
 		dproc.setClassifierFromXml(ctype, this.xmlFileName());
+		dproc.setFormat(this.formatType);
 		dproc.setAddedListFileName(this.addedListFileName);
 		dproc.setModifiedListFileName(this.modifiedListFileName);
 		dproc.setUnchangeMode(this.unchangeMode);

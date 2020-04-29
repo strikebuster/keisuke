@@ -27,7 +27,7 @@ public class FileNameUtilTest {
 		String expected = "";
 
 		String actual = FileNameUtil.getRelativePath(fullPath, basePath);
-		assertThat(actual, is(equalTo(expected)));
+		assertThat(actual, equalTo(expected));
 	}
 
 	@Test
@@ -38,7 +38,7 @@ public class FileNameUtilTest {
 		String expected = "";
 
 		String actual = FileNameUtil.getRelativePath(fullPath, basePath);
-		assertThat(actual, is(equalTo(expected)));
+		assertThat(actual, equalTo(expected));
 	}
 
 	@Test
@@ -49,7 +49,7 @@ public class FileNameUtilTest {
 		String expected = fullPath;
 
 		String actual = FileNameUtil.getRelativePath(fullPath, basePath);
-		assertThat(actual, is(equalTo(expected)));
+		assertThat(actual, equalTo(expected));
 	}
 
 	@Test
@@ -60,7 +60,7 @@ public class FileNameUtilTest {
 		String expected = fullPath;
 
 		String actual = FileNameUtil.getRelativePath(fullPath, basePath);
-		assertThat(actual, is(equalTo(expected)));
+		assertThat(actual, equalTo(expected));
 	}
 
 	@Test
@@ -71,7 +71,7 @@ public class FileNameUtilTest {
 		String expected = fullPath;
 
 		String actual = FileNameUtil.getRelativePath(fullPath, basePath);
-		assertThat(actual, is(equalTo(expected)));
+		assertThat(actual, equalTo(expected));
 	}
 
 	@Test
@@ -82,7 +82,7 @@ public class FileNameUtilTest {
 		String expected = "main/java/keisuke/count/util/FileNameUtil.java";
 
 		String actual = FileNameUtil.getRelativePath(fullPath, basePath);
-		assertThat(actual, is(equalTo(expected)));
+		assertThat(actual, equalTo(expected));
 	}
 
 	@Test
@@ -94,12 +94,13 @@ public class FileNameUtilTest {
 
 		String actual = FileNameUtil.getRelativePath(fullPath, basePath);
 		if (!nameOfSystemOS().startsWith("Windows")) {
-			assertThat(actual, is(equalTo(expected)));
+			assertThat(actual, equalTo(expected));
 		} else {
 			System.out.println("--- but this is runnning on " + nameOfSystemOS()
-					+ ", so we did not get expected result.");
-			System.out.println("--- actual=" + actual);
-			assertThat(actual, is(not(equalTo(expected))));
+					+ ", so we do not get expected result.");
+			System.out.println("--- expected=" + expected);
+			System.out.println("--- actual  =" + actual);
+			assertThat(actual, not(equalTo(expected)));
 		}
 	}
 
@@ -112,7 +113,7 @@ public class FileNameUtilTest {
 		String expected = fullPath;
 
 		String actual = FileNameUtil.getRelativePath(fullPath, basePath);
-		assertThat(actual, is(equalTo(expected)));
+		assertThat(actual, equalTo(expected));
 	}
 
 	@Test
@@ -123,7 +124,7 @@ public class FileNameUtilTest {
 		String expected = "main/java/keisuke/count/util/FileNameUtil.java";
 
 		String actual = FileNameUtil.getRelativePath(fullPath, basePath);
-		assertThat(actual, is(equalTo(expected)));
+		assertThat(actual, equalTo(expected));
 	}
 
 	@Test
@@ -135,12 +136,13 @@ public class FileNameUtilTest {
 
 		String actual = FileNameUtil.getRelativePath(fullPath, basePath);
 		if (nameOfSystemOS().startsWith("Windows")) {
-			assertThat(actual, is(equalTo(expected)));
+			assertThat(actual, equalTo(expected));
 		} else {
 			System.out.println("--- but this is runnning on " + nameOfSystemOS()
-					+ ", so we did not get expected result.");
-			System.out.println("--- actual=" + actual);
-			assertThat(actual, is(not(equalTo(expected))));
+					+ ", so we do not get expected result.");
+			System.out.println("--- expected=" + expected);
+			System.out.println("--- actual  =" + actual);
+			assertThat(actual, not(equalTo(expected)));
 		}
 	}
 
@@ -153,7 +155,7 @@ public class FileNameUtilTest {
 		String expected = fullPath;
 
 		String actual = FileNameUtil.getRelativePath(fullPath, basePath);
-		assertThat(actual, is(equalTo(expected)));
+		assertThat(actual, equalTo(expected));
 	}
 
 	@Test
@@ -161,10 +163,10 @@ public class FileNameUtilTest {
 		System.out.println("## FileNameUtil ## getSubPathFromBottomOfBaseOnUnix ##");
 		String fullPath = "/var/dir/work/src/main/java/keisuke/count/util/FileNameUtil.java";
 		String basePath = "/var/dir/work/src";
-		String expected = "/src/main/java/keisuke/count/util/FileNameUtil.java";
+		String expected = "src/main/java/keisuke/count/util/FileNameUtil.java";
 
 		String actual = FileNameUtil.getSubPathFromBottomOfBase(fullPath, basePath);
-		assertThat(actual, is(equalTo(expected)));
+		assertThat(actual, equalTo(expected));
 	}
 
 	@Test
@@ -175,15 +177,16 @@ public class FileNameUtilTest {
 		String expected = "/var/dir/work/src/main/java/keisuke/count/util/FileNameUtil.java";
 
 		String actual = FileNameUtil.getSubPathFromBottomOfBase(fullPath, basePath);
-		assertThat(actual, is(equalTo(expected)));
+		assertThat(actual, equalTo(expected));
 		/* Windowsでも同じ結果が得られる
 		if (!nameOfSystemOS().startsWith("Windows")) {
-			assertThat(actual, is(equalTo(expected)));
+			assertThat(actual, equalTo(expected));
 		} else {
 			System.out.println("--- but this is runnning on " + nameOfSystemOS()
-					+ ", so we did not get expected result.");
-			System.out.println("--- actual=" + actual);
-			assertThat(actual, is(not(equalTo(expected))));
+					+ ", so we do not get expected result.");
+			System.out.println("--- expected=" + expected);
+			System.out.println("--- actual  =" + actual);
+			assertThat(actual, not(equalTo(expected)));
 		}
 		*/
 	}
@@ -197,7 +200,7 @@ public class FileNameUtilTest {
 		String expected = fullPath;
 
 		String actual = FileNameUtil.getSubPathFromBottomOfBase(fullPath, basePath);
-		assertThat(actual, is(equalTo(expected)));
+		assertThat(actual, equalTo(expected));
 	}
 
 	@Test
@@ -205,10 +208,10 @@ public class FileNameUtilTest {
 		System.out.println("## FileNameUtil ## getSubPathFromBottomOfBaseOnWindows ##");
 		String fullPath = "D:/var/dir/work/src/main/java/keisuke/count/util/FileNameUtil.java";
 		String basePath = "D:/var/dir/work/src";
-		String expected = "/src/main/java/keisuke/count/util/FileNameUtil.java";
+		String expected = "src/main/java/keisuke/count/util/FileNameUtil.java";
 
 		String actual = FileNameUtil.getSubPathFromBottomOfBase(fullPath, basePath);
-		assertThat(actual, is(equalTo(expected)));
+		assertThat(actual, equalTo(expected));
 	}
 
 	@Test
@@ -220,12 +223,13 @@ public class FileNameUtilTest {
 
 		String actual = FileNameUtil.getSubPathFromBottomOfBase(fullPath, basePath);
 		if (nameOfSystemOS().startsWith("Windows")) {
-			assertThat(actual, is(equalTo(expected)));
+			assertThat(actual, equalTo(expected));
 		} else {
 			System.out.println("--- but this is runnning on " + nameOfSystemOS()
-					+ ", so we did not get expected result.");
-			System.out.println("--- actual=" + actual);
-			assertThat(actual, is(not(equalTo(expected))));
+					+ ", so we do not get expected result.");
+			System.out.println("--- expected=" + expected);
+			System.out.println("--- actual  =" + actual);
+			assertThat(actual, not(equalTo(expected)));
 		}
 	}
 
@@ -238,7 +242,7 @@ public class FileNameUtilTest {
 		String expected = fullPath;
 
 		String actual = FileNameUtil.getSubPathFromBottomOfBase(fullPath, basePath);
-		assertThat(actual, is(equalTo(expected)));
+		assertThat(actual, equalTo(expected));
 	}
 
 	@Test
@@ -250,7 +254,7 @@ public class FileNameUtilTest {
 		String expected = "../work/src/main/java/keisuke/count/util/FileNameUtil.java";
 
 		String actual = FileNameUtil.getSubPathFromTopOfBase(fullPath, basePath, currentPath);
-		assertThat(actual, is(equalTo(expected)));
+		assertThat(actual, equalTo(expected));
 	}
 
 	@Test
@@ -263,7 +267,7 @@ public class FileNameUtilTest {
 		String expected = "work/src/main/java/keisuke/count/util/FileNameUtil.java";
 
 		String actual = FileNameUtil.getSubPathFromTopOfBase(fullPath, basePath, currentPath);
-		assertThat(actual, is(equalTo(expected)));
+		assertThat(actual, equalTo(expected));
 	}
 
 	@Test
@@ -276,12 +280,13 @@ public class FileNameUtilTest {
 
 		String actual = FileNameUtil.getSubPathFromTopOfBase(fullPath, basePath, currentPath);
 		if (!nameOfSystemOS().startsWith("Windows")) {
-			assertThat(actual, is(equalTo(expected)));
+			assertThat(actual, equalTo(expected));
 		} else {
 			System.out.println("--- but this is runnning on " + nameOfSystemOS()
-					+ ", so we did not get expected result.");
-			System.out.println("--- actual=" + actual);
-			assertThat(actual, is(not(equalTo(expected))));
+					+ ", so we do not get expected result.");
+			System.out.println("--- expected=" + expected);
+			System.out.println("--- actual  =" + actual);
+			assertThat(actual, not(equalTo(expected)));
 		}
 	}
 
@@ -295,12 +300,13 @@ public class FileNameUtilTest {
 
 		String actual = FileNameUtil.getSubPathFromTopOfBase(fullPath, basePath, currentPath);
 		if (!nameOfSystemOS().startsWith("Windows")) {
-			assertThat(actual, is(equalTo(expected)));
+			assertThat(actual, equalTo(expected));
 		} else {
 			System.out.println("--- but this is runnning on " + nameOfSystemOS()
-					+ ", so we did not get expected result.");
-			System.out.println("--- actual=" + actual);
-			assertThat(actual, is(not(equalTo(expected))));
+					+ ", so we do not get expected result.");
+			System.out.println("--- expected=" + expected);
+			System.out.println("--- actual  =" + actual);
+			assertThat(actual, not(equalTo(expected)));
 		}
 	}
 
@@ -314,7 +320,7 @@ public class FileNameUtilTest {
 		String expected = fullPath;
 
 		String actual = FileNameUtil.getSubPathFromTopOfBase(fullPath, basePath, currentPath);
-		assertThat(actual, is(equalTo(expected)));
+		assertThat(actual, equalTo(expected));
 	}
 
 	@Test
@@ -326,15 +332,16 @@ public class FileNameUtilTest {
 		String expected = "D:/var/dir/work/src/main/java/keisuke/count/util/FileNameUtil.java";
 
 		String actual = FileNameUtil.getSubPathFromTopOfBase(fullPath, basePath, currentPath);
-		assertThat(actual, is(equalTo(expected)));
+		assertThat(actual, equalTo(expected));
 		/* Unixでも同じ結果が得られる
 		if (nameOfSystemOS().startsWith("Windows")) {
-			assertThat(actual, is(equalTo(expected)));
+			assertThat(actual, equalTo(expected));
 		} else {
 			System.out.println("--- but this is runnning on " + nameOfSystemOS()
-					+ ", so we did not get expected result.");
-			System.out.println("--- actual=" + actual);
-			assertThat(actual, is(not(equalTo(expected))));
+					+ ", so we do not get expected result.");
+			System.out.println("--- expected=" + expected);
+			System.out.println("--- actual  =" + actual);
+			assertThat(actual, not(equalTo(expected)));
 		}
 		*/
 	}
@@ -348,7 +355,7 @@ public class FileNameUtilTest {
 		String expected = "../../../var/dir/work/src/main/java/keisuke/count/util/FileNameUtil.java";
 
 		String actual = FileNameUtil.getSubPathFromTopOfBase(fullPath, basePath, currentPath);
-		assertThat(actual, is(equalTo(expected)));
+		assertThat(actual, equalTo(expected));
 	}
 
 	@Test
@@ -361,7 +368,7 @@ public class FileNameUtilTest {
 		String expected = "work/src/main/java/keisuke/count/util/FileNameUtil.java";
 
 		String actual = FileNameUtil.getSubPathFromTopOfBase(fullPath, basePath, currentPath);
-		assertThat(actual, is(equalTo(expected)));
+		assertThat(actual, equalTo(expected));
 	}
 
 	@Test
@@ -374,12 +381,13 @@ public class FileNameUtilTest {
 
 		String actual = FileNameUtil.getSubPathFromTopOfBase(fullPath, basePath, currentPath);
 		if (nameOfSystemOS().startsWith("Windows")) {
-			assertThat(actual, is(equalTo(expected)));
+			assertThat(actual, equalTo(expected));
 		} else {
 			System.out.println("--- but this is runnning on " + nameOfSystemOS()
-					+ ", so we did not get expected result.");
-			System.out.println("--- actual=" + actual);
-			assertThat(actual, is(not(equalTo(expected))));
+					+ ", so we do not get expected result.");
+			System.out.println("--- expected=" + expected);
+			System.out.println("--- actual  =" + actual);
+			assertThat(actual, not(equalTo(expected)));
 		}
 	}
 
@@ -392,15 +400,16 @@ public class FileNameUtilTest {
 		String expected = "var/dir/work/src/main/java/keisuke/count/util/FileNameUtil.java";
 
 		String actual = FileNameUtil.getSubPathFromTopOfBase(fullPath, basePath, currentPath);
-		assertThat(actual, is(equalTo(expected)));
+		assertThat(actual, equalTo(expected));
 		/* Unixでも同じ結果が得られる
 		if (nameOfSystemOS().startsWith("Windows")) {
-			assertThat(actual, is(equalTo(expected)));
+			assertThat(actual, equalTo(expected));
 		} else {
 			System.out.println("--- but this is runnning on " + nameOfSystemOS()
-					+ ", so we did not get expected result.");
-			System.out.println("--- actual=" + actual);
-			assertThat(actual, is(not(equalTo(expected))));
+					+ ", so we do not get expected result.");
+			System.out.println("--- expected=" + expected);
+			System.out.println("--- actual  =" + actual);
+			assertThat(actual, not(equalTo(expected)));
 		}
 		*/
 	}
@@ -415,6 +424,85 @@ public class FileNameUtilTest {
 		String expected = fullPath;
 
 		String actual = FileNameUtil.getSubPathFromTopOfBase(fullPath, basePath, currentPath);
-		assertThat(actual, is(equalTo(expected)));
+		assertThat(actual, equalTo(expected));
+	}
+
+	@Test
+	public void getTrueFullPathIsAbsolutePathOnUnix() {
+		System.out.println("## FileNameUtil ## "
+				+ "getTrueFullPathIsAbsolutePathOnUnix ##");
+		String targetPath = "/var/dir/work/srcdir";
+		boolean expected = true;
+
+		boolean actual = FileNameUtil.isAbsolutePath(targetPath);
+		if (!nameOfSystemOS().startsWith("Windows")) {
+			assertThat(actual, equalTo(expected));
+		} else {
+			System.out.println("--- but this is runnning on " + nameOfSystemOS()
+					+ ", so we do not get expected result.");
+			System.out.println("--- expected=" + expected);
+			System.out.println("--- actual  =" + actual);
+			assertThat(actual, not(equalTo(expected)));
+		}
+	}
+
+	@Test
+	public void getFalseRelativePathIsAbsolutePathOnUnix() {
+		System.out.println("## FileNameUtil ## "
+				+ "getFalseRelativePathIsAbsolutePathOnUnix ##");
+		String targetPath = "work/srcdir";
+		boolean expected = false;
+
+		boolean actual = FileNameUtil.isAbsolutePath(targetPath);
+		assertThat(actual, equalTo(expected));
+	}
+
+	@Test
+	public void getTrueFullPathIsAbsolutePathOnWindows() {
+		System.out.println("## FileNameUtil ## "
+				+ "getTrueFullPathIsAbsolutePathOnWindows ##");
+		String targetPath = "C:/var/dir/work/srcdir";
+		boolean expected = true;
+
+		boolean actual = FileNameUtil.isAbsolutePath(targetPath);
+		if (nameOfSystemOS().startsWith("Windows")) {
+			assertThat(actual, equalTo(expected));
+		} else {
+			System.out.println("--- but this is runnning on " + nameOfSystemOS()
+					+ ", so we do not get expected result.");
+			System.out.println("--- expected=" + expected);
+			System.out.println("--- actual  =" + actual);
+			assertThat(actual, not(equalTo(expected)));
+		}
+	}
+
+	@Test
+	public void getTrueFullPathWithSmallDriveLetterIsAbsolutePathOnWindows() {
+		System.out.println("## FileNameUtil ## "
+				+ "getTrueFullPathWithSmallDriveLetterIsAbsolutePathOnWindows ##");
+		String targetPath = "c:/var/dir/work/srcdir";
+		boolean expected = true;
+
+		boolean actual = FileNameUtil.isAbsolutePath(targetPath);
+		if (nameOfSystemOS().startsWith("Windows")) {
+			assertThat(actual, equalTo(expected));
+		} else {
+			System.out.println("--- but this is runnning on " + nameOfSystemOS()
+					+ ", so we do not get expected result.");
+			System.out.println("--- expected=" + expected);
+			System.out.println("--- actual  =" + actual);
+			assertThat(actual, not(equalTo(expected)));
+		}
+	}
+
+	@Test
+	public void getFalseRelativePathIsAbsolutePathOnWindows() {
+		System.out.println("## FileNameUtil ## "
+				+ "getFalseRelativePathIsAbsolutePathOnWindows ##");
+		String targetPath = "work/srcdir";
+		boolean expected = false;
+
+		boolean actual = FileNameUtil.isAbsolutePath(targetPath);
+		assertThat(actual, equalTo(expected));
 	}
 }

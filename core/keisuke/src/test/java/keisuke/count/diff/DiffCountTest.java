@@ -21,8 +21,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.fail;
 
 /**
- * Test class of DiffCounter.
- *
+ * Test class of DiffCount.
  */
 public class DiffCountTest {
 
@@ -121,8 +120,7 @@ public class DiffCountTest {
 		thrownEx.expect(RuntimeException.class);
 		thrownEx.expectMessage(expected);
 
-		String[] args = {"-e", "UTF-8", "-f", "record",
-				"-o", "test/out/diff_java.json", newRoot, oldRoot};
+		String[] args = {"-e", "UTF-8", "-f", "record", "-o", "test/out/diff_java.json", newRoot, oldRoot};
 		DiffCountProc diffcount = new DiffCountProc();
 		diffcount.main(args);
 
@@ -134,15 +132,14 @@ public class DiffCountTest {
 		System.out.println("## DiffCount ## countDiffJava ##");
 		String oldRoot = "test/data/java/root1";
 		String newRoot = "test/data/java/root2";
-		URL expected = this.getClass()
-				.getResource("DiffCounterTest_testCount_java.txt");
+		String outFileName = "test/out/diff_java.txt";
+		URL expected = this.getClass().getResource("diffCount_java.txt");
 
-		String[] args = {"-e", "UTF-8", "-f", "text",
-				"-o", "test/out/diff_java.txt", newRoot, oldRoot};
+		String[] args = {"-e", "UTF-8", "-o", outFileName, newRoot, oldRoot};
 		DiffCountProc diffcount = new DiffCountProc();
 		diffcount.main(args);
 
-		File actual = new File("test/out/diff_java.txt");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)),
 				is(equalTo(textContentOf(expected))));
 	}
@@ -155,248 +152,19 @@ public class DiffCountTest {
 
 		String oldRoot = "test/data/java/root1";
 		String newRoot = "test/data/java/root2";
-		URL expected = this.getClass()
-				.getResource("DiffCounterTest_testCount_java_en.txt");
+		String outFileName = "test/out/diff_java_en.txt";
+		URL expected = this.getClass().getResource("diffCount_java_en.txt");
 
-		String[] args = {"-e", "UTF-8", "-f", "text",
-				"-o", "test/out/diff_java_en.txt", newRoot, oldRoot};
+		String[] args = {"-e", "UTF-8", "-f", "text", "-o", outFileName, newRoot, oldRoot};
 		DiffCountProc diffcount = new DiffCountProc();
 		try {
 			diffcount.main(args);
 		} finally {
 			Locale.setDefault(org);
 		}
-		File actual = new File("test/out/diff_java_en.txt");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)),
 				is(equalTo(textContentOf(expected))));
-	}
-
-	@Test
-	public void countDiffJavaUsingCsvFormat() throws Exception {
-		System.out.println("## DiffCount ## countDiffJavaUsingCsvFormat ##");
-		String oldRoot = "test/data/java/root1";
-		String newRoot = "test/data/java/root2";
-		URL expected;
-
-		String[] args = {"-e", "UTF-8", "-f", "csv",
-				"-o", "test/out/diff_java.csv", newRoot, oldRoot};
-		DiffCountProc diffcount = new DiffCountProc();
-		diffcount.main(args);
-
-		File actual = new File("test/out/diff_java.csv");
-		if (nameOfSystemOS().startsWith("Windows")) {
-			expected = this.getClass()
-					.getResource("diffCount_java_win.csv");
-		} else {
-			expected = this.getClass()
-					.getResource("diffCount_java.csv");
-		}
-		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
-	}
-
-	@Test
-	public void countDiffJavaUsingCsvFormatWhenLocaleIsEnglish() throws Exception {
-		System.out.println("## DiffCount ## countDiffJavaUsingCsvFormatWhenLocaleIsEnglish ##");
-		Locale org = Locale.getDefault();
-		Locale.setDefault(Locale.ENGLISH);
-
-		String oldRoot = "test/data/java/root1";
-		String newRoot = "test/data/java/root2";
-		URL expected;
-
-		String[] args = {"-e", "UTF-8", "-f", "csv",
-				"-o", "test/out/diff_java_en.csv", newRoot, oldRoot};
-		DiffCountProc diffcount = new DiffCountProc();
-		try {
-			diffcount.main(args);
-		} finally {
-			Locale.setDefault(org);
-		}
-		File actual = new File("test/out/diff_java_en.csv");
-		if (nameOfSystemOS().startsWith("Windows")) {
-			expected = this.getClass()
-					.getResource("diffCount_java_en_win.csv");
-		} else {
-			expected = this.getClass()
-					.getResource("diffCount_java_en.csv");
-		}
-		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
-	}
-
-	@Test
-	public void countDiffJavaUsingHtmlFormat() throws Exception {
-		System.out.println("## DiffCount ## countDiffJavaUsingHtmlFormat ##");
-		String oldRoot = "test/data/java/root1";
-		String newRoot = "test/data/java/root2";
-		URL expected = this.getClass()
-				.getResource("diffCount_java.html");
-
-		String[] args = {"-e", "UTF-8", "-f", "html",
-				"-o", "test/out/diff_java.html", newRoot, oldRoot};
-		DiffCountProc diffcount = new DiffCountProc();
-		diffcount.main(args);
-
-		File actual = new File("test/out/diff_java.html");
-		assertThat(htmlToRemoveMutableIdFrom(rawContentOf(actual, withoutHeadLines(HTML_IGNORE_LINES))),
-				is(equalTo(htmlToRemoveMutableIdFrom(textContentOf(expected)))));
-	}
-
-	@Test
-	public void countDiffJavaUsingHtmlFormatWhenLocaleIsEnglish() throws Exception {
-		System.out.println("## DiffCount ## countDiffJavaUsingHtmlFormatWhenLocaleIsEnglish ##");
-		Locale org = Locale.getDefault();
-		Locale.setDefault(Locale.ENGLISH);
-
-		String oldRoot = "test/data/java/root1";
-		String newRoot = "test/data/java/root2";
-		URL expected = this.getClass()
-				.getResource("diffCount_java_en.html");
-
-		String[] args = {"-e", "UTF-8", "-f", "html",
-				"-o", "test/out/diff_java_en.html", newRoot, oldRoot};
-		DiffCountProc diffcount = new DiffCountProc();
-		try {
-			diffcount.main(args);
-		} finally {
-			Locale.setDefault(org);
-		}
-		File actual = new File("test/out/diff_java_en.html");
-		assertThat(htmlToRemoveMutableIdFrom(rawContentOf(actual, withoutHeadLines(HTML_IGNORE_LINES))),
-				is(equalTo(htmlToRemoveMutableIdFrom(textContentOf(expected)))));
-	}
-
-	@Test
-	public void countDiffJavaUsingExcelFormat() throws Exception {
-		System.out.println("## DiffCount ## countDiffJavaUsingExcelFormat ##");
-		String oldRoot = "test/data/java/root1";
-		String newRoot = "test/data/java/root2";
-		URL expected = this.getClass()
-				.getResource("diffCount_java.xls");
-
-		String[] args = {"-e", "UTF-8", "-f", "excel",
-				"-o", "test/out/diff_java.xls", newRoot, oldRoot};
-		DiffCountProc diffcount = new DiffCountProc();
-		diffcount.main(args);
-
-		File actual = new File("test/out/diff_java.xls");
-		assertThat(binaryContentOf(actual), is(equalTo(binaryContentOf(expected))));
-	}
-
-	@Test
-	public void countDiffJavaUsingExcelFormatWhenLocaleIsEnglish() throws Exception {
-		System.out.println("## DiffCount ## countDiffJavaUsingExcelFormatWhenLocaleIsEnglish ##");
-		Locale org = Locale.getDefault();
-		Locale.setDefault(Locale.ENGLISH);
-
-		String oldRoot = "test/data/java/root1";
-		String newRoot = "test/data/java/root2";
-		URL expected = this.getClass()
-				.getResource("diffCount_java_en.xls");
-
-		String[] args = {"-e", "UTF-8", "-f", "excel",
-				"-o", "test/out/diff_java_en.xls", newRoot, oldRoot};
-		DiffCountProc diffcount = new DiffCountProc();
-		try {
-			diffcount.main(args);
-		} finally {
-			Locale.setDefault(org);
-		}
-		File actual = new File("test/out/diff_java_en.xls");
-		assertThat(binaryContentOf(actual), is(equalTo(binaryContentOf(expected))));
-	}
-
-	@Test
-	public void countDiffJavaUsingXmlFormat() throws Exception {
-		System.out.println("## DiffCount ## countDiffJavaUsingXmlFormat ##");
-		String oldRoot = "test/data/java/root1";
-		String newRoot = "test/data/java/root2";
-		URL expected = this.getClass()
-				.getResource("diffCount_java.xml");
-
-		String[] args = {"-e", "UTF-8", "-f", "xml",
-				"-o", "test/out/diff_java.xml", newRoot, oldRoot};
-		DiffCountProc diffcount = new DiffCountProc();
-		diffcount.main(args);
-
-		File actual = new File("test/out/diff_java.xml");
-		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
-	}
-
-	@Test
-	public void countDiffJavaUsingXmlFormatWhenLocaleIsEnglish() throws Exception {
-		System.out.println("## DiffCount ## countDiffJavaUsingXmlFormatWhenLocaleIsEnglish ##");
-		Locale org = Locale.getDefault();
-		Locale.setDefault(Locale.ENGLISH);
-
-		String oldRoot = "test/data/java/root1";
-		String newRoot = "test/data/java/root2";
-		URL expected = this.getClass()
-				.getResource("diffCount_java_en.xml");
-
-		String[] args = {"-e", "UTF-8", "-f", "xml",
-				"-o", "test/out/diff_java_en.xml", newRoot, oldRoot};
-		DiffCountProc diffcount = new DiffCountProc();
-		try {
-			diffcount.main(args);
-		} finally {
-			Locale.setDefault(org);
-		}
-		File actual = new File("test/out/diff_java_en.xml");
-		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
-	}
-
-	@Test
-	public void countDiffJavaUsingJsonFormat() throws Exception {
-		System.out.println("## DiffCount ## countDiffJavaUsingJsonFormat ##");
-		String oldRoot = "test/data/java/root1";
-		String newRoot = "test/data/java/root2";
-		URL expected;
-
-		String[] args = {"-e", "UTF-8", "-f", "json",
-				"-o", "test/out/diff_java.json", newRoot, oldRoot};
-		DiffCountProc diffcount = new DiffCountProc();
-		diffcount.main(args);
-
-		File actual = new File("test/out/diff_java.json");
-		if (nameOfSystemOS().startsWith("Windows")) {
-			expected = this.getClass()
-					.getResource("diffCount_java_win.json");
-		} else {
-			expected = this.getClass()
-					.getResource("diffCount_java.json");
-		}
-		// JSON形式ではエンコードはUTF-8固定
-		assertThat(rawContentOf(actual, "UTF-8"), is(equalTo(textContentOf(expected))));
-	}
-
-	@Test
-	public void countDiffJavaUsingJsonFormatWhenLocaleIsEnglish() throws Exception {
-		System.out.println("## DiffCount ## countDiffJavaUsingJsonFormatWhenLocaleIsEnglish ##");
-		Locale org = Locale.getDefault();
-		Locale.setDefault(Locale.ENGLISH);
-
-		String oldRoot = "test/data/java/root1";
-		String newRoot = "test/data/java/root2";
-		URL expected;
-
-		String[] args = {"-e", "UTF-8", "-f", "json",
-				"-o", "test/out/diff_java_en.json", newRoot, oldRoot};
-		DiffCountProc diffcount = new DiffCountProc();
-		try {
-			diffcount.main(args);
-		} finally {
-			Locale.setDefault(org);
-		}
-		File actual = new File("test/out/diff_java_en.json");
-		if (nameOfSystemOS().startsWith("Windows")) {
-			expected = this.getClass()
-					.getResource("diffCount_java_en_win.json");
-		} else {
-			expected = this.getClass()
-					.getResource("diffCount_java_en.json");
-		}
-		// JSON形式ではエンコードはUTF-8固定
-		assertThat(rawContentOf(actual, "UTF-8"), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -404,15 +172,14 @@ public class DiffCountTest {
 		System.out.println("## DiffCount ## countDiffJava(2) ##");
 		String oldRoot = "test/data/java/root1";
 		String newRoot = "test/data/java/root3";
-		URL expected = this.getClass()
-				.getResource("DiffCounterTest_testCount_java2.txt");
+		String outFileName = "test/out/diff_java2.txt";
+		URL expected = this.getClass().getResource("diffCount_java2.txt");
 
-		String[] args = {"-e", "UTF-8", "-f", "text",
-				"-o", "test/out/diff_java2.txt", newRoot, oldRoot};
+		String[] args = {"-e", "UTF-8", "-f", "text", "-o", outFileName, newRoot, oldRoot};
 		DiffCountProc diffcount = new DiffCountProc();
 		diffcount.main(args);
 
-		File actual = new File("test/out/diff_java2.txt");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)),
 				is(equalTo(textContentOf(expected))));
 	}
@@ -422,15 +189,14 @@ public class DiffCountTest {
 		System.out.println("## DiffCount ## countDiffJavaWhenThereIsNoDifference ##");
 		String oldRoot = "test/data/java/root1";
 		String newRoot = "test/data/java/root1";
-		URL expected = this.getClass()
-				.getResource("DiffCounterTest_testCount_java3.txt");
+		String outFileName = "test/out/diff_java_nodiff.txt";
+		URL expected = this.getClass().getResource("diffCount_java_nodiff.txt");
 
-		String[] args = {"-e", "UTF-8", "-f", "text",
-				"-o", "test/out/diff_java3.txt", newRoot, oldRoot};
+		String[] args = {"-e", "UTF-8", "-f", "text", "-o", outFileName, newRoot, oldRoot};
 		DiffCountProc diffcount = new DiffCountProc();
 		diffcount.main(args);
 
-		File actual = new File("test/out/diff_java3.txt");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)),
 				is(equalTo(textContentOf(expected))));
 	}
@@ -440,15 +206,14 @@ public class DiffCountTest {
 		System.out.println("## DiffCount ## countDiffJavaWhenScmDirectoriesExist ##");
 		String oldRoot = "test/data/java/root4";
 		String newRoot = "test/data/java/root2";
-		URL expected = this.getClass()
-				.getResource("DiffCounterTest_testCount_java.txt");
+		String outFileName = "test/out/diff_java_scm.txt";
+		URL expected = this.getClass().getResource("diffCount_java.txt");
 
-		String[] args = {"-e", "UTF-8", "-f", "text",
-				"-o", "test/out/diff_java_scm.txt", newRoot, oldRoot};
+		String[] args = {"-e", "UTF-8", "-f", "text", "-o", outFileName, newRoot, oldRoot};
 		DiffCountProc diffcount = new DiffCountProc();
 		diffcount.main(args);
 
-		File actual = new File("test/out/diff_java_scm.txt");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)),
 				is(equalTo(textContentOf(expected))));
 	}
@@ -458,15 +223,14 @@ public class DiffCountTest {
 		System.out.println("## DiffCount ## countDiffWebCodingInUtf ##");
 		String oldRoot = "test/data/web/root1";
 		String newRoot = "test/data/web/root2";
-		URL expected = this.getClass()
-				.getResource("DiffCounterTest_testCount_web.txt");
+		String outFileName = "test/out/diff_web.txt";
+		URL expected = this.getClass().getResource("diffCount_web.txt");
 
-		String[] args = {"--encoding", "UTF-8",
-				"--output", "test/out/diff_web.txt", newRoot, oldRoot};
+		String[] args = {"--encoding", "UTF-8", "--output", outFileName, newRoot, oldRoot};
 		DiffCountProc diffcount = new DiffCountProc();
 		diffcount.main(args);
 
-		File actual = new File("test/out/diff_web.txt");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)),
 				is(equalTo(textContentOf(expected))));
 	}
@@ -476,15 +240,14 @@ public class DiffCountTest {
 		System.out.println("## DiffCount ## countDiffWebCodingInSjis ##");
 		String oldRoot = "test/data/web/root1S";
 		String newRoot = "test/data/web/root2S";
-		URL expected = this.getClass()
-				.getResource("DiffCounterTest_testCount_webS.txt");
+		String outFileName = "test/out/diff_webS.txt";
+		URL expected = this.getClass().getResource("diffCount_webS.txt");
 
-		String[] args = {"-encoding", "Windows-31J",
-				"-output", "test/out/diff_webS.txt", newRoot, oldRoot};
+		String[] args = {"-encoding", "Windows-31J", "-output", outFileName, newRoot, oldRoot};
 		DiffCountProc diffcount = new DiffCountProc();
 		diffcount.main(args);
 
-		File actual = new File("test/out/diff_webS.txt");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)),
 				is(equalTo(textContentOf(expected))));
 	}
@@ -494,14 +257,13 @@ public class DiffCountTest {
 		System.out.println("## DiffCount ## countDiffC ##");
 		String oldRoot = "test/data/c/root1";
 		String newRoot = "test/data/c/root2";
-		URL expected = this.getClass()
-				.getResource("DiffCounterTest_testCount_c.txt");
+		String outFileName = "test/out/diff_c.txt";
+		URL expected = this.getClass().getResource("diffCount_c.txt");
 
-		String[] args = {"-encoding", "Shift_JIS",
-				"-output", "test/out/diff_c.txt", newRoot, oldRoot};
+		String[] args = {"-encoding", "Shift_JIS", "-output", outFileName, newRoot, oldRoot};
 		DiffCount.main(args);
 
-		File actual = new File("test/out/diff_c.txt");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)),
 				is(equalTo(textContentOf(expected))));
 	}
@@ -511,14 +273,13 @@ public class DiffCountTest {
 		System.out.println("## DiffCount ## countDiffMiscSourcesIncludingMiscCommentsInSjis ##");
 		String oldRoot = "test/data/commentS/root1";
 		String newRoot = "test/data/commentS/root2";
-		URL expected = this.getClass()
-				.getResource("DiffCounterTest_testCount_commentS.txt");
+		String outFileName = "test/out/diff_commentS.txt";
+		URL expected = this.getClass().getResource("diffCount_commentS.txt");
 
-		String[] args = {"-encoding", "Windows-31J",
-				"-output", "test/out/diff_commentS.txt", newRoot, oldRoot};
+		String[] args = {"-encoding", "Windows-31J", "-output", outFileName, newRoot, oldRoot};
 		DiffCount.main(args);
 
-		File actual = new File("test/out/diff_commentS.txt");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)),
 				is(equalTo(textContentOf(expected))));
 	}
@@ -528,14 +289,13 @@ public class DiffCountTest {
 		System.out.println("## DiffCount ## countDiffMiscSourcesIncludingMiscCommentsInSjis(2) ##");
 		String oldRoot = "test/data/commentS/root10";
 		String newRoot = "test/data/commentS/root20";
-		URL expected = this.getClass()
-				.getResource("DiffCounterTest_testCount_commentS2.txt");
+		String outFileName = "test/out/diff_commentS2.txt";
+		URL expected = this.getClass().getResource("diffCount_commentS2.txt");
 
-		String[] args = {"-encoding", "Windows-31J",
-				"-output", "test/out/diff_commentS2.txt", newRoot, oldRoot};
+		String[] args = {"-encoding", "Windows-31J", "-output", outFileName, newRoot, oldRoot};
 		DiffCount.main(args);
 
-		File actual = new File("test/out/diff_commentS2.txt");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)),
 				is(equalTo(textContentOf(expected))));
 	}
@@ -545,14 +305,13 @@ public class DiffCountTest {
 		System.out.println("## DiffCount ## countDiffMiscSourcesIncludingMiscCommentsInUtf ##");
 		String oldRoot = "test/data/commentU/root1";
 		String newRoot = "test/data/commentU/root2";
-		URL expected = this.getClass()
-				.getResource("DiffCounterTest_testCount_commentU.txt");
+		String outFileName = "test/out/diff_commentU.txt";
+		URL expected = this.getClass().getResource("diffCount_commentU.txt");
 
-		String[] args = {"-encoding", "UTF-8",
-				"-output", "test/out/diff_commentU.txt", newRoot, oldRoot};
+		String[] args = {"-encoding", "UTF-8", "-output", outFileName, newRoot, oldRoot};
 		DiffCount.main(args);
 
-		File actual = new File("test/out/diff_commentU.txt");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)),
 				is(equalTo(textContentOf(expected))));
 	}
@@ -563,14 +322,13 @@ public class DiffCountTest {
 		System.out.println("## DiffCount ## countDiffMiscSourcesIncludingMiscCommentsInUtf(2) ##");
 		String oldRoot = "test/data/commentU/root10";
 		String newRoot = "test/data/commentU/root20";
-		URL expected = this.getClass()
-				.getResource("DiffCounterTest_testCount_commentU2.txt");
+		String outFileName = "test/out/diff_commentU2.txt";
+		URL expected = this.getClass().getResource("diffCount_commentU2.txt");
 
-		String[] args = {"-encoding", "UTF-8",
-				"-output", "test/out/diff_commentU2.txt", newRoot, oldRoot};
+		String[] args = {"-encoding", "UTF-8", "-output", outFileName, newRoot, oldRoot};
 		DiffCount.main(args);
 
-		File actual = new File("test/out/diff_commentU2.txt");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)),
 				is(equalTo(textContentOf(expected))));
 	}
@@ -581,14 +339,13 @@ public class DiffCountTest {
 		System.out.println("## DiffCount ## countDiffCobol ##");
 		String oldRoot = "test/data/cobol/root1";
 		String newRoot = "test/data/cobol/root2";
-		URL expected = this.getClass()
-				.getResource("DiffCounterTest_testCount_cobol.txt");
+		String outFileName = "test/out/diff_cobol.txt";
+		URL expected = this.getClass().getResource("diffCount_cobol.txt");
 
-		String[] args = {"-encoding", "Shift_JIS",
-				"-output", "test/out/diff_cobol.txt", newRoot, oldRoot};
+		String[] args = {"-encoding", "Shift_JIS", "-output", outFileName, newRoot, oldRoot};
 		DiffCount.main(args);
 
-		File actual = new File("test/out/diff_cobol.txt");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)),
 				is(equalTo(textContentOf(expected))));
 	}
@@ -598,14 +355,13 @@ public class DiffCountTest {
 		System.out.println("## DiffCount ## countDiffOW ##");
 		String oldRoot = "test/data/ow/root1";
 		String newRoot = "test/data/ow/root2";
-		URL expected = this.getClass()
-				.getResource("DiffCounterTest_testCount_ow.txt");
+		String outFileName = "test/out/diff_ow.txt";
+		URL expected = this.getClass().getResource("diffCount_ow.txt");
 
-		String[] args = {"-encoding", "UTF-8",
-				"-output", "test/out/diff_ow.txt", newRoot, oldRoot};
+		String[] args = {"-encoding", "UTF-8", "-output", outFileName, newRoot, oldRoot};
 		DiffCount.main(args);
 
-		File actual = new File("test/out/diff_ow.txt");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)),
 				is(equalTo(textContentOf(expected))));
 	}
@@ -615,14 +371,13 @@ public class DiffCountTest {
 		System.out.println("## DiffCount ## countDiffOW(2) ##");
 		String oldRoot = "test/data/ow/root1";
 		String newRoot = "test/data/ow/root3";
-		URL expected = this.getClass()
-				.getResource("DiffCounterTest_testCount_ow2.txt");
+		String outFileName = "test/out/diff_ow2.txt";
+		URL expected = this.getClass().getResource("diffCount_ow2.txt");
 
-		String[] args = {"-encoding", "UTF-8",
-				"-output", "test/out/diff_ow2.txt", newRoot, oldRoot};
+		String[] args = {"-encoding", "UTF-8", "-output", outFileName, newRoot, oldRoot};
 		DiffCount.main(args);
 
-		File actual = new File("test/out/diff_ow2.txt");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)),
 				is(equalTo(textContentOf(expected))));
 	}

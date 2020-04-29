@@ -125,11 +125,65 @@ public class StepCountTaskTest {
 	}
 
 	@Test
+	public void cannotDoBecauseInvalidPath() throws Exception {
+		System.out.println("## StepCountTask ## arg06 ## cannotDoBecauseInvalidPath ##");
+		String targetName = "InvalidPath";
+		String expected = "invalid path";
+		thrownEx.expect(BuildException.class);
+		thrownEx.expectMessage(expected);
+
+		AntTaskTestDriver driver = new AntTaskTestDriver();
+		driver.configureProject(projfile);
+		driver.executeTarget(targetName);
+		System.out.println(driver.getLog());
+		System.err.println(driver.getStderr());
+		System.out.println(driver.getStdout());
+
+		fail("Should throw Exception : " + expected);
+	}
+
+	@Test
+	public void countJavaUsingCsvFormatAndBasePath() throws Exception {
+		System.out.println("## StepCountTask ## countJavaUsingCsvFormatAndBasePath ##");
+		String targetName = "CountJava_Csv_BasePath";
+		URL expected = this.getClass()
+				.getResource("../count/step/stepCount_java_basePath.csv");
+
+		AntTaskTestDriver driver = new AntTaskTestDriver();
+		driver.configureProject(projfile);
+		driver.executeTarget(targetName);
+		System.out.println(driver.getLog());
+		System.err.println(driver.getStderr());
+		System.out.println(driver.getStdout());
+
+		File actual = new File("test/out/ant_count_java_basePath.csv");
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
+	}
+
+	@Test
+	public void countJavaUsingCsvFormatAndSubPath() throws Exception {
+		System.out.println("## StepCountTask ## countJavaUsingCsvFormatAndSubPath ##");
+		String targetName = "CountJava_Csv_SubPath";
+		URL expected = this.getClass()
+				.getResource("../count/step/stepCount_java_subPath.csv");
+
+		AntTaskTestDriver driver = new AntTaskTestDriver();
+		driver.configureProject(projfile);
+		driver.executeTarget(targetName);
+		System.out.println(driver.getLog());
+		System.err.println(driver.getStderr());
+		System.out.println(driver.getStdout());
+
+		File actual = new File("test/out/ant_count_java_subPath.csv");
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
+	}
+
+	@Test
 	public void countJavaUsingCsvFormat() throws Exception {
 		System.out.println("## StepCountTask ## countJavaUsingCsvFormat ##");
 		String targetName = "CountJava_Csv";
 		URL expected = this.getClass()
-				.getResource("../count/step/StepCounterTest_testCount_java.csv");
+				.getResource("../count/step/stepCount_java_noPath.csv");
 
 		AntTaskTestDriver driver = new AntTaskTestDriver();
 		driver.configureProject(projfile);
@@ -143,11 +197,11 @@ public class StepCountTaskTest {
 	}
 
 	@Test
-	public void countJavaUsingCsvFormatWithoutShowDirectory() throws Exception {
-		System.out.println("## StepCountTask ## countJavaUsingCsvFormatWithoutShowDirectory ##");
-		String targetName = "CountJavaWithoutShowDir";
+	public void countJavaUsingCsvFormatAndNoPathAndShowDir() throws Exception {
+		System.out.println("## StepCountTask ## countJavaUsingCsvFormatAndNoPathAndShowDir ##");
+		String targetName = "CountJava_Csv_NoPath_ShowDir";
 		URL expected = this.getClass()
-				.getResource("../count/step/StepCounterTest_testCount_java_nodir.csv");
+				.getResource("../count/step/stepCount_java_noPath.csv");
 
 		AntTaskTestDriver driver = new AntTaskTestDriver();
 		driver.configureProject(projfile);
@@ -156,16 +210,16 @@ public class StepCountTaskTest {
 		System.err.println(driver.getStderr());
 		System.out.println(driver.getStdout());
 
-		File actual = new File("test/out/ant_count_java_nodir.csv");
+		File actual = new File("test/out/ant_count_java_noPath.csv");
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
-	public void countJavaUsingCsvFormatAndSortOffWithoutShowDirectory() throws Exception {
-		System.out.println("## StepCountTask ## countJavaUsingCsvFormatAndSortOffWithoutShowDirectory ##");
-		String targetName = "CountJavaWithoutShowDirWithSortOff";
+	public void countJavaUsingCsvFormatAndSortOff() throws Exception {
+		System.out.println("## StepCountTask ## countJavaUsingCsvFormatAndSortOff ##");
+		String targetName = "CountJava_Csv_SortOff";
 		URL expected = this.getClass()
-				.getResource("../count/step/StepCounterTest_testCount_java_nodir_nosort.csv");
+				.getResource("../count/step/stepCount_java_noPath_noSort.csv");
 
 		AntTaskTestDriver driver = new AntTaskTestDriver();
 		driver.configureProject(projfile);
@@ -174,17 +228,16 @@ public class StepCountTaskTest {
 		System.err.println(driver.getStderr());
 		System.out.println(driver.getStdout());
 
-		File actual = new File("test/out/ant_count_java_nodir_nosort.csv");
+		File actual = new File("test/out/ant_count_java_noSort.csv");
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
-	public void countJavaUsingCsvFormatAndCustomRule() throws Exception {
-		System.out.println("## StepCountTask ## countJavaUsingCsvFormatAndCustomRule ##");
-		String targetName = "CountJavaUsingCustomRule";
+	public void countJavaUsingCustomRuleAndCsvFormatAndBasePath() throws Exception {
+		System.out.println("## StepCountTask ## countJavaUsingCustomRuleAndCsvFormatAndBasePath ##");
+		String targetName = "CountJava_Rule_Csv_BasePath";
 		URL expected = this.getClass()
-				.getResource("../count/step/RuleCounterTest_testCount_java.csv");
-
+				.getResource("../count/step/stepCount_rule_java_basePath.csv");
 		AntTaskTestDriver driver = new AntTaskTestDriver();
 		driver.configureProject(projfile);
 		driver.executeTarget(targetName);
@@ -192,35 +245,17 @@ public class StepCountTaskTest {
 		System.err.println(driver.getStderr());
 		System.out.println(driver.getStdout());
 
-		File actual = new File("test/out/ant_count_java_usingCustomRule.csv");
+		File actual = new File("test/out/ant_count_rule_java_basePath.csv");
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
-	public void countJavaUsingCsvFormatWhenFilelistIsGiven() throws Exception {
-		System.out.println("## StepCountTask ## countJavaUsingCsvFormatWhenFilelistIsGiven ##");
-		String targetName = "CountJavaWhenFilelist";
-		URL expected = this.getClass()
-				.getResource("../ant/SCTaskTest_testCount_java_files.csv");
-
-		AntTaskTestDriver driver = new AntTaskTestDriver();
-		driver.configureProject(projfile);
-		driver.executeTarget(targetName);
-		System.out.println(driver.getLog());
-		System.err.println(driver.getStderr());
-		System.out.println(driver.getStdout());
-
-		File actual = new File("test/out/ant_count_java_whenFilelist.csv");
-		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
-	}
-
-	@Test
-	public void countJavaUsingCsvFormatWithoutShowDirectoryWhenFilelistIsGiven() throws Exception {
+	public void countJavaUsingCsvFormatAndBasePathWhenFileListIsGiven() throws Exception {
 		System.out.println("## StepCountTask ## "
-				+ "countJavaUsingCsvFormatWithoutShowDirectoryWhenFilelistIsGiven ##");
-		String targetName = "CountJavaWithoutShowDirWhenFilelist";
+				+ "countJavaUsingCsvFormatAndBasePathWhenFileListIsGiven ##");
+		String targetName = "CountJava_Csv_FileList_BasePath";
 		URL expected = this.getClass()
-				.getResource("../ant/SCTaskTest_testCount_java_files_nodir.csv");
+				.getResource("SCTask_java_files_basePath.csv");
 
 		AntTaskTestDriver driver = new AntTaskTestDriver();
 		driver.configureProject(projfile);
@@ -229,35 +264,17 @@ public class StepCountTaskTest {
 		System.err.println(driver.getStderr());
 		System.out.println(driver.getStdout());
 
-		File actual = new File("test/out/ant_count_java_nodir_whenFilelist.csv");
+		File actual = new File("test/out/ant_count_java_files_basePath.csv");
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
-	public void countJavaUsingCsvFormatAndSortOffWhenFilelistIsGiven() throws Exception {
-		System.out.println("## StepCountTask ## countJavaUsingCsvFormatAndSortOffWhenFilelistIsGiven ##");
-		String targetName = "CountJavaWithSortOffWhenFilelist";
-		URL expected = this.getClass()
-				.getResource("../ant/SCTaskTest_testCount_java_files_nosort.csv");
-
-		AntTaskTestDriver driver = new AntTaskTestDriver();
-		driver.configureProject(projfile);
-		driver.executeTarget(targetName);
-		System.out.println(driver.getLog());
-		System.err.println(driver.getStderr());
-		System.out.println(driver.getStdout());
-
-		File actual = new File("test/out/ant_count_java_nosort_whenFilelist.csv");
-		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
-	}
-
-	@Test
-	public void countJavaUsingCsvFormatAndSortOffWithoutShowDirectoryWhenFilelistIsGiven() throws Exception {
+	public void countJavaUsingCsvFormatAndSubPathWhenFileListIsGiven() throws Exception {
 		System.out.println("## StepCountTask ## "
-				+ "countJavaUsingCsvFormatAndSortOffWithoutShowDirectoryWhenFilelistIsGiven ##");
-		String targetName = "CountJavaWithoutShowDirWithSortOffWhenFilelist";
+				+ "countJavaUsingCsvFormatAndSubPathWhenFileListIsGiven ##");
+		String targetName = "CountJava_Csv_FileList_SubPath";
 		URL expected = this.getClass()
-				.getResource("../ant/SCTaskTest_testCount_java_files_nodir_nosort.csv");
+				.getResource("SCTask_java_files_subPath.csv");
 
 		AntTaskTestDriver driver = new AntTaskTestDriver();
 		driver.configureProject(projfile);
@@ -266,7 +283,62 @@ public class StepCountTaskTest {
 		System.err.println(driver.getStderr());
 		System.out.println(driver.getStdout());
 
-		File actual = new File("test/out/ant_count_java_nodir_nosort_whenFilelist.csv");
+		File actual = new File("test/out/ant_count_java_files_subPath.csv");
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
+	}
+
+	@Test
+	public void countJavaUsingCsvFormatWhenFileListIsGiven() throws Exception {
+		System.out.println("## StepCountTask ## countJavaUsingCsvFormatWhenFileListIsGiven ##");
+		String targetName = "CountJava_Csv_FileList";
+		URL expected = this.getClass()
+				.getResource("SCTask_java_files_noPath.csv");
+
+		AntTaskTestDriver driver = new AntTaskTestDriver();
+		driver.configureProject(projfile);
+		driver.executeTarget(targetName);
+		System.out.println(driver.getLog());
+		System.err.println(driver.getStderr());
+		System.out.println(driver.getStdout());
+
+		File actual = new File("test/out/ant_count_java_files.csv");
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
+	}
+
+	@Test
+	public void countJavaUsingCsvFormatAndBasePathAndSortOffWhenFileListIsGiven() throws Exception {
+		System.out.println("## StepCountTask ## "
+				+ "countJavaUsingCsvFormatAndBasePathAndSortOffWhenFileListIsGiven ##");
+		String targetName = "CountJava_Csv_FileList_BasePath_SortOff";
+		URL expected = this.getClass()
+				.getResource("SCTask_java_files_basePath_noSort.csv");
+
+		AntTaskTestDriver driver = new AntTaskTestDriver();
+		driver.configureProject(projfile);
+		driver.executeTarget(targetName);
+		System.out.println(driver.getLog());
+		System.err.println(driver.getStderr());
+		System.out.println(driver.getStdout());
+
+		File actual = new File("test/out/ant_count_java_files_basePath_noSort.csv");
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
+	}
+
+	@Test
+	public void countJavaUsingCsvFormatAndSortOffWhenFileListIsGiven() throws Exception {
+		System.out.println("## StepCountTask ## countJavaUsingCsvFormatAndSortOffWhenFileListIsGiven ##");
+		String targetName = "CountJava_Csv_FileList_SortOff";
+		URL expected = this.getClass()
+				.getResource("SCTask_java_files_noPath_noSort.csv");
+
+		AntTaskTestDriver driver = new AntTaskTestDriver();
+		driver.configureProject(projfile);
+		driver.executeTarget(targetName);
+		System.out.println(driver.getLog());
+		System.err.println(driver.getStderr());
+		System.out.println(driver.getStdout());
+
+		File actual = new File("test/out/ant_count_java_files_noSort.csv");
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 }

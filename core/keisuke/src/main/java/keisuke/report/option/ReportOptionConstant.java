@@ -1,5 +1,7 @@
 package keisuke.report.option;
 
+import keisuke.count.FormatEnum;
+import keisuke.count.PathStyleEnum;
 import keisuke.report.classify.ClassifierConstant;
 
 /**
@@ -25,13 +27,19 @@ public final class ReportOptionConstant {
 	// Diff Proc Option
 	public static final String OPT_AOUT = "aout";
 	public static final String OPT_MOUT = "mout";
+	public static final String OPT_FORMAT = "format";
 	public static final String OPT_UNCHANGE = "unchange";
-	public static final String OPTVAL_TOTAL = "total";
-	public static final String OPTVAL_DETAIL = "detail";
+	public static final String OPTVAL_CSV = FormatEnum.CSV.value(); // for format
+	public static final String OPTVAL_TEXT = FormatEnum.TEXT.value(); // for format
+	public static final String OPTVAL_TOTAL = "total"; // for unchange
+	public static final String OPTVAL_DETAIL = "detail"; // for unchange
 
 	// Match Proc Option
 	public static final String ARG_MASTER = "mafile";
 	public static final String ARG_TRANSACTION = "trfile";
 	public static final String ARG_OUTPUT = "outfile";
+	public static final String OPT_PATH = "path";
+	public static final String OPTVAL_BASE = PathStyleEnum.BASE.value(); // for path
+	public static final String OPTVAL_SUB = PathStyleEnum.SUB.value(); // for path
 
 }

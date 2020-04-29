@@ -1,12 +1,16 @@
 package keisuke;
 
+import java.io.Serializable;
+
 /**
  * ソースコードファイルのステップ数計測結果の基本クラス
  */
-public class StepCountResult {
+public class StepCountResult implements Serializable {
+
+	private static final long serialVersionUID = 1L; // since ver.2.0.0
 
 	private String filePath = "";
-	private String sourceType = "";
+	private String sourceType = null;
 	private String sourceCategory = "";
 	private long execSteps = 0;
 	private long blancSteps = 0;
@@ -67,13 +71,17 @@ public class StepCountResult {
 	 * 計測対象のファイルに指定されたカテゴリ文字列を設定する
 	 * @param category カテゴリ文字列
 	 */
-	public 	void setSourceCategory(final String category) {
-		this.sourceCategory = category;
+	public void setSourceCategory(final String category) {
+		if (category == null) {
+			this.sourceCategory = "";
+		} else {
+			this.sourceCategory = category;
+		}
 	}
 
 	/**
 	 * 計測対象のソースコードの実行ステップ数を返す
-	 * @return 実行スッテプ数
+	 * @return 実行ステップ数
 	 */
 	public long execSteps() {
 		return this.execSteps;
@@ -113,5 +121,13 @@ public class StepCountResult {
 	 */
 	public long sumSteps() {
 		return this.execSteps + this.blancSteps + this.commentSteps;
+	}
+
+	/**
+	 * 計測対象のソースコードが未対応であればtrueを返す
+	 * @return 未対応ならtrue
+	 */
+	public boolean isUnsupported() {
+		return (this.sourceType == null);
 	}
 }

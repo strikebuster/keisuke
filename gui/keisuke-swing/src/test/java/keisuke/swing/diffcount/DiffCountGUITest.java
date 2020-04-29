@@ -21,6 +21,7 @@ import static keisuke.count.diff.DiffCountTestConstant.TEXT_IGNORE_LINES;
 import static keisuke.swing.GUIConstant.*;
 import static keisuke.swing.GUITestUtil.*;
 import static keisuke.swing.diffcount.DiffCountGUIConstant.*;
+import static keisuke.swing.diffcount.DiffCountGUITestConstant.*;
 import static keisuke.swing.diffcount.DiffCountTestUtil.*;
 import static keisuke.util.TestUtil.nameOfSystemOS;
 import static org.hamcrest.MatcherAssert.*;
@@ -34,13 +35,6 @@ import java.util.List;
  * Test class of DiffCount GUI.
  */
 public final class DiffCountGUITest extends FestSwingJUnitTestCase {
-
-	private static final int FORMAT_TEXT_IDX = 0;
-	private static final int FORMAT_CSV_IDX = 1;
-	private static final int FORMAT_EXCEL_IDX = 2;
-	private static final int FORMAT_XML_IDX = 3;
-	private static final int FORMAT_JSON_IDX = 4;
-	private static final int FORMAT_HTML_IDX = 5;
 
 	private FrameFixture frame;
 
@@ -146,7 +140,7 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		// 計測後のトータル表示ラベルの検査
 		stat = total.target.isEnabled();
 		assertThat(stat, is(true));
-		URL expectedCsv = this.getClass().getResource("DiffCount_java_top.csv");
+		URL expectedCsv = this.getClass().getResource("DiffCountTable_java_top.csv");
 		String[][] expectedArray = convertToTableArrayFrom(contentOf(expectedCsv));
 		String expectedStatus = deriveTotalStatusFrom(expectedArray);
 		long expectedAdded = deriveTotalAddedStepsFrom(expectedArray);
@@ -237,7 +231,7 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		// 表の内容の検査
 		String[][] actual = table.contents();
 		//System.out.println(contentOf(actual));
-		URL expected = this.getClass().getResource("DiffCount_java_top.csv");
+		URL expected = this.getClass().getResource("DiffCountTable_java_top.csv");
 		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
 		// トータル表示ラベルの検査
 		JLabelFixture total = frame.label(TOTAL_LABEL);
@@ -277,10 +271,10 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		URL expectedAll;
 		if (nameOfSystemOS().startsWith("Windows")) {
 			expectedAll = this.getClass()
-					.getResource("DiffCount_java_all_win.csv");
+					.getResource("DiffCountTable_java_all_win.csv");
 		} else {
 			expectedAll = this.getClass()
-					.getResource("DiffCount_java_all.csv");
+					.getResource("DiffCountTable_java_all.csv");
 		}
 		assertThat(contentOf(actual), is(equalTo(contentOf(expectedAll))));
 
@@ -327,7 +321,7 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		String[][] actual = table.contents();
 		//System.out.println(contentOf(actual));
 		URL expectedData = this.getClass()
-				.getResource("DiffCount_java_nodiff_top.csv");
+				.getResource("DiffCountTable_java_nodiff_top.csv");
 		assertThat(contentOf(actual), is(equalTo(contentOf(expectedData))));
 	}
 
@@ -349,7 +343,7 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		//System.out.println(frame.textBox(NEW_DIR_TEXTFIELD).text());
 		assertThat(frame.textBox(NEW_DIR_TEXTFIELD).text(), endsWith(pathForLocalSystem(newRoot)));
 
-		// HTMLフォーマットを選択
+		// TEXTフォーマットを選択
 		frame.comboBox(FORMAT_SELECT).selectItem(FORMAT_TEXT_IDX);
 		sleep(SLEEPTIME);
 		// 計測実行しテキスト形式で表示
@@ -381,7 +375,7 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		//System.out.println(frame.textBox(NEW_DIR_TEXTFIELD).text());
 		assertThat(frame.textBox(NEW_DIR_TEXTFIELD).text(), endsWith(pathForLocalSystem(newRoot)));
 
-		// HTMLフォーマットを選択
+		// CSVフォーマットを選択
 		frame.comboBox(FORMAT_SELECT).selectItem(FORMAT_CSV_IDX);
 		sleep(SLEEPTIME);
 		// 計測実行しテキスト形式で表示
@@ -436,7 +430,14 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		removeFile(saveFile);
 		chooseFile(frame, frame.button(SAVE_BUTTON), SAVE_CHOOSER,
 				".", saveFile, frame.textBox(HIDDEN_SAVING));
-		URL expected = this.getClass().getResource("DiffCount_java.xls");
+		URL expected;
+		if (nameOfSystemOS().startsWith("Windows")) {
+			expected = this.getClass()
+					.getResource("DiffCount_java_win.xls");
+		} else {
+			expected = this.getClass()
+					.getResource("DiffCount_java.xls");
+		}
 		assertThat(binaryContentOf(new File(saveFile)), is(binaryContentOf(expected)));
 	}
 
@@ -458,7 +459,7 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		//System.out.println(frame.textBox(NEW_DIR_TEXTFIELD).text());
 		assertThat(frame.textBox(NEW_DIR_TEXTFIELD).text(), endsWith(pathForLocalSystem(newRoot)));
 
-		// HTMLフォーマットを選択
+		// XMLフォーマットを選択
 		frame.comboBox(FORMAT_SELECT).selectItem(FORMAT_XML_IDX);
 		sleep(SLEEPTIME);
 		// 計測実行しテキスト形式で表示
@@ -489,7 +490,7 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		//System.out.println(frame.textBox(NEW_DIR_TEXTFIELD).text());
 		assertThat(frame.textBox(NEW_DIR_TEXTFIELD).text(), endsWith(pathForLocalSystem(newRoot)));
 
-		// HTMLフォーマットを選択
+		// JSONフォーマットを選択
 		frame.comboBox(FORMAT_SELECT).selectItem(FORMAT_JSON_IDX);
 		sleep(SLEEPTIME);
 		// 計測実行しテキスト形式で表示
@@ -620,7 +621,7 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		sleep(SLEEPVERYLONGTIME);
 		String text = frame.textBox(RESULT_TEXT).requireEnabled(Timeout.timeout(WAITTIME)).text();
 		//System.out.println(text);
-		URL expected = this.getClass().getResource("DiffCount_java_rule.txt");
+		URL expected = this.getClass().getResource("DiffCount_rule_java.txt");
 		assertThat(actualTextOf(text, withoutHeadLines(TEXT_IGNORE_LINES)),
 				is(equalTo(textContentOf(expected))));
 

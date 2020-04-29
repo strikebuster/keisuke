@@ -4,7 +4,9 @@ import static keisuke.util.StringUtil.LINE_SEP;
 import static keisuke.util.StringUtil.SYSTEM_ENCODING;
 
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
+import keisuke.count.SortOrderEnum;
 import keisuke.count.diff.AbstractDiffResultForCount;
 import keisuke.count.diff.DiffFileResult;
 import keisuke.count.diff.DiffFolderResult;
@@ -49,12 +51,13 @@ public class CsvRenderer extends AbstractRenderer {
 	 */
 	protected String getCsvLineAbout(final DiffFolderResult result) {
 		StringBuffer sb = new StringBuffer();
-		//sb.append(result.pathFromTop()).append("/,,,");
-		//sb.append(this.getStatusLabelOf(result.status())).append(',');
-		//sb.append(result.addedSteps()).append(',');
-		//sb.append(result.deletedSteps()).append(LINE_SEP);
-		//for (AbstractDiffResultForCount obj : result.getSortedChildren()) {
-		for (AbstractDiffResultForCount obj : result.getChildren()) {
+		List<AbstractDiffResultForCount> children = null;
+		if (this.sortOrder() == SortOrderEnum.NODE) {
+			children = result.getSortedChildren();
+		} else {
+			children = result.getChildren();
+		}
+		for (AbstractDiffResultForCount obj : children) {
 			sb.append(this.getCsvLineAbout(obj));
 		}
 		return sb.toString();
@@ -67,12 +70,20 @@ public class CsvRenderer extends AbstractRenderer {
 	 */
 	protected String getCsvLineAbout(final DiffFileResult result) {
 		StringBuffer sb = new StringBuffer();
-		sb.append(result.pathFromTop()).append(',');
-		sb.append(result.sourceType()).append(',');
-		sb.append(EncodeUtil.csvEscape(result.sourceCategory())).append(',');
+		// filePath()はパス表記スタイルを有効に
+		sb.append(result.filePath(this.pathStyle())).append(',');
+		sb.append(this.getSourceType(result.sourceType())).append(',');
+		if (result.sourceCategory() != null && !result.sourceCategory().isEmpty()) {
+			sb.append(EncodeUtil.csvEscape(result.sourceCategory()));
+		}
+		sb.append(',');
 		sb.append(this.getStatusLabelOf(result.status())).append(',');
-		sb.append(result.addedSteps()).append(',');
-		sb.append(result.deletedSteps()).append(LINE_SEP);
+		if (result.isUnsupported()) {
+			sb.append(',').append(LINE_SEP);
+		} else {
+			sb.append(result.addedSteps()).append(',');
+			sb.append(result.deletedSteps()).append(LINE_SEP);
+		}
 		return sb.toString();
 	}
 

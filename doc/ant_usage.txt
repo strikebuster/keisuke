@@ -3,22 +3,31 @@
 <project default="stepcount" basedir=".">
  <!-- タスクの定義 -->
  <taskdef name="StepCountTask" classname="keisuke.ant.StepCountTask"
-  classpath="keisuke-1.2.0-jar-with-dependencies.jar"/>
+  classpath="keisuke-2.0.0-jar-with-dependencies.jar"/>
 
  <taskdef name="DiffCountTask" classname="keisuke.ant.DiffCountTask"
-  classpath="keisuke-1.2.0-jar-with-dependencies.jar"/>
+  classpath="keisuke-2.0.0-jar-with-dependencies.jar"/>
 
  <taskdef name="CountReportTask" classname="keisuke.ant.CountReportTask"
-  classpath="keisuke-1.2.0-jar-with-dependencies.jar"/>
+  classpath="keisuke-2.0.0-jar-with-dependencies.jar"/>
 
  <taskdef name="DiffReportTask" classname="keisuke.ant.DiffReportTask"
-  classpath="keisuke-1.2.0-jar-with-dependencies.jar"/>
+  classpath="keisuke-2.0.0-jar-with-dependencies.jar"/>
 
  <taskdef name="MatchExtractTask" classname="keisuke.ant.MatchExtractTask"
-  classpath="keisuke-1.2.0-jar-with-dependencies.jar"/>
+  classpath="keisuke-2.0.0-jar-with-dependencies.jar"/>
 
  <target name="stepcount">
   <!-- ステップ数をカウント、結果のファイル名にパス付与 -->
+  <StepCountTask format="excel" output="count.xls" encoding="UTF-8" path="sub">
+   <fileset dir="test/sample/java">
+    <include name="**/*.java"/>
+   </fileset>
+  </StepCountTask>
+ </target>
+ 
+ <target name="stepcount1">
+  <!-- ステップ数をカウント、結果のファイル名にパス付与(ver.1.x下位互換のため) -->
   <StepCountTask format="excel" output="count.xls" encoding="UTF-8" showDirectory="true">
    <fileset dir="test/sample/java">
     <include name="**/*.java"/>
@@ -40,14 +49,20 @@
 
  <target name="diffcount">
   <!-- 差分をカウント -->
+  <DiffCountTask format="csv" output="diff.csv" encoding="UTF-8" path="sub"
+   srcdir="test/sample/java" olddir="test/sample.old/java"/>
+ </target>
+
+ <target name="diffcount1">
+  <!-- 差分をカウント -->
   <DiffCountTask format="text" output="diff.txt" encoding="UTF-8"
    srcdir="test/sample/java" olddir="test/sample.old/java"/>
  </target>
 
  <target name="diffcount2">
-  <!-- 言語定義XMLを使って差分をカウント -->
+  <!-- 言語定義XMLを使って差分をカウント、結果のファイル名のソートはコード順 -->
   <DiffCountTask format="html" output="diff.htm" encoding="Windows-31J"
-   xml="custom.xml"
+   xml="custom.xml" sort="on"
    srcdir="test/sample/ver2" olddir="test/sample/ver1"/>
  </target>
 
@@ -64,7 +79,13 @@
  </target>
 
  <target name="diffreport">
-  <!-- 差分ステップ数カウント結果の集計 -->
+  <!-- 差分ステップ数カウント結果の集計(StepCountがpath-"sub"で出力した場合) -->
+  <DiffReportTask classify="extension" format="csv" input="test/sample/diff.csv"
+   output="diffreport.csv"/>
+ </target>
+
+ <target name="diffreport1">
+  <!-- 差分ステップ数カウント結果の集計(StepCountがshowDirectory="true"で出力した場合) -->
   <DiffReportTask classify="extension" input="test/sample/diff.txt"
    output="diffreport.csv"/>
  </target>
@@ -87,8 +108,14 @@
 　　　input="test/sample/diff.txt" output="diffreport4.csv"/>
  </target>
 
-　<target name="matchextract">
-  <!-- ステップ数カウント結果から指定されたファイルだけを抽出 -->
+ <target name="matchextract">
+  <!-- ステップ数カウント結果から指定されたファイルだけを抽出(StepCountがpath-"sub"で出力した場合) -->
+  <MatchExtractTask path="sub" master="test/sample/count.csv"
+   transaction="test/sample/added_list.txt" output="extract.csv"/>
+ </target>
+
+ <target name="matchextract1">
+  <!-- ステップ数カウント結果から指定されたファイルだけを抽出(StepCountがshowDirectory="true"で出力した場合) -->
   <MatchExtractTask master="test/sample/count.csv"
    transaction="test/sample/added_list.txt" output="extract.csv"/>
  </target>

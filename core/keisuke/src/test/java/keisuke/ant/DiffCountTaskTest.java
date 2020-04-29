@@ -19,8 +19,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 /**
- * Test class of DiffCountTask which is ant task to call DiffCounter.
- *
+ * Test class of DiffCountTask which is ant task to call DiffCount.
  */
 public class DiffCountTaskTest {
 	private String projfile = "test/data/ant/diffcount.xml";
@@ -93,7 +92,7 @@ public class DiffCountTaskTest {
 		System.out.println("## DiffCountTask ## countDiffJava ##");
 		String targetName = "DiffJava";
 		URL expected = this.getClass()
-				.getResource("../count/diff/DiffCounterTest_testCount_java.txt");
+				.getResource("../count/diff/diffCount_java.txt");
 
 		AntTaskTestDriver driver = new AntTaskTestDriver();
 		driver.configureProject(projfile);
@@ -110,7 +109,7 @@ public class DiffCountTaskTest {
 	@Test
 	public void countDiffJavaUsingCsvFormat() throws Exception {
 		System.out.println("## DiffCountTask ## countDiffJavaUsingCsvFormat ##");
-		String targetName = "DiffJavaUsingCsvFormat";
+		String targetName = "DiffJava_Csv";
 		URL expected;
 
 		AntTaskTestDriver driver = new AntTaskTestDriver();
@@ -134,9 +133,9 @@ public class DiffCountTaskTest {
 	@Test
 	public void countDiffJavaUsingCustomRule() throws Exception {
 		System.out.println("## DiffCountTask ## countDiffJavaUsingCustomRule ##");
-		String targetName = "DiffJavaUsingCustomRule";
+		String targetName = "DiffJava_Rule";
 		URL expected = this.getClass()
-				.getResource("../count/diff/RuleDiffCounterTest_testCount_java.txt");
+				.getResource("../count/diff/diffCount_rule_java.txt");
 
 		AntTaskTestDriver driver = new AntTaskTestDriver();
 		driver.configureProject(projfile);
@@ -149,4 +148,5 @@ public class DiffCountTaskTest {
 		assertThat(rawContentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)),
 				is(equalTo(textContentOf(expected))));
 	}
+
 }

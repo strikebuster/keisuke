@@ -30,7 +30,7 @@ public class CommentExpressionDefine {
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
+		StringBuffer sb = new StringBuffer();
 		sb.append(this.getStart());
 		return sb.toString();
 	}

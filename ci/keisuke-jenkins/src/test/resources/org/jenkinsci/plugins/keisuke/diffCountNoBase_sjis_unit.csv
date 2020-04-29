@@ -1,0 +1,8 @@
+test/comment.bat,BAT,commentS,MODIFIED,3,3
+test/comment.cbf,COBOL,commentS,MODIFIED,8,8
+test/comment.cob,COBOL,commentS,MODIFIED,4,3
+test/comment.vbs,VBScript,commentS,MODIFIED,1,1
+test/comment_org.bat,BAT,commentS,DROPED,0,4
+test/comment_org.cbf,COBOL,commentS,DROPED,0,13
+test/comment_org.cob,COBOL,commentS,DROPED,0,6
+test/comment_org.vbs,VBScript,commentS,DROPED,0,4

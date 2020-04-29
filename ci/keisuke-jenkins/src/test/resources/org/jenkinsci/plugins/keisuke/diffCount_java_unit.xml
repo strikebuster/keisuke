@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<diffcounter>
+<directory name="root1" status="MODIFIED" added="43" deleted="6" >
+ <directory name="src" status="MODIFIED" added="43" deleted="6" >
+  <file name="JavaCutter.java" type="Java" category="java" status="MODIFIED" added="0" deleted="1" />
+  <file name="Status.java" type="Java" category="java" status="DROPED" added="0" deleted="4" />
+  <file name="StringUtil.java" type="Java" category="java" status="ADDED" added="42" deleted="0" />
+  <directory name="jp" status="MODIFIED" added="1" deleted="1" >
+   <file name="FileObj.java" type="Java" category="java" status="MODIFIED" added="1" deleted="1" />
+   <directory name="sf" status="ADDED" added="0" deleted="0" >
+    <file name="hoge.txt" type="Text" category="java" status="ADDED" added="0" deleted="0" />
+   </directory>
+  </directory>
+ </directory>
+ <directory name="test" status="UNCHANGED" added="0" deleted="0" >
+  <file name="Utils" type="UNSUPPORTED" category="java" status="UNSUPPORTED" />
+  <file name="Utils.java" type="Java" category="java" status="UNCHANGED" added="0" deleted="0" />
+  <file name="Utils.txt" type="Text" category="java" status="UNCHANGED" added="0" deleted="0" />
+ </directory>
+</directory>
+</diffcounter>

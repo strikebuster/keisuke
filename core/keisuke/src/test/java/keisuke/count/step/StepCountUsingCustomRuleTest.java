@@ -18,8 +18,7 @@ import keisuke.count.StepCount;
 
 
 /**
- * Test class of StepCounter about customized xml rules.
- *
+ * Test class of StepCount using customized xml rules.
  */
 public class StepCountUsingCustomRuleTest {
 
@@ -49,147 +48,164 @@ public class StepCountUsingCustomRuleTest {
 	}
 
 	@Test
-	public void countJavaUsingCustomRule() throws Exception {
-		System.out.println("## CustomRule ## countJavaUsingCustomRule ##");
+	public void countJavaUsingCustomRuleAndCsvFormatAndBasePath() throws Exception {
+		System.out.println("## CustomRule ## countJavaUsingCustomRuleAndCsvFormatAndBasePath ##");
 		String newRoot = "test/data/java/root1";
+		String outFileName = "test/out/count_rule_java_basePath.csv";
 		URL expected = this.getClass()
-				.getResource("RuleCounterTest_testCount_java.csv");
+				.getResource("stepCount_rule_java_basePath.csv");
 
-		String[] args = {"-showDirectory", "-format", "csv",
-				"-output", "test/out/rule_count_java.csv",
+		String[] args = {"-path", "base", "-format", "csv",
+				"-output", outFileName,
 				"-xml", "test/data/ktestl2.xml", newRoot};
 		StepCount.main(args);
 
-		File actual = new File("test/out/rule_count_java.csv");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
-	public void countWebCodingInUtfUsingCustomRule() throws Exception {
-		System.out.println("## CustomRule ## countWebCodingInUtfUsingCustomRule ##");
+	public void countWebCodingInUtfUsingCustomRuleAndCsvFormatAndSubPath() throws Exception {
+		System.out.println("## CustomRule ## countWebCodingInUtfUsingCustomRuleAndCsvFormatAndSubPath ##");
 		String newRoot = "test/data/web/root1";
+		String outFileName = "test/out/count_rule_web_subPath.csv";
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_web.csv");
+				.getResource("stepCount_web_subPath.csv");
 
-		String[] args = {"-showDirectory", "-format", "csv", "-encoding", "UTF-8",
-				"-output", "test/out/rule_count_web.csv",
+		String[] args = {"-p", "sub", "-format", "csv", "-encoding", "UTF-8",
+				"-output", outFileName,
 				"-xml", "test/data/ktestl2.xml", newRoot};
 		StepCount.main(args);
 
-		File actual = new File("test/out/rule_count_web.csv");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
-	public void countWebCodingInSjisUsingCustomRule() throws Exception {
-		System.out.println("## CustomRule ## countWebCodingInSjisUsingCustomRule ##");
+	public void countWebCodingInSjisUsingCustomRuleAndCsvFormatAndBasePath() throws Exception {
+		System.out.println("## CustomRule ## countWebCodingInSjisUsingCustomRuleAndCsvFormatAndBasePath ##");
 		String newRoot = "test/data/web/root1S";
+		String outFileName = "test/out/count_rule_webS_basePath.csv";
 		URL expected = this.getClass()
-				.getResource("RuleCounterTest_testCount_webS.csv");
+				.getResource("stepCount_webS_basePath.csv");
 
-		String[] args = {"-showDirectory", "-format", "csv", "-encoding", "Windows-31J",
-				"-output", "test/out/rule_count_webS.csv",
+		String[] args = {"--path", "base", "-format", "csv", "-encoding", "Windows-31J",
+				"-output", outFileName,
 				"-xml", "test/data/ktestl2.xml", newRoot};
 		StepCount.main(args);
 
-		File actual = new File("test/out/rule_count_webS.csv");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
-	public void countCUsingCustomRule() throws Exception {
-		System.out.println("## CustomRule ## countCUsingCustomRule ##");
+	public void countCUsingCustomRuleAndCsvFormatAndBasePath() throws Exception {
+		System.out.println("## CustomRule ## countCUsingCustomRuleAndCsvFormatAndBasePath ##");
 		String newRoot = "test/data/c/root1";
+		String outFileName = "test/out/count_rule_c_basePath.csv";
 		URL expected = this.getClass()
-				.getResource("RuleCounterTest_testCount_c.csv");
+				.getResource("stepCount_rule_c_basePath.csv");
 
-		String[] args = {"-showDirectory", "-format", "csv", "-encoding", "Shift_JIS",
-				"-output", "test/out/rule_count_c.csv",
+		String[] args = {"-p", "base", "-format", "csv", "-encoding", "Shift_JIS",
+				"-output", outFileName,
 				"-xml", "test/data/ktestl2.xml", newRoot};
 		StepCount.main(args);
 
-		File actual = new File("test/out/rule_count_c.csv");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
-	public void countMiscSourcesIncludingMiscCommentsInSjisUsingCustomRule() throws Exception {
-		System.out.println("## CustomRule ## countMiscSourcesIncludingMiscCommentsInSjisUsingCustomRule ##");
+	public void countMiscSourcesIncludingMiscCommentsInSjisUsingCustomRuleAndCsvFormatAndBasePath()
+			throws Exception {
+		System.out.println("## CustomRule ## countMiscSourcesIncludingMiscCommentsInSjis"
+				+ "UsingCustomRuleAndCsvFormatAndBasePath ##");
 		String newRoot = "test/data/commentS/root1";
+		String outFileName = "test/out/count_rule_commentS_basePath.csv";
 		URL expected = this.getClass()
-				.getResource("RuleCounterTest_testCount_commentS.csv");
+				.getResource("stepCount_rule_commentS_basePath.csv");
 
-		String[] args = {"-showDirectory", "-format", "csv", "-encoding", "Windows-31J",
+		String[] args = {"-p", "base", "-format", "csv", "-encoding", "Windows-31J",
 				"-xml", "test/data/ktestl2.xml",
-				"-output", "test/out/rule_count_commentS.csv", newRoot};
+				"-output", outFileName, newRoot};
 		StepCount.main(args);
 
-		File actual = new File("test/out/rule_count_commentS.csv");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
-	public void countMiscSourcesIncludingMiscCommentsInSjisUsingCustomRule2() throws Exception {
-		System.out.println("## CustomRule ## countMiscSourcesIncludingMiscCommentsInSjisUsingCustomRule(2) ##");
+	public void countMiscSourcesIncludingMiscCommentsInSjis2UsingCustomRuleAndCsvFormatAndBasePath()
+			throws Exception {
+		System.out.println("## CustomRule ## countMiscSourcesIncludingMiscCommentsInSjis(2)"
+				+ "UsingCustomRuleAndCsvFormatAndBasePath ##");
 		String newRoot = "test/data/commentS/root10";
+		String outFileName = "test/out/count_rule_commentS2_basePath.csv";
 		URL expected = this.getClass()
-				.getResource("RuleCounterTest_testCount_commentS2.csv");
+				.getResource("stepCount_rule_commentS2_basePath.csv");
 
-		String[] args = {"-showDirectory", "-format", "csv", "-encoding", "Windows-31J",
+		String[] args = {"-p", "base", "-format", "csv", "-encoding", "Windows-31J",
 				"-xml", "test/data/ktestl2.xml",
-				"-output", "test/out/rule_count_commentS2.csv", newRoot};
+				"-output", outFileName, newRoot};
 		StepCount.main(args);
 
-		File actual = new File("test/out/rule_count_commentS2.csv");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
-	public void countMiscSourcesIncludingMiscCommentsInUtfUsingCustomRule() throws Exception {
-		System.out.println("## CustomRule ## countMiscSourcesIncludingMiscCommentsInUtfUsingCustomRule ##");
+	public void countMiscSourcesIncludingMiscCommentsInUtfUsingCustomRuleAndCsvFormatAndBasePath()
+			throws Exception {
+		System.out.println("## CustomRule ## countMiscSourcesIncludingMiscCommentsInUtf"
+				+ "UsingCustomRuleAndCsvFormatAndBasePath ##");
 		String newRoot = "test/data/commentU/root1";
+		String outFileName = "test/out/count_rule_commentU_basePath.csv";
 		URL expected = this.getClass()
-				.getResource("RuleCounterTest_testCount_commentU.csv");
+				.getResource("stepCount_rule_commentU_basePath.csv");
 
-		String[] args = {"-showDirectory", "-format", "csv", "-encoding", "UTF-8",
+		String[] args = {"-p", "base", "-format", "csv", "-encoding", "UTF-8",
 				"-xml", "test/data/ktestl2.xml",
-				"-output", "test/out/rule_count_commentU.csv", newRoot};
+				"-output", outFileName, newRoot};
 		StepCount.main(args);
 
-		File actual = new File("test/out/rule_count_commentU.csv");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
-	public void countMiscSourcesIncludingMiscCommentsInUtfUsingCustomRule2() throws Exception {
-		System.out.println("## CustomRule ## countMiscSourcesIncludingMiscCommentsInUtfUsingCustomRule(2) ##");
+	public void countMiscSourcesIncludingMiscCommentsInUtf2UsingCustomRuleAndCsvFormatAndBasePath()
+			throws Exception {
+		System.out.println("## CustomRule ## countMiscSourcesIncludingMiscCommentsInUtf(2)"
+				+ "UsingCustomRuleAndCsvFormatAndBasePath ##");
 		String newRoot = "test/data/commentU/root10";
+		String outFileName = "test/out/count_rule_commrntU2_basePath.csv";
 		URL expected = this.getClass()
-				.getResource("StepCounterTest_testCount_commentU2.csv");
+				.getResource("stepCount_commentU2_basePath.csv");
 
-		String[] args = {"-showDirectory", "-format", "csv", "-encoding", "UTF-8",
+		String[] args = {"-p", "base", "-format", "csv", "-encoding", "UTF-8",
 				"-xml", "test/data/ktestl2.xml",
-				"-output", "test/out/rule_count_commentU2.csv", newRoot};
+				"-output", outFileName, newRoot};
 		StepCount.main(args);
 
-		File actual = new File("test/out/rule_count_commentU2.csv");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	// このテスト用データは未公開
 	@Test
-	public void countOWUsingCustomRule() throws Exception {
-		System.out.println("## CustomRule ## countOWUsingCustomRule ##");
+	public void countOWUsingCustomRuleAndCsvFormatAndSubPath() throws Exception {
+		System.out.println("## CustomRule ## countOWUsingCustomRuleAndCsvFormatAndSubPath ##");
 		String newRoot = "test/data/ow/root1";
+		String outFileName = "test/out/count_rule_ow_subPath.csv";
 		URL expected = this.getClass()
-				.getResource("RuleCounterTest_testCount_ow.csv");
+				.getResource("stepCount_rule_ow_subPath.csv");
 
-		String[] args = {"-showDirectory", "-format", "csv", "-encoding", "UTF-8",
+		String[] args = {"-p", "sub", "-format", "csv", "-encoding", "UTF-8",
 				"-xml", "test/data/ktestl2.xml",
-				"-output", "test/out/rule_count_ow.csv", newRoot};
+				"-output", outFileName, newRoot};
 		StepCount.main(args);
 
-		File actual = new File("test/out/rule_count_ow.csv");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 

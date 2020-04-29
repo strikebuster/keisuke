@@ -1,0 +1,9 @@
+[
+	{ "name": "root1\/src\/JavaCutter.java", "type": "Java", "category": "Cutter", "step": 8, "none": 5, "comment": 7, "total": 20 },
+	{ "name": "root1\/src\/StringUtil.java", "type": "Java", "step": 42, "none": 11, "comment": 9, "total": 62 },
+	{ "name": "root1\/src\/jp\/FileObj.java", "type": "Java", "step": 22, "none": 6, "comment": 5, "total": 33 },
+	{ "name": "root1\/src\/jp\/sf\/hoge.txt", "type": "Text", "step": 0, "none": 0, "comment": 0, "total": 0 },
+	{ "name": "root1\/test\/Utils", "type": "UNSUPPORTED" },
+	{ "name": "root1\/test\/Utils.java", "type": "Java", "step": 42, "none": 11, "comment": 9, "total": 62 },
+	{ "name": "root1\/test\/Utils.txt", "type": "Text", "step": 51, "none": 11, "comment": 0, "total": 62 }
+]

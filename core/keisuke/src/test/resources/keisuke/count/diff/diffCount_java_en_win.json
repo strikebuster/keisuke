@@ -4,7 +4,7 @@
 	{ "name": "root2\/src\/jp\/sf\/hoge.txt", "type": "Text", "status": "DROPED", "added": 0, "deleted": 0 },
 	{ "name": "root2\/src\/Status.java", "type": "Java", "status": "ADDED", "added": 4, "deleted": 0 },
 	{ "name": "root2\/src\/StringUtil.java", "type": "Java", "status": "DROPED", "added": 0, "deleted": 42 },
-	{ "name": "root2\/test\/Utils", "type": "UNDEF", "status": "UNSUPPORTED", "added": 0, "deleted": 0 },
+	{ "name": "root2\/test\/Utils", "type": "UNSUPPORTED", "status": "UNSUPPORTED" },
 	{ "name": "root2\/test\/Utils.java", "type": "Java", "status": "UNCHANGED", "added": 0, "deleted": 0 },
 	{ "name": "root2\/test\/Utils.txt", "type": "Text", "status": "UNCHANGED", "added": 0, "deleted": 0 }
 ]

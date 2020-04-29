@@ -50,7 +50,7 @@ public class CommentExpr extends AreaComment {
 		String preStr = "";
 		String postStr = "";
 		String escapedStart = "\\" + EXPR_START;
-		StringBuilder sb = new StringBuilder();
+		StringBuffer sb = new StringBuffer();
 
 		// prefix[ \t]*postfix "#_ ("
 		// prefix[ \t]*postfix(\W?) "( comment\W"

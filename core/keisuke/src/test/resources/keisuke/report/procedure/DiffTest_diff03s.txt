@@ -1,0 +1,6 @@
+war/src/main/webapp/edit.xhtml
+war/src/main/webapp/insert.xhtml
+war/src/main/webapp/list.xhtml
+war/src/main/webapp/sample.jsp
+war/src/main/webapp/sample2.jsp
+war/src/main/webapp/top.xhtml

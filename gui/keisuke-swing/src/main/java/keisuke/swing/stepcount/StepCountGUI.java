@@ -87,16 +87,14 @@ public final class StepCountGUI extends AbstractMainGUI {
 		} else {
 			this.stepCounter.setEncoding(encoding);
 		}
-		this.stepCounter.setShowDirectory(((CountCommandComponent) this.commander()).showDirectory());
+		//this.stepCounter.setShowDirectory(((CountCommandComponent) this.commander()).showDirectory());
+		this.stepCounter.setPath(((CountCommandComponent) this.commander()).pathStyle());
 		this.stepCounter.setSort(((CountCommandComponent) this.commander()).sort());
-		String format = this.commander().format();
-		this.stepCounter.setFormat(format);
+		this.stepCounter.setFormat(this.commander().format());
 		this.setResultBytes(this.stepCounter.getCountingResultAsBytes(this.sources.getPathOfSources()));
 		if (this.stepCounter.isTextAsOutput()) {
 			String text = "";
-			//text = this.stepCounter.getCountingResultAsText(this.sources.getPathOfSources());
 			try {
-				//this.setResultBytes(text.getBytes(this.stepCounter.encodingAsOutput()));
 				text = new String(this.resultBytes(), this.stepCounter.encodingAsOutput());
 			} catch (UnsupportedEncodingException e) {
 				text = e.toString();
@@ -104,8 +102,6 @@ public final class StepCountGUI extends AbstractMainGUI {
 			((CountResultViewComponent) this.resultView())
 				.refreshWith(text, this.stepCounter.getCountedResultAsRaw());
 		} else {
-			//this.setResultBytes(this.stepCounter
-			//		.getCountingResultAsBytes(this.sources.getPathOfSources()));
 			((CountResultViewComponent) this.resultView())
 				.refreshWith(MSG_EXCUSE_BINARY, this.stepCounter.getCountedResultAsRaw());
 		}

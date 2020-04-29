@@ -1,5 +1,6 @@
 package keisuke.count.diff;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -10,7 +11,8 @@ import keisuke.util.LogUtil;
 /**
  * ディレクトリの差分変更結果を示すオブジェクトです。
  */
-public class DiffFolderResult extends AbstractDiffResultForCount {
+public class DiffFolderResult extends AbstractDiffResultForCount implements Serializable {
+	private static final long serialVersionUID = 1L; // since ver.2.0.0
 
 	/*
 	 * インスタンス変数のゲッターはOverride
@@ -19,14 +21,7 @@ public class DiffFolderResult extends AbstractDiffResultForCount {
 	private List<AbstractDiffResultForCount> children = new ArrayList<AbstractDiffResultForCount>();
 	private boolean evaluated = false;
 
-	/**
-	 * 親フォルダーを指定するコンストラクタ
-	 * @param parent 親フォルダーの差分計測結果インスタンス
-	 */
-	public DiffFolderResult(final DiffFolderResult parent) {
-		super(parent);
-		this.setIsFile(false);
-	}
+	public DiffFolderResult() { }
 
 	/**
 	 * 自ノードの名称と差分変更ステータス、親フォルダーを指定するコンストラクタ

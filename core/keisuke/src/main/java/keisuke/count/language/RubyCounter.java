@@ -74,7 +74,7 @@ public class RubyCounter extends LabelHereDocScriptCounter {
 	@Override
 	public String handleLiteralStringStart(
 			final ProgramLangRule lang, final String line, final LiteralString literal) {
-		StringBuilder sb = new StringBuilder();
+		StringBuffer sb = new StringBuffer();
 		if (literal.checkPercentNotation()) {
 			// %記法リテラル処理
 			// 区切り文字を抽出

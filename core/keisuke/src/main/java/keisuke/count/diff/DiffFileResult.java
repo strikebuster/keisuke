@@ -1,24 +1,19 @@
 package keisuke.count.diff;
 
+import java.io.Serializable;
+
 import keisuke.DiffStatusEnum;
 
 /**
  * ファイルの差分変更結果を示すオブジェクトです。
  */
-public class DiffFileResult extends AbstractDiffResultForCount {
+public class DiffFileResult extends AbstractDiffResultForCount implements Serializable {
+	private static final long serialVersionUID = 1L; // since ver.2.0.0
 
-	private String sourceType = "";
+	private String sourceType = null;
 	private String sourceCategory = "";
 
-	/**
-	 * 親フォルダーを指定するコンストラクタ
-	 * @param parent 親フォルダーの差分計測結果インスタンス
-	 */
-	public DiffFileResult(final DiffFolderResult parent) {
-		super(parent);
-		this.setIsFile(true);
-		this.setSourceType("UNDEF");
-	}
+	public DiffFileResult() { }
 
 	/**
 	 * 自ノードの名称と差分変更ステータス、親フォルダーを指定するコンストラクタ
@@ -30,7 +25,7 @@ public class DiffFileResult extends AbstractDiffResultForCount {
 			final DiffFolderResult parent) {
 		super(name, status, parent);
 		this.setIsFile(true);
-		this.setSourceType("UNDEF");
+		//this.setSourceType("UNDEF");
 	}
 
 	/**
@@ -38,9 +33,6 @@ public class DiffFileResult extends AbstractDiffResultForCount {
 	 * @return カテゴリ名
 	 */
 	public String sourceCategory() {
-		if (sourceCategory == null) {
-			return "";
-		}
 		return sourceCategory;
 	}
 
@@ -49,7 +41,11 @@ public class DiffFileResult extends AbstractDiffResultForCount {
 	 * @param category カテゴリ名
 	 */
 	public void setSourceCategory(final String category) {
-		this.sourceCategory = category;
+		if (category == null) {
+			this.sourceCategory = "";
+		} else {
+			this.sourceCategory = category;
+		}
 	}
 
 	/**
@@ -68,4 +64,12 @@ public class DiffFileResult extends AbstractDiffResultForCount {
 		this.sourceType = filetype;
 	}
 
+	/**
+	 * 計測対象のソースコードが未対応であればtrueを返す
+	 * @return 未対応ならtrue
+	 */
+	@Override
+	public boolean isUnsupported() {
+		return (this.sourceType == null);
+	}
 }

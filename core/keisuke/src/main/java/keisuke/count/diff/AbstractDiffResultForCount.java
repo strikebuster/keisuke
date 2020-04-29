@@ -1,7 +1,10 @@
 package keisuke.count.diff;
 
+import java.io.Serializable;
+
 import keisuke.DiffCountResult;
 import keisuke.DiffStatusEnum;
+import keisuke.count.PathStyleEnum;
 
 /**
  * ファイル、ディレクトリの変更情報を示すオブジェクトの抽象基底クラスです。
@@ -9,30 +12,42 @@ import keisuke.DiffStatusEnum;
  *  ステータス文言のproperties定義対応のためコンストラクタ引数追加
  */
 public abstract class AbstractDiffResultForCount extends DiffCountResult
-		implements Comparable<AbstractDiffResultForCount> {
+		implements Comparable<AbstractDiffResultForCount>, Serializable {
+
+	private static final long serialVersionUID = 1L; // since ver.2.0.0
 
 	private DiffFolderResult	parent;
+
+	public AbstractDiffResultForCount() { }
 
 	/**
 	 * 親フォルダーを指定するコンストラクタ
 	 * @param parentResult 	親フォルダーの差分計測結果インスタンス
 	 */
 	public AbstractDiffResultForCount(final DiffFolderResult parentResult) {
+		super();
 		this.parent = parentResult;
 	}
 
 	/**
 	 * 自ノードの名称と差分変更ステータス、親フォルダーを指定するコンストラクタ
-	 * @param nodename ノード名
+	 * @param nodeName ノード名
 	 * @param diffStatus 差分変更ステータス値
 	 * @param parentResult 	親フォルダーの差分計測結果インスタンス
 	 */
-	public AbstractDiffResultForCount(final String nodename, final DiffStatusEnum diffStatus,
+	public AbstractDiffResultForCount(final String nodeName, final DiffStatusEnum diffStatus,
 			final DiffFolderResult parentResult) {
 		super();
 		this.parent = parentResult;
-		this.setNodeName(nodename);
+		this.setNodeName(nodeName);
 		this.setDiffStatus(diffStatus);
+		if (parentResult == null) {
+			this.setFilePath(nodeName);
+		} else {
+			StringBuffer sb = new StringBuffer();
+			sb.append(parentResult.filePath()).append('/').append(nodeName);
+			this.setFilePath(sb.toString());
+		}
 	}
 
 	/**
@@ -66,19 +81,23 @@ public abstract class AbstractDiffResultForCount extends DiffCountResult
 	}
 
 	/**
-	 * 自ノードの計測ルートからのパス名を返す
-	 * @return パス名
+	 * DiffCount結果の対象ファイル｜ディレクトリのパス名を指定したパス表記スタイルで返す
+	 * @param style パス表記スタイル
+	 * @return パス表記文字列
 	 */
-	public String pathFromTop() {
-		DiffFolderResult parentDir = this.parent;
-		StringBuilder sb = new StringBuilder();
-		while (parentDir != null) {
-			sb.insert(0, "/");
-			sb.insert(0, parentDir.nodeName());
-			parentDir = parentDir.getParent();
+	public String filePath(final PathStyleEnum style) {
+		if (style.equals(PathStyleEnum.NO)) {
+			return super.nodeName();
+		} else if (style.equals(PathStyleEnum.SUB)) {
+			String pathFromBase = super.filePath();
+			int pos = pathFromBase.indexOf('/');
+			if (pos < 0) { // root
+				return "";
+			}
+			return pathFromBase.substring(pos + 1);
+		} else { //PathStyleEnum.BASE
+			return super.filePath();
 		}
-		sb.append(this.nodeName());
-		return sb.toString();
 	}
 
 	/**
@@ -87,7 +106,7 @@ public abstract class AbstractDiffResultForCount extends DiffCountResult
 	 */
 	public String hashCodeName() {
 		AbstractDiffResultForCount obj = this;
-		StringBuilder sb = new StringBuilder();
+		StringBuffer sb = new StringBuffer();
 		sb.append(obj.hashCode());
 		while (true) {
 			obj = obj.getParent();

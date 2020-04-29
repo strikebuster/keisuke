@@ -9,9 +9,13 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import static keisuke.report.option.ReportOptionConstant.*;
-import static keisuke.util.TestUtil.*;
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.Matchers.*;
+import static keisuke.util.TestUtil.textContentOf;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.fail;
 
 /**
@@ -70,7 +74,7 @@ public class CountMainProcTest {
 		StderrCapture capture = new StderrCapture();
 		String errMessage = null;
 		Exception firedException = null;
-		String expected = "invalid option value";
+		String expected = "invalid classify value";
 
 		CountMainProc cproc = new CountMainProc();
 		String[] args = {"-" + OPT_CLASS, "xxx", "test/data/dummy.csv"};
@@ -287,6 +291,18 @@ public class CountMainProcTest {
 
 		CountMainProc cproc = new CountMainProc();
 		String[] args = {"-c", OPTVAL_LANGGROUP, "test/data/count01.csv", "-x", "test/data/ktestl.xml"};
+		cproc.main(args);
+
+		assertThat(cproc.reportText(), is(equalTo(textContentOf(expected))));
+	}
+
+	@Test
+	public void countSubPathInfileUsingDefault() throws Exception {
+		System.out.println("## CountProcTest ## count11 ## countSubPathInfileUsingDefault ##");
+		URL expected = this.getClass().getResource("CountTest_count01.csv");
+
+		CountMainProc cproc = new CountMainProc();
+		String[] args = {"test/data/count01.csv"};
 		cproc.main(args);
 
 		assertThat(cproc.reportText(), is(equalTo(textContentOf(expected))));

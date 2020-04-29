@@ -19,6 +19,7 @@ import org.junit.Test;
 import static keisuke.swing.GUIConstant.*;
 import static keisuke.swing.GUITestUtil.*;
 import static keisuke.swing.stepcount.StepCountGUIConstant.*;
+import static keisuke.swing.stepcount.StepCountGUITestConstant.*;
 import static keisuke.swing.stepcount.StepCountTestUtil.*;
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
@@ -30,16 +31,6 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 
 	private static final float UPPER_RATIO = 1.1f;
 	private static final float LOWER_RATIO = 0.9f;
-
-	private static final int FORMAT_TEXT_IDX = 0;
-	private static final int FORMAT_CSV_IDX = 1;
-	private static final int FORMAT_EXCEL_IDX = 2;
-	private static final int FORMAT_XML_IDX = 3;
-	private static final int FORMAT_JSON_IDX = 4;
-
-	private static final int SORT_ON_IDX = 0;
-	private static final int SORT_OS_IDX = 1;
-	private static final int SORT_OFF_IDX = 2;
 
 	private FrameFixture frame;
 
@@ -375,11 +366,9 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 		msg = frame.label(SAVE_LABEL).target.getText();
 		assertThat(msg, containsString("finish"));
 
-		// ShowDirをチェックし再計測
-		frame.checkBox(SHOWDIR_CHECK).click();
+		// path styleでshowDirを選択し再計測
+		frame.comboBox(PATH_SELECT).selectItem(PATH_SHOWDIR_IDX);
 		sleep(SLEEPLONGTIME); // often gets false
-		boolean checked = frame.checkBox(SHOWDIR_CHECK).target.isSelected();
-		assertThat(checked, is(true));
 		frame.button(COUNT_BUTTON).requireEnabled(Timeout.timeout(WAITTIME)).click();
 		sleep(SLEEPLONGTIME);
 
@@ -484,7 +473,7 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 
 		stat = frame.button(COUNT_BUTTON).target.isEnabled();
 		assertThat(stat, is(false));
-		frame.checkBox(SHOWDIR_CHECK).click();
+		frame.comboBox(PATH_SELECT).selectItem(PATH_SHOWDIR_IDX);
 		sleep(SLEEPTIME);
 		stat = frame.button(COUNT_BUTTON).target.isEnabled();
 		assertThat(stat, is(true));
@@ -511,7 +500,7 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 		//System.out.println(contentOf(actual));
 		assertThat(actual, is(array(endsWith(pathForLocalSystem(srcFile1)),
 				endsWith(pathForLocalSystem(srcFile2)))));
-		frame.checkBox(SHOWDIR_CHECK).click();
+		frame.comboBox(PATH_SELECT).selectItem(PATH_SHOWDIR_IDX);
 		sleep(SLEEPTIME);
 		frame.comboBox(FORMAT_SELECT).selectItem(FORMAT_CSV_IDX);
 		sleep(SLEEPTIME);
@@ -593,7 +582,7 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 		String[] actual = frame.list(SOURCE_LIST).contents();
 		//System.out.println(contentOf(actual));
 		assertThat(actual, is(array(endsWith(pathForLocalSystem(srcRoot)))));
-		frame.checkBox(SHOWDIR_CHECK).click();
+		frame.comboBox(PATH_SELECT).selectItem(PATH_SHOWDIR_IDX);
 		sleep(SLEEPTIME);
 		frame.comboBox(FORMAT_SELECT).selectItem(FORMAT_XML_IDX);
 		sleep(SLEEPTIME);
@@ -617,7 +606,7 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 		String[] actual = frame.list(SOURCE_LIST).contents();
 		//System.out.println(contentOf(actual));
 		assertThat(actual, is(array(endsWith(pathForLocalSystem(srcRoot)))));
-		frame.checkBox(SHOWDIR_CHECK).click();
+		frame.comboBox(PATH_SELECT).selectItem(PATH_SHOWDIR_IDX);
 		sleep(SLEEPTIME);
 		frame.comboBox(FORMAT_SELECT).selectItem(FORMAT_JSON_IDX);
 		sleep(SLEEPTIME);
@@ -641,7 +630,7 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 		String[] actual = frame.list(SOURCE_LIST).contents();
 		//System.out.println(contentOf(actual));
 		assertThat(actual, is(array(endsWith(pathForLocalSystem(srcRoot)))));
-		frame.checkBox(SHOWDIR_CHECK).click();
+		frame.comboBox(PATH_SELECT).selectItem(PATH_SHOWDIR_IDX);
 		sleep(SLEEPTIME);
 		frame.comboBox(FORMAT_SELECT).selectItem(FORMAT_EXCEL_IDX);
 		sleep(SLEEPTIME);
@@ -677,7 +666,7 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 		// エンコードを指定
 		frame.textBox(ENCODING_TEXT).deleteText();
 		frame.textBox(ENCODING_TEXT).enterText("Windows-31J");
-		frame.checkBox(SHOWDIR_CHECK).click();
+		frame.comboBox(PATH_SELECT).selectItem(PATH_SHOWDIR_IDX);
 		sleep(SLEEPTIME);
 		frame.comboBox(FORMAT_SELECT).selectItem(FORMAT_CSV_IDX);
 		sleep(SLEEPTIME);
@@ -719,7 +708,7 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 		//System.out.println(frame.textBox(XML_TEXT).text());
 		assertThat(frame.textBox(XML_TEXT).text(), endsWith(pathForLocalSystem(xmlFile)));
 
-		frame.checkBox(SHOWDIR_CHECK).click();
+		frame.comboBox(PATH_SELECT).selectItem(PATH_SHOWDIR_IDX);
 		frame.comboBox(FORMAT_SELECT).selectItem(FORMAT_CSV_IDX);
 		sleep(SLEEPTIME);
 		frame.button(COUNT_BUTTON).requireEnabled(Timeout.timeout(WAITTIME)).click();
@@ -727,7 +716,7 @@ public final class StepCountGUITest extends FestSwingJUnitTestCase {
 
 		String text = frame.textBox(RESULT_TEXT).text();
 		//System.out.println(text);
-		URL expected = this.getClass().getResource("RuleCount_java_showdir.csv");
+		URL expected = this.getClass().getResource("StepCount_rule_java_showdir.csv");
 		assertThat(text, is(equalTo(textContentOf(expected))));
 
 		// Xml定義を削除して再度実行

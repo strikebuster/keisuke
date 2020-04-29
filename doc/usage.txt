@@ -28,7 +28,14 @@ usage: StepCount <infile> [<infile2> ..] [-?] [-e <arg>] [-f <arg>] [-o　<arg>]
 			'xml'	XML形式
 			'json'	JSON形式
  -o,--output <arg>     計測結果出力ファイル（未指定時は標準出力）
+ -p,--path <arg>       結果に表示するソースファイル名のパス表記方法
+			'no'	ファイル名のみ（未指定時のデフォルト値:ver.1.x互換のため）
+			'base'	指定されたinfileディレクトリのディレクトリ名以下を付与
+			'sub'	指定されたinfileディレクトリのサブディレクトリ以下を付与
  -s,--showDirectory    結果に表示するソースファイル名にディレクトリパスを付与する
+			指定されたinfileディレクトリのディレクトリ名以下を付与するが先頭に'/'が付く
+			--pathと同時に指定された場合は無視される
+			※このオプションはver.1.xの下位互換で残されているが非推奨、--pathの利用を推奨する
  -S,--sort <arg>       結果に表示するソースファイルのソート方法
 			'on'	Unicode順にソート（未指定時のデフォルト値）
 			'os'	OSのファイル名順にソート、Windowsのときは大文字小文字無視
@@ -61,6 +68,18 @@ usage: DiffCount <newDir> <oldDir> [-?] [-e <arg>] [-f <arg>] [-o <arg>] [-x <ar
 			　ディレクトリ集計を含むもの： text, xml, html
 			　ファイルのみのもの：       csv, excel, json
  -o,--output <arg>     計測結果出力ファイル（未指定時は標準出力）
+ -p,--path <arg>       結果に表示するソースファイル名のパス表記方法
+			'base'	指定されたinfileディレクトリのディレクトリ名以下を付与
+				（未指定時のデフォルト値:ver.1.x互換のため）
+			'sub'	指定されたinfileディレクトリのサブディレクトリ以下を付与
+			'no'	ファイル名のみ
+			出力フォーマットがcsv, excel, jsonのときに有効であり、それ以外のフォーマットでは無視される
+ -S,--sort <arg>       結果に表示するソースファイルのソート方法
+			'node'	ディレクトリ＞ファイル順でかつファイル名を'os'と同様にソート
+				（フォーマットがtext,xml,htmlの時に未指定時のデフォルト値:ver.1.x互換のため）
+			'os'	OSのファイル名順にソート、Windowsのときは大文字小文字無視
+				（フォーマットがcsv,excel,jsonの時に未指定時のデフォルト値:ver.1.x互換のため）
+			'on'	Unicode順にソート
  -x,--xml <arg>        言語定義XMLファイル、指定時は内部デフォルト定義を先に読んでから、
 			指定された定義を上書き追加する
 
@@ -93,17 +112,24 @@ usage: CountReport <infile> [-?] [-c <arg>] [-o <arg>] [-p <arg>] [-x <arg>]
 #
 java -cp keisuke-x.x.x-jar-with-dependencies.jar keisuke.DiffReport ファイル [オプション]
 #
-usage: DiffReport <infile> [-?] [-a <arg>] [-c <arg>] [-m <arg>] [-o
-       <arg>] [-p <arg>] [-u <arg>] [-x <arg>]
-　<infile>             集計対象となる差分行数計測結果ファイル（TEXT形式であること）（未指定時は標準入力）
+usage: DiffReport <infile> [-?] [-a <arg>] [-c <arg>] [-f <arg>] [-m
+       <arg>] [-o <arg>] [-p <arg>] [-u <arg>] [-x <arg>]
+　<infile>             集計対象となる差分行数計測結果ファイル（TEXT形式またはCSV形式であること）（未指定時は標準入力）
  -?,--help             コマンドライン引数説明の表示
  -a,--aout <arg>       差分から追加ファイル名を抽出して出力するファイル（未指定時は出力なし）
+			差分行数計測結果がTEXT形式の場合、基点ディレクトリからのパスの先頭に'/'を付与する
+			これは突き合せるStepCountの行数計測が-showDirectory指定で出力された場合に対応するため
+			CSV形式の場合、結果に記述されるパスをそのまま出力する
  -c,--classify <arg>   集計分類の指定
 			'extension'	拡張子
 			'language'	言語
 			'group'		言語グループ
 			'fw:'<name>	<name>で指定するフレームワークでのソース種別
 					<name>はフレームワーク定義XMLで指定されたもの
+ -f,--format <arg>     集計対象の差分行数計測結果ファイルの形式を指定
+			'text'	テキスト形式（未指定時のデフォルト値:ver.1.x互換のため）
+			'csv'	CSV形式
+			それ以外の形式は非対応
  -m,--mout <arg>       差分から変更ファイル名を抽出して出力するファイル（未指定時は出力なし）
  -o,--output <arg>     集計結果出力ファイル（未指定時は標準出力）
  -p,--properties <arg> 出力ラベル定義用プロパティ設定ファイル（未指定時は内部デフォルト定義）
@@ -122,9 +148,19 @@ usage: DiffReport <infile> [-?] [-a <arg>] [-c <arg>] [-m <arg>] [-o
 #
 java -cp keisuke-x.x.x-jar-with-dependencies.jar keisuke.MatchExtract ファイル ファイル [ファイル] [オプション]
 #
-usage: MatchExtract <mafile> <trfile>  [<outfile>] [-?] [-o <arg>]
+usage: MatchExtract <mafile> <trfile>  [<outfile>] [-?] [-o <arg>] [-p <arg>]
  <mafile>              抽出元となる行数計測結果ファイル
+			StepCountで出力したファイルで-path base , -path sub もしくは-showDirectoryを指定した結果
  <trfile>              抽出対象を指定するファイル（DiffReportのaoutまたはmoutの出力ファイル）
+			StepCountの出力時のパス表記指定に応じてDiffCount、DiffReportのオプションを指定して作成して結果
+			StepCountで-path baseを指定した場合、DiffCount -path base -format csv、DiffReport -format csv
+			StepCountで-path subを指定した場合、DiffCount -path sub -format csv、DiffReport -format csv
+			StepCountで-showDirectoryを指定した場合、DiffCount -format text、DiffReport -format text
  <outfile>             抽出結果出力ファイル（未指定時は標準出力）
  -?,--help             コマンドライン引数説明の表示
  -o,--output <arg>     抽出結果出力ファイル（<outfile>より優先、未指定時は<outfile>）
+ -p,--path <arg>       <mafile>のパス表記方法
+			未指定		<mafile>が-showDirectoryを指定されていた場合（ver.1.x互換のため）
+			'base'		<mafile>が-path baseを指定されていた場合
+			'sub'		<mafile>が-path subを指定されていた場合
+

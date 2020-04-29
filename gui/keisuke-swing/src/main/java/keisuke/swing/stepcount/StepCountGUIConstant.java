@@ -13,8 +13,7 @@ final class StepCountGUIConstant {
 	static final String ADD_BUTTON = "add_button";
 	static final String REMOVE_BUTTON = "remove_button";
 	static final String FILE_CHOOSER = "src_choose";
-	static final String SHOWDIR_CHECK = "showdir_box";
-	static final String SORT_SELECT = "sort_box";
+	static final String SHOWDIR_CHECK = "showdir_box"; // not use since ver.2.0.0
 	static final String HIDDEN_ADDING = "_hidden_add_text";
 
 	// Table Column Index

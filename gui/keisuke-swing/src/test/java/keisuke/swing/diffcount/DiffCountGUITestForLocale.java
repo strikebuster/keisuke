@@ -112,7 +112,7 @@ public final class DiffCountGUITestForLocale extends FestSwingJUnitTestCase {
 		assertThat(actualTextOf(text, withoutHeadLines(TEXT_IGNORE_LINES)),
 				is(equalTo(textContentOf(expected))));
 		// 計測後のトータル表示ラベルの検査
-		URL expectedCsv = this.getClass().getResource("DiffCount_java_top_en.csv");
+		URL expectedCsv = this.getClass().getResource("DiffCountTable_java_top_en.csv");
 		String[][] expectedArray = convertToTableArrayFrom(contentOf(expectedCsv));
 		String expectedStatus = deriveTotalStatusFrom(expectedArray);
 		long expectedAdded = deriveTotalAddedStepsFrom(expectedArray);
@@ -153,7 +153,7 @@ public final class DiffCountGUITestForLocale extends FestSwingJUnitTestCase {
 		//System.out.println(actual);
 		assertThat(actualLabel, contains(expectedHeader));
 		// 表の内容の検査
-		URL expectedData = this.getClass().getResource("DiffCount_java_top_en.csv");
+		URL expectedData = this.getClass().getResource("DiffCountTable_java_top_en.csv");
 		String[][] actual = table.contents();
 		//System.out.println(contentOf(actual));
 		assertThat(contentOf(actual), is(equalTo(contentOf(expectedData))));

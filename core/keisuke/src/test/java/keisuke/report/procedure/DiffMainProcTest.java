@@ -12,14 +12,18 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import static keisuke.report.option.ReportOptionConstant.*;
-import static keisuke.util.TestUtil.*;
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.Matchers.*;
+import static keisuke.util.TestUtil.textContentOf;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.fail;
 
 /**
  * Test class of DiffProc.
- *
  */
 public class DiffMainProcTest {
 	@Before
@@ -38,7 +42,7 @@ public class DiffMainProcTest {
 		DiffMainProc dproc = new DiffMainProc();
 		String[] args = {"-?", "xxx"};
 		dproc.main(args);
-		assertThat(dproc.argMapEntity(), is(nullValue()));
+		assertThat(dproc.argMapEntity(), nullValue());
 	}
 
 	@Test
@@ -106,7 +110,7 @@ public class DiffMainProcTest {
 		StderrCapture capture = new StderrCapture();
 		String errMessage = null;
 		Exception firedException = null;
-		String expected = "invalid option value";
+		String expected = "invalid unchange value";
 
 		DiffMainProc dproc = new DiffMainProc();
 		String[] args = {"--" + OPT_UNCHANGE, "xxx", "test/data/diff01.txt"};
@@ -157,7 +161,7 @@ public class DiffMainProcTest {
 		StderrCapture capture = new StderrCapture();
 		String errMessage = null;
 		Exception firedException = null;
-		String expected = "invalid option value";
+		String expected = "invalid classify value";
 
 		DiffMainProc dproc = new DiffMainProc();
 		String[] args = {"-" + OPT_CLASS, "xxx", "test/data/diff01.txt"};

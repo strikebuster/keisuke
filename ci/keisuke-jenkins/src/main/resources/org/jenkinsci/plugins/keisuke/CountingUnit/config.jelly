@@ -1,0 +1,9 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+	<f:entry>
+		<f:property field="inputSetting"/>
+	</f:entry>
+	<f:entry>
+		<f:optionalProperty title="${%enableOutput}" name="outputEnabled" field="outputSetting" checked="${instance.outputEnabled}"/>
+	</f:entry>
+</j:jelly>

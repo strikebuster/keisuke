@@ -49,6 +49,18 @@ public abstract class AbstractFormatter implements Formatter<StepCountResult[]> 
 	}
 
 	/**
+	 * ソースコードタイプを返す
+	 * @param type 計測結果のソースコードタイプ
+	 * @return ソースコードタイプ
+	 */
+	protected String getSourceType(final String type) {
+		if (type == null) {
+			return this.messageMap.get(MSG_COUNT_FMT_UNDEF);
+		}
+		return type;
+	}
+
+	/**
 	 * {@inheritDoc}
 	 * <br>
 	 * 引数はステップ計測結果の配列

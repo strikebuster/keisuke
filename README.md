@@ -3,7 +3,15 @@
 - - -
 ### 概要
 StepCounter (http://github.com/takezoe/stepcounter) のコマンドラインI/Fで出力されるファイルに対し、集計する機能があります。  
-StepCounterを模倣してソースコードの行数計測をする機能もあります。行数計測において本ツールで実装したのはStepCounterの行数カウントと２つの版の差分行数カウントの機能です。コマンドラインI/FおよびAntタスクI/FおよびSwing画面I/Fを提供していますが、StepCounterの用意しているEclipseプラグインのI/Fはありません。
+StepCounterを模倣してソースコードの行数計測をする機能もあります。行数計測において本ツールで実装したのはStepCounterの行数カウントと２つの版の差分行数カウントの機能です。  
+コマンドラインI/FおよびAntタスクI/FおよびSwing画面I/FおよびJenkinsプラグインを提供していますが、StepCounterの用意しているEclipseプラグインはありません。  
+計測可能な言語についてはdocディレクトリ内のlanguage.xmlを参照してください。
+主な言語を例示すると
+COBOL, Fortran, C/C++, Java, Scala, C#, Smalltalk, VB, Delphi,
+JavaScript, TypeScript, VBScript, JSP, ASP, PHP, Flex, XML, HTML,
+BAT, Shell, Perl, Python, Ruby, Groovy, Lua, SQL, R, Lisp, Scheme, Clojure, Haskell
+などがあります。
+
 - - -
 ### 使い方
 #### 行数カウント集計コマンド
@@ -21,7 +29,7 @@ StepCounterを模倣してソースコードの行数計測をする機能もあ
 > java -cp keisuke-x.x.x-jar-with-dependencies.jar keisuke.DiffReport [差分計測ファイル]
 ```
 差分計測ファイルは入力であり、省略時は標準入力となります。  
-差分計測ファイルは、stepcounter.diffcount.Mainまたはkeisuke.count.DiffCountでTEXT形式で出力されたファイルと同じフォーマットであることが必要です。  
+差分計測ファイルは、stepcounter.diffcount.Mainまたはkeisuke.count.DiffCountでTEXT形式で出力されたファイルと同じフォーマットであること、もしくはkeisuke.count.DiffCountでCSV形式で出力されたファイルと同じフォーマットであることが必要です。  
 入力を分類ごとに集計した結果は標準出力に出力されます。
 
 オプション引数"-?", "--help"を指定すると他のオプション引数が表示されます。
@@ -52,7 +60,7 @@ StepCounterを模倣してソースコードの行数計測をする機能もあ
 > java -cp keisuke-x.x.x-jar-with-dependencies.jar keisuke.count.DiffCount [新版ディレクトリ] [旧版ディレクトリ]
 ```
 差分計測の対象となるディレクトリを引数で２つ指定する。１つ目に新バージョンのソースがあるディレクトリ、２つ目に旧バージョンのソースがあるディレクトリを指定する。  
-stepcounter.diffcount.Mainとの互換のため通常のdiffと引数の順が逆であることに注意する。  
+stepcounter.diffcount.Mainとの互換のため通常のdiffと比較基準となる引数の位置が逆であることに注意する。  
 ディレクトリの下位にあるファイルおよびサブディレクトリが計測対象になる。ディレクトリツリーの階層構造が新旧で対応するように同じ階層レベルのルートディレクトリを選ぶ。  
 計測した結果は標準出力に出力されます。
 
@@ -74,12 +82,50 @@ keisuke.count.StepCountの引数およびオプションで指定する値は、
 keisuke.count.DiffCountの引数およびオプションで指定する値は、画面の中で指定できます。
 
 - - -
+#### ソースコード行数計測/差分行数計測Jenkinsプラグイン
+keisuke-jenkins-x.x.x.hpiをJenkinsに導入し利用する。ビルド後処理に追加される。  
+Pipelineにも対応しています。  
+ジョブの設定にて計測モードを３種類から選択する。  
+（１）ディレクトリ配下全ファイルの行数計測  
+（２）ディレクトリ配下からパターンに合致するファイルを対象に行数計測  
+（３）（１）に加え、（１）のディレクトリの旧版のソースとの差分行数計測  
+　　　旧版のソースは直前のビルドのソースではなく、比較基準となる版（例えば直近のリリース版）を格納したディレクトリを指定して比較します。
+
+- - -
 ### 詳細説明
 より詳細な情報については、gitリポジトリのdocディレクトリ内のファイルを参照する。  
 ファイルはUTF-8エンコード、UNIX改行で作成しています。
 
 - - -
 ### 更新履歴
+###### Version 2.0.0(2020/4/29)
+* 機能追加  
+・Jenkinsプラグインを追加  
+・StepCountにファイルパスの表記方法を選択できるオプション(-path)を追加  
+・DiffCountにファイルパスの表記方法を選択できるオプション(-path)とファイルパスのソート順を選択できるオプション(-sort)を追加  
+・上述のオプション指定をAntタスクI/FおよびSwing画面I/Fに追加  
+・DiffReportの入力ファイルにDiffCountのCSV形式の出力結果を選択できるオプション(-format)を追加  
+・MatchExtractの入力ファイルのファイルパス表記方法を選択できるオプション(-path)を追加  
+
+* 機能改修  
+・StepCountでソースタイプが未対応の場合のJSON,XML形式での表記が"unknown"であったのをCSV,EXCEL,TEXT形式と合わせるようにプロパティに定義した文言（未対応/UNSUPPORTED）に変更    
+・DiffCountでソースタイプが未対応の場合の追加/削除行数の表記が”0”であったのをCSV,JSON,XML形式では抑止、HTML形式では"-"に変更（TEXT,EXCEL形式については"0"のまま）  
+・DiffCountでソースタイプの表記を含むCSV,EXCEL,JSON,XML形式では未対応時の表記が"UNDEF"であったのをStepCountに合わせるようにプロパティに定義した文言（未対応/UNSUPPORTED）に変更  
+・上述の変更によりStepCounterの出力との互換性が損なわれたが本ツールの機能拡張での整合性を優先  
+
+* バグ修正  
+・Windowsでのパス比較時に大文字小文字を無視するように修正  
+
+* 内部的な改変  
+・Gradle5.xに対応するようビルドスクリプトの修正  
+・coreモジュールにMavenリポジトリ登録用のpom.xmlを追加  
+・Jenkins PluginからStepCountとDiffCountの機能を呼び出すための外部I/Fを追加  
+・Jenkinsのスレーブからcoreモジュールを呼び出した結果をマスターに渡すために一部のクラスにSerializableを実装  
+・JenkinsなどWebApplicationからcoreモジュールを呼び出した時にExcel出力ができない問題を回避するための修正  
+・Jenkins test-harnessとcoreモジュールが推移依存するdom4jの競合問題を回避するため、coreモジュールの依存ライブラリにorg.jenkins-ci.dom4j:dom4j:1.6.1-jenkins-4を追加  
+・Swing画面テストコードの関数の一部をcoreモジュールのテストコードに移動  
+・StepCountやDiffCountのテスト期待値ファイルの名称を変更  
+
 ###### Version 1.4.1(2018/10/6)
 * バグ修正  
 ・CountReportとDiffReportとMatchExtractの出力において改行コードが環境依存になっていなかったバグを修正  

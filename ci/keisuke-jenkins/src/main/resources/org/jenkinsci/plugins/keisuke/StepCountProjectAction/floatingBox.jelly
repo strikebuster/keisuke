@@ -1,0 +1,55 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:local="local">
+    <!-- at least two data points are required for a trend report -->
+    <j:set var="graphUrlPath" value="keisuke/trend"/>
+    <j:set var="mapUrlPath" value="keisuke/trendMap"/>
+    <j:set var="selectedKind" value="${from.displayStepKindEnum}" />
+    <j:set var="hasDiffResult" value="${from.diffExist}" />
+    <j:set var="graphUrlPathForDiffAdded" value="keisuke/trendDiffAdded"/>
+    <j:set var="mapUrlPathForDiffAdded" value="keisuke/trendMapDiffAdded"/>
+    <j:set var="graphUrlPathForDiffDeleted" value="keisuke/trendDiffDeleted"/>
+    <j:set var="mapUrlPathForDiffDeleted" value="keisuke/trendMapDiffDeleted"/>
+    <j:set var="kindCaption" value="${%unknown}" />
+    <j:choose>
+     	<j:when test="${selectedKind.codeOnly}">
+     		<j:set var="kindCaption" value="${%code_only}" />
+     	</j:when>
+     	<j:when test="${selectedKind.withComment}">
+     		<j:set var="kindCaption" value="${%with_comment}" />
+     	</j:when>
+     	<j:when test="${selectedKind.allSteps}">
+     		<j:set var="kindCaption" value="${%all_steps}" />
+     	</j:when>
+    </j:choose>
+    <div align="right">
+      <div class="test-trend-caption">
+        ${%title}<st:nbsp />(${kindCaption})
+      </div>
+      <div>
+        <img src="${graphUrlPath}" lazymap="${mapUrlPath}" alt="${%Trend graph of StepCount}"/>
+      </div>
+      <div style="text-align:right">
+        <a href="${graphUrlPath}?width=800&amp;height=600">${%enlarge}</a>
+      </div>
+      <j:if test="${hasDiffResult}">
+        <div class="test-trend-caption">
+          ${%diffTitle}
+        </div>
+        <div style="text-align:center">
+             ${%diffBuildNote}
+        </div>
+        <div>
+          <img src="${graphUrlPathForDiffAdded}" lazymap="${mapUrlPathForDiffAdded}" alt="${%Trend graph of DiffCount added steps}"/>
+        </div>
+        <div>
+          <img src="${graphUrlPathForDiffDeleted}?buildAxis=false" lazymap="${mapUrlPathForDiffDeleted}" alt="${%Trend graph of DiffCount deleted steps}"/>
+        </div>
+        <div style="text-align:right">
+           ${%enlarge}<st:nbsp /><st:nbsp />
+          <a href="${graphUrlPathForDiffAdded}?width=800&amp;height=600">${%added}</a>
+          <st:nbsp /><st:nbsp />
+          <a href="${graphUrlPathForDiffDeleted}?width=800&amp;height=600">${%deleted}</a>
+        </div>
+      </j:if>
+    </div>
+</j:jelly>

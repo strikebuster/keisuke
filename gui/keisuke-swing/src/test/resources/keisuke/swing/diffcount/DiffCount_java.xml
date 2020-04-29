@@ -13,7 +13,7 @@
   <file name="StringUtil.java" type="Java" status="削除" added="0" deleted="42" />
  </directory>
  <directory name="test" status="変更なし" added="0" deleted="0" >
-  <file name="Utils" type="UNDEF" status="サポート対象外" added="0" deleted="0" />
+  <file name="Utils" type="未対応" status="サポート対象外" />
   <file name="Utils.java" type="Java" status="変更なし" added="0" deleted="0" />
   <file name="Utils.txt" type="Text" status="変更なし" added="0" deleted="0" />
  </directory>

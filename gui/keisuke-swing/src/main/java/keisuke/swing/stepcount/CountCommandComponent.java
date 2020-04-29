@@ -5,8 +5,11 @@ import java.awt.Container;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 
+import keisuke.CommandOption;
 import keisuke.count.option.StepCountOption;
-import keisuke.swing.CommandComponent;
+import keisuke.swing.AbstractCommandComponent;
+import keisuke.swing.AbstractSelectPathUnit;
+import keisuke.swing.AbstractSelectSortUnit;
 import keisuke.swing.SeparatorUnit;
 
 import javax.swing.JLabel;
@@ -14,14 +17,13 @@ import javax.swing.JLabel;
 /**
  * 計測オプション指定用GUI部品
  */
-class CountCommandComponent extends CommandComponent {
+class CountCommandComponent extends AbstractCommandComponent {
 
 	private JLabel padding11;
 	private SeparatorUnit separator;
-	private ShowDirectoryUnit showDirBox;
+	//private ShowDirectoryUnit showDirBox;
 	private JLabel padding21;
 	private JLabel padding22;
-	private SelectSortUnit sortBox;
 	private JLabel padding23;
 
 	CountCommandComponent(final StepCountGUI owner) {
@@ -29,20 +31,27 @@ class CountCommandComponent extends CommandComponent {
 
 		this.padding11 = new JLabel("   ");
 		this.separator = new SeparatorUnit();
-		this.showDirBox = new ShowDirectoryUnit(this);
+		//this.showDirBox = new ShowDirectoryUnit(this);
 		this.padding21 = new JLabel("   ");
 		this.padding22 = new JLabel("   ");
-		this.sortBox = new SelectSortUnit(this);
 		this.padding23 = new JLabel("   ");
 	}
 
-	boolean showDirectory() {
-		return this.showDirBox.selectedShowDirecory();
+	/** {@inheritDoc} */
+	@Override
+	protected AbstractSelectSortUnit defineSortBox(final CommandOption option) {
+		return new SelectSortUnit(this, option);
 	}
 
-	String sort() {
-		return this.sortBox.selectedValue();
+	/** {@inheritDoc} */
+	@Override
+	protected AbstractSelectPathUnit definePathBox(final CommandOption option) {
+		return new SelectPathUnit(this, option);
 	}
+
+	//boolean showDirectory() {
+	//	return this.showDirBox.selectedShowDirecory();
+	//}
 
 	/** {@inheritDoc} */
 	public GroupLayout.SequentialGroup createGroupForVerticalGroup(final Container container) {
@@ -57,9 +66,9 @@ class CountCommandComponent extends CommandComponent {
 				.addGroup(layout.createParallelGroup(Alignment.CENTER)
 					.addGroup(this.formatBox().createGroupForVerticalGroup(container))
 					.addComponent(this.padding21)
-					.addGroup(this.sortBox.createGroupForVerticalGroup(container))
+					.addGroup(this.sortBox().createGroupForVerticalGroup(container))
 					.addComponent(this.padding22)
-					.addGroup(this.showDirBox.createGroupForVerticalGroup(container))
+					.addGroup(this.pathBox().createGroupForVerticalGroup(container))
 					.addComponent(this.padding23)
 					.addComponent(this.countButton().button()));
 	}
@@ -83,12 +92,12 @@ class CountCommandComponent extends CommandComponent {
 								.createGroupForHorizontalGroup(container))
 						.addGroup(layout.createSequentialGroup()
 							.addGroup(layout.createParallelGroup(Alignment.LEADING)
-								.addGroup(this.sortBox
+								.addGroup(this.sortBox()
 									.createGroupForHorizontalGroup(container)))
 							.addGroup(layout.createParallelGroup(Alignment.LEADING)
 								.addComponent(this.padding22))
 							.addGroup(layout.createParallelGroup(Alignment.LEADING)
-								.addGroup(this.showDirBox
+								.addGroup(this.pathBox()
 									.createGroupForHorizontalGroup(container)))
 							.addGroup(layout.createParallelGroup(Alignment.LEADING)
 								.addComponent(this.padding23))

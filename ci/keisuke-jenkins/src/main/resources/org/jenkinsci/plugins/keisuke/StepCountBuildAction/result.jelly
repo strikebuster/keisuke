@@ -1,0 +1,255 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
+	<j:set var="myname" value="keisuke" />
+	<l:layout title="${%title} Build #${it.build.number}">
+		<l:side-panel>
+ 			<st:include page="sidepanel.jelly" it="${it.build}" />
+ 		</l:side-panel>
+ 		<l:main-panel>
+			<script type="text/javascript" src="${rootURL}/plugin/${myname}/jquery/jquery-1.6.2.min.js" />
+			<script type="text/javascript">
+    			var $162 = $.noConflict(true);
+			</script>
+			<script type="text/javascript" src="${rootURL}/plugin/${myname}/jquery/jquery-ui-1.8.16.custom.min.js" />
+			<link href="${rootURL}/plugin/${myname}/jquery/css/smoothness/jquery-ui-1.8.16.custom.css" rel="stylesheet" type="text/css" />
+			<script type="text/javascript">
+				$162(function(){
+					$162('#tabs').tabs({
+						selected: 0,
+						fx: { opacity: 'toggle', duration: 'fast' }
+					});
+				});
+			</script>
+			<j:set var="allCountedFileNum" value="0" />
+			<j:set var="allStepsSum" value="0" />
+			<j:set var="allCodesSum" value="0" />
+			<j:set var="allCommentsSum" value="0" />
+			<j:set var="allBlanksSum" value="0" />
+			<j:set var="allUncountedFileNum" value="0" />
+			<j:set var="allChangedFileNum" value="0" />
+			<j:set var="allAddedSum" value="0" />
+			<j:set var="allDeletedSum" value="0" />
+			<j:set var="allUnchangedFileNum" value="0" />
+			<j:set var="allUnsupportedFileNum" value="0" />
+			<j:set var="hasDiffResult" value="false" />
+			<j:forEach var="item" items="${it.stepsMap}">
+				<j:set var="allCountedFileNum" value="${allCountedFileNum + item.value.countedFiles}" />
+				<j:set var="allStepsSum" value="${allStepsSum + item.value.stepsSum}" />
+				<j:set var="allCodesSum" value="${allCodesSum + item.value.codesSum}" />
+				<j:set var="allBlanksSum" value="${allBlanksSum + item.value.blanksSum}" />
+				<j:set var="allCommentsSum" value="${allCommentsSum + item.value.commentsSum}" />
+				<j:set var="allUncountedFileNum" value="${allUncountedFileNum + item.value.uncountedFiles}" />
+				<j:set var="allChangedFileNum" value="${allChangedFileNum + item.value.changedFiles}" />
+				<j:set var="allAddedSum" value="${allAddedSum + item.value.addedSum}" />
+				<j:set var="allDeletedSum" value="${allDeletedSum + item.value.deletedSum}" />
+				<j:set var="allUnchangedFileNum" value="${allUnchangedFileNum + item.value.unchangedFiles}" />
+				<j:set var="allUnsupportedFileNum" value="${allUnsupportedFileNum + item.value.unsupportedFiles}" />
+				<j:set var="hasDiffResult" value="${hasDiffResult || item.value.diffExist}"/>
+			</j:forEach>
+			<div align="left"><h1>${%allUnitsSummary}</h1></div>
+			<table class="pane" id="allStepSummary">
+				<tr>
+					<td class="pane-header"> ${%countStatus}</td>
+					<td class="pane-header"> ${%files}</td>
+					<td class="pane-header"> ${%total}</td>
+					<td class="pane-header"> ${%codes}</td>
+					<td class="pane-header"> ${%comments}</td>
+					<td class="pane-header"> ${%blanks}</td>
+				</tr>
+				<tbody>
+					<tr>
+						<td class="pane">${%counted}</td>
+						<td class="pane">${allCountedFileNum}</td>
+						<td class="pane">${allStepsSum}</td>
+						<td class="pane">${allCodesSum}</td>
+						<td class="pane">${allCommentsSum}</td>
+						<td class="pane">${allBlanksSum}</td>
+					</tr>
+					<tr>
+						<td class="pane">${%uncounted}</td>
+						<td class="pane">${allUncountedFileNum}</td>
+						<td class="pane">-</td>
+						<td class="pane">-</td>
+						<td class="pane">-</td>
+						<td class="pane">-</td>
+					</tr>
+				</tbody>
+			</table>
+			<j:if test="${hasDiffResult}">
+				<table class="pane" id="allDiffSummary">
+					<tr>
+						<td class="pane-header"> ${%diffStatus}</td>
+						<td class="pane-header"> ${%files}</td>
+						<td class="pane-header"> ${%added}</td>
+						<td class="pane-header"> ${%deleted}</td>
+					</tr>
+					<tbody>
+						<tr>
+							<td class="pane">${%changed}</td>
+							<td class="pane">${allChangedFileNum}</td>
+							<td class="pane">${allAddedSum}</td>
+							<td class="pane">${allDeletedSum}</td>
+						</tr>
+						<tr>
+							<td class="pane">${%unchanged}</td>
+							<td class="pane">${allUnchangedFileNum}</td>
+							<td class="pane">0</td>
+							<td class="pane">0</td>
+						</tr>
+						<tr>
+							<td class="pane">${%unsupported}</td>
+							<td class="pane">${allUnsupportedFileNum}</td>
+							<td class="pane">-</td>
+							<td class="pane">-</td>
+						</tr>
+					</tbody>
+				</table>
+			</j:if>
+			<div align="left"><h1>${%eachUnitSummary}</h1></div>
+			<div id="tabs">
+				<ul style="display: flex;">
+					<j:forEach var="item" items="${it.stepsMap}">
+						<li><a href="#${item.key}">${item.key}</a></li>
+					</j:forEach>
+				</ul>
+				<j:forEach var="item" items="${it.stepsMap}">
+					<div id="${item.key}">
+						<div align="left"><h3>${%totalOfSteps}</h3></div>
+						<table class="pane" id="stepSummary">
+							<tr>
+								<td class="pane-header"> ${%countStatus}</td>
+								<td class="pane-header"> ${%files}</td>
+								<td class="pane-header"> ${%total}</td>
+								<td class="pane-header"> ${%codes}</td>
+								<td class="pane-header"> ${%comments}</td>
+								<td class="pane-header"> ${%blanks}</td>
+							</tr>
+							<tbody>
+								<tr>
+								    <td class="pane">${%counted}</td>
+								    <td class="pane">${item.value.countedFiles}</td>
+								    <td class="pane">${item.value.stepsSum}</td>
+									<td class="pane">${item.value.codesSum}</td>
+									<td class="pane">${item.value.commentsSum}</td>
+									<td class="pane">${item.value.blanksSum}</td>
+								</tr>
+								<tr>
+								    <td class="pane">${%uncounted}</td>
+								    <td class="pane">${item.value.uncountedFiles}</td>
+								    <td class="pane">-</td>
+									<td class="pane">-</td>
+									<td class="pane">-</td>
+									<td class="pane">-</td>
+								</tr>
+							</tbody>
+						</table>
+						<div align="left"><h3>${%detailOfSteps}</h3></div>
+						<table class="pane" id="stepDetail">
+							<tr>
+								<td class="pane-header"> #</td>
+								<td class="pane-header"> ${%dirPath}</td>
+								<td class="pane-header"> ${%fileName}</td>
+								<td class="pane-header"> ${%codes}</td>
+								<td class="pane-header"> ${%blanks}</td>
+								<td class="pane-header"> ${%comments}</td>
+								<td class="pane-header"> ${%sum}</td>
+							</tr>
+							<tbody>
+								<j:forEach var="fileStep" items="${item.value.fileSteps}" indexVar="index">
+									<tr>
+										<td class="pane">${index + 1}</td>
+										<td class="pane">${fileStep.directoryPath}</td>
+										<td class="pane">${fileStep.fileName}</td>
+										<j:choose>
+										<j:when test="${fileStep.unsupported}">
+											<td class="pane">-</td>
+											<td class="pane">-</td>
+											<td class="pane">-</td>
+											<td class="pane">-</td>
+										</j:when>
+										<j:otherwise>
+											<td class="pane">${fileStep.codes}</td>
+											<td class="pane">${fileStep.blanks}</td>
+											<td class="pane">${fileStep.comments}</td>
+											<td class="pane">${fileStep.sum}</td>
+										</j:otherwise>
+										</j:choose>
+									</tr>
+								</j:forEach>
+							</tbody>
+						</table>
+						<j:set var="isDiffToo" value="${item.value.diffExist}"/>
+						<j:if test="${isDiffToo}">
+							<div align="left"><h3>${%totalOfDiffs}</h3></div>
+							<table class="pane" id="diffSummary">
+								<tr>
+									<td class="pane-header"> ${%diffStatus}</td>
+									<td class="pane-header"> ${%files}</td>
+									<td class="pane-header"> ${%added}</td>
+									<td class="pane-header"> ${%deleted}</td>
+								</tr>
+								<tbody>
+									<tr>
+									    <td class="pane">${%changed}</td>
+									    <td class="pane">${item.value.changedFiles}</td>
+									    <td class="pane">${item.value.addedSum}</td>
+									    <td class="pane">${item.value.deletedSum}</td>
+									</tr>
+									<tr>
+									    <td class="pane">${%unchanged}</td>
+									    <td class="pane">${item.value.unchangedFiles}</td>
+									    <td class="pane">0</td>
+									    <td class="pane">0</td>
+									</tr>
+									<tr>
+									    <td class="pane">${%unsupported}</td>
+									    <td class="pane">${item.value.unsupportedFiles}</td>
+									    <td class="pane">-</td>
+									    <td class="pane">-</td>
+									</tr>
+								</tbody>
+							</table>
+							<div align="left"><h3>${%detailOfDiffs}</h3></div>
+							<table class="pane" id="diffDetail">
+								<tr>
+									<td class="pane-header"> #</td>
+									<td class="pane-header"> ${%dirPath}</td>
+									<td class="pane-header"> ${%fileName}</td>
+									<td class="pane-header"> ${%diffStatus}</td>
+									<td class="pane-header"> ${%added}</td>
+									<td class="pane-header"> ${%deleted}</td>
+								</tr>
+								<tbody>
+									<j:forEach var="diffStep" items="${item.value.diffSteps}" indexVar="index">
+										<tr>
+											<td class="pane">${index + 1}</td>
+											<td class="pane">${diffStep.directoryPath}</td>
+											<td class="pane">${diffStep.fileName}</td>
+											<td class="pane">${diffStep.status}</td>
+											<j:choose>
+											<j:when test="${diffStep.unsupported}">
+												<td class="pane">-</td>
+												<td class="pane">-</td>
+											</j:when>
+											<j:otherwise>
+												<td class="pane">${diffStep.added}</td>
+												<td class="pane">${diffStep.deleted}</td>
+											</j:otherwise>
+											</j:choose>
+										</tr>
+									</j:forEach>
+								</tbody>
+							</table>
+						</j:if>
+						<div align="left"><h4>${%configValue}</h4></div>
+						<table class="pane" id="config">
+							<tr>
+								<td class="pane">${item.value.inputSetting.toScript()}</td>
+							</tr>
+						</table>
+					</div>
+				</j:forEach>
+			</div>
+		</l:main-panel>
+	</l:layout>
+</j:jelly>

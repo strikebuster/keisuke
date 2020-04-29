@@ -34,7 +34,7 @@ public class LabelHereDocScriptCounter extends GeneralStepCounter {
 	@Override
 	public String handleLiteralStringStart(
 			final ProgramLangRule lang, final String line, final LiteralString literal) {
-		StringBuilder sb = new StringBuilder();
+		StringBuffer sb = new StringBuffer();
 		int pos = -1;
 		if (literal instanceof LabelHereDoc) {
 			LabelHereDoc heredoc = (LabelHereDoc) literal;

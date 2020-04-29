@@ -18,6 +18,12 @@ import keisuke.report.ProcedureType;
  */
 public class MatchExtractOption extends AbstractCommandOption {
 
+	private static OptionValues pathStyle = new OptionValues();
+	static {
+		pathStyle.add(OPTVAL_BASE);
+		pathStyle.add(OPTVAL_SUB);
+	}
+
 	protected MatchExtractOption() {
 		super();
 		this.setProcCommandName(ProcedureType.MATCH_PROC.toString());
@@ -27,7 +33,13 @@ public class MatchExtractOption extends AbstractCommandOption {
 
 	/** {@inheritDoc} */
 	public OptionValues valuesAs(final String optname) {
-		return null;
+		if (optname == null || optname.isEmpty()) {
+			return null;
+		} else if (optname.equals(OPT_PATH)) {
+			return pathStyle;
+		} else {
+			return null;
+		}
 	}
 
 	// MatchProcコマンドライン引数の設定
@@ -37,6 +49,7 @@ public class MatchExtractOption extends AbstractCommandOption {
         Options options = new Options();
         options.addOption("?", "help", false, "show help");
         options.addOption("o", OPT_OUT, true, "output file name for extracting");
+        options.addOption("p", OPT_PATH, true, "path style of input files " + pathStyle.printList());
         this.setOptions(options);
     }
 
@@ -50,6 +63,9 @@ public class MatchExtractOption extends AbstractCommandOption {
 		map.put(ARG_TRANSACTION, null);
 		map.put(ARG_OUTPUT, null);
 		// 引数の解析
+		if (this.commandline().hasOption(OPT_PATH)) {
+			map.put(OPT_PATH, this.commandline().getOptionValue(OPT_PATH));
+		}
 		if (this.commandline().hasOption(OPT_OUT)) {
 			map.put(OPT_OUT, this.commandline().getOptionValue(OPT_OUT));
 		}

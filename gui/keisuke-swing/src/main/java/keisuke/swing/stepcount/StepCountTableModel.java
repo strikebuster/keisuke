@@ -65,15 +65,15 @@ class StepCountTableModel extends DefaultTableModel {
 		for (StepCountResult result : results) {
 			Object[] objArray = new Object[COLUMNS_NUM];
 			objArray[INDEX_NAME] = result.filePath();
-			if (result.sourceType() != null) {
+			if (result.isUnsupported()) {
+				objArray[INDEX_TYPE] = this.messageMap.get(MSG_COUNT_FMT_UNDEF);
+			} else {
 				objArray[INDEX_TYPE] = result.sourceType();
 				objArray[INDEX_CATEGORY] = result.sourceCategory();
 				objArray[INDEX_EXEC] = result.execSteps();
 				objArray[INDEX_BLANC] = result.blancSteps();
 				objArray[INDEX_COMMENT] = result.commentSteps();
 				objArray[INDEX_SUM] = result.sumSteps();
-			} else {
-				objArray[INDEX_TYPE] = this.messageMap.get(MSG_COUNT_FMT_UNDEF);
 			}
 			super.addRow(objArray);
 		}

@@ -1,0 +1,12 @@
+root10/test/comment.bat,BAT,,6,2,4,12
+root10/test/comment.cbf,COBOL,,13,3,11,27
+root10/test/comment.cob,COBOL,,6,4,6,16
+root10/test/comment.php,PHP,,29,6,2,37
+root10/test/comment.sh,Shell,,9,4,5,18
+root10/test/comment.vbs,VBScript,,7,3,1,11
+root10/test/comment2.bas,VB,,5,3,2,10
+root10/test/comment2.cls,VB,,28,23,0,51
+root10/test/comment2.dfm,Delphi,,16,0,0,16
+root10/test/comment2.dpr,Delphi,,10,3,0,13
+root10/test/comment2.frm,VBForm,,29,3,0,32
+root10/test/comment2.pas,Pascal,,14,7,3,24

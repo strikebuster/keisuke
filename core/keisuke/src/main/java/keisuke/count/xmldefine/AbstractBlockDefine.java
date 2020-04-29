@@ -49,7 +49,7 @@ public abstract class AbstractBlockDefine {
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
+		StringBuffer sb = new StringBuffer();
 		sb.append(this.getStart());
 		sb.append(",");
 		sb.append(this.getEnd());

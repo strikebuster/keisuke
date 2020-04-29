@@ -169,7 +169,7 @@ public class ASPCounter extends GeneralStepCounter {
 			return line;
 		}
 		// Script記号を見つけた
-		StringBuilder sb = new StringBuilder();
+		StringBuffer sb = new StringBuffer();
 		ScriptBlock block = this.scriptBlocks().get(sbidx);
 		// Script記号が言語指定をするものか確認して言語を設定
 		String start = block.getStartString();

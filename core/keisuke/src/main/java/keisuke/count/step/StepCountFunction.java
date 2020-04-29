@@ -1,12 +1,11 @@
 package keisuke.count.step;
 
-import static keisuke.count.option.CountOptionConstant.*;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import keisuke.count.SortOrderEnum;
 import keisuke.count.StepCountResultForCount;
 import keisuke.count.StepCounter;
 import keisuke.count.language.XmlDefinedStepCounterFactory;
@@ -18,7 +17,7 @@ import keisuke.util.LogUtil;
  */
 class StepCountFunction {
 
-	private String sortingOrder = OPTVAL_SORT_ON;
+	private SortOrderEnum sortingOrder = SortOrderEnum.ON;
 	private String encoding = null;
 	private XmlDefinedStepCounterFactory factory = null;
 
@@ -43,13 +42,10 @@ class StepCountFunction {
 	}
 
 	/**
-	 * ファイルリストのソート順を文字列順でなくOSファイル名順に設定する
+	 * ファイルリストのソート順を設定する
 	 * @param order ソート順
 	 */
-	void setSortingOrder(final String order) {
-		if (order == null || order.isEmpty()) {
-			return;
-		}
+	void setSortingOrder(final SortOrderEnum order) {
 		this.sortingOrder = order;
 	}
 
@@ -65,9 +61,10 @@ class StepCountFunction {
 		if (paths == null) {
 			return null;
 		}
+		String[] pathArray = this.sortFilePaths(paths);
 		ArrayList<StepCountResultForCount> list = new ArrayList<StepCountResultForCount>();
-		for (int i = 0; i < paths.length; i++) {
-			String path = paths[i];
+		for (int i = 0; i < pathArray.length; i++) {
+			String path = pathArray[i];
 			String fullpath = null;
 			File file = null;
 			try {
@@ -80,7 +77,7 @@ class StepCountFunction {
 			// １ファイル or １ディレクトリずつカウント
 			List<StepCountResultForCount> results = countOneNode(file);
 			for (StepCountResultForCount result : results) {
-				// showDirectory用にパス情報を記録しておく
+				// path表記用にパス情報を記録しておく
 				if (file.isDirectory()) {
 					// 基点ディレクトリを記録
 					result.setBaseDirPath(fullpath);
@@ -126,15 +123,17 @@ class StepCountFunction {
 			if (FileNameUtil.checkToBeIgnored(file)) {
 				return new ArrayList<StepCountResultForCount>();
 			}
-			if (this.sortingOrder.equals(OPTVAL_SORT_ON)) {
-				return this.countEveryNodes(FileNameUtil.sortInCodeOrder(file.listFiles()));
-			} else if (this.sortingOrder.equals(OPTVAL_SORT_OS)) {
-				return this.countEveryNodes(FileNameUtil.sortInOsOrder(file.listFiles()));
+			File[] nodes = null;
+			if (this.sortingOrder == SortOrderEnum.ON) {
+				nodes = FileNameUtil.sortInCodeOrder(file.listFiles());
+			} else if (this.sortingOrder == SortOrderEnum.OS) {
+				nodes = FileNameUtil.sortInOsOrder(file.listFiles());
 			} else {
 				//listFiles()の順番は不明なのでOS順にする
-				//return this.countEveryNodes(file.listFiles());
-				return this.countEveryNodes(FileNameUtil.sortInOsOrder(file.listFiles()));
+				//nodes = file.listFiles();
+				nodes = FileNameUtil.sortInOsOrder(file.listFiles());
 			}
+			return this.countEveryNodes(nodes);
 		} else {
 			ArrayList<StepCountResultForCount> list = new ArrayList<StepCountResultForCount>();
 			list.add(this.countOneFile(file));
@@ -167,12 +166,9 @@ class StepCountFunction {
 	 *
 	 * @param baseDir カウント対象ファイルパスの基点ディレクトリ
 	 * @param filePaths カウント対象ファイルパスの配列
-	 * @param showDir カウント結果のファイル名にパスを付ける場合はtrueを指定する
-	 * @param isCategory 基点ディレクトリ名をカテゴリとして記録する場合はtrueを指定する
 	 * @return カウント結果List
 	 */
-	List<StepCountResultForCount> countFileSet(final File baseDir, final String[] filePaths,
-			final boolean showDir, final boolean isCategory) {
+	List<StepCountResultForCount> countFileSet(final File baseDir, final String[] filePaths) {
 		if (filePaths == null) {
 			return null;
 		}
@@ -180,30 +176,14 @@ class StepCountFunction {
 			LogUtil.errorLog("countFileSet: baseDir must be not null.");
 			throw new IllegalArgumentException("no baseDir.");
 		}
-		String baseFullPath = null;
-		try {
-			if (showDir) {
-				baseFullPath = baseDir.getCanonicalPath().replace('\\', '/');
-			}
-		} catch (IOException e) {
-            throw new RuntimeException("I/O Error: " + baseDir, e);
-		}
 
+		String[] pathArray = this.sortFilePaths(filePaths);
 		ArrayList<StepCountResultForCount> list = new ArrayList<StepCountResultForCount>();
-		for (int i = 0; i < filePaths.length; i++) {
+		for (int i = 0; i < pathArray.length; i++) {
 			File file = null;
 			try {
-				file = new File(baseDir, filePaths[i]);
+				file = new File(baseDir, pathArray[i]);
 				StepCountResultForCount result = this.countOneFile(file);
-				if (showDir) {
-					// 基点ディレクトリを記録
-					result.setBaseDirPath(baseFullPath);
-					// baseDirディレクトリからのファイルパスに上書きします。
-					result.setFilePathAsSubPathFromBase();
-				}
-				if (isCategory) {
-					result.setSourceCategory(baseDir.getName());
-				}
 				list.add(result);
 				//LogUtil.debugLog(result.filePath());
 			} catch (IOException e) {
@@ -211,5 +191,17 @@ class StepCountFunction {
 			}
 		}
 		return list;
+	}
+
+	private String[] sortFilePaths(final String[] paths) {
+		if (paths == null) {
+			return null;
+		}
+		if (this.sortingOrder == SortOrderEnum.ON) {
+			return FileNameUtil.sortInCodeOrder(paths);
+		} else if (this.sortingOrder == SortOrderEnum.OS) {
+			return FileNameUtil.sortInOsOrder(paths);
+		}
+		return paths;
 	}
 }

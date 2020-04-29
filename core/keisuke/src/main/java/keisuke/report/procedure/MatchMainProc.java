@@ -16,6 +16,8 @@ import static keisuke.util.StringUtil.LINE_SEP;
  */
 public final class MatchMainProc extends AbstractReportMainProc {
 
+	private String pathStyle = null;
+
 	public MatchMainProc() {
 		super();
 		createBindedFuncs(ProcedureType.MATCH_PROC);
@@ -29,6 +31,10 @@ public final class MatchMainProc extends AbstractReportMainProc {
 		}
 		//this.argMap().debugMap();
 		// propertiesの設定項目なし＝出力レポートなし
+
+		String style = this.argMap().get(OPT_PATH);
+		// 入力ファイルのパス表記スタイルの指定
+		this.setPathStyle(style);
 
 		// 入力ファイルの確認
 		String mafile = this.argMap().get(ARG_MASTER);
@@ -55,6 +61,34 @@ public final class MatchMainProc extends AbstractReportMainProc {
 		this.extractFromMatching(mafile, trfile);
 	}
 
+	/**
+	 * 入力ファイルのパス表記スタイルを設定します
+	 * @param style パス表記スタイル
+	 */
+	public void setPathStyle(final String style) {
+		this.validatePathOption(style);
+		if (style == null || style.isEmpty()) {
+			this.pathStyle = "";
+		} else {
+			this.pathStyle = style;
+		}
+	}
+
+	/**
+	 * パス表記スタイルオプションの値としてチェックして不当な場合は例外を投げる
+	 * @param style パス表記スタイル
+	 * @throws IllegalArgumentException スタイル名が不正の場合に発行
+	 */
+	protected void validatePathOption(final String style) throws IllegalArgumentException {
+		if (style == null || style.isEmpty()) {
+			return;
+		}
+		if (!this.commandOption().valuesAs(OPT_PATH).contains(style)) {
+			LogUtil.errorLog("'" + style + "' is invalid path value.");
+			throw new IllegalArgumentException(style + " is invalid path value.");
+		}
+	}
+
 	public void extractFromMatching(final String mafile, final String trfile) {
 		this.extractMatchedContentFrom(mafile, trfile);
 		this.writeOutput();
@@ -79,19 +113,13 @@ public final class MatchMainProc extends AbstractReportMainProc {
 				// ファイル1行毎の処理
 				linectrTr++;
 				lineTr = lineTr.trim();
-				if (lineTr.length() == 0) {
-					// フォーマット不正行
-					LogUtil.warningLog("empty line at " + linectrTr + " in " + trfile);
-			        continue;
-				}
-				int pos = lineTr.indexOf('/', 1); // 先頭の/を除き次の/を探す
-				if (pos < 0) {
-					// フォーマット不正行
-					LogUtil.warningLog("'/' not found in " + lineTr);
-			        continue;
-				}
 				// TRファイルリストから対象1行のパスを格納
-				String pathTr = lineTr.substring(pos);
+				String pathTr = this.getTargetPath(lineTr);
+				if (pathTr == null || pathTr.isEmpty()) {
+					// 空行を無視
+					LogUtil.warningLog("empty line at " + linectrTr + " in " + trfile);
+					continue;
+				}
 			    //LogUtil.debugLog("TR_FILE#" + linectrTr + ": " + pathTr);
 			    // MAファイルリストの読み込みを進める
 			    String pathMa = null;
@@ -102,19 +130,13 @@ public final class MatchMainProc extends AbstractReportMainProc {
 					// 列要素分解
 					String[] strArray = lineMa.split(",");
 					String strpath = strArray[0];
-					if (strpath.length() == 0) {
-						// フォーマット不正行
-						LogUtil.warningLog("illegal line at " + linectrMa + " in " + mafile);
-				        continue;
-					}
-					int pos2 = strpath.indexOf('/', 1); // 先頭の/を除き次の/を探す
-					if (pos2 < 0) {
-						// フォーマット不正行
-						LogUtil.warningLog("'/' not found in " + strpath);
-				        continue;
-					}
 					// MAファイルリストから対象1行のパスを格納
-					pathMa = strpath.substring(pos2);
+					pathMa = this.getTargetPath(strpath);
+					if (pathMa == null || pathMa.isEmpty()) {
+						// 空行を無視
+						LogUtil.warningLog("illegal line at " + linectrMa + " in " + mafile);
+						continue;
+					}
 					//LogUtil.debugLog("MA_FILE#" + linectrMa + ": " + pathMa);
 					if (pathTr.equals(pathMa)) {
 						break;
@@ -140,6 +162,9 @@ public final class MatchMainProc extends AbstractReportMainProc {
 		} catch (IOException e) {
 			LogUtil.errorLog("Read error : " + mafile + " or " + trfile);
 			throw new RuntimeException(e);
+		} catch (IllegalPathStyleException e) {
+			LogUtil.errorLog("Fatal error occured. no output.");
+			//throw new RuntimeException(e.getMessage());
 		} finally {
 			if (readerMa != null) {
 				try {
@@ -158,4 +183,41 @@ public final class MatchMainProc extends AbstractReportMainProc {
 		}
 	}
 
+	private String getTargetPath(final String path) throws IllegalPathStyleException {
+		if (path == null || path.isEmpty()) {
+			// フォーマット不正行
+			return "";
+		}
+		if (OPTVAL_SUB.equals(this.pathStyle)) {
+			return path;
+		}
+		int pos = path.indexOf('/'); // 先頭の/を探す
+		if (!OPTVAL_BASE.equals(this.pathStyle)) {
+			// -path optionが指定されてない場合
+			if (pos == 0) {
+				pos = path.indexOf('/', 1); // 先頭の/を除き次の/を探す
+			} else {
+				LogUtil.errorLog("path style error: '/' not found at top of " + path);
+				throw new IllegalPathStyleException("-path not specified, but '/' not found at top");
+			}
+		}
+		if (pos < 0) {
+			LogUtil.errorLog("path style error: '/' of base directory not found in " + path);
+			throw new IllegalPathStyleException("-path " + this.pathStyle
+					+ " specified, but '/' of base directory not found");
+		}
+		// 比較対象のパスを返す
+		return path.substring(pos + 1);
+	}
+
+	/**
+	 * exception for illegal path style about line of input file
+	 */
+	static class IllegalPathStyleException extends Exception {
+		private static final long serialVersionUID = 1L;
+
+		IllegalPathStyleException(final String msg) {
+			super(msg);
+		}
+	}
 }

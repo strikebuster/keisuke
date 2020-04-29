@@ -1,32 +1,14 @@
 package keisuke.swing.stepcount;
 
-import keisuke.OptionValues;
-import keisuke.count.option.StepCountOption;
-import keisuke.swing.AbstractSelectUnit;
-
-import static keisuke.count.option.CountOptionConstant.OPT_SORT;
-import static keisuke.swing.stepcount.StepCountGUIConstant.SORT_SELECT;
+import keisuke.CommandOption;
+import keisuke.swing.AbstractSelectSortUnit;
 
 /**
- * 出力ソート順選択用部品
+ * StepCount用出力ソート順選択用部品
  */
-class SelectSortUnit extends AbstractSelectUnit {
+public class SelectSortUnit extends AbstractSelectSortUnit {
 
-	private CountCommandComponent parent;
-
-	SelectSortUnit(final CountCommandComponent owner) {
-		this.parent = owner;
-		super.initialize("sort:", SORT_SELECT, this.defineValues());
+	SelectSortUnit(final CountCommandComponent owner, final CommandOption option) {
+		super(owner, option);
 	}
-
-	private String[] defineValues() {
-		OptionValues formatOpt = (new StepCountOption()).valuesAs(OPT_SORT);
-		return formatOpt.getValuesAsArray();
-	}
-
-	/** {@inheritDoc} */
-	protected void updateStatus() {
-		this.parent.updateStatus();
-	}
-
 }

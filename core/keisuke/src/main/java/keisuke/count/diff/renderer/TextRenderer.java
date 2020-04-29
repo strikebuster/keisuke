@@ -6,11 +6,13 @@ import static keisuke.util.StringUtil.SYSTEM_ENCODING;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
+import java.util.List;
 
+import keisuke.count.SortOrderEnum;
 import keisuke.count.diff.AbstractDiffResultForCount;
 import keisuke.count.diff.DiffFileResult;
 import keisuke.count.diff.DiffFolderResult;
-import keisuke.count.util.DateUtil;
+import keisuke.util.DateUtil;
 
 
 /**
@@ -71,7 +73,13 @@ public class TextRenderer extends AbstractRenderer {
 		sb.append(" +").append(result.addedSteps());
 		sb.append(" -").append(result.deletedSteps()).append(LINE_SEP);
 
-		for (AbstractDiffResultForCount obj : result.getSortedChildren()) {
+		List<AbstractDiffResultForCount> children = null;
+		if (this.sortOrder() == SortOrderEnum.NODE) {
+			children = result.getSortedChildren();
+		} else {
+			children = result.getChildren();
+		}
+		for (AbstractDiffResultForCount obj : children) {
 			sb.append(this.getTextLineAbout(obj, nest + 1));
 		}
 		return sb.toString();
@@ -89,7 +97,7 @@ public class TextRenderer extends AbstractRenderer {
 			sb.append(" ");
 		}
 		sb.append(result.nodeName());
-		sb.append("[").append(this.getStatusLabelOf(result.status())).append("]");
+		sb.append("[").append(this.getStatusLabelOf(result.status(), result.isUnsupported())).append("]");
 		sb.append(" +").append(result.addedSteps());
 		sb.append(" -").append(result.deletedSteps());
 		sb.append(LINE_SEP);

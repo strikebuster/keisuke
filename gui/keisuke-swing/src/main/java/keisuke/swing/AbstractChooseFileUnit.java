@@ -1,5 +1,7 @@
 package keisuke.swing;
 
+import static keisuke.count.util.FileNameUtil.getCanonicalOrAbsolutePath;
+
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -171,7 +173,7 @@ abstract class AbstractChooseFileUnit {
 	 * @param file 選択されたファイル
 	 */
 	void handleFile(final File file) {
-		this.textField().setText(file.getAbsolutePath());
+		this.textField().setText(getCanonicalOrAbsolutePath(file));
 	}
 
 	/**

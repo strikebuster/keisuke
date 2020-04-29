@@ -95,17 +95,16 @@ public class DiffCountGUI extends AbstractMainGUI {
 		} else {
 			this.diffCounter.setEncoding(encoding);
 		}
-		String format = this.commander().format();
-		this.diffCounter.setFormat(format);
+		this.diffCounter.setPath(((DiffCommandComponent) this.commander()).pathStyle());
+		this.diffCounter.setSort(((DiffCommandComponent) this.commander()).sort());
+		this.diffCounter.setFormat(this.commander().format());
 		String[] dirs = new String[2];
 		dirs[0] = this.rootDirs.oldDirName();
 		dirs[1] = this.rootDirs.newDirName();
 		this.setResultBytes(this.diffCounter.getCountingResultAsBytes(dirs));
 		if (this.diffCounter.isTextAsOutput()) {
 			String text = "";
-			//text = this.diffCounter.getCountingResultAsText(dirs);
 			try {
-				//this.setResultBytes(text.getBytes(this.diffCounter.encodingAsOutput()));
 				text = new String(this.resultBytes(), this.diffCounter.encodingAsOutput());
 			} catch (UnsupportedEncodingException e) {
 				text = e.toString();
@@ -113,7 +112,6 @@ public class DiffCountGUI extends AbstractMainGUI {
 			((DiffResultViewComponent) this.resultView())
 				.refreshWith(text, this.diffCounter.getCountedResultAsRaw());
 		} else {
-			//this.setResultBytes(this.diffCounter.getCountingResultAsBytes(dirs));
 			((DiffResultViewComponent) this.resultView())
 				.refreshWith(MSG_EXCUSE_BINARY, this.diffCounter.getCountedResultAsRaw());
 		}

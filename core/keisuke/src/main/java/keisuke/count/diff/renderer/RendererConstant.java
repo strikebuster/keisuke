@@ -9,6 +9,7 @@ public final class RendererConstant {
 	private RendererConstant() { }
 
 	// Message Property Key
+	public static final String MSG_DIFF_RND_UNDEF = "diff.render.undef";
 	public static final String MSG_DIFF_RND_TIME = "diff.render.time";
 	public static final String MSG_DIFF_RND_PATH = "diff.render.path";
 	public static final String MSG_DIFF_RND_STATUS = "diff.render.status";

@@ -1,0 +1,81 @@
+# Jenkins プラグインの使用方法
+
+#
+# プラグインのインストール
+#
+(1) Jenkinsの管理者権限のあるユーザでJenkinsのWeb画面にログイン
+(2) 「Jenkinsの管理」 > 「プラグインの管理」 を開く
+(3) 「高度な設定」タブを開く
+(4) 「プラグインのアップロード」セクションにある「ファイル：」の「参照」ボタンを押し、ファイル選択画面を開く
+(5) keisuke-jenkins-x.x.x.hpi ファイルを選択して「開く」ボタンを押す
+(6) 戻った画面で「アップロード」ボタンを押す
+(7) Jenkinsサーバを再起動する
+
+#
+# プラグインのSystem設定
+# 　プロジェクト毎の設定をする際に初期値が設定可能な以下の項目にSystem共通の初期値を登録する
+#
+(1) Jenkinsの管理者権限のあるユーザでJenkinsのWeb画面にログイン
+(2) 「Jenkinsの管理」 > 「システムの設定」 を開く
+(3) 「Keisuke（ソース行数計測）」のセクションまで画面スクロールする
+(4) 「エンコーディングを指定」に文字エンコーディング名を指定する
+　　　　e.g. UTF-8
+(5) 「言語定義XMLファイルを指定」にカスタマイズ定義したkeisuke.count用の言語定義XMLファイルを指定する
+　　　　ファイルはビルド時のWorkspaceを基点にした相対パス、または絶対パスで指定すること
+
+#
+# プロジェクトでのプラグイン設定
+#
+(1) Jenkinsでプロジェクトを作成し、「ソースコード管理」や「ビルド」の設定を行う
+(2) 「ビルド後の処理」の「ビルド後の処理の追加」ボタンを押しプラグインの選択メニューから「Keisuke（ソース行数計測）」を選ぶ
+(3) 「Keisukeソース行数計測」の設定領域が追加される
+　　　項目の意味はそれぞれのヘルプを参照する
+(4) 「画面表示の設定」
+(4.1) 「行数遷移グラフの表示行数」のラジオボタンを選択する
+(5) 「計測ユニットの設定」
+　　　計測ユニットは１つ以上定義が必要で、「追加」ボタンで複数の定義が可能。
+　　　計測ユニット毎に計測対象や計測方法、結果出力方法を設定することができる。
+(5.1) 各項目のヘルプを参照して設定する
+(5.2) 「高度な設定」にある３つの計測モードのラジオボタンを選択する
+(5.3) 計測結果をファイルに保存したい場合は「計測結果をファイルに出力する」チェックボックスを選択する
+(5.3.1) 展開された設定項目をヘルプを参照して設定する
+(5.3.2) 差分行数計測の計測結果をファイルに保存したい場合は「差分行数計測の出力」チェックボックスを選択する
+　　　　展開された設定項目をヘルプを参照して設定する。
+　　　　計測モードで「ソースの行数と旧版との差分行数を計測」以外のモードを選択した場合は、ファイルは保存されない。
+　　　　差分行数計測結果をファイル保存する設定をしたければ、ソース行数計測結果の保存も必ず設定する必要がある。
+(6) 「保存」ボタンを押して設定を終了する
+
+#
+# パイプラインでのプラグイン設定
+#
+(1) Jenkinsでパイプラインを作成し、「パイプライン」の設定を行う
+(2) 「定義」で「Pipeline script」を選択し、ソースコード管理やビルドに関するスクリプトを記述し「Apply」ボタンを押す
+(3) プラグイン設定のスクリプトを記述する
+(3.1) 「Pipeline Syntax」リンクを押しスクリプト生成画面を開く
+(3.2) 「Sample Step」で「step: General Build Step」を選択
+(3.3) 「Build Step」で「Keisukeソース行数計測」を選択
+(3.4) 表示されたプラグインの設定領域の項目を設定する
+　　　設定内容はプロジェクトの場合の設定と同様である。
+(3.5) 「Generate Pipeline Script」ボタンを押して生成されたスクリプトの文字列をコピーして閉じる
+(3.6) 元の画面のスクリプトにコピーしたスクリプトをペーストして「保存」する
+
+　　e.g.(a)
+        stage('StepCount') {
+          // Keisuke step count
+          step([$class: 'KeisukePublisher', countingUnits: [[inputSetting: [countingMode: 'step_simply', encoding: 'UTF-8', sourceDirectory: 'ci/keisuke-jenkins/src/main', unitName: 'ci', xmlPath: '']]]])
+        }
+
+　　e.g.(b)
+        stage('StepCount') {
+          // Keisuke step count
+          step([$class: 'KeisukePublisher', countingUnits: [[inputSetting: [countingMode: 'file_set', encoding: 'UTF-8', includePattern: '**/*.java', sourceDirectory: 'gui/keisuke-swing/src/main/java', unitName: 'guiJava', xmlPath: ''], outputSetting: [baseDirInclusion: false, outputFilePath: 'gui/keisuke-swing/build/reports/stepCount.xls', outputFormat: 'excel']]], displaySetting: [displayStepKind: 'all_steps']])
+        }
+
+　　e.g.(c)
+        stage('StepCount') {
+          // Keisuke step count
+          step([$class: 'KeisukePublisher', countingUnits: [[inputSetting: [countingMode: 'diff_too', encoding: 'UTF-8', oldSourceDirectory: 'c:/Repository/keisuke_rel/core/keisuke/src/main', sourceDirectory: 'core/keisuke/src/main', unitName: 'core', xmlPath: ''], outputSetting: [baseDirInclusion: false, diffOutputSetting: [diffOutputFilePath: 'core/keisuke/build/reports/diffCount.csv', diffOutputFormat: 'csv'], outputFilePath: 'core/keisuke/build/reports/stepCount.csv', outputFormat: 'csv']]], displaySetting: [displayStepKind: 'code_only']])
+        }
+
+以上
+

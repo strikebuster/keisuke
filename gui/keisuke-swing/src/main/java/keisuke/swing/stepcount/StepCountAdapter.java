@@ -14,13 +14,10 @@ class StepCountAdapter extends AbstractCountAdapter {
 		this.setCountProc(new StepCountProc());
 	}
 
-	void setShowDirectory(final boolean show) {
-		((StepCountProc) this.countProc()).setShowDirectory(show);
-	}
-
-	void setSort(final String sort) {
-		((StepCountProc) this.countProc()).setSortOrder(sort);
-	}
+	// not use since Ver.2.0.0
+	//void setShowDirectory(final boolean show) {
+	//	((StepCountProc) this.countProc()).setShowDirectory(show);
+	//}
 
 	StepCountResult[] getCountedResultAsRaw() {
 		return ((StepCountProc) this.countProc()).getResultAsRawData();

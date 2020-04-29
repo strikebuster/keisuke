@@ -53,26 +53,27 @@ public class TextFormatter extends AbstractFormatter {
 		// １行ずつ処理を行う
 		for (int i = 0; i < results.length; i++) {
 			StepCountResult result = results[i];
-			if (result.sourceType() == null) {
-				// 未対応のカウント結果をフォーマット
-				sb.append(fillOrCut(result.filePath(), maxFileLength));
-				sb.append(this.getMessageText(MSG_COUNT_FMT_UNDEF));
-				sb.append(LINE_SEP);
+			sb.append(fillOrCut(result.filePath(), maxFileLength));
+			if (result.isUnsupported()) {
+				if (result.sourceCategory() != null && !result.sourceCategory().isEmpty()) {
+					sb.append(fillOrCut(this.getSourceType(result.sourceType()), TYPE_MAX_LEN));
+					sb.append(fillOrCut(result.sourceCategory(), CATEGORY_MAX_LEN));
+				} else {
+					sb.append(this.getSourceType(result.sourceType()));
+				}
 			} else {
-				// 正常にカウントされた結果をフォーマット
-				sb.append(fillOrCut(result.filePath(), maxFileLength));
-				sb.append(fillOrCut(result.sourceType(), TYPE_MAX_LEN));
+				sb.append(fillOrCut(this.getSourceType(result.sourceType()), TYPE_MAX_LEN));
 				sb.append(fillOrCut(result.sourceCategory(), CATEGORY_MAX_LEN));
 				sb.append(fillLeftOrCut(Long.toString(result.execSteps()), EXEC_MAX_LEN));
 				sb.append(fillLeftOrCut(Long.toString(result.blancSteps()), BLANC_MAX_LEN));
 				sb.append(fillLeftOrCut(Long.toString(result.commentSteps()),
 						COMMENT_MAX_LEN));
 				sb.append(fillLeftOrCut(Long.toString(result.sumSteps()), SUM_MAX_LEN));
-				sb.append(LINE_SEP);
 				sumExec    += result.execSteps();
 				sumComment += result.commentSteps();
 				sumBlanc   += result.blancSteps();
 			}
+			sb.append(LINE_SEP);
 		}
 		// 区切り行
 		sb.append(getHyphens(maxFileLength + TYPE_MAX_LEN + CATEGORY_MAX_LEN

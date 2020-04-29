@@ -3,6 +3,7 @@ package keisuke.swing.stepcount;
 import static keisuke.swing.GUIConstant.*;
 import static keisuke.swing.GUITestUtil.*;
 import static keisuke.swing.stepcount.StepCountGUIConstant.*;
+import static keisuke.swing.stepcount.StepCountGUITestConstant.*;
 import static keisuke.swing.stepcount.StepCountTestUtil.chooseSomeFiles;
 import static keisuke.swing.stepcount.StepCountTestUtil.parentPathOf;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -32,16 +33,6 @@ import org.junit.Test;
  * Test class of StepCounter GUI under location which is not system default.
  */
 public final class StepCountGUITestForLocale extends FestSwingJUnitTestCase {
-
-	private static final int FORMAT_TEXT_IDX = 0;
-	private static final int FORMAT_CSV_IDX = 1;
-	private static final int FORMAT_EXCEL_IDX = 2;
-	private static final int FORMAT_XML_IDX = 3;
-	private static final int FORMAT_JSON_IDX = 4;
-
-	private static final int SORT_ON_IDX = 0;
-	private static final int SORT_OS_IDX = 1;
-	private static final int SORT_OFF_IDX = 2;
 
 	private FrameFixture frame;
 	private Locale orgLocale = Locale.getDefault();
@@ -101,7 +92,7 @@ public final class StepCountGUITestForLocale extends FestSwingJUnitTestCase {
 
 		stat = frame.button(COUNT_BUTTON).target.isEnabled();
 		assertThat(stat, is(false));
-		frame.checkBox(SHOWDIR_CHECK).click();
+		frame.comboBox(PATH_SELECT).selectItem(PATH_SHOWDIR_IDX);
 		stat = frame.button(COUNT_BUTTON).target.isEnabled();
 		assertThat(stat, is(true));
 		frame.button(COUNT_BUTTON).click();

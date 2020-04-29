@@ -12,10 +12,10 @@ import javax.swing.JButton;
  */
 public class CountButtonElement {
 
-	private CommandComponent parent;
+	private AbstractCommandComponent parent;
 	private JButton button;
 
-	CountButtonElement(final CommandComponent owner) {
+	CountButtonElement(final AbstractCommandComponent owner) {
 		this.parent = owner;
 		this.button = new JButton();
 		this.button.setName(COUNT_BUTTON);

@@ -1,0 +1,96 @@
+<?jelly escape-by-default='true'?>
+<!-- Section header <%@attribute name="icon" required="false" %> -->
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:u="/util">
+
+	<j:set var="urlPath" value="${it.urlName}"/>
+	<j:set var="iconName" value="${it.iconFileName}"/>
+	<j:set var="isEmpty" value="${empty(it.lastBuildAction)}"/>
+	<j:set var="hasDiffReslt" value="false" />
+	<table style="margin-top: 1em; margin-left:1em;">
+		<tr>
+			<td>
+				<j:choose>
+				<j:when test="${!isEmpty}">
+					<a href="${urlPath}">
+					<img height="48" style="margin-right:1em" alt="" width="48"
+					src="${rootURL}/images/48x48/${iconName}" /></a>
+				</j:when>
+				<j:otherwise>
+					<a><img height="48" style="margin-right:1em" alt="" width="48"
+					src="${rootURL}/images/48x48/${iconName}" /></a>
+				</j:otherwise>
+				</j:choose>
+			</td>
+			<td>
+				<j:choose>
+				<j:when test="${!isEmpty}">
+					<j:set var="allFileNum" value="0" />
+					<j:set var="allTotalSum" value="0" />
+					<j:set var="allCodesSum" value="0" />
+					<j:set var="allCommentsSum" value="0" />
+					<j:set var="allBlanksSum" value="0" />
+					<j:set var="allChangedFileNum" value="0" />
+					<j:set var="allAddedSum" value="0" />
+					<j:set var="allDeletedSum" value="0" />
+					<j:forEach var="item" items="${it.lastBuildAction.stepsMap}">
+						<j:set var="allFileNum" value="${allFileNum + item.value.countedFiles}" />
+						<j:set var="allTotalSum" value="${allTotalSum + item.value.stepsSum}" />
+						<j:set var="allCodesSum" value="${allCodesSum + item.value.codesSum}" />
+						<j:set var="allCommentsSum" value="${allCommentsSum + item.value.commentsSum}" />
+						<j:set var="allBlanksSum" value="${allBlanksSum + item.value.blanksSum}" />
+						<j:set var="allChangedFileNum" value="${allChangedFileNum + item.value.changedFiles}" />
+						<j:set var="allAddedSum" value="${allAddedSum + item.value.addedSum}" />
+						<j:set var="allDeletedSum" value="${allDeletedSum + item.value.deletedSum}" />
+					</j:forEach>
+					<j:set var="hasDiffResult" value="${it.diffExist}" />
+					<table>
+						<tr>
+							<td>
+							<a href="${urlPath}">${%keisukeResult}</a>
+							</td>
+						</tr>
+						<tr>
+							<td> ${%files}</td>
+							<td style="text-align: right;">${allFileNum}</td>
+						</tr>
+						<tr>
+							<td> ${%total}</td>
+							<td style="text-align: right;">${allTotalSum}</td>
+						</tr>
+						<tr>
+							<td> ${%codes}</td>
+							<td style="text-align: right;">${allCodesSum}</td>
+						</tr>
+						<tr>
+							<td> ${%comments}</td>
+							<td style="text-align: right;">${allCommentsSum}</td>
+						</tr>
+						<tr>
+							<td> ${%blanks}</td>
+							<td style="text-align: right;">${allBlanksSum}</td>
+						</tr>
+						<j:if test="${hasDiffResult}">
+							<tr>
+								<td> ${%diffFiles}</td>
+								<td style="text-align: right;">${allChangedFileNum}</td>
+							</tr>
+							<tr>
+								<td> ${%added}</td>
+								<td style="text-align: right;">${allAddedSum}</td>
+							</tr>
+							<tr>
+								<td> ${%deleted}</td>
+								<td style="text-align: right;">${allDeletedSum}</td>
+							</tr>
+						</j:if>
+					</table>
+				</j:when>
+				<j:otherwise>
+					${%noResults}
+				</j:otherwise>
+				</j:choose>
+			</td>
+		</tr>
+	</table>
+</j:jelly>

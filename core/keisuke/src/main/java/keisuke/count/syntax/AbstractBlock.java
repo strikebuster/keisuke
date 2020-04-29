@@ -190,7 +190,7 @@ public abstract class AbstractBlock {
 	 */
 	public String getActualStartString() {
 		if (this.longBracket) {
-			StringBuilder sb = new StringBuilder();
+			StringBuffer sb = new StringBuffer();
 			int pos;
 			pos = this.startingMark.indexOf(LONGBRACKET_MAGIC_WORD);
 			if (pos > 0) {
@@ -225,7 +225,7 @@ public abstract class AbstractBlock {
 			if (pos < this.startingMark.length()) {
 				postStr = this.startingMark.substring(pos);
 			}
-			StringBuilder sb = new StringBuilder(Pattern.quote(preStr));
+			StringBuffer sb = new StringBuffer(Pattern.quote(preStr));
 			sb.append("(");
 			sb.append(Pattern.quote(chStr));
 			sb.append("*)");

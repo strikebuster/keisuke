@@ -1,0 +1,5 @@
+keisuke.DiffCountResult
+keisuke.StepCountResult
+keisuke.count.diff.AbstractDiffResultForCount
+keisuke.count.diff.DiffFileResult
+keisuke.count.diff.DiffFolderResult

@@ -11,9 +11,9 @@ import javax.swing.JFrame;
  */
 public class ChooseXmlUnit extends AbstractChooseFileUnit {
 
-	private CommandComponent parent;
+	private AbstractCommandComponent parent;
 
-	ChooseXmlUnit(final CommandComponent owner) {
+	ChooseXmlUnit(final AbstractCommandComponent owner) {
 		this.parent = owner;
 		super.initialize("use xml:", XML_TEXT, XML_BUTTON, XML_CHOOSER, ChooseFileEnum.OPEN);
 	}

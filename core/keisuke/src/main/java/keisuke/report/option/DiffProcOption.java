@@ -18,15 +18,18 @@ import keisuke.report.ProcedureType;
  */
 public class DiffProcOption extends AbstractCommandOption {
 
-	private static OptionValues unchange = new OptionValues();
 	private static OptionValues classify = new OptionValues();
+	private static OptionValues format = new OptionValues();
+	private static OptionValues unchange = new OptionValues();
 	static {
-		unchange.add(OPTVAL_DETAIL);
-		unchange.add(OPTVAL_TOTAL);
 		classify.add(OPTVAL_EXTENSION);
 		classify.add(OPTVAL_LANGUAGE);
 		classify.add(OPTVAL_LANGGROUP);
 		classify.add(OPTVAL_FW, "name");
+		format.add(OPTVAL_TEXT);
+		format.add(OPTVAL_CSV);
+		unchange.add(OPTVAL_DETAIL);
+		unchange.add(OPTVAL_TOTAL);
 	}
 
 	protected DiffProcOption() {
@@ -40,10 +43,12 @@ public class DiffProcOption extends AbstractCommandOption {
 	public OptionValues valuesAs(final String optname) {
 		if (optname == null || optname.isEmpty()) {
 			return null;
-		} else if (optname.equals(OPT_UNCHANGE)) {
-			return unchange;
 		} else if (optname.equals(OPT_CLASS)) {
 			return classify;
+		} else if (optname.equals(OPT_FORMAT)) {
+			return format;
+		} else if (optname.equals(OPT_UNCHANGE)) {
+			return unchange;
 		} else {
 			return null;
 		}
@@ -57,6 +62,7 @@ public class DiffProcOption extends AbstractCommandOption {
         options.addOption("?", "help", false, "show help");
         options.addOption("a", OPT_AOUT, true, "output file name for listing added files");
         options.addOption("c", OPT_CLASS, true, "type to classify " + classify.printList());
+        options.addOption("f", OPT_FORMAT, true, "format of input " + format.printList());
         options.addOption("m", OPT_MOUT, true, "output file name for listing modified files");
         options.addOption("o", OPT_OUT, true, "output file name for reporting");
         options.addOption("p", OPT_PROP, true, "properties file name");
@@ -93,6 +99,9 @@ public class DiffProcOption extends AbstractCommandOption {
 		}
 		if (this.commandline().hasOption(OPT_CLASS)) {
 			map.put(OPT_CLASS, this.commandline().getOptionValue(OPT_CLASS));
+		}
+		if (this.commandline().hasOption(OPT_FORMAT)) {
+			map.put(OPT_FORMAT, this.commandline().getOptionValue(OPT_FORMAT));
 		}
 		if (this.commandline().hasOption(OPT_UNCHANGE)) {
 			map.put(OPT_UNCHANGE, this.commandline().getOptionValue(OPT_UNCHANGE));

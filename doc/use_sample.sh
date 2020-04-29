@@ -15,9 +15,9 @@ SRCENCODE="UTF-8"
 #SRCENCODE="Shift_JIS"
 #SRCENCODE="Windows-31J"
 
-# ＝＝＝計助内部設定＝＝＝
+# ＝＝＝計測および集計の設定＝＝＝
 # KeisukeのJarパッケージ
-JARFILE="keisuke-1.0.1-jar-with-dependencies.jar"
+JARFILE="keisuke-2.0.0-jar-with-dependencies.jar"
 # Keisuke計測時の追加指定
 OPTXML=
 #OPTXML=-xml xxx.xml
@@ -35,7 +35,7 @@ IFFILE01="_count.csv"
 OUTFILE01="01_新規改修後全PGM規模.csv"
 
 # StepCount実行
-java -cp ${JARFILE} keisuke.count.StepCount -format csv -output ${IFFILE01} -encoding ${SRCENCODE} -showDirectory ${SRCROOT} ${OPTXML}
+java -cp ${JARFILE} keisuke.count.StepCount -format csv -output ${IFFILE01} -encoding ${SRCENCODE} -path sub ${SRCROOT} ${OPTXML}
 
 # 計測結果集計
 java -cp ${JARFILE} keisuke.CountReport ${CLASSIFY} ${IFFILE01} > ${OUTFILE01}
@@ -48,7 +48,7 @@ fi
 
 # ＝＝＝(2)改修前後の差分カウント＝＝＝
 # 差分計測結果I/Fファイル
-IFFILE02="_diff.txt"
+IFFILE02="_diff.csv"
 # 差分計測結果から新規ファイルパス抽出結果ファイル
 ADDFILE02="_diff_add.txt"
 # 差分計測結果から修正ファイルパス抽出結果ファイル
@@ -57,10 +57,10 @@ MODFILE02="_diff_modify.txt"
 OUTFILE02="02_改修差分PGM規模.csv"
 
 # DiffCount実行
-java -cp ${JARFILE} keisuke.count.DiffCount -format text -output ${IFFILE02} -encoding ${SRCENCODE} ${SRCROOT} ${OLDSRCROOT} ${OPTXML}
+java -cp ${JARFILE} keisuke.count.DiffCount -format csv -path sub -output ${IFFILE02} -encoding ${SRCENCODE} ${SRCROOT} ${OLDSRCROOT} ${OPTXML}
 
 # 差分計測結果集計
-java -cp ${JARFILE} keisuke.DiffReport ${CLASSIFY} ${IFFILE02} -aout ${ADDFILE02} -mout ${MODFILE02} > ${OUTFILE02}
+java -cp ${JARFILE} keisuke.DiffReport -format csv ${CLASSIFY} ${IFFILE02} -aout ${ADDFILE02} -mout ${MODFILE02} > ${OUTFILE02}
 
 # ＝＝＝(3)改修追加PGMのソースのカウント＝＝＝
 # StepCount計測結果ファイル
@@ -83,7 +83,7 @@ sort ${MAFILE03} -o ${MA2FILE03}
 sort ${TRFILE03} -o ${TR2FILE03}
 
 # 新規ファイルのみ計測結果抽出
-java -cp ${JARFILE} keisuke.MatchExtract ${MA2FILE03} ${TR2FILE03} ${IFFILE03}
+java -cp ${JARFILE} keisuke.MatchExtract -path sub ${MA2FILE03} ${TR2FILE03} ${IFFILE03}
 
 # 新規ファイルのみの計測結果集計
 java -cp ${JARFILE} keisuke.CountReport ${CLASSIFY} ${IFFILE03} > ${OUTFILE03}
@@ -95,7 +95,7 @@ IFFILE04="_count_old.csv"
 OUTFILE04="04_リグレッション規模.csv"
 
 #  StepCount実行
-java -cp ${JARFILE} keisuke.count.StepCount -format csv -output ${IFFILE04} -encoding ${SRCENCODE} -showDirectory ${OLDSRCROOT} ${OPTXML}
+java -cp ${JARFILE} keisuke.count.StepCount -format csv -output ${IFFILE04} -encoding ${SRCENCODE} -path sub ${OLDSRCROOT} ${OPTXML}
 
 # 計測結果集計
 java -cp ${JARFILE} keisuke.CountReport ${CLASSIFY} ${IFFILE04} > ${OUTFILE04}
@@ -121,7 +121,7 @@ sort ${MAFILE05} -o ${MA2FILE05}
 sort ${TRFILE05} -o ${TR2FILE05}
 
 # 修正ファイルのみ計測結果抽出
-java -cp ${JARFILE} keisuke.MatchExtract ${MA2FILE05} ${TR2FILE05} ${IFFILE05}
+java -cp ${JARFILE} keisuke.MatchExtract -path sub ${MA2FILE05} ${TR2FILE05} ${IFFILE05}
 
 # 修正ファイルのみの計測結果集計
 java -cp ${JARFILE} keisuke.CountReport ${CLASSIFY} ${IFFILE05} > ${OUTFILE05}

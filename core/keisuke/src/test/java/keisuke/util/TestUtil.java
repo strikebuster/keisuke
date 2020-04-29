@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -23,6 +24,45 @@ import keisuke.report.ReportColumn;
 public class TestUtil {
 
 	protected TestUtil() { }
+
+	/**
+	 * 文字列を配列に格納した引数を改行区切りで連結した文字列に変換する
+	 * @param array Stringの配列
+	 * @return 改行区切りで連結した文字列
+	 */
+	public static String contentOf(final String[] array) {
+		if (array == null || array.length == 0) {
+			return "";
+		}
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < array.length; i++) {
+			sb.append(array[i]).append("\n");
+		}
+		return sb.toString();
+	}
+
+	/**
+	 * 表形式のデータを２次元配列に格納した引数をCSV形式の文字列に変換する
+	 * @param table ２次元配列データ
+	 * @return CSV形式に変換された文字列
+	 */
+	public static String contentOf(final String[][] table) {
+		if (table == null || table.length == 0) {
+			return "";
+		}
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < table.length; i++) {
+			String[] row = table[i];
+			for (int j = 0; j < row.length; j++) {
+				if (j > 0) {
+					sb.append(",");
+				}
+				sb.append(row[j]);
+			}
+			sb.append("\n");
+		}
+		return sb.toString();
+	}
 
 	/**
 	 * Mapの内容を文字列に出力する.
@@ -301,6 +341,45 @@ public class TestUtil {
 	}
 
 	/**
+	 * 指定されたファイルをコピーする
+	 * @param srcname コピー元ファイル名
+	 * @param destname コピー先ファイル名
+	 * @throws IOException ファイルの操作に失敗した場合に発生
+	 */
+	public static void copyFile(final String srcname, final String destname) throws IOException {
+		File src = new File(srcname);
+		File dest = new File(destname);
+		copy(src, dest);
+	}
+
+	/**
+	 * 指定されたファイルをコピーする
+	 * @param src コピー元ファイル
+	 * @param dest コピー先ファイル
+	 * @throws IOException ファイルの操作に失敗した場合に発生
+	 */
+	public static void copy(final File src, final File dest) throws IOException {
+		FileInputStream in = new FileInputStream(src);
+		FileOutputStream out = new FileOutputStream(dest);
+		byte[] buff = new byte[BUF_SIZE];
+		int len = 0;
+		try {
+			while (true) {
+				len = in.read(buff);
+				if (len < 0) {
+					break;
+				}
+				out.write(buff, 0, len);
+			}
+		} catch (IOException e) {
+			throw e;
+		} finally {
+			in.close();
+			out.close();
+		}
+	}
+
+	/**
 	 * 指定されたファイル名称のファイルを削除する
 	 * 指定されたファイルが存在しない、またはファイルではない場合はfalseを返す
 	 * @param filename 削除ファイル名
@@ -310,7 +389,19 @@ public class TestUtil {
 		if (filename == null || filename.isEmpty()) {
 			return false;
 		}
-		File file = new File(filename);
+		return remove(new File(filename));
+	}
+
+	/**
+	 * 指定されたファイル名称のファイルを削除する
+	 * 指定されたファイルが存在しない、またはファイルではない場合はfalseを返す
+	 * @param file 削除ファイル
+	 * @return 削除が成功したらtrue
+	 */
+	public static boolean remove(final File file) {
+		if (file == null) {
+			return false;
+		}
 		if (!file.exists() || !file.isFile()) {
 			return false;
 		}

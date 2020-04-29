@@ -128,7 +128,7 @@ public class LiteralString extends AbstractBlock {
 	public String getStartRegxString() {
 		int pos;
 		String preStr = "";
-		StringBuilder sb = new StringBuilder();
+		StringBuffer sb = new StringBuffer();
 		if (this.percentNotation) {
 			// prefix[a-zA-Z]?([^0-9a-zA-Z])
 			pos = this.startRawString().indexOf(PERCENT_MAGIC_WORD);
@@ -148,7 +148,7 @@ public class LiteralString extends AbstractBlock {
 	 *  @return 正規表現文字列
 	 */
 	public String getEndRegxString() {
-		StringBuilder sb = new StringBuilder();
+		StringBuffer sb = new StringBuffer();
 		if (this.percentNotation) {
 			if (this.percentStart.equals(this.percentEnd)) {
 				// [^!]*!

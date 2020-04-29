@@ -7,13 +7,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
+import keisuke.count.FormatEnum;
+import keisuke.count.SortOrderEnum;
 import keisuke.count.diff.AbstractDiffResultForCount;
 import keisuke.count.diff.DiffFileResult;
 import keisuke.count.diff.DiffFolderResult;
 import keisuke.count.util.ExcelUtil;
-import keisuke.count.util.LocaleUtil;
+import keisuke.util.LocaleUtil;
 import keisuke.util.LogUtil;
 
 /**
@@ -22,7 +23,7 @@ import keisuke.util.LogUtil;
 public class ExcelRenderer extends AbstractRenderer {
 
 	private static final String XLS_PREFIX = "DiffExcelFormat";
-	private static final String XLS_EXTENSION = ".xls";
+	private static final String XLS_EXTENSION = "." + FormatEnum.EXCEL.fileExtension();
 	private static final String XLS_DATA_RESULT = "results";
 	private static final String XLS_DATA_TOTAL_ADD = "totalAdd";
 	private static final String XLS_DATA_TOTAL_DELETE = "totalDel";
@@ -61,27 +62,43 @@ public class ExcelRenderer extends AbstractRenderer {
 		}
 	}
 
-	private List<DiffCountResultDto> listConvertedFrom(
-			final DiffFolderResult folderResult) {
-		return new ArrayList<DiffCountResultDto>(
-				this.mapConvertedFrom(folderResult).values());
-	}
-
-	private Map<String, DiffCountResultDto> mapConvertedFrom(
-			final DiffFolderResult folderResult) {
-		Map<String, DiffCountResultDto> map = new TreeMap<String, DiffCountResultDto>();
-		List<AbstractDiffResultForCount> children = folderResult.getChildren();
+	/**
+	 * 差分計測結果からEXCELレンダリング用DTOのリストを返す
+	 * @param result フォルダー差分計測結果インスタンス
+	 * @return EXCELレンダリング用DTOのリスト
+	 */
+	protected List<DiffCountResultDto> listConvertedFrom(final DiffFolderResult result) {
+		List<DiffCountResultDto> list = new ArrayList<DiffCountResultDto>();
+		List<AbstractDiffResultForCount> children = null;
+		if (this.sortOrder() == SortOrderEnum.NODE) {
+			children = result.getSortedChildren();
+		} else {
+			children = result.getChildren();
+		}
 		for (AbstractDiffResultForCount child : children) {
 			if (child instanceof DiffFolderResult) {
-				Map<String, DiffCountResultDto> childMap = mapConvertedFrom((DiffFolderResult) child);
-				map.putAll(childMap);
+				list.addAll(this.listConvertedFrom((DiffFolderResult) child));
 			} else if (child instanceof DiffFileResult) {
-				DiffCountResultDto dto =
-						new DiffCountResultDto((DiffFileResult) child, this.diffStatusLabels());
-				map.put(dto.pathFromTop(), dto);
+				list.add(this.listConvertedFrom((DiffFileResult) child));
 			}
 		}
-		return map;
+		return list;
+	}
+
+	/**
+	 * 差分計測結果からEXCELレンダリング用DTOを返す
+	 * @param result ファイル差分計測結果インスタンス
+	 * @return EXCELレンダリング用DTO
+	 */
+	protected DiffCountResultDto listConvertedFrom(final DiffFileResult result) {
+		// dto.filePath()のパス表記スタイルを有効に
+		DiffCountResultDto dto =
+				new DiffCountResultDto(result, this.diffStatusLabels(), this.pathStyle());
+		// soutceTypeがnullのときの表記を設定
+		if (result.sourceType() == null) {
+			dto.setSourceType(this.getSourceType(result.sourceType()));
+		}
+		return dto;
 	}
 
 	/** {@inheritDoc} */

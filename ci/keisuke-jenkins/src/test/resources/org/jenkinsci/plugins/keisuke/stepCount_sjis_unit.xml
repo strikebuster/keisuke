@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<stepcounter>
+	<file name="root1/test/comment.bat" type="BAT" category="commentS" step="4" none="1" comment="4" total="9" />
+	<file name="root1/test/comment.cbf" type="COBOL" category="commentS" step="13" none="3" comment="11" total="27" />
+	<file name="root1/test/comment.cob" type="COBOL" category="commentS" step="6" none="4" comment="6" total="16" />
+	<file name="root1/test/comment.vbs" type="VBScript" category="commentS" step="4" none="2" comment="2" total="8" />
+</stepcounter>

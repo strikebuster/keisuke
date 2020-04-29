@@ -7,6 +7,9 @@ import org.apache.commons.cli.Options;
 import keisuke.ArgumentMap;
 import keisuke.OptionValues;
 import keisuke.count.CountType;
+import keisuke.count.FormatEnum;
+import keisuke.count.PathStyleEnum;
+import keisuke.count.SortOrderEnum;
 import keisuke.option.AbstractCommandOption;
 import keisuke.option.ArgumentMapImpl;
 
@@ -17,17 +20,36 @@ import static keisuke.count.option.CountOptionConstant.*;
  */
 public class StepCountOption extends AbstractCommandOption {
 
+	public static final FormatEnum[] STEPCOUNT_FORMATS = {
+			FormatEnum.TEXT,
+			FormatEnum.CSV,
+			FormatEnum.EXCEL,
+			FormatEnum.XML,
+			FormatEnum.JSON
+	};
+	public static final PathStyleEnum[] STEPCOUNT_PATHSTYLES = {
+			PathStyleEnum.NO, // default for compatible with ver.1.x
+			PathStyleEnum.BASE,
+			PathStyleEnum.SUB
+	};
+	public static final SortOrderEnum[] STEPCOUNT_SORTORDERS = {
+			SortOrderEnum.ON,
+			SortOrderEnum.OS,
+			SortOrderEnum.OFF
+	};
 	private static OptionValues format = new OptionValues();
+	private static OptionValues path = new OptionValues();
 	private static OptionValues sort = new OptionValues();
 	static {
-		format.add(OPTVAL_TEXT);
-		format.add(OPTVAL_CSV);
-		format.add(OPTVAL_EXCEL);
-		format.add(OPTVAL_XML);
-		format.add(OPTVAL_JSON);
-		sort.add(OPTVAL_SORT_ON);
-		sort.add(OPTVAL_SORT_OS);
-		sort.add(OPTVAL_SORT_OFF);
+		for (FormatEnum obj : STEPCOUNT_FORMATS) {
+			format.add(obj.value());
+		}
+		for (PathStyleEnum obj : STEPCOUNT_PATHSTYLES) {
+			path.add(obj.value());
+		}
+		for (SortOrderEnum obj : STEPCOUNT_SORTORDERS) {
+			sort.add(obj.value());
+		}
 	}
 
 	public StepCountOption() {
@@ -43,6 +65,8 @@ public class StepCountOption extends AbstractCommandOption {
 			return null;
 		} else if (optname.equals(OPT_FORMAT)) {
 			return format;
+		} else if (optname.equals(OPT_PATH)) {
+			return path;
 		} else if (optname.equals(OPT_SORT)) {
 			return sort;
 		} else {
@@ -59,7 +83,8 @@ public class StepCountOption extends AbstractCommandOption {
         options.addOption("e", OPT_ENCODE, true, "encoding name");
         options.addOption("o", OPT_OUTPUT, true, "file name");
         options.addOption("f", OPT_FORMAT, true, "output format " + format.printList());
-        options.addOption("s", OPT_SHOWDIR, false, "show source files path");
+        options.addOption("s", OPT_SHOWDIR, false, "show source files path (deprecated, use \"path\" option)");
+        options.addOption("p", OPT_PATH, true, "path style " + path.printList());
         options.addOption("S", OPT_SORT, true, "sorting order " + sort.printList());
         options.addOption("x", OPT_XML, true, "xml file name");
         this.setOptions(options);
@@ -83,6 +108,9 @@ public class StepCountOption extends AbstractCommandOption {
 		}
 		if (this.commandline().hasOption(OPT_SHOWDIR)) {
 			map.put(OPT_SHOWDIR, "true");
+		}
+		if (this.commandline().hasOption(OPT_PATH)) {
+			map.put(OPT_PATH, this.commandline().getOptionValue(OPT_PATH));
 		}
 		if (this.commandline().hasOption(OPT_SORT)) {
 			map.put(OPT_SORT, this.commandline().getOptionValue(OPT_SORT));

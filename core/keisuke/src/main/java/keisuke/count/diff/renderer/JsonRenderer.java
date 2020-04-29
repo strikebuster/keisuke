@@ -4,7 +4,9 @@ import static keisuke.util.StringUtil.LINE_SEP;
 //import static keisuke.util.StringUtil.SYSTEM_ENCODING;
 
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
+import keisuke.count.SortOrderEnum;
 import keisuke.count.diff.AbstractDiffResultForCount;
 import keisuke.count.diff.DiffFileResult;
 import keisuke.count.diff.DiffFolderResult;
@@ -57,8 +59,14 @@ public class JsonRenderer extends AbstractRenderer {
 	 * @return 表示用テキスト
 	 */
 	protected String getJsonLineAbout(final DiffFolderResult result) {
-		StringBuilder sb = new StringBuilder();
-		for (AbstractDiffResultForCount obj : result.getChildren()) {
+		StringBuffer sb = new StringBuffer();
+		List<AbstractDiffResultForCount> children = null;
+		if (this.sortOrder() == SortOrderEnum.NODE) {
+			children = result.getSortedChildren();
+		} else {
+			children = result.getChildren();
+		}
+		for (AbstractDiffResultForCount obj : children) {
 			sb.append(this.getJsonLineAbout(obj));
 		}
 		return sb.toString();
@@ -70,24 +78,29 @@ public class JsonRenderer extends AbstractRenderer {
 	 * @return 表示用テキスト
 	 */
 	protected String getJsonLineAbout(final DiffFileResult result) {
-		StringBuilder sb = new StringBuilder();
+		StringBuffer sb = new StringBuffer();
 		if (this.first) {
 			this.first = false;
 		} else {
 			sb.append(',');
 		}
 		sb.append(LINE_SEP);
-		sb.append("\t{ \"name\": \"");
-		sb.append(EncodeUtil.unicodeEscape(result.pathFromTop())).append("\", ");
-		sb.append("\"type\": \"").append(EncodeUtil.unicodeEscape(result.sourceType())).append("\", ");
-		if (result.sourceCategory() != null && result.sourceCategory().length() > 0) {
+		// filePath()はパス表記スタイルを有効に
+		sb.append("\t{ \"name\": \"")
+			.append(EncodeUtil.unicodeEscape(result.filePath(this.pathStyle()))).append("\", ");
+		sb.append("\"type\": \"")
+			.append(EncodeUtil.unicodeEscape(this.getSourceType(result.sourceType()))).append("\", ");
+		if (result.sourceCategory() != null && !result.sourceCategory().isEmpty()) {
 			sb.append("\"category\": \"")
 				.append(EncodeUtil.unicodeEscape(result.sourceCategory())).append("\", ");
 		}
 		sb.append("\"status\": \"")
-			.append(EncodeUtil.unicodeEscape(this.getStatusLabelOf(result.status()))).append("\", ");
-		sb.append("\"added\": ").append(result.addedSteps()).append(", ");
-		sb.append("\"deleted\": ").append(result.deletedSteps()).append(" }");
+			.append(EncodeUtil.unicodeEscape(this.getStatusLabelOf(result.status()))).append("\"");
+		if (!result.isUnsupported()) {
+			sb.append(", ").append("\"added\": ").append(result.addedSteps());
+			sb.append(", ").append("\"deleted\": ").append(result.deletedSteps());
+		}
+		sb.append(" }");
 		return sb.toString();
 	}
 

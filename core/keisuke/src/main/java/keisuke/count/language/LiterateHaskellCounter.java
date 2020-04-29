@@ -58,7 +58,7 @@ public class LiterateHaskellCounter extends GeneralStepCounter {
 		}
 		BufferedReader reader = new BufferedReader(new InputStreamReader(
 				new FileInputStream(file), charSetName));
-		String category = "";
+		String category = null;
 		OperationResult opeResult = new OperationResult(ope, this.getFileType());
 		try {
 			String line = null;
@@ -67,14 +67,14 @@ public class LiterateHaskellCounter extends GeneralStepCounter {
 
 			//LogUtil.debugLog("### Processing file=" + file.getPath() + " ###");
 			while ((line = reader.readLine()) != null) {
-				if (category.length() == 0) {
+				if (category == null) {
 					String str = this.findCategory(line);
 					if (str != null) {
 						category = str;
 					}
 				}
 				if (IGNORE_PATTERN.matcher(line).find()) {
-					opeResult.createIgnoredResult(category);
+					opeResult.makeIgnoredResult(category);
 					return opeResult;
 				}
 
@@ -184,7 +184,7 @@ public class LiterateHaskellCounter extends GeneralStepCounter {
 		} finally {
 			reader.close();
 		}
-		opeResult.createResult(file, this.getFileType(), category);
+		opeResult.makeResult(file, this.getFileType(), category);
 		return opeResult;
 	}
 

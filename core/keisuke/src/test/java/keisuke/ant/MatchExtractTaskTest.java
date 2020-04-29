@@ -3,6 +3,8 @@ package keisuke.ant;
 import static keisuke.util.TestUtil.rawContentOf;
 import static keisuke.util.TestUtil.textContentOf;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.fail;
@@ -141,4 +143,25 @@ public class MatchExtractTaskTest {
 		File actual = new File("test/out/ant_match.csv");
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
+
+	@Test
+	public void extractNoLinesBecauseMatchingError() throws Exception {
+		System.out.println("## MatchExtractTask ## match01 ## extractNoLinesBecauseMatchingError ##");
+		String targetName = "ExtractError";
+		URL expected = this.getClass()
+				.getResource("../report/procedure/MatchTest_match01.csv");
+
+		AntTaskTestDriver driver = new AntTaskTestDriver();
+		driver.configureProject(projfile);
+		driver.executeTarget(targetName);
+		String errMessage = driver.getStderr();
+		System.out.println(driver.getLog());
+		System.err.println(errMessage);
+		System.out.println(driver.getStdout());
+
+		File actual = new File("test/out/ant_match_error.csv");
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
+		assertThat(errMessage, is(allOf(containsString("not found"), containsString("no output"))));
+	}
+
 }

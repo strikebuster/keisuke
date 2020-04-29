@@ -1,0 +1,24 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+	<j:set var="selectedKind" value="${instance.displayStepKindEnum}" />
+	<f:entry title="${%displayStepKind}" field="displayStepKind">
+		<j:forEach var="kind" items="${descriptor.allDisplayStepKinds}">
+			<j:set var="title" value="" />
+			<j:set var="checked" value="${selectedKind==kind}" />
+			<j:choose>
+				<j:when test="${kind.codeOnly}">
+					<j:set var="title" value="${%code_only}" />
+					<j:set var="checked" value="${checked||selectedKind==null}" />
+				</j:when>
+				<j:when test="${kind.codeAndComment}">
+					<j:set var="title" value="${%with_comment}" />
+				</j:when>
+				<j:otherwise>
+					<j:set var="title" value="${%all_steps}" />
+				</j:otherwise>
+			</j:choose>
+			<f:radio title="${title}" name="displayStepKind" value="${kind.value}" checked="${checked}"/>
+			<st:nbsp /><st:nbsp /><st:nbsp />
+		</j:forEach>
+	</f:entry>
+</j:jelly>

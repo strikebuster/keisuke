@@ -16,12 +16,12 @@ import java.awt.Container;
  */
 public class SpecifyEncodingUnit {
 
-	private CommandComponent parent;
+	private AbstractCommandComponent parent;
 	private JLabel label;
 	private JTextField textField;
 	private String srcEncoding = System.getProperty("file.encoding");
 
-	SpecifyEncodingUnit(final CommandComponent owner) {
+	SpecifyEncodingUnit(final AbstractCommandComponent owner) {
 		this.parent = owner;
 		this.label = new JLabel("encoding:");
 		this.textField = new JTextField();

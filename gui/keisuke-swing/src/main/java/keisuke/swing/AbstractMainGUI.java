@@ -17,7 +17,7 @@ public abstract class AbstractMainGUI {
 
 	private MessageDefine msgDef;
 	private JFrame mainWindow;
-	private CommandComponent commander;
+	private AbstractCommandComponent commander;
 	private ResultViewComponent resultView;
 	private byte[] result = null;
 
@@ -82,7 +82,7 @@ public abstract class AbstractMainGUI {
 	 * 計測指示GUI部品CommandComponentインスタンスを返す
 	 * @return CommandComponentインスタンス
 	 */
-	protected CommandComponent commander() {
+	protected AbstractCommandComponent commander() {
 		return this.commander;
 	}
 
@@ -90,7 +90,7 @@ public abstract class AbstractMainGUI {
 	 * 計測指示GUI部品CommandComponentインスタンスを設定する
 	 * @param commComp CommandComponentインスタンス
 	 */
-	protected void setCommander(final CommandComponent commComp) {
+	protected void setCommander(final AbstractCommandComponent commComp) {
 		this.commander = commComp;
 	}
 

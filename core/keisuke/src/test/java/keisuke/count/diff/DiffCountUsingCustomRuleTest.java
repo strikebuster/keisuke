@@ -57,15 +57,14 @@ public class DiffCountUsingCustomRuleTest {
 		System.out.println("## CustomRule ## diffJavaUsingCustomRule ##");
 		String oldRoot = "test/data/java/root1";
 		String newRoot = "test/data/java/root2";
-		URL expected = this.getClass()
-				.getResource("RuleDiffCounterTest_testCount_java.txt");
+		String outFileName = "test/out/diff_rule_java.txt";
+		URL expected = this.getClass().getResource("diffCount_rule_java.txt");
 
-		String[] args = {"-encoding", "UTF-8", "-format", "text",
-				"-output", "test/out/rule_diff_java.txt",
+		String[] args = {"-encoding", "UTF-8", "-format", "text", "-output", outFileName,
 				"-xml", "test/data/ktestl2.xml", newRoot, oldRoot};
 		DiffCount.main(args);
 
-		File actual = new File("test/out/rule_diff_java.txt");
+		File actual = new File(outFileName);
 		assertThat(rawContentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)),
 				is(equalTo(textContentOf(expected))));
 	}

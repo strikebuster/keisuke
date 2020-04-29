@@ -2,8 +2,11 @@ package keisuke.count.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 /**
  * ファイル名に関するユーティリティメソッドを提供します。
@@ -97,12 +100,14 @@ public final class FileNameUtil {
 		}
 		if (isRootDirectory(basePath)) {
 			// 基点がルートディレクトリなので処理が特別
+			// 基点ディレクトリが'/'なので残す
 			return fullPath.substring(basePath.length() - 1);
 		} else if (fullPath.charAt(basePath.length()) == '/') {
 			StringBuffer sb = new StringBuffer();
 			int pos2 = basePath.lastIndexOf('/');
 			if (pos2 >= 0) {
-				sb.append(basePath.substring(pos2));
+				//sb.append(basePath.substring(pos2));
+				sb.append(basePath.substring(pos2 + 1)); // 先頭の'/'を除く
 			}
 			return sb.append(fullPath.substring(basePath.length())).toString();
 		} else {
@@ -120,8 +125,9 @@ public final class FileNameUtil {
 	 * @param currentPath カレントディレクトリの絶対パス
 	 * @return ファイル名の相対パス
 	 */
-	public static String getSubPathFromTopOfBase(final String fullPath, final String basePath,
+	static String getSubPathFromTopOfBase(final String fullPath, final String basePath,
 			final String currentPath) {
+		// 使っていない関数
 		String noGoodValue = checkPathArgs(fullPath, basePath);
 		if (noGoodValue != null) {
 			return noGoodValue;
@@ -151,25 +157,15 @@ public final class FileNameUtil {
 		int pos = fullPath.indexOf(basePath);
 		if (pos == 0 && fullPath.length() > basePath.length()) {
 			if (fullPath.charAt(basePath.length()) == '/') {
+				// full=/xxx/yyy/aaa/bbb , base=/xxx/yyy
 				return null;
 			} else if (basePath.charAt(basePath.length() - 1) == '/') {
+				// full=c:/aaa/bbb , base:c:/
 				return null;
 			}
 		}
 		// 正常な値の組み合わせでない場合はファイルの絶対パスを返す
 		return fullPath;
-	}
-
-	private static boolean isRootDirectory(final String path) {
-		if (path == null || path.isEmpty()) {
-			return false;
-		}
-		for (int i = 0; i < fsRootPaths.length; i++) {
-			if (path.equals(fsRootPaths[i])) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	/**
@@ -197,7 +193,7 @@ public final class FileNameUtil {
 			return targetPath + "/";
 		}
 		if (isRootDirectory(currentPath)) {
-			if (targetPath.startsWith(currentPath)) {
+			if (startWithAsOsPath(targetPath, currentPath)) {
 				return targetPath.substring(currentPath.length()) + "/";
 			}
 		}
@@ -231,7 +227,7 @@ public final class FileNameUtil {
 			limit = targetDirs.length;
 		}
 		for (int i = 0; i < limit; i++) {
-			if (!currentDirs[i].equals(targetDirs[i])) {
+			if (!equalAsOsPath(currentDirs[i], targetDirs[i])) {
 				idx = i;
 				break;
 			}
@@ -256,6 +252,55 @@ public final class FileNameUtil {
 		return sb.toString();
 	}
 
+	private static boolean isRootDirectory(final String path) {
+		if (path == null || path.isEmpty()) {
+			return false;
+		}
+		for (int i = 0; i < fsRootPaths.length; i++) {
+			if (equalAsOsPath(path, fsRootPaths[i])) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * ファイルパス文字列が絶対パスであるかの真偽を返す。
+	 * @param path ファイルパス文字列
+	 * @return 絶対パスであれば真
+	 */
+	public static boolean isAbsolutePath(final String path) {
+		if (path == null || path.isEmpty()) {
+			return false;
+		}
+		for (int i = 0; i < fsRootPaths.length; i++) {
+			if (startWithAsOsPath(path, fsRootPaths[i])) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * 対象ファイルの正規パス文字列を返す。
+	 * ただし、正規パス取得が失敗したときは代わりに絶対パス文字列を返す。
+	 * @param file 対象のファイル
+	 * @return ファイルの正規パスまたは絶対パス文字列
+	 */
+	public static String getCanonicalOrAbsolutePath(final File file) {
+		if (file == null) {
+			return null;
+		}
+		String path = null;
+		try {
+			path = file.getCanonicalPath();
+		} catch (IOException ex) {
+			System.err.println("[WARN] ignore exception:" + ex.toString());
+			path = file.getAbsolutePath();
+		}
+		return path;
+	}
+
 	/* ファイル名比較用の変数と初期化処理 */
 	private static boolean ignoreCase;
 	static {
@@ -263,6 +308,26 @@ public final class FileNameUtil {
 			ignoreCase = true;
 		} else {
 			ignoreCase = false;
+		}
+	}
+
+	private static boolean equalAsOsPath(final String path1, final String path2) {
+		if (ignoreCase) {
+			return path1.equalsIgnoreCase(path2);
+		} else {
+			return path1.equals(path2);
+		}
+	}
+
+	private static boolean startWithAsOsPath(final String path1, final String path2) {
+		if (ignoreCase) {
+			if (path1.length() < path2.length()) {
+				return false;
+			}
+			String head = path1.substring(0, path2.length());
+			return head.equalsIgnoreCase(path2);
+		} else {
+			return path1.startsWith(path2);
 		}
 	}
 
@@ -288,6 +353,58 @@ public final class FileNameUtil {
 	 */
 	public static int compareInCodeOrder(final String name1, final String name2) {
 		return name1.compareTo(name2);
+	}
+
+	/**
+	 * 文字列配列に対しOSの違いによる大文字小文字の扱いに対応したソートを
+	 * 実行した結果の配列を返す
+	 * @param strarray 文字列配列
+	 * @return ソート後の文字列配列
+	 */
+	public static String[] sortInOsOrder(final String[] strarray) {
+		return sort(strarray, true);
+	}
+
+	/**
+	 * 文字列配列に対しファイル名のコード順のソートを実行した結果の配列を返す
+	 * @param strarray 文字列配列
+	 * @return ソート後の文字列配列
+	 */
+	public static String[] sortInCodeOrder(final String[] strarray) {
+		return sort(strarray, false);
+	}
+
+	/**
+	 * 文字列配列に対しソートを実行した結果の配列を返す
+	 * OSの違いによる大文字小文字の扱いに対応したソート方法と通常のコード順の
+	 * ソートを指定する
+	 * @param strarray 文字列配列
+	 * @param dependingOs OS依存の文字列ソートならtrue
+	 * @return ソート後の文字列配列
+	 */
+	private static String[] sort(final String[] strarray, final boolean dependingOs) {
+		if (strarray == null) {
+			return null;
+		}
+		if (dependingOs) {
+			Arrays.sort(strarray, new OsOrderStringComparator());
+		} else {
+			Arrays.sort(strarray);
+		}
+		return strarray;
+	}
+
+	/**
+	 * 文字列に対しOS依存の大小比較をする
+	 */
+	public static class OsOrderStringComparator implements Comparator<String>, Serializable {
+		private static final long serialVersionUID = 1L;
+
+		/** {@inheritDoc} */
+		@Override
+		public int compare(final String o1, final String o2) {
+			return FileNameUtil.compareInOsOrder(o1, o2);
+		}
 	}
 
 	/**
@@ -317,23 +434,81 @@ public final class FileNameUtil {
 	 * @param dependingOs OS依存のファイル名ソートならtrue
 	 * @return ソート後のファイル配列
 	 */
-	public static File[] sort(final File[] filearray, final boolean dependingOs) {
+	private static File[] sort(final File[] filearray, final boolean dependingOs) {
 		if (filearray == null) {
 			return null;
 		}
 		if (dependingOs) {
-			Arrays.sort(filearray, new Comparator<File>() {
-				public int compare(final File o1, final File o2) {
-					return FileNameUtil.compareInOsOrder(o1.getName(), o2.getName());
-				}
-			});
+			Arrays.sort(filearray, new OsOrderFileComparator());
 		} else {
-			Arrays.sort(filearray, new Comparator<File>() {
-				public int compare(final File o1, final File o2) {
-					return FileNameUtil.compareInCodeOrder(o1.getName(), o2.getName());
-				}
-			});
+			Arrays.sort(filearray, new CodeOrderFileComparator());
 		}
 		return filearray;
 	}
+
+	/**
+	 * ファイルリストに対しOSの違いによる大文字小文字の扱いに対応したソートを
+	 * 実行した結果のリストを返す
+	 * @param filelist ファイルリスト
+	 * @return ソート後のファイルリスト
+	 */
+	public static List<File> sortInOsOrder(final List<File> filelist) {
+		return sort(filelist, true);
+	}
+
+	/**
+	 * ファイルリストに対しファイル名のコード順のソートを実行した結果のリストを返す
+	 * @param filelist ファイルリスト
+	 * @return ソート後のファイルリスト
+	 */
+	public static List<File> sortInCodeOrder(final List<File> filelist) {
+		return sort(filelist, false);
+	}
+
+	/**
+	 * ファイルリストに対しソートを実行した結果の配列を返す
+	 * OSの違いによる大文字小文字の扱いに対応したソート方法と通常のコード順の
+	 * ソートを指定する
+	 * @param filelist ファイルリスト
+	 * @param dependingOs OS依存のファイル名ソートならtrue
+	 * @return ソート後のファイルリスト
+	 */
+	private static List<File> sort(final List<File> filelist, final boolean dependingOs) {
+		if (filelist == null) {
+			return null;
+		}
+		if (dependingOs) {
+			Collections.sort(filelist, new OsOrderFileComparator());
+		} else {
+			Collections.sort(filelist, new CodeOrderFileComparator());
+		}
+		return filelist;
+	}
+
+	/**
+	 * ファイルノードに対し文字コード順の大小比較をする
+	 */
+	public static class CodeOrderFileComparator implements Comparator<File>, Serializable {
+		private static final long serialVersionUID = 1L;
+
+		/** {@inheritDoc} */
+		@Override
+		public int compare(final File o1, final File o2) {
+			return FileNameUtil.compareInCodeOrder(o1.getName(), o2.getName());
+		}
+	}
+
+	/**
+	 * ファイルノードに対しOS依存の大小比較をする
+	 */
+	public static class OsOrderFileComparator implements Comparator<File>, Serializable {
+		private static final long serialVersionUID = 1L;
+
+		/** {@inheritDoc} */
+		@Override
+		public int compare(final File o1, final File o2) {
+			return FileNameUtil.compareInOsOrder(o1.getName(), o2.getName());
+		}
+	}
+
 }

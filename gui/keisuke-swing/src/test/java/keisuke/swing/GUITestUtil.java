@@ -19,6 +19,8 @@ import org.fest.swing.timing.Timeout;
 
 import keisuke.count.CountTestUtil;
 
+import static keisuke.count.util.FileNameUtil.getCanonicalOrAbsolutePath;
+
 /**
  * Swing画面テスト用ユーティリティ
  */
@@ -87,9 +89,9 @@ public class GUITestUtil extends CountTestUtil {
 		} else {
 			file = new File(dirName, fileName);
 		}
-		System.out.println("[TEST] not to use file-choose-dialog: set directly file="
-				+ file.getAbsolutePath());
-		textBox.setText(file.getAbsolutePath());
+		String path = getCanonicalOrAbsolutePath(file);
+		System.out.println("[TEST] not to use file-choose-dialog: set directly file=" + path);
+		textBox.setText(path);
 	}
 
 	/**
@@ -172,72 +174,6 @@ public class GUITestUtil extends CountTestUtil {
 		//sleep(ONE_THOUSAND_MILISEC);
 		fileChooser.requireEnabled(Timeout.timeout(WAITTIME));
 		return fileChooser;
-	}
-
-	/**
-	 * 文字列を配列に格納した引数を改行区切りで連結した文字列に変換する
-	 * @param array Stringの配列
-	 * @return 改行区切りで連結した文字列
-	 */
-	public static String contentOf(final String[] array) {
-		if (array == null || array.length == 0) {
-			return "";
-		}
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < array.length; i++) {
-			sb.append(array[i]).append("\n");
-		}
-		return sb.toString();
-	}
-
-	/**
-	 * 表形式のデータを２次元配列に格納した引数をCSV形式の文字列に変換する
-	 * @param table ２次元配列データ
-	 * @return CSV形式に変換された文字列
-	 */
-	public static String contentOf(final String[][] table) {
-		if (table == null || table.length == 0) {
-			return "";
-		}
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < table.length; i++) {
-			String[] row = table[i];
-			for (int j = 0; j < row.length; j++) {
-				if (j > 0) {
-					sb.append(",");
-				}
-				sb.append(row[j]);
-			}
-			sb.append("\n");
-		}
-		return sb.toString();
-	}
-
-	/**
-	 * CSV形式の文字列を表形式の２次元配列に変換する
-	 * @param csv CSV形式の文字列
-	 * @return ２次元配列データ
-	 */
-	public static String[][] convertToTableArrayFrom(final String csv) {
-		if (csv == null || csv.length() == 0) {
-			return null;
-		}
-		String[][] table = null;
-		int valueSize = 0;
-		String[] lines = csv.split("\r\n?|\n");
-		for (int i = 0; i < lines.length; i++) {
-			String[] values = lines[i].split(",");
-			if (i == 0) {
-				valueSize = values.length;
-				table = new String[lines.length][valueSize];
-			}
-			for (int j = 0; j < values.length; j++) {
-				if (j < valueSize) {
-					table[i][j] = values[j];
-				}
-			}
-		}
-		return table;
 	}
 
 	/**

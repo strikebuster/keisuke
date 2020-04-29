@@ -1,5 +1,8 @@
 package keisuke.report.procedure;
 
+import static keisuke.report.option.ReportOptionConstant.OPTVAL_EXTENSION;
+import static keisuke.report.option.ReportOptionConstant.OPT_CLASS;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -79,10 +82,30 @@ abstract class AbstractReportMainProc extends AbstractMainProc {
 	 * @param filename XMLファイル名
 	 */
 	public void setClassifierFromXml(final String classify, final String filename) {
+		String classifyValue = classify;
+		this.validateClassifyOption(classify);
+		if (classify == null || classify.isEmpty()) {
+			classifyValue = OPTVAL_EXTENSION;
+		}
 		if (filename != null) {
-			this.makeClassifier(classify, filename);
+			this.makeClassifier(classifyValue, filename);
 		} else {
-			this.makeClassifier(classify);
+			this.makeClassifier(classifyValue);
+		}
+	}
+
+	/**
+	 * 集計分類オプションの値としてチェックして不当な場合は例外を投げる
+	 * @param classify 集計分類オプションの値
+	 * @throws IllegalArgumentException 集計分類オプションの値が不正の場合に発行
+	 */
+	protected void validateClassifyOption(final String classify) throws IllegalArgumentException {
+		if (classify == null || classify.isEmpty()) {
+			return;
+		}
+		if (!this.commandOption().valuesAs(OPT_CLASS).contains(classify)) {
+			LogUtil.errorLog("'" + classify + "' is invalid classify value.");
+			throw new IllegalArgumentException(classify + " is invalid classify value.");
 		}
 	}
 

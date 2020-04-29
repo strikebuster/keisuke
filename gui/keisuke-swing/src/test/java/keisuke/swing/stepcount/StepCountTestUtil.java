@@ -13,8 +13,8 @@ import org.fest.swing.fixture.JButtonFixture;
 import org.fest.swing.fixture.JFileChooserFixture;
 import org.fest.swing.fixture.JListFixture;
 
-import keisuke.count.util.FileNameUtil;
-
+import static keisuke.count.util.FileNameUtil.compareInOsOrder;
+import static keisuke.count.util.FileNameUtil.getCanonicalOrAbsolutePath;
 import static keisuke.swing.GUITestUtil.*;
 import static keisuke.swing.stepcount.StepCountGUIConstant.HIDDEN_ADDING;
 
@@ -113,9 +113,10 @@ final class StepCountTestUtil {
 		}
 		multiFiles = sortPathInOSOrder(multiFiles);
 		for (int i = 0; i < multiFiles.length; i++) {
-			frame.textBox(HIDDEN_TEXT).setText(multiFiles[i].getAbsolutePath());
+		    String path = getCanonicalOrAbsolutePath(multiFiles[i]);
+			frame.textBox(HIDDEN_TEXT).setText(path);
 			System.out.println("[TEST] not to use file-choose-dialog: set directly file="
-					+ multiFiles[i].getAbsolutePath());
+					+ path);
 		}
 		*/
 		String[] sortedNames;
@@ -145,7 +146,7 @@ final class StepCountTestUtil {
 		}
 		Arrays.sort(filearray, new Comparator<File>() {
 			public int compare(final File o1, final File o2) {
-				return FileNameUtil.compareInOsOrder(o1.getAbsolutePath(), o2.getAbsolutePath());
+				return compareInOsOrder(getCanonicalOrAbsolutePath(o1), getCanonicalOrAbsolutePath(o2));
 			}
 		});
 		return filearray;
@@ -157,7 +158,7 @@ final class StepCountTestUtil {
 		}
 		Arrays.sort(strarray, new Comparator<String>() {
 			public int compare(final String o1, final String o2) {
-				return FileNameUtil.compareInOsOrder(o1, o2);
+				return compareInOsOrder(o1, o2);
 			}
 		});
 		return strarray;

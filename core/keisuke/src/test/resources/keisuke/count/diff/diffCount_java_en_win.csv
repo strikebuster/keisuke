@@ -3,6 +3,6 @@ root2/src/jp/FileObj.java,Java,,MODIFIED,1,1
 root2/src/jp/sf/hoge.txt,Text,,DROPED,0,0
 root2/src/Status.java,Java,,ADDED,4,0
 root2/src/StringUtil.java,Java,,DROPED,0,42
-root2/test/Utils,UNDEF,,UNSUPPORTED,0,0
+root2/test/Utils,UNSUPPORTED,,UNSUPPORTED,,
 root2/test/Utils.java,Java,,UNCHANGED,0,0
 root2/test/Utils.txt,Text,,UNCHANGED,0,0

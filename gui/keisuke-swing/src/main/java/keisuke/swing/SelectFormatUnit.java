@@ -12,10 +12,10 @@ import keisuke.CommandOption;
  */
 public class SelectFormatUnit extends AbstractSelectUnit {
 
-	private CommandComponent parent;
+	private AbstractCommandComponent parent;
 	private CommandOption comOption;
 
-	public SelectFormatUnit(final CommandComponent owner, final CommandOption option) {
+	public SelectFormatUnit(final AbstractCommandComponent owner, final CommandOption option) {
 		this.parent = owner;
 		this.comOption = option;
 		super.initialize("format:", FORMAT_SELECT, this.defineValues());

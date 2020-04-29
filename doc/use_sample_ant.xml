@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 計助カウント実行antタスク -->
+<!-- Sampleカウント実行antタスク -->
 <project default="all" basedir="." >
   <!-- プロパティ設定 -->
   <!-- ＃＃＃対象ソースに合わせて設定＃＃＃ -->
@@ -13,9 +13,9 @@
   <!-- ソースのエンコーディング -->
   <property name="SRCENCODE" value="UTF-8" />
 
-  <!-- ＝＝＝計助内部設定＝＝＝ -->
+  <!-- ＝＝＝計測および集計の設定＝＝＝ -->
   <!-- KeisukeのJarパッケージ -->
-  <property name="JARFILE" value="keisuke-1.2.0-jar-with-dependencies.jar" />
+  <property name="JARFILE" value="keisuke-2.0.0-jar-with-dependencies.jar" />
   <!-- Keisuke計測時の追加指定 -->
   <property name="OPTXML" value="" />
   <!-- Keisuke集計時の分類指定 -->
@@ -48,7 +48,7 @@
   <target name="CountNew" >
     <!-- StepCount実行 -->
     <StepCountTask format="csv" output="${IFFILE01}" encoding="${SRCENCODE}"
-      showDirectory="true" xml="${OPTXML}" >
+      path="sub" xml="${OPTXML}" >
       <fileset dir="${SRCROOT}" />
     </StepCountTask>
     <!-- 計測結果集計 -->
@@ -57,7 +57,7 @@
 
   <!-- ＝＝＝(2)改修前後の差分カウント＝＝＝ -->
   <!-- 差分計測結果I/Fファイル -->
-  <property name="IFFILE02" value="_diff.txt" />
+  <property name="IFFILE02" value="_diff.csv" />
   <!-- 差分計測結果から新規ファイルパス抽出結果ファイル -->
   <property name="ADDFILE02" value="_diff_add.txt" />
   <!-- 差分計測結果から修正ファイルパス抽出結果ファイル -->
@@ -67,10 +67,10 @@
 
   <target name="DiffCount" if="OLDSRCROOT" >
     <!--DiffCount実行 -->
-    <DiffCountTask format="text" output="${IFFILE02}" encoding="${SRCENCODE}"
+    <DiffCountTask format="csv" path="sub" output="${IFFILE02}" encoding="${SRCENCODE}"
       srcdir="${SRCROOT}" olddir="${OLDSRCROOT}" xml="${OPTXML}" />
     <!-- 差分計測結果集計 -->
-    <DiffReportTask classify="${CLASSIFY}" input="${IFFILE02}" aout="${ADDFILE02}"
+    <DiffReportTask format="csv" classify="${CLASSIFY}" input="${IFFILE02}" aout="${ADDFILE02}"
       mout="${MODFILE02}" output="${OUTFILE02}" />
   </target>
 
@@ -98,7 +98,7 @@
       <arg line="${TRFILE03} -o ${TR2FILE03}" />
     </exec>
     <!-- 新規ファイルのみ計測結果抽出 -->
-    <MatchExtractTask master="${MA2FILE03}" transaction="${TR2FILE03}"
+    <MatchExtractTask path="sub" master="${MA2FILE03}" transaction="${TR2FILE03}"
       output="${IFFILE03}" />
     <!-- 新規ファイルのみの計測結果集計 -->
     <CountReportTask classify="${CLASSIFY}" input="${IFFILE03}" output="${OUTFILE03}" />
@@ -113,7 +113,7 @@
   <target name="CountOld" if="OLDSRCROOT" >
     <!-- StepCount実行 -->
     <StepCountTask format="csv" output="${IFFILE04}" encoding="${SRCENCODE}"
-      showDirectory="true" xml="${OPTXML}" >
+      path="sub" xml="${OPTXML}" >
       <fileset dir="${OLDSRCROOT}">
         <include name="**/*" />
       </fileset>
@@ -146,7 +146,7 @@
       <arg line="${TRFILE05} -o ${TR2FILE05}" />
     </exec>
     <!-- 修正ファイルのみ計測結果抽出 -->
-    <MatchExtractTask master="${MA2FILE05}" transaction="${TR2FILE05}"
+    <MatchExtractTask path="sub" master="${MA2FILE05}" transaction="${TR2FILE05}"
       output="${IFFILE05}" />
     <!-- 修正ファイルのみの計測結果集計 -->
     <CountReportTask classify="${CLASSIFY}" input="${IFFILE05}" output="${OUTFILE05}" />

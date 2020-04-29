@@ -324,7 +324,7 @@ public class LanguageCountRule implements XmlParseSubject {
 		if (this.specialized) {
 			return "[DEBUG] LanguageCountRule specialized = true, not required to define rules.\n";
 		}
-		StringBuilder sb = new StringBuilder();
+		StringBuffer sb = new StringBuffer();
 		if (this.functional) {
 			sb.append("[DEBUG] functional = true\n");
 		}

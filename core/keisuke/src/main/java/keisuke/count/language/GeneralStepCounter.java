@@ -296,7 +296,7 @@ public class GeneralStepCounter extends ProgramLangRule implements StepCounter, 
 		BufferedReader reader = new BufferedReader(new InputStreamReader(
 				new FileInputStream(file), charSetName));
 
-		String category = "";
+		String category = null;
 		OperationResult opeResult = new OperationResult(ope, this.getFileType());
 
 		try {
@@ -305,14 +305,14 @@ public class GeneralStepCounter extends ProgramLangRule implements StepCounter, 
 
 			//LogUtil.debugLog("### Processing file=" + file.getPath() + " ###");
 			while ((line = reader.readLine()) != null) {
-				if (category.length() == 0) {
+				if (category == null) {
 					String str = this.findCategory(line);
 					if (str != null) {
 						category = str;
 					}
 				}
 				if (IGNORE_PATTERN.matcher(line).find()) {
-					opeResult.createIgnoredResult(category);
+					opeResult.makeIgnoredResult(category);
 					return opeResult;
 				}
 
@@ -395,7 +395,7 @@ public class GeneralStepCounter extends ProgramLangRule implements StepCounter, 
 		} finally {
 			reader.close();
 		}
-		opeResult.createResult(file, this.getFileType(), category);
+		opeResult.makeResult(file, this.getFileType(), category);
 		return opeResult;
 	}
 
@@ -779,7 +779,7 @@ public class GeneralStepCounter extends ProgramLangRule implements StepCounter, 
 			AreaComment area = (AreaComment) parse.mostLeftTarget();
 			// 複数行コメント開始
 			//LogUtil.debugLog("Find (Area Comment):" + area.getStartString());
-			StringBuilder sb = new StringBuilder();
+			StringBuffer sb = new StringBuffer();
 			if (parse.mostLeftPosition() > 0) {
 				// コメントの左側は有効行なので返却対象
 				sb.append(this.handleValidCode(lang, line.substring(0, parse.mostLeftPosition())));
@@ -792,7 +792,7 @@ public class GeneralStepCounter extends ProgramLangRule implements StepCounter, 
 		} else if (parse.mostLeftTarget() instanceof LiteralString) {
 			// 最左はリテラル文字列記号
 			LiteralString literal = (LiteralString) parse.mostLeftTarget();
-			StringBuilder sb = new StringBuilder();
+			StringBuffer sb = new StringBuffer();
 			// Rubyのヒアドキュメント開始記号に除外ケースあり、dealLiteralStringStart()
 			// の中では判定できないため、ここでチェック
 			if (this.checkExcludeLiteralStringStart(line, literal)) {
@@ -827,7 +827,7 @@ public class GeneralStepCounter extends ProgramLangRule implements StepCounter, 
 			// 最左はScript終了記号
 			ScriptBlock block = (ScriptBlock) parse.mostLeftTarget();
 			//LogUtil.debugLog("Find (Script End):" + block.getEndString());
-			StringBuilder sb = new StringBuilder();
+			StringBuffer sb = new StringBuffer();
 			// 終了記号を含まない有効行を処理
 			sb.append(this.handleValidCode(lang, line.substring(0, parse.mostLeftPosition())));
 			// 終了記号を含む右側の外部リテラルを処理
@@ -872,7 +872,7 @@ public class GeneralStepCounter extends ProgramLangRule implements StepCounter, 
 			final ProgramLangRule lang, final String line, final LiteralString literal) {
 		// 通常の引用符リテラル
 		String start = literal.getStartString();
-		StringBuilder sb = new StringBuilder();
+		StringBuffer sb = new StringBuffer();
 		// 開始記号を処理
 		int pos = start.length();
 		sb.append(this.handleValidCode(lang, line.substring(0, pos), HAVING_ONLY_LITERAL));
@@ -892,7 +892,7 @@ public class GeneralStepCounter extends ProgramLangRule implements StepCounter, 
 			final ProgramLangRule lang, final  String line, final ScriptBlock block) {
 		// 通常の引用符リテラル
 		String end = block.getEndString();
-		StringBuilder sb = new StringBuilder();
+		StringBuffer sb = new StringBuffer();
 		// 開始記号を処理
 		int pos = end.length();
 		sb.append(this.handleValidCode(lang, line.substring(0, pos), HAVING_ONLY_LITERAL));
@@ -937,7 +937,7 @@ public class GeneralStepCounter extends ProgramLangRule implements StepCounter, 
 			//LogUtil.debugLog("literal end: " + literal.getEndString());
 			this.popStatusAsLiteralRule();
 			// リテラルの内容を返す
-			StringBuilder sb = new StringBuilder();
+			StringBuffer sb = new StringBuffer();
 			sb.append(this.handleValidCode(lang, line.substring(0, pos), HAVING_ONLY_LITERAL));
 			// リテラル終了後の右側のコードを解析して返す
 			if (pos < line.length()) {
@@ -981,7 +981,7 @@ public class GeneralStepCounter extends ProgramLangRule implements StepCounter, 
 			return line;
 		}
 		// Script記号を見つけた
-		StringBuilder sb = new StringBuilder();
+		StringBuffer sb = new StringBuffer();
 		ScriptBlock block = this.scriptBlocks().get(asidx);
 		this.setCurrentLang((ProgramLangRule) this);
 		this.pushNewStatusAsScriptletCodeWith(block, this.currentLang());

@@ -55,7 +55,7 @@ public class LuaCounter extends GeneralStepCounter {
 	@Override
 	public String handleLiteralStringStart(
 			final ProgramLangRule lang, final String line, final LiteralString literal) {
-		StringBuilder sb = new StringBuilder();
+		StringBuffer sb = new StringBuffer();
 		if (literal.checkLongBracket()) {
 			// N段長括弧リテラル処理
 			int pos = literal.validateLongBracketStart(line);

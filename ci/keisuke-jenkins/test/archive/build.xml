@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project default="build">
+    <property name="zipfile" value="data4ut.zip"/>
+    <property name="destdir" value="."/>
+    <property name="testdatadir" value="test/data"/>
+    <property name="testoutdir" value="test/out"/>
+    <target name="build">
+        <unzip src="${zipfile}" dest="${destdir}" overwrite="false"/>
+    </target>
+    <target name="clean">
+        <delete dir="${testdatadir}"/>
+        <delete dir="${testoutdir}"/>
+    </target>
+</project>

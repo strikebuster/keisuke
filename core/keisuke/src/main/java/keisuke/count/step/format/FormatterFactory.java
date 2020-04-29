@@ -1,8 +1,7 @@
 package keisuke.count.step.format;
 
-import static keisuke.count.option.CountOptionConstant.*;
-
 import keisuke.StepCountResult;
+import keisuke.count.FormatEnum;
 import keisuke.count.Formatter;
 
 /**
@@ -20,6 +19,16 @@ public final class FormatterFactory {
 	 * @param format フォーマット
 	 * @return フォーマッタのインスタンス
 	 */
+	public static Formatter<StepCountResult[]> getFormatter(final FormatEnum format) {
+		return getFormatter(format.value());
+	}
+
+	/**
+	 * フォーマッタのインスタンスを生成します。
+	 *
+	 * @param format フォーマット
+	 * @return フォーマッタのインスタンス
+	 */
 	public static Formatter<StepCountResult[]> getFormatter(final String format) {
 		// nullの場合はデフォルトフォーマット
 		if (format == null || format.isEmpty()) {
@@ -27,23 +36,23 @@ public final class FormatterFactory {
 		}
 		String name = format.toLowerCase();
 		// TEXTフォーマット
-		if (name.equals(OPTVAL_TEXT)) {
+		if (name.equals(FormatEnum.TEXT.value())) {
 			return new TextFormatter();
 
 		// CSVフォーマット
-		} else if (name.equals(OPTVAL_CSV)) {
+		} else if (name.equals(FormatEnum.CSV.value())) {
 			return new CSVFormatter();
 
 		// XMLフォーマット
-		} else if (name.equals(OPTVAL_XML)) {
+		} else if (name.equals(FormatEnum.XML.value())) {
 			return new XmlFormatter();
 
 		// JSONフォーマット
-		} else if (name.equals(OPTVAL_JSON)) {
+		} else if (name.equals(FormatEnum.JSON.value())) {
 			return new JsonFormatter();
 
 		// Excelフォーマット
-		} else if (name.equals(OPTVAL_EXCEL)) {
+		} else if (name.equals(FormatEnum.EXCEL.value())) {
 			return new ExcelFormatter();
 
 		// デフォルトフォーマット

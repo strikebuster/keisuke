@@ -12,6 +12,8 @@ public abstract class AbstractCountTask extends Task {
 
 	private File outputFile = null;
 	private String formatType = "";
+	private String pathStyleName = "";
+	private String sortType = "";
 	private String sourceEncoding;
 	private String xmlFileName = null;
 
@@ -30,6 +32,22 @@ public abstract class AbstractCountTask extends Task {
 	public void setFormat(final String format) {
 		this.formatType = format;
 	}
+
+	/**
+	 * パス表記スタイルを設定する
+	 * @param style パス表記スタイル
+	 */
+	public void setPath(final String style) {
+		this.pathStyleName = style;
+	}
+
+	/**
+	 * 出力内容に書き出すファイルリストのソート順を設定する
+	 * @param order ソート順
+	 */
+    public void setSort(final String order) {
+    	this.sortType = order;
+    }
 
 	/**
 	 * ソースファイルの文字コードを設定する
@@ -61,6 +79,22 @@ public abstract class AbstractCountTask extends Task {
 	 */
     protected String formatType() {
     	return this.formatType;
+    }
+
+    /**
+     * パス表記スタイルを返す
+     * @return パス表記スタイル
+     */
+    protected String pathStyleName() {
+    	return this.pathStyleName;
+    }
+
+    /**
+	 * 結果出力のソート順を返す
+	 * @return ソート順
+	 */
+    protected String sortType() {
+    	return this.sortType;
     }
 
     /**

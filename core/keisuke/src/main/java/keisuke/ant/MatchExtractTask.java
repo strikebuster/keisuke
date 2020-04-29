@@ -13,6 +13,7 @@ public class MatchExtractTask extends Task {
 	private String masterFileName = null;
 	private String transactionFileName = null;
 	private String outputFileName = null;
+	private String pathStyle = null;
 
 	/**
 	 * 抽出元のステップ数計測結果ファイル名を設定する
@@ -39,6 +40,15 @@ public class MatchExtractTask extends Task {
 	}
 
 	/**
+	 * 抽出元ファイルのパス表記方法を設定する
+	 * showDirectoryの場合は指定しない
+	 * @param style baseかsub
+	 */
+	public void setPath(final String style) {
+		this.pathStyle = style;
+	}
+
+	/**
 	 * 差分ステップ数計測結果集計を実行します。
 	 * @see org.apache.tools.ant.Task#execute()
 	 * @throws BuildException when one of some exception occured
@@ -48,6 +58,7 @@ public class MatchExtractTask extends Task {
     	this.validateAttributes();
 		MatchMainProc mproc = new MatchMainProc();
 		mproc.setOutputFileName(this.outputFileName);
+		mproc.setPathStyle(this.pathStyle);
 		mproc.extractFromMatching(this.masterFileName, this.transactionFileName);
     }
 

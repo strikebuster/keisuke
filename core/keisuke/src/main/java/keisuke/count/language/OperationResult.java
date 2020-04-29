@@ -19,7 +19,7 @@ public class OperationResult {
 	private long commentStep = 0;
 	private long blancStep = 0;
 	private NakedSourceCode sourceCode = null;
-	private StringBuilder buildingSource = null;
+	private StringBuffer buildingSource = null;
 
 	/**
 	 * ステップカウントまたはコメント除去ソース抽出の操作を指定するコンストラクター
@@ -29,7 +29,7 @@ public class OperationResult {
 	protected OperationResult(final OperationType ope, final String type) {
 		this.operation = ope;
 		this.sourceType = type;
-		this.buildingSource = new StringBuilder();
+		this.buildingSource = new StringBuffer();
 	}
 
 	/**
@@ -134,7 +134,7 @@ public class OperationResult {
 	 * @param type ソースのファイルタイプ
 	 * @param category ソースのカテゴリ
 	 */
-	protected void createResult(final File file, final String type, final String category) {
+	protected void makeResult(final File file, final String type, final String category) {
 		if (this.operation == OperationType.COUNT) {
 			this.makeCountResult(file, type, category);
 		} else if (this.operation == OperationType.CUT) {
@@ -146,7 +146,7 @@ public class OperationResult {
 	 * 解析対象ソースが無視対象の場合の結果を作成して保持する
 	 * @param category ソースのカテゴリ
 	 */
-	protected void createIgnoredResult(final String category) {
+	protected void makeIgnoredResult(final String category) {
 		if (this.operation == OperationType.COUNT) {
 			this.setCountResult(null);
 		} else if (this.operation == OperationType.CUT) {
@@ -171,7 +171,7 @@ public class OperationResult {
 		this.commentStep = another.commentStep;
 		this.blancStep = another.blancStep;
 		this.sourceCode = null;
-		this.buildingSource = new StringBuilder(another.buildingSource);
+		this.buildingSource = new StringBuffer(another.buildingSource);
 	}
 
 	/**
@@ -183,7 +183,7 @@ public class OperationResult {
 		this.commentStep = 0;
 		this.blancStep = 0;
 		this.sourceCode = null;
-		this.buildingSource = new StringBuilder();
+		this.buildingSource = new StringBuffer();
 	}
 
 	/**

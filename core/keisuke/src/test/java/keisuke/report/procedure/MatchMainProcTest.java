@@ -9,9 +9,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static keisuke.util.TestUtil.*;
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.Matchers.*;
+import static keisuke.util.TestUtil.textContentOf;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.isEmptyString;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.fail;
 
 /**
@@ -32,7 +37,7 @@ public class MatchMainProcTest {
 		String[] args = {"-?", "xxx"};
 		mproc.main(args);
 
-		assertThat(mproc.argMapEntity(), is(nullValue()));
+		assertThat(mproc.argMapEntity(), nullValue());
 	}
 
 	@Test
@@ -107,7 +112,7 @@ public class MatchMainProcTest {
 
 	@Test
 	public void extractNoLinesWhenListsAreNotSorted() throws Exception {
-		System.out.println("## MatchProcTest ## match01 ##  extractNoLinesWhenListsAreNotSorted ##");
+		System.out.println("## MatchProcTest ## error02 ##  extractNoLinesWhenListsAreNotSorted ##");
 
 		StderrCapture capture = new StderrCapture();
 		String errMessage = null;
@@ -150,16 +155,17 @@ public class MatchMainProcTest {
 		System.out.println(
 			"## MatchProcTest ## match03 ## extractLinesOfMatchedFilesIntoOutfileWhenListsAreSorted ##");
 		URL expected = this.getClass().getResource("MatchTest_match03.csv");
+		String outFileName = "test/out/match03.csv";
 
 		MatchMainProc mproc = new MatchMainProc();
 		// match_ma03_sorted.csv: /oldsrc/ is root
 		// match_tr03_sorted.txt: /src/ is root
-		// mathing file path, but ignore difference of root dir
+		// matching file path, but ignore difference of root dir
 		String[] args = {"test/data/match_ma03_sorted.csv",
-				"test/data/match_tr03_sorted.txt", "test/out/match03.csv"};
+				"test/data/match_tr03_sorted.txt", outFileName};
 		mproc.main(args);
 
-		File actual = new File("test/out/match03.csv");
+		File actual = new File(outFileName);
 		assertThat(textContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
@@ -168,16 +174,18 @@ public class MatchMainProcTest {
 		System.out.println("## MatchProcTest ## match04 ## "
 			+ "extractLinesOfMatchedFilesIntoOutfileOfOptionWhenListsAreSorted ##");
 		URL expected = this.getClass().getResource("MatchTest_match03.csv");
+		String outFileName = "test/out/match04.csv";
 
 		MatchMainProc mproc = new MatchMainProc();
 		// match_ma03_sorted.csv: /oldsrc/ is root
 		// match_tr03_sorted.txt: /src/ is root
-		// mathing file path, but ignore difference of root dir
+		// matching file path, but ignore difference of root dir
 		String[] args = {"test/data/match_ma03_sorted.csv",
-				"test/data/match_tr03_sorted.txt", "-o", "test/out/match04.csv"};
+				"test/data/match_tr03_sorted.txt", "-o", outFileName};
 		mproc.main(args);
 
-		File actual = new File("test/out/match04.csv");
+		File actual = new File(outFileName);
 		assertThat(textContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
+
 }

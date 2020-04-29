@@ -1,0 +1,10 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+	<f:entry title="${%displaySetting}">
+		<f:property field="displaySetting"/>
+	</f:entry>
+	<br/>
+	<f:entry title="${%countingUnits}">
+		<f:repeatableProperty field="countingUnits" minimum="1"/>
+	</f:entry>
+</j:jelly>

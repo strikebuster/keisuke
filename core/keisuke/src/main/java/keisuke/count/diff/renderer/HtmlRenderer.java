@@ -6,11 +6,13 @@ import static keisuke.util.StringUtil.SYSTEM_ENCODING;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
+import java.util.List;
 
+import keisuke.count.SortOrderEnum;
 import keisuke.count.diff.AbstractDiffResultForCount;
 import keisuke.count.diff.DiffFolderResult;
-import keisuke.count.util.DateUtil;
 import keisuke.count.util.EncodeUtil;
+import keisuke.util.DateUtil;
 
 
 /**
@@ -74,13 +76,13 @@ public class HtmlRenderer extends AbstractRenderer {
 		sb.append("<input type=\"button\" onclick=\"hideAll();\" value=\"");
 		sb.append(this.getMessageText(MSG_DIFF_RND_HIDE)).append("\">");
 		sb.append("<table border=\"1\" width=\"100%\">").append(LINE_SEP);
-		sb.append("<tr><th width=\"80%\">");
+		sb.append("<tr><th width=\"70%\">");
 		sb.append(this.getMessageText(MSG_DIFF_RND_PATH));
 		sb.append("</th><th width=\"10%\">");
 		sb.append(this.getMessageText(MSG_DIFF_RND_STATUS));
 		sb.append("</th><th width=\"10%\">");
 		sb.append(this.getMessageText(MSG_DIFF_RND_INCREASE));
-		sb.append("</th><th>");
+		sb.append("</th><th width=\"10%\">");
 		sb.append(this.getMessageText(MSG_DIFF_RND_DECREASE));
 		sb.append("</th></tr>").append(LINE_SEP);
 		for (AbstractDiffResultForCount obj : result.getSortedChildren()) {
@@ -120,22 +122,36 @@ public class HtmlRenderer extends AbstractRenderer {
 		sb.append("</td>");
 
 		sb.append("<td>");
-		sb.append(EncodeUtil.xmlEscape(this.getStatusLabelOf(obj.status())));
+		sb.append(EncodeUtil.xmlEscape(this.getStatusLabelOf(obj.status(), obj.isUnsupported())));
 		sb.append("</td>");
 
 		sb.append("<td style=\"text-align: right;\">");
-		sb.append(obj.addedSteps());
+		if (obj.isUnsupported()) {
+			sb.append('-');
+		} else {
+			sb.append(obj.addedSteps());
+		}
 		sb.append("</td>");
 
 		sb.append("<td style=\"text-align: right;\">");
-		sb.append(obj.deletedSteps());
+		if (obj.isUnsupported()) {
+			sb.append('-');
+		} else {
+			sb.append(obj.deletedSteps());
+		}
 		sb.append("</td>");
 
 		sb.append("</tr>").append(LINE_SEP);
 
 		if (obj instanceof DiffFolderResult) {
 			DiffFolderResult folder = (DiffFolderResult) obj;
-			for (AbstractDiffResultForCount child : folder.getSortedChildren()) {
+			List<AbstractDiffResultForCount> children = null;
+			if (this.sortOrder() == SortOrderEnum.NODE) {
+				children = folder.getSortedChildren();
+			} else {
+				children = folder.getChildren();
+			}
+			for (AbstractDiffResultForCount child : children) {
 				sb.append(this.renderLine(folder, child, nest + 1));
 			}
 		}

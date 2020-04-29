@@ -49,9 +49,7 @@ public class CountProcOption extends AbstractCommandOption {
 	protected void configureOption() {
 		Options options = new Options();
         options.addOption("?", "help", false, "show help");
-        options.addOption("c", OPT_CLASS, true, "type to classify '"
-        		+ OPTVAL_EXTENSION + "' | '" + OPTVAL_LANGUAGE + "' | '"
-        		+ OPTVAL_LANGGROUP + "' | '" + OPTVAL_FW + "'<name>");
+        options.addOption("c", OPT_CLASS, true, "type to classify " + classify.printList());
         options.addOption("o", OPT_OUT, true, "output file name");
         options.addOption("p", OPT_PROP, true, "properties file name");
         options.addOption("x", OPT_XML, true, "xml file name");

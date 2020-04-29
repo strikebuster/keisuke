@@ -74,7 +74,7 @@ public class OptionValues {
 		if (this.valuesList.isEmpty()) {
 			return "";
 		}
-		StringBuilder sb = new StringBuilder();
+		StringBuffer sb = new StringBuffer();
 		Iterator<String> it = this.valuesList.iterator();
 		String value = it.next();
 		sb.append(this.getQuotedString(value));
@@ -87,7 +87,7 @@ public class OptionValues {
 	}
 
 	private String getQuotedString(final String value) {
-		StringBuilder sb = new StringBuilder();
+		StringBuffer sb = new StringBuffer();
 		sb.append('\'');
 		int pos = value.indexOf('<');
 		if (pos > 0) {

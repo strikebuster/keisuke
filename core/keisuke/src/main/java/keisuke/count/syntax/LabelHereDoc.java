@@ -108,7 +108,7 @@ public class LabelHereDoc extends LiteralString {
 		int pos;
 		String preStr = "";
 		String postStr = "";
-		StringBuilder sb = new StringBuilder();
+		StringBuffer sb = new StringBuffer();
 		if (this.labelEnclose) {
 			// prefix[ \t]*(["'`]?\w+["'`]?)[ \t]*postfix
 			pos = start.indexOf(LABEL_MAGIC_WORD);
@@ -141,7 +141,7 @@ public class LabelHereDoc extends LiteralString {
 	@Override
 	public String getEndRegxString() {
 		String end = this.endRawString();
-		StringBuilder sb = new StringBuilder();
+		StringBuffer sb = new StringBuffer();
 		if (this.labelEnclose) {
 			// prefix[ \t]*label[ \t]*postfix
 			String preStr = "";
