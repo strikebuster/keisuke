@@ -13,19 +13,55 @@ import org.fest.swing.junit.testcase.FestSwingJUnitTestCase;
 import org.fest.swing.timing.Timeout;
 import org.junit.Test;
 
-import static keisuke.count.CountTestUtil.binaryContentOf;
+import static keisuke.count.CountTestUtil.convertToTableArrayFrom;
+import static keisuke.count.CountTestUtil.excelContentOf;
 import static keisuke.count.CountTestUtil.htmlToRemoveMutableIdFrom;
 import static keisuke.count.CountTestUtil.withoutHeadLines;
 import static keisuke.count.diff.DiffCountTestConstant.HTML_IGNORE_LINES;
 import static keisuke.count.diff.DiffCountTestConstant.TEXT_IGNORE_LINES;
-import static keisuke.swing.GUIConstant.*;
-import static keisuke.swing.GUITestUtil.*;
+import static keisuke.swing.GUIConstant.COUNT_BUTTON;
+import static keisuke.swing.GUIConstant.ENCODING_TEXT;
+import static keisuke.swing.GUIConstant.FORMAT_RADIO;
+import static keisuke.swing.GUIConstant.FORMAT_SELECT;
+import static keisuke.swing.GUIConstant.HIDDEN_SAVING;
+import static keisuke.swing.GUIConstant.MSG_EXCUSE_BINARY;
+import static keisuke.swing.GUIConstant.RESULT_TABLE;
+import static keisuke.swing.GUIConstant.RESULT_TEXT;
+import static keisuke.swing.GUIConstant.SAVE_BUTTON;
+import static keisuke.swing.GUIConstant.SAVE_CHOOSER;
+import static keisuke.swing.GUIConstant.SAVE_LABEL;
+import static keisuke.swing.GUIConstant.SAVE_TEXT;
+import static keisuke.swing.GUIConstant.TABLE_RADIO;
+import static keisuke.swing.GUIConstant.XML_BUTTON;
+import static keisuke.swing.GUIConstant.XML_CHOOSER;
+import static keisuke.swing.GUIConstant.XML_TEXT;
+import static keisuke.swing.GUITestUtil.SLEEPLONGTIME;
+import static keisuke.swing.GUITestUtil.SLEEPTIME;
+import static keisuke.swing.GUITestUtil.SLEEPVERYLONGTIME;
+import static keisuke.swing.GUITestUtil.WAITTIME;
+import static keisuke.swing.GUITestUtil.chooseFile;
+import static keisuke.swing.GUITestUtil.labelsOf;
+import static keisuke.swing.GUITestUtil.pathForLocalSystem;
+import static keisuke.swing.GUITestUtil.sleep;
 import static keisuke.swing.diffcount.DiffCountGUIConstant.*;
 import static keisuke.swing.diffcount.DiffCountGUITestConstant.*;
-import static keisuke.swing.diffcount.DiffCountTestUtil.*;
+import static keisuke.swing.diffcount.DiffCountTestUtil.actualTextOf;
+import static keisuke.swing.diffcount.DiffCountTestUtil.deriveTotalAddedStepsFrom;
+import static keisuke.swing.diffcount.DiffCountTestUtil.deriveTotalDeletedStepsFrom;
+import static keisuke.swing.diffcount.DiffCountTestUtil.deriveTotalStatusFrom;
+import static keisuke.util.TestUtil.contentOf;
 import static keisuke.util.TestUtil.nameOfSystemOS;
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.Matchers.*;
+import static keisuke.util.TestUtil.rawContentOf;
+import static keisuke.util.TestUtil.removeFile;
+import static keisuke.util.TestUtil.textContentOf;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.emptyString;
+import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 
 import java.io.File;
 import java.net.URL;
@@ -162,7 +198,7 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		stat = frame.button(SAVE_BUTTON).target.isEnabled();
 		assertThat(stat, is(true));
 		String path = frame.textBox(SAVE_TEXT).target.getText();
-		assertThat(path, isEmptyString());
+		assertThat(path, is(emptyString()));
 		String msg = frame.label(SAVE_LABEL).target.getText();
 		assertThat(msg, containsString("if you want"));
 
@@ -259,7 +295,7 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		stat = frame.button(SAVE_BUTTON).target.isEnabled();
 		assertThat(stat, is(true));
 		String path = frame.textBox(SAVE_TEXT).target.getText();
-		assertThat(path, isEmptyString());
+		assertThat(path, is(emptyString()));
 		String msg = frame.label(SAVE_LABEL).target.getText();
 		assertThat(msg, containsString("if you want"));
 
@@ -285,7 +321,6 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		//System.out.println(contentOf(actual));
 		assertThat(contentOf(actual), is(equalTo(contentOf(expected))));
 	}
-
 
 	@Test
 	public void countDiffJavaWhenThereIsNoDifference() {
@@ -438,7 +473,7 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 			expected = this.getClass()
 					.getResource("DiffCount_java.xls");
 		}
-		assertThat(binaryContentOf(new File(saveFile)), is(binaryContentOf(expected)));
+		assertThat(excelContentOf(new File(saveFile)), is(excelContentOf(expected)));
 	}
 
 	@Test
@@ -584,6 +619,8 @@ public final class DiffCountGUITest extends FestSwingJUnitTestCase {
 		//エンコードがデフォルトのUTF-8になっても結果が同じだった
 		//assertThat(actualTextOf(text, withoutHeadLines(TEXT_IGNORE_LINES)),
 		//		is(not(equalTo(contentOf(expected)))));
+		assertThat(actualTextOf(text, withoutHeadLines(TEXT_IGNORE_LINES)),
+				is(equalTo(textContentOf(expected))));
 	}
 
 	@Test

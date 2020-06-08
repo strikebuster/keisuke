@@ -1,13 +1,12 @@
 // build.gradle as a single project
-//  or as a sub-project of the multi-project
-//  which configurations are defined by ../../settings.gradle.
 
 plugins {
   id 'java'
+  id 'java-library'
   id 'checkstyle'
-  id 'findbugs'
+  id 'com.github.spotbugs' version '4.0.2'
   id 'jacoco'
-  id 'com.github.johnrengelman.shadow' version '2.0.4'
+  id 'com.github.johnrengelman.shadow' version '5.2.0'
 }
 
 // when change version status from snapshot to release,
@@ -15,9 +14,9 @@ plugins {
 
 group = 'keisuke'
 //name : 'keisuke' as single project
-version = '2.0.0'
-//@@version = '2.0.0-SNAPSHOT'
+version = '2.1.0'
 def deployUrl = 'http://localhost:8081/repository/maven-releases'
+//@@version = '2.0.1-SNAPSHOT'
 //@@def deployUrl = 'http://localhost:8081/repository/maven-snapshots'
 
 description = """keisuke : counts source code steps like as stepcounter"""
@@ -32,42 +31,62 @@ repositories {
 }
 
 dependencies {
-    compile 'com.googlecode.java-diff-utils:diffutils:1.3.0'
-    compile 'commons-cli:commons-cli:1.3.1'
-    compile 'commons-io:commons-io:2.4'
-    compile 'org.jenkins-ci.dom4j:dom4j:1.6.1-jenkins-4'
-    compile 'net.sf.jxls:jxls-core:1.0.6'
-    compile 'org.apache.ant:ant:1.9.9'
-    compile 'org.apache.poi:poi:3.9'
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.hamcrest:hamcrest-all:1.3'
-    testCompile 'org.jacoco:org.jacoco.agent:0.7.9'
-    testCompile 'org.jacoco:org.jacoco.ant:0.7.9'
-    checkstyle 'com.puppycrawl.tools:checkstyle:8.1'
-    findbugs 'com.google.code.findbugs:findbugs:3.0.1'
+    api 'com.googlecode.java-diff-utils:diffutils:1.3.0'
+    api 'commons-io:commons-io:2.6'
+    api 'org.jenkins-ci.dom4j:dom4j:1.6.1-jenkins-4'
+    api 'net.sf.jxls:jxls-core:1.0.6'
+    api 'org.apache.poi:poi:3.9'
+    //api 'org.apache.poi:poi:4.1.2'
+    //api 'org.apache.poi:poi-ooxml:4.1.2'
+    //api 'org.jxls:jxls:2.8.1'
+    //api 'org.jxls:jxls-poi:2.8.1'
+    //implementation 'org.slf4j:slf4j-nop:1.7.26'
+    implementation 'commons-cli:commons-cli:1.4'
+    implementation 'org.apache.ant:ant:1.10.7'
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.hamcrest:hamcrest:2.2'
+    testRuntimeOnly 'org.jacoco:org.jacoco.agent:0.8.5'
+    testRuntimeOnly 'org.jacoco:org.jacoco.ant:0.8.5'
+    checkstyle 'com.puppycrawl.tools:checkstyle:8.32'
+    spotbugs 'com.github.spotbugs:spotbugs:4.0.2'
 }
 
 tasks.withType(JavaCompile) {
     options.encoding = defaultEncoding
+    options.compilerArgs << '-Xlint:deprecation'
 }
-sourceCompatibility = 1.6
-targetCompatibility = 1.6
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 checkstyle {
-    toolVersion = '8.1'
+    toolVersion = '8.32'
     configFile = file('config/checkstyle/sun_checks_custom.xml')
     //reportsDir = file("${buildDir}/reports/checkstyle")
     ignoreFailures = true
 }
 
 checkstyleTest {
-    excludes = ['**/*']
+    //excludes = ['**/*']
 }
 
-findbugs {
-    toolVersion = '3.0.5'
-    //reportsDir = file("${buildDir}/reports/findbugs")
+spotbugs {
+    toolVersion = '4.0.2'
+    //reportsDir = file("${buildDir}/reports/spotbugs")
     ignoreFailures = true
+}
+
+spotbugsMain {
+    reports {
+        html {
+            enabled = false
+            destination = file("$buildDir/reports/spotbugs/main/spotbugs.html")
+            stylesheet = 'fancy-hist.xsl'
+        }
+        xml {
+             enabled = true
+             destination = file("$buildDir/reports/spotbugs/main/spotbugsXml.xml")
+        }
+    }
 }
 
 def dirPathForOutputOfTestRun = 'test/out'
@@ -109,9 +128,9 @@ compileTestdataJava.setActions Arrays.asList()
 testdataClasses.setActions Arrays.asList()
 
 task makeZipOfTestData(dependsOn: processTestdataResources, type: Zip) {
-    baseName = 'data'
-    version = null
-    destinationDir = file(dirPathOfTestDataZip)
+    archiveBaseName = 'data'
+    archiveVersion = ''
+    destinationDirectory = file(dirPathOfTestDataZip)
     from(dirPathOfTestData) {
         include '**'
         includeEmptyDirs = true
@@ -120,11 +139,11 @@ task makeZipOfTestData(dependsOn: processTestdataResources, type: Zip) {
         if (!file(dirPathOfTestData).exists()) {
             println("Fail because it does not exist: ${dirPathOfTestData}")
             throw new Exception("Not exist ${dirPathOfTestData}")
-        }
+         }
         //if (file(zipPathOfTestData).exists()) {
         //    println("Fail because it already exists: ${zipPathOfTestData}")
         //    throw new Exception("Already exists ${zipPathOfTestData}")
-        //}
+         //}
     }
     doLast {
         println("Archive test data into zip file: ${zipPathOfTestData}")
@@ -180,7 +199,7 @@ test {
 }
 
 jacoco {
-    toolVersion = '0.7.9'
+    toolVersion = '0.8.5'
     //reportsDir = file("${buildDir}/reports/jacoco")
 }
 
@@ -195,21 +214,21 @@ jacocoTestReport {
 }
 
 jar {
-    baseName = project.name
-    version = project.version
+    archiveBaseName = project.name
+    archiveVersion = project.version
     manifest {
-        attributes 'Implementation-Title':"${baseName}", 'Implementation-Version':"${version}"
+        attributes 'Implementation-Title':"${archiveBaseName}", 'Implementation-Version':"${archiveVersion}"
     }
 }
 
 def suffixFatJar = 'jar-with-dependencies'
 
 shadowJar {
-    baseName = project.name
-    version = project.version
-    classifier = suffixFatJar
+    archiveBaseName = project.name
+    archiveVersion = project.version
+    archiveClassifier = suffixFatJar
     manifest {
-        attributes 'Implementation-Title':"${baseName}-${classifier}", 'Implementation-Version':"${version}"
+        attributes 'Implementation-Title':"${archiveBaseName}-${archiveClassifier}", 'Implementation-Version':"${archiveVersion}"
     }
     dependsOn build
 }
@@ -217,12 +236,12 @@ shadowJar {
 def suffixSrcJar = 'sources'
 
 task sourcesJar(type: Jar) {
-    baseName = project.name
-    version = project.version
-    classifier = suffixSrcJar
+    archiveBaseName = project.name
+    archiveVersion = project.version
+    archiveClassifier = suffixSrcJar
     from sourceSets.main.allSource
     manifest {
-        attributes 'Implementation-Title':"${baseName}-${classifier}", 'Implementation-Version':"${version}"
+        attributes 'Implementation-Title':"${archiveBaseName}-${archiveClassifier}", 'Implementation-Version':"${archiveVersion}"
     }
     dependsOn build
 }
@@ -230,12 +249,12 @@ task sourcesJar(type: Jar) {
 def suffixTestJar = 'tests'
 
 task testsJar(type:Jar) {
-    baseName = project.name
-    version = project.version
-    classifier = suffixTestJar
+    archiveBaseName = project.name
+    archiveVersion = project.version
+    archiveClassifier = suffixTestJar
     from sourceSets.test.output
     manifest {
-        attributes 'Implementation-Title':"${baseName}-${classifier}", 'Implementation-Version':"${version}"
+        attributes 'Implementation-Title':"${archiveBaseName}-${archiveClassifier}", 'Implementation-Version':"${archiveVersion}"
     }
     dependsOn build
 }

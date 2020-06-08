@@ -73,7 +73,77 @@ public class CountTestUtil extends TestUtil {
 		return excelContentOf(new File(url.getFile()));
 	}
 
-	private static final byte[] END_OF_EXCEL_CONTENT = {(byte) 0xFF,
+	private static final byte[][] BEGININGS_OF_EXCEL_IGNORE_CONTENT = {
+			{0x50, 0x4B, 0x03, 0x04, 0x14, 0x00, 0x08, 0x08, 0x08, 0x00},
+			{0x50, 0x4B, 0x01, 0x02, 0x14, 0x00, 0x14, 0x00, 0x08, 0x08, 0x08, 0x00}
+	};
+	private static final int[] SIZE_OF_BEGININGS_OF_EXCEL_IGNORE_CONTENT = {10, 12};
+	private static final int SIZE_OF_EXCEL_IGNORE_CONTENT = 3;
+
+	public static byte[] excelContentOf(final File file) {
+		FileInputStream in = null;
+		ByteArrayOutputStream out = null;
+		try {
+			in = new FileInputStream(file);
+		} catch (FileNotFoundException ex) {
+			ex.printStackTrace();
+			return null;
+		}
+		byte[] content;
+		try {
+			int idx = 0;
+			int pattern = 0;
+			out = new ByteArrayOutputStream();
+			int c;
+			while ((c = in.read()) != -1) {
+				out.write(c);
+				if (c == BEGININGS_OF_EXCEL_IGNORE_CONTENT[pattern][idx]) {
+					idx++;
+					if (idx >= SIZE_OF_BEGININGS_OF_EXCEL_IGNORE_CONTENT[pattern]) {
+						for (int j = 0; j < SIZE_OF_EXCEL_IGNORE_CONTENT; j++) {
+							c = in.read();
+							out.write(1); // 1 is dummy data for ignore content
+						}
+						idx = 0;
+					}
+				} else if (idx == 2) {
+					boolean isInPattern = false;
+					for (int j = 0; j < BEGININGS_OF_EXCEL_IGNORE_CONTENT.length; j++) {
+						if (c == BEGININGS_OF_EXCEL_IGNORE_CONTENT[j][idx]) {
+							isInPattern = true;
+							pattern = j;
+							break;
+						}
+					}
+					if (isInPattern) {
+						idx++;
+					} else {
+						idx = 0;
+					}
+				} else {
+					idx = 0;
+				}
+			}
+			content = out.toByteArray();
+		} catch (IOException ex) {
+			ex.printStackTrace();
+			return null;
+		} finally {
+			try {
+				if (in != null) in.close();
+				if (out != null) out.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return content;
+	}
+
+	public static byte[] excel97ContentOf(final URL url) {
+		return excel97ContentOf(new File(url.getFile()));
+	}
+
+	private static final byte[] END_OF_EXCEL97_CONTENT = {(byte) 0xFF,
 			0x52, 0x00, 0x6F, 0x00, 0x6F, 0x00, 0x74, 0x00,
 			0x20, 0x00, 0x45, 0x00, 0x6E, 0x00, 0x74, 0x00,
 			0x72, 0x00, 0x79, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -84,9 +154,9 @@ public class CountTestUtil extends TestUtil {
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 			0x16, 0x00, 0x05, 0x01, (byte) 0xFF
 			};
-	private static final int SIZE_OF_END_OF_EXCEL_CONTENT = 70;
+	private static final int SIZE_OF_END_OF_EXCEL97_CONTENT = 70;
 
-	public static byte[] excelContentOf(final File file) {
+	public static byte[] excel97ContentOf(final File file) {
 		FileInputStream in = null;
 		ByteArrayOutputStream out = null;
 		try {
@@ -102,9 +172,9 @@ public class CountTestUtil extends TestUtil {
 			int c;
 			while ((c = in.read()) != -1) {
 				out.write(c);
-				if (c == END_OF_EXCEL_CONTENT[idx]) {
+				if (c == END_OF_EXCEL97_CONTENT[idx]) {
 					idx++;
-					if (idx > SIZE_OF_END_OF_EXCEL_CONTENT) {
+					if (idx >= SIZE_OF_END_OF_EXCEL97_CONTENT) {
 						// content ends. the rest data is ignored.
 						break;
 					}

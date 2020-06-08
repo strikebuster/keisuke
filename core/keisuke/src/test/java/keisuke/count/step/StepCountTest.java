@@ -1,10 +1,14 @@
 package keisuke.count.step;
 
-import static keisuke.count.CountTestUtil.*;
+import static keisuke.count.CountTestUtil.binaryContentOf;
+//import static keisuke.count.CountTestUtil.excelContentOf;
+import static keisuke.count.CountTestUtil.rawContentOf;
+import static keisuke.count.CountTestUtil.textContentOf;
 import static keisuke.count.option.CountOptionConstant.*;
 import static keisuke.util.TestUtil.nameOfSystemOS;
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 
 import java.io.File;
 import java.net.URL;
@@ -377,13 +381,14 @@ public class StepCountTest {
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
+	/*
 	@Test
 	public void countJavaUsingExcelFormatAndSubPath() throws Exception {
 		System.out.println("## StepCount ## countJavaUsingExcelFormatAndSubPath ##");
 		String newRoot = "test/data/java/root1";
-		String outFileName = "test/out/count_java_subPath.xls";
+		String outFileName = "test/out/count_java_subPath.xlsx";
 		URL expected = this.getClass()
-				.getResource("stepCount_java_subPath.xls");
+				.getResource("stepCount_java_subPath.xlsx");
 
 		String[] args = {"-path", "sub", "-format", "excel", "-encoding", "UTF-8",
 				"-output", outFileName, newRoot};
@@ -402,9 +407,9 @@ public class StepCountTest {
 		Locale.setDefault(Locale.ENGLISH);
 
 		String newRoot = "test/data/java/root1";
-		String outFileName = "test/out/count_java_basePath_en.xls";
+		String outFileName = "test/out/count_java_basePath_en.xlsx";
 		URL expected = this.getClass()
-				.getResource("stepCount_java_basePath_en.xls");
+				.getResource("stepCount_java_basePath_en.xlsx");
 
 		String[] args = {"-path", "base", "-format", "excel", "-encoding", "UTF-8",
 				"-output", outFileName, newRoot};
@@ -417,6 +422,49 @@ public class StepCountTest {
 		File actual = new File(outFileName);
 		//assertThat(binaryContentOf(actual), is(equalTo(binaryContentOf(expected))));
 		assertThat(excelContentOf(actual), is(equalTo(excelContentOf(expected))));
+	}
+	*/
+
+	@Test
+	public void countJavaUsingExcel97FormatAndSubPath() throws Exception {
+		System.out.println("## StepCount ## countJavaUsingExcel97FormatAndSubPath ##");
+		String newRoot = "test/data/java/root1";
+		String outFileName = "test/out/count_java_subPath.xls";
+		URL expected = this.getClass()
+				.getResource("stepCount_java_subPath.xls");
+
+		//String[] args = {"-path", "sub", "-format", "excel97", "-encoding", "UTF-8",
+		String[] args = {"-path", "sub", "-format", "excel", "-encoding", "UTF-8",
+				"-output", outFileName, newRoot};
+		StepCountProc stepcount = new StepCountProc();
+		stepcount.main(args);
+
+		File actual = new File(outFileName);
+		assertThat(binaryContentOf(actual), is(equalTo(binaryContentOf(expected))));
+	}
+
+	@Test
+	public void countJavaUsingExcel97FormatAndBasePathWhenLocaleIsEnglish() throws Exception {
+		System.out.println("## StepCount ## countJavaUsingExcel97FormatAndBasePathWhenLocaleIsEnglish ##");
+		Locale org = Locale.getDefault();
+		Locale.setDefault(Locale.ENGLISH);
+
+		String newRoot = "test/data/java/root1";
+		String outFileName = "test/out/count_java_basePath_en.xls";
+		URL expected = this.getClass()
+				.getResource("stepCount_java_basePath_en.xls");
+
+		//String[] args = {"-path", "base", "-format", "excel97", "-encoding", "UTF-8",
+		String[] args = {"-path", "base", "-format", "excel", "-encoding", "UTF-8",
+				"-output", outFileName, newRoot};
+		StepCountProc stepcount = new StepCountProc();
+		try {
+			stepcount.main(args);
+		} finally {
+			Locale.setDefault(org);
+		}
+		File actual = new File(outFileName);
+		assertThat(binaryContentOf(actual), is(equalTo(binaryContentOf(expected))));
 	}
 
 	@Test

@@ -79,6 +79,7 @@ public final class CountMainProc extends AbstractReportMainProc {
 			} else {
 				reader = new BufferedReader(new FileReader(infile));
 			}
+			@SuppressWarnings("unused")
 			int linectr = 0;
 			while ((line = reader.readLine()) != null) {
 				// ファイル1行毎の処理

@@ -10,6 +10,7 @@ import keisuke.util.LogUtil;
  * ソースコードファイルのステップ数計測結果の集計レポート作成用の派生クラス
  */
 public class StepCountResultForReport extends StepCountResult implements CountResultForReport {
+	private static final long serialVersionUID = 1L; // since ver.2.0.1
 
 	private static final int STEPCOUNT_COLUMN_NUM = StepCountEnum.values().length;
 	private long sumSteps = 0;

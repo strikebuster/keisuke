@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
@@ -67,6 +68,15 @@ public class ProjectMainPageUI extends AbstractReportPageUI {
 	 */
 	public void openProjectPage(final String projectName) {
 		this.openPage(projectName);
+	}
+
+	/**
+	 * Open build result page.
+	 * @param url URL path to build result page.
+	 * @return HtmlPage instance.
+	 */
+	public HtmlPage openResultPage(final String url) {
+		return this.openWebPage(url);
 	}
 
 	/**
@@ -177,22 +187,22 @@ public class ProjectMainPageUI extends AbstractReportPageUI {
 		HtmlImage img = this.findImageOfFloatingTrendGraphForStep();
 		if (times < 1) {
 			System.out.println("[TEST] img is " + img);
-			assertThat(img, nullValue());
+			assertThat(img, is(nullValue()));
 			return null;
 		}
-		assertThat(img, not(nullValue()));
+		assertThat(img, is(not(nullValue())));
 		System.out.println("[TEST] img src:" + img.getAttribute("src"));
 		System.out.println("[TEST] img alt:" + img.getAttribute("alt"));
 		System.out.println("[TEST] img usemap:" + img.getAttribute("usemap"));
-		assertThat(img.getAttribute("alt"), equalTo("Trend graph of StepCount"));
+		assertThat(img.getAttribute("alt"), is(equalTo("Trend graph of StepCount")));
 		// グラフキャプション
 		String graphCaptionXpath = getXPathOfCaptionDivisionFromImageOfStepCount(img);
 		HtmlDivision captionDiv = (HtmlDivision) this.getPage().getFirstByXPath(graphCaptionXpath);
 		System.out.println("[TEST] graph caption:" + captionDiv.getTextContent());
 		String stepKind = getDisplayStepKindCaption(captionDiv.getTextContent());
-		assertThat(stepKind, equalTo(getExpectedDisplayStepKindCaption(expectedKind)));
+		assertThat(stepKind, is(equalTo(getExpectedDisplayStepKindCaption(expectedKind))));
 		String classValue = captionDiv.getAttribute("class");
-		assertThat(classValue, equalTo("test-trend-caption"));
+		assertThat(classValue, is(equalTo("test-trend-caption")));
 		return img;
 	}
 
@@ -207,22 +217,22 @@ public class ProjectMainPageUI extends AbstractReportPageUI {
 		HtmlImage img = this.findImageOfFloatingTrendGraphForDiffAdded();
 		if (times < 1) {
 			System.out.println("[TEST] img is " + img);
-			assertThat(img, nullValue());
+			assertThat(img, is(nullValue()));
 			return null;
 		}
-		assertThat(img, not(nullValue()));
+		assertThat(img, is(not(nullValue())));
 		System.out.println("[TEST] img src:" + img.getAttribute("src"));
 		System.out.println("[TEST] img alt:" + img.getAttribute("alt"));
 		System.out.println("[TEST] img usemap:" + img.getAttribute("usemap"));
-		assertThat(img.getAttribute("alt"), equalTo("Trend graph of DiffCount added steps"));
+		assertThat(img.getAttribute("alt"), is(equalTo("Trend graph of DiffCount added steps")));
 		// グラフキャプション
 		String graphCaptionXpath = getXPathOfCaptionDivisionFromImageOfDiffCountAdded(img);
 		HtmlDivision captionDiv = (HtmlDivision) this.getPage().getFirstByXPath(graphCaptionXpath);
 		String captionTitle = captionDiv.getTextContent();
 		System.out.println("[TEST] graph caption:" + captionTitle);
-		assertThat(captionTitle, equalTo("Trend of Diff Steps (Code only)"));
+		assertThat(captionTitle, is(equalTo("Trend of Diff Steps (Code only)")));
 		String classValue = captionDiv.getAttribute("class");
-		assertThat(classValue, equalTo("test-trend-caption"));
+		assertThat(classValue, is(equalTo("test-trend-caption")));
 		return img;
 	}
 
@@ -240,19 +250,19 @@ public class ProjectMainPageUI extends AbstractReportPageUI {
 			assertThat(img, nullValue());
 			return null;
 		}
-		assertThat(img, not(nullValue()));
+		assertThat(img, is(not(nullValue())));
 		System.out.println("[TEST] img src:" + img.getAttribute("src"));
 		System.out.println("[TEST] img alt:" + img.getAttribute("alt"));
 		System.out.println("[TEST] img usemap:" + img.getAttribute("usemap"));
-		assertThat(img.getAttribute("alt"), equalTo("Trend graph of DiffCount deleted steps"));
+		assertThat(img.getAttribute("alt"), is(equalTo("Trend graph of DiffCount deleted steps")));
 		// グラフキャプション
 		String graphCaptionXpath = getXPathOfCaptionDivisionFromImageOfDiffCountDeleted(img);
 		HtmlDivision captionDiv = (HtmlDivision) this.getPage().getFirstByXPath(graphCaptionXpath);
 		String captionTitle = captionDiv.getTextContent();
 		System.out.println("[TEST] graph caption:" + captionTitle);
-		assertThat(captionTitle, equalTo("Trend of Diff Steps (Code only)"));
+		assertThat(captionTitle, is(equalTo("Trend of Diff Steps (Code only)")));
 		String classValue = captionDiv.getAttribute("class");
-		assertThat(classValue, equalTo("test-trend-caption"));
+		assertThat(classValue, is(equalTo("test-trend-caption")));
 		return img;
 	}
 
@@ -261,9 +271,9 @@ public class ProjectMainPageUI extends AbstractReportPageUI {
 	 */
 	public void assertThatDiffCountGraphsDoNotExist() {
 		HtmlImage img = this.findImageOfFloatingTrendGraphForDiffAdded();
-		assertThat(img, nullValue());
+		assertThat(img, is(nullValue()));
 		img = this.findImageOfFloatingTrendGraphForDiffDeleted();
-		assertThat(img, nullValue());
+		assertThat(img, is(nullValue()));
 	}
 
 	private String getUsemap(final HtmlImage image) {
@@ -325,12 +335,13 @@ public class ProjectMainPageUI extends AbstractReportPageUI {
 			System.out.println("[TEST] area[" + i + "]:title=" + title + ", href=" + href
 					+ ", coords=" + coords);
 			if (checkCategories != null) {
-				assertThat(title, allOf(containsString(checkCategories[j]), containsString("Build #")));
+				assertThat(title, is(allOf(
+						containsString(checkCategories[j]), containsString("Build #"))));
 			}
 			if (checkHref != null) {
 				StringBuilder sb = new StringBuilder();
 				sb.append(Integer.toString(k)).append(checkHref);
-				assertThat(href, allOf(startsWith(sb.toString()), endsWith(checkCategories[j])));
+				assertThat(href, is(allOf(startsWith(sb.toString()), endsWith(checkCategories[j]))));
 			}
 			if (checkCoords) {
 				if (k == times) { // when last build, add Y-axis：step value into list
@@ -377,12 +388,13 @@ public class ProjectMainPageUI extends AbstractReportPageUI {
 			System.out.println("[TEST] bar[" + i + "]:title=" + title + ", href=" + href
 					+ ", coords=" + coords);
 			if (checkCategories != null) {
-				assertThat(title, allOf(containsString(checkCategories[j]), containsString("Build #")));
+				assertThat(title, is(allOf(
+						containsString(checkCategories[j]), containsString("Build #"))));
 			}
 			if (checkHref != null) {
 				StringBuilder sb = new StringBuilder();
 				sb.append(Integer.toString(k)).append(checkHref);
-				assertThat(href, allOf(startsWith(sb.toString()), endsWith(checkCategories[j])));
+				assertThat(href, is(allOf(startsWith(sb.toString()), endsWith(checkCategories[j]))));
 			}
 			if (checkCoords) {
 				if (k == times) { // when last build, add Y-axis：step value into list
@@ -434,7 +446,7 @@ public class ProjectMainPageUI extends AbstractReportPageUI {
 			assertThat(map, nullValue());
 			return null;
 		}
-		assertThat(map, not(nullValue()));
+		assertThat(map, is(not(nullValue())));
 		if (checkY && (categories == null || categories.length == 0)) {
 			System.out.println("[TEST] categories is required when checkY is true.");
 			throw new RuntimeException("wrong use ProjectMainPageUI"
@@ -458,7 +470,7 @@ public class ProjectMainPageUI extends AbstractReportPageUI {
 			assertThat(map, nullValue());
 			return null;
 		}
-		assertThat(map, not(nullValue()));
+		assertThat(map, is(not(nullValue())));
 		this.verifyMapArea(map, times, categories, "/keisuke/result", false);
 		return map;
 	}
@@ -478,7 +490,7 @@ public class ProjectMainPageUI extends AbstractReportPageUI {
 			assertThat(map, nullValue());
 			return null;
 		}
-		assertThat(map, not(nullValue()));
+		assertThat(map, is(not(nullValue())));
 		this.verifyMapAreaOfStackedBar(map, times, categories, "/keisuke/result", false);
 		return map;
 	}

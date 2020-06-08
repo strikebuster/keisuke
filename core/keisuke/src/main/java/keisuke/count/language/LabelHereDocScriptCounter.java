@@ -31,6 +31,10 @@ public class LabelHereDocScriptCounter extends GeneralStepCounter {
 	}
 
 	/* リテラル文字列の開始から行末までの処理をする */
+	/**
+	 * ラベル終了形式のヒアドキュメント構文のあるスクリプト言語用の処理.<br>
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String handleLiteralStringStart(
 			final ProgramLangRule lang, final String line, final LiteralString literal) {

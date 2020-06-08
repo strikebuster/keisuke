@@ -23,14 +23,38 @@ public class StepCountResultCategoryDto implements CategoryStepDtoCompatible {
 		return this.execSteps;
 	}
 
+	/**
+	 * 計測対象のソースコードのコード行数を返す
+	 * @return コード行数
+	 */
+	public long getCode() {
+		return this.execSteps;
+	}
+
 	/** {@inheritDoc} */
 	public long getNone() {
+		return this.blancSteps;
+	}
+
+	/**
+	 * 計測対象のソースコードの空白行数を返す
+	 * @return 空白行数
+	 */
+	public long getBlank() {
 		return this.blancSteps;
 	}
 
 	/** {@inheritDoc} */
 	public long getComment() {
 		return this.commentSteps;
+	}
+
+	/**
+	 * 計測対象のソースコードの全行数を返す
+	 * @return 全行数
+	 */
+	public long getSum() {
+		return (this.execSteps + this.blancSteps + this.commentSteps);
 	}
 
 	/**

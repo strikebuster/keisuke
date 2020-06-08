@@ -2,6 +2,8 @@ package keisuke.report.procedure;
 
 import keisuke.util.StderrCapture;
 import java.net.URL;
+import java.util.Locale;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -223,8 +225,8 @@ public class CountMainProcTest {
 	}
 
 	@Test
-	public void countUsingPropOfEnglishTitles() throws Exception {
-		System.out.println("## CountProcTest ## count03 ## countUsingPropOfEnglishTitles ##");
+	public void countUsingPropOfCustomTitles() throws Exception {
+		System.out.println("## CountProcTest ## count03 ## countUsingPropOfCustomTitles ##");
 		URL expected = this.getClass().getResource("CountTest_count03.csv");
 
 		CountMainProc cproc = new CountMainProc();
@@ -305,6 +307,50 @@ public class CountMainProcTest {
 		String[] args = {"test/data/count01.csv"};
 		cproc.main(args);
 
+		assertThat(cproc.reportText(), is(equalTo(textContentOf(expected))));
+	}
+
+	@Test
+	public void countUsingDefaultWhenLocaleIsEnglish() throws Exception {
+		System.out.println("## CountProcTest ## count12 ## countUsingDefaultWhenLocaleIsEnglish ##");
+		Locale org = Locale.getDefault();
+		Locale.setDefault(Locale.ENGLISH);
+		URL expected = this.getClass().getResource("CountTest_count12.csv");
+
+		CountMainProc cproc = new CountMainProc();
+		String[] args = {"test/data/count01_en.csv"};
+		try {
+			cproc.main(args);
+		} finally {
+			Locale.setDefault(org);
+		}
+
+		assertThat(cproc.reportText(), is(equalTo(textContentOf(expected))));
+	}
+
+	@Test
+	public void countUsingDefaultWhenLocaleIsEnglishButInputIsNotEnglish() throws Exception {
+		System.out.println("## CountProcTest ## count13 ## "
+				+ "countUsingDefaultWhenLocaleIsEnglishButInputIsNotEnglish ##");
+		Locale org = Locale.getDefault();
+		Locale.setDefault(Locale.ENGLISH);
+		StderrCapture capture = new StderrCapture();
+		String errMessage = null;
+		String expectedMessage = "fail to parse integer, ignore line";
+		URL expected = this.getClass().getResource("CountTest_count12.csv");
+
+		CountMainProc cproc = new CountMainProc();
+		String[] args = {"test/data/count01.csv"};
+		try {
+			cproc.main(args);
+		} finally {
+			errMessage = capture.getCapturedString();
+			capture.finish();
+			Locale.setDefault(org);
+		}
+
+		assertThat(errMessage, containsString(expectedMessage));
+		// that is warning. result may be ok.
 		assertThat(cproc.reportText(), is(equalTo(textContentOf(expected))));
 	}
 

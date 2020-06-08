@@ -6,18 +6,16 @@
 	</keisuke:Language>
 	<keisuke:Language name="Text" group="Text">
 		<keisuke:FileExtension>.txt</keisuke:FileExtension>
-		<keisuke:CountRules>
-		</keisuke:CountRules>
+		<keisuke:CountRules></keisuke:CountRules>
 	</keisuke:Language>
 	<keisuke:Language name="CSV" group="Text">
 		<keisuke:FileExtension>.csv</keisuke:FileExtension>
-		<keisuke:CountRules sameAs="Text">
-		</keisuke:CountRules>
+		<keisuke:CountRules sameAs="Text"></keisuke:CountRules>
 	</keisuke:Language>
 	<keisuke:Language name="Java" group="Java">
 		<keisuke:FileExtension>.java</keisuke:FileExtension>
 		<keisuke:CountRules>
-			<!--  
+			<!--
 			<keisuke:SkipPattern>^import[ \\t].+;$</keisuke:SkipPattern>
 			<keisuke:SkipPattern>^package[ \\t].+;$</keisuke:SkipPattern>
 			-->
@@ -32,7 +30,8 @@
 				<keisuke:start>&quot;</keisuke:start>
 				<keisuke:end>&quot;</keisuke:end>
 				<keisuke:escape>\&quot;</keisuke:escape>
-			</keisuke:LiteralString></keisuke:CountRules>
+			</keisuke:LiteralString>
+		</keisuke:CountRules>
 	</keisuke:Language>
 	<keisuke:Language name="properties" group="Java">
 		<keisuke:FileExtension>.properties</keisuke:FileExtension>
@@ -49,23 +48,20 @@
 		<keisuke:FileExtension>.c</keisuke:FileExtension>
 		<keisuke:FileExtension>.m</keisuke:FileExtension>
 		<keisuke:FileExtension>.pc</keisuke:FileExtension>
-		<keisuke:CountRules sameAs="Java">
-		</keisuke:CountRules>
+		<keisuke:CountRules sameAs="Java"></keisuke:CountRules>
 	</keisuke:Language>
 	<keisuke:Language name="C++" group="C">
 		<keisuke:FileExtension>.cpp</keisuke:FileExtension>
 		<keisuke:FileExtension>.cxx</keisuke:FileExtension>
 		<keisuke:FileExtension>.cc</keisuke:FileExtension>
 		<keisuke:FileExtension>.mm</keisuke:FileExtension>
-		<keisuke:CountRules sameAs="Java">
-		</keisuke:CountRules>
+		<keisuke:CountRules sameAs="Java"></keisuke:CountRules>
 	</keisuke:Language>
 	<keisuke:Language name="h" group="C">
 		<keisuke:FileExtension>.h</keisuke:FileExtension>
 		<keisuke:FileExtension>.hpp</keisuke:FileExtension>
 		<keisuke:FileExtension>.hxx</keisuke:FileExtension>
-		<keisuke:CountRules sameAs="Java">
-		</keisuke:CountRules>
+		<keisuke:CountRules sameAs="Java"></keisuke:CountRules>
 	</keisuke:Language>
 	<keisuke:Language name="Pascal" group="Delphi">
 		<keisuke:FileExtension>.pas</keisuke:FileExtension>
@@ -85,13 +81,13 @@
 				<keisuke:start>&apos;</keisuke:start>
 				<keisuke:end>&apos;</keisuke:end>
 				<keisuke:escape>&apos;&apos;</keisuke:escape>
-			</keisuke:LiteralString></keisuke:CountRules>
+			</keisuke:LiteralString>
+		</keisuke:CountRules>
 	</keisuke:Language>
 	<keisuke:Language name="Delphi" group="Delphi">
 		<keisuke:FileExtension>.dpr</keisuke:FileExtension>
 		<keisuke:FileExtension>.dfm</keisuke:FileExtension>
-		<keisuke:CountRules sameAs="Text">
-		</keisuke:CountRules>
+		<keisuke:CountRules sameAs="Text"></keisuke:CountRules>
 	</keisuke:Language>
 	<keisuke:Language name="VB" group="VisualBasic">
 		<keisuke:FileExtension>.bas</keisuke:FileExtension>
@@ -113,8 +109,7 @@
 	</keisuke:Language>
 	<keisuke:Language name="VBForm" group="VisualBasic">
 		<keisuke:FileExtension>.frm</keisuke:FileExtension>
-		<keisuke:CountRules sameAs="Text">
-		</keisuke:CountRules>
+		<keisuke:CountRules sameAs="Text"></keisuke:CountRules>
 	</keisuke:Language>
 	<keisuke:Language name="VBScript" group="VBScript">
 		<keisuke:FileExtension>.vbs</keisuke:FileExtension>
@@ -137,13 +132,11 @@
 	</keisuke:Language>
 	<keisuke:Language name="VB.NET" group=".NET">
 		<keisuke:FileExtension>.vb</keisuke:FileExtension>
-		<keisuke:CountRules sameAs="VB">
-		</keisuke:CountRules>
+		<keisuke:CountRules sameAs="VB"></keisuke:CountRules>
 	</keisuke:Language>
 	<keisuke:Language name="C#" group=".NET">
 		<keisuke:FileExtension>.cs</keisuke:FileExtension>
-		<keisuke:CountRules sameAs="Java">
-		</keisuke:CountRules>
+		<keisuke:CountRules sameAs="Java"></keisuke:CountRules>
 	</keisuke:Language>
 	<keisuke:Language name="ASP.NET" group=".NET">
 		<keisuke:FileExtension>.aspx</keisuke:FileExtension>
@@ -173,18 +166,15 @@
 	</keisuke:Language>
 	<keisuke:Language name="JavaScript" group="JavaScript">
 		<keisuke:FileExtension>.js</keisuke:FileExtension>
-		<keisuke:CountRules sameAs="Java">		
-		</keisuke:CountRules>
+		<keisuke:CountRules sameAs="Java"></keisuke:CountRules>
 	</keisuke:Language>
 	<keisuke:Language name="TypeScript" group="JavaScript">
 		<keisuke:FileExtension>.ts</keisuke:FileExtension>
-		<keisuke:CountRules sameAs="Java">		
-	</keisuke:CountRules>
+		<keisuke:CountRules sameAs="Java"></keisuke:CountRules>
 	</keisuke:Language>
 	<keisuke:Language name="JSON" group="JSON">
 		<keisuke:FileExtension>.json</keisuke:FileExtension>
-		<keisuke:CountRules sameAs="Java">
-		</keisuke:CountRules>
+		<keisuke:CountRules sameAs="Java"></keisuke:CountRules>
 	</keisuke:Language>
 	<keisuke:Language name="MXML" group="Flex">
 		<keisuke:FileExtension>.mxml</keisuke:FileExtension>
@@ -192,8 +182,7 @@
 	</keisuke:Language>
 	<keisuke:Language name="ActionScript" group="Flex">
 		<keisuke:FileExtension>.as</keisuke:FileExtension>
-		<keisuke:CountRules sameAs="Java">
-		</keisuke:CountRules>
+		<keisuke:CountRules sameAs="Java"></keisuke:CountRules>
 	</keisuke:Language>
 	<keisuke:Language name="PHP" group="PHP">
 		<keisuke:FileExtension>.php</keisuke:FileExtension>
@@ -241,6 +230,10 @@
 			</keisuke:ScriptBlock>
 		</keisuke:CountRules>
 	</keisuke:Language>
+	<keisuke:Language name="Jelly" group="Jelly">
+		<keisuke:FileExtension>.jelly</keisuke:FileExtension>
+		<keisuke:CountRules sameAs="XML"></keisuke:CountRules>
+	</keisuke:Language>
 	<keisuke:Language name="XHTML" group="XHTML">
 		<keisuke:FileExtension>.xhtml</keisuke:FileExtension>
 		<keisuke:CountRules sameAs="XML"></keisuke:CountRules>
@@ -256,16 +249,17 @@
 			<keisuke:BlockComment>
 				<keisuke:start>/*</keisuke:start>
 				<keisuke:end>*/</keisuke:end>
-			</keisuke:BlockComment></keisuke:CountRules>
-	</keisuke:Language>	
+			</keisuke:BlockComment>
+		</keisuke:CountRules>
+	</keisuke:Language>
 	<keisuke:Language name="LESS" group="CSS">
 		<keisuke:FileExtension>.less</keisuke:FileExtension>
 		<keisuke:CountRules sameAs="CSS">
-		    <keisuke:LineComment>
+			<keisuke:LineComment>
 				<keisuke:start>//</keisuke:start>
 			</keisuke:LineComment>
 		</keisuke:CountRules>
-	</keisuke:Language>	
+	</keisuke:Language>
 	<keisuke:Language name="SCSS" group="CSS">
 		<keisuke:FileExtension>.scss</keisuke:FileExtension>
 		<keisuke:CountRules sameAs="LESS"></keisuke:CountRules>
@@ -273,13 +267,14 @@
 	<keisuke:Language name="Sass" group="CSS">
 		<keisuke:FileExtension>.sass</keisuke:FileExtension>
 		<keisuke:CountRules indentSense="true">
-		    <keisuke:LineComment>
+			<keisuke:LineComment>
 				<keisuke:start>//</keisuke:start>
 			</keisuke:LineComment>
 			<keisuke:BlockComment>
 				<keisuke:start>/*</keisuke:start>
 				<keisuke:end>*/</keisuke:end>
-			</keisuke:BlockComment></keisuke:CountRules>
+			</keisuke:BlockComment>
+		</keisuke:CountRules>
 	</keisuke:Language>
 	<keisuke:Language name="Stylus" group="CSS">
 		<keisuke:FileExtension>.styl</keisuke:FileExtension>
@@ -300,7 +295,8 @@
 			<keisuke:BlockComment>
 				<keisuke:start>&lt;!--</keisuke:start>
 				<keisuke:end>--&gt;</keisuke:end>
-			</keisuke:BlockComment></keisuke:CountRules>
+			</keisuke:BlockComment>
+		</keisuke:CountRules>
 	</keisuke:Language>
 	<keisuke:Language name="XMLSchema" group="XML">
 		<keisuke:FileExtension>.xsd</keisuke:FileExtension>
@@ -334,7 +330,8 @@
 			<keisuke:BlockComment>
 				<keisuke:start>&lt;!---</keisuke:start>
 				<keisuke:end>---&gt;</keisuke:end>
-			</keisuke:BlockComment></keisuke:CountRules>
+			</keisuke:BlockComment>
+		</keisuke:CountRules>
 	</keisuke:Language>
 	<keisuke:Language name="Velocity" group="Velocity">
 		<keisuke:FileExtension>.vm</keisuke:FileExtension>
@@ -353,23 +350,21 @@
 			<keisuke:LiteralString>
 				<keisuke:start>&quot;</keisuke:start>
 				<keisuke:end>&quot;</keisuke:end>
-			</keisuke:LiteralString></keisuke:CountRules>
+			</keisuke:LiteralString>
+		</keisuke:CountRules>
 	</keisuke:Language>
 	<keisuke:Language name="Ruby" group="Ruby">
 		<keisuke:FileExtension>.rb</keisuke:FileExtension>
-		<keisuke:CountRules specialized="true">
-		</keisuke:CountRules>
+		<keisuke:CountRules specialized="true"></keisuke:CountRules>
 	</keisuke:Language>
 	<keisuke:Language name="EmbeddedRuby" group="Ruby">
 		<keisuke:FileExtension>.erb</keisuke:FileExtension>
-		<keisuke:CountRules specialized="true">
-		</keisuke:CountRules>
+		<keisuke:CountRules specialized="true"></keisuke:CountRules>
 	</keisuke:Language>
 	<keisuke:Language name="Perl" group="Perl">
 		<keisuke:FileExtension>.pl</keisuke:FileExtension>
 		<keisuke:FileExtension>.pm</keisuke:FileExtension>
-		<keisuke:CountRules specialized="true">
-		</keisuke:CountRules>
+		<keisuke:CountRules specialized="true"></keisuke:CountRules>
 	</keisuke:Language>
 	<keisuke:Language name="Python" group="Python">
 		<keisuke:FileExtension>.py</keisuke:FileExtension>
@@ -453,8 +448,7 @@
 	</keisuke:Language>
 	<keisuke:Language name="Lua" group="Lua">
 		<keisuke:FileExtension>.lua</keisuke:FileExtension>
-		<keisuke:CountRules specialized="true">
-		</keisuke:CountRules>
+		<keisuke:CountRules specialized="true"></keisuke:CountRules>
 	</keisuke:Language>
 	<keisuke:Language name="Shell" group="Shell">
 		<keisuke:FileExtension>.sh</keisuke:FileExtension>
@@ -470,7 +464,7 @@
 				<keisuke:start>&lt;&lt;-@?@</keisuke:start>
 				<keisuke:end>@?@</keisuke:end>
 			</keisuke:LabelHereDoc>
-			</keisuke:CountRules>
+		</keisuke:CountRules>
 	</keisuke:Language>
 	<keisuke:Language name="TCL" group="TCL">
 		<keisuke:FileExtension>.tcl</keisuke:FileExtension>
@@ -560,8 +554,7 @@
 		<keisuke:FileExtension>.cpy</keisuke:FileExtension>
 		<keisuke:FileExtension>.cbf</keisuke:FileExtension>
 		<keisuke:FileExtension>.pco</keisuke:FileExtension>
-		<keisuke:CountRules specialized="true">
-		</keisuke:CountRules>
+		<keisuke:CountRules specialized="true"></keisuke:CountRules>
 	</keisuke:Language>
 	<keisuke:Language name="Fortran" group="Fortran">
 		<keisuke:FileExtension>.f</keisuke:FileExtension>
@@ -731,7 +724,6 @@
 	</keisuke:Language>
 	<keisuke:Language name="LiterateHaskell" group="Haskell">
 		<keisuke:FileExtension>.lhs</keisuke:FileExtension>
-		<keisuke:CountRules specialized="true">
-		</keisuke:CountRules>
+		<keisuke:CountRules specialized="true"></keisuke:CountRules>
 	</keisuke:Language>
 </keisuke:LanguageDefinitions>

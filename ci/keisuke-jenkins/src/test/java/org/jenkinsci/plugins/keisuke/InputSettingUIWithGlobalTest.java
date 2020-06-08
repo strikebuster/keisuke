@@ -51,28 +51,28 @@ public class InputSettingUIWithGlobalTest extends AbstractSettingUITest {
 		// 任意のユニット名を指定
 		System.out.println("[TEST] === input a good value into unitName.");
 		String unitGoodValue = "default";
-		unitTextbox.setText(unitGoodValue);
+		this.inputUI.inputValue(unitTextbox, unitGoodValue);
 		this.waitForEventCallbackProcess();
 		this.inputUI.findUnitNameThenVerify(unitGoodValue, true); // 指定値, エラー表示なし
 
 		// 任意のパスを指定
 		System.out.println("[TEST] === input a good value into sourceDirectory.");
 		String srcdirGoodValue = "src/main/java";
-		srcdirTextbox.setText(srcdirGoodValue);
+		this.inputUI.inputValue(srcdirTextbox, srcdirGoodValue);
 		this.waitForEventCallbackProcess();
 		this.inputUI.findSourceDirectoryThenVerify(srcdirGoodValue, true); // 指定値, エラー表示なし
 
 		// 存在するエンコード名を指定
 		String encodingGoodValue = "Shift_JIS";
 		System.out.println("[TEST] === input a good value into encoding.");
-		encodingTextbox.setText(encodingGoodValue);
+		this.inputUI.inputValue(encodingTextbox, encodingGoodValue);
 		this.waitForEventCallbackProcess();
 		this.inputUI.findEncodingThenVerify(encodingGoodValue, true); // 指定値, エラー表示なし
 
 		// ""を指定
 		String empty = "";
 		System.out.println("[TEST] === input an empty string into xmlPath.");
-		xmlpathTextbox.setText(empty);
+		this.inputUI.inputValue(xmlpathTextbox, empty);
 		this.waitForEventCallbackProcess();
 		this.inputUI.findXmlPathThenVerify("", true); // 指定値, エラー表示なし
 

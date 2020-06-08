@@ -5,8 +5,9 @@ import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
-import static org.hamcrest.Matchers.isEmptyString;
+import static org.hamcrest.Matchers.emptyOrNullString;
+import static org.hamcrest.Matchers.emptyString;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
 import java.util.List;
@@ -43,13 +44,13 @@ public class CountingUnitUITest extends AbstractSettingUITest {
 		// タイトル表示の検証
 		String title = this.unitUI.getTitleOfCountingUnitsAtDiv(countingUnitsDiv);
 		System.out.println("[TEST] title td content:" + title);
-		assertThat(title, not(isEmptyOrNullString()));
+		assertThat(title, is(not(emptyOrNullString())));
 		// coutingUnitsは１つ、またはなぜか時々２つ
 		List<DomElement> divList = this.unitUI.getListOfDivForCountingUnits();
 		int unitsNum = divList.size();
 		System.out.println("[TEST] countingUnits[0]:" + divList.get(0).toString());
 		System.out.println("[TEST] countingUnits division # :" + Integer.toString(unitsNum));
-		assertThat(divList, anyOf(hasSize(1), hasSize(2))); //sometimes 2
+		assertThat(divList, is(anyOf(hasSize(1), hasSize(2)))); //sometimes 2
 
 		// inputSettingが１つ
 		List<DomElement> trList = this.unitUI.getListOfTrowForInputSetting();
@@ -86,7 +87,7 @@ public class CountingUnitUITest extends AbstractSettingUITest {
 		System.out.println("[TEST] Textbox[unitName][0] value(after):" + unitTextbox.getAttribute("value"));
 		String actual = unitTextbox.getAttribute("value");
 		// 入力値のまま
-		assertThat(actual, equalTo(unitGoodValue));
+		assertThat(actual, is(equalTo(unitGoodValue)));
 
 		// 追加ボタンの押下
 		this.unitUI.addNewCountingUnit();
@@ -104,13 +105,13 @@ public class CountingUnitUITest extends AbstractSettingUITest {
 			//unitTextboxList.add((HtmlTextInput) input);
 			actual = input.getAttribute("value");
 			if (addedNum == 0) {
-				assertThat(actual, equalTo(unitGoodValue));
+				assertThat(actual, is(equalTo(unitGoodValue)));
 			} else {
-				assertThat(actual, isEmptyString());
+				assertThat(actual, is(emptyString()));
 			}
 			addedNum++;
 		}
 		//assertThat(unitList, hasSize(2));
-		assertThat(addedNum, greaterThan(initNum));
+		assertThat(addedNum, is(greaterThan(initNum)));
 	}
 }

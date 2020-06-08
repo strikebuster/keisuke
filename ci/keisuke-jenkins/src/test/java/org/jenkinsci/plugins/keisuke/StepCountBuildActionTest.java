@@ -2,7 +2,8 @@ package org.jenkinsci.plugins.keisuke;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.hamcrest.Matchers.emptyOrNullString;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
@@ -28,7 +29,7 @@ public class StepCountBuildActionTest extends AbstractActionTest {
 	private void validateFirstHeading() {
 		HtmlHeading1 allHead1 = this.resultUI.findHeadingOfAllSummary();
 		System.out.println("[TEST] 1st heading1 content:" + allHead1.getTextContent());
-		assertThat(allHead1.getTextContent(), not(isEmptyOrNullString()));
+		assertThat(allHead1.getTextContent(), is(not(emptyOrNullString())));
 	}
 
 	private void validateTotalSummaryTable(final int[] counts, final int[] uncounts) {
@@ -51,7 +52,7 @@ public class StepCountBuildActionTest extends AbstractActionTest {
 	private void validateSecondHeading() {
 		HtmlHeading1 eachHead1 = this.resultUI.findHeadingOfEachSummary();
 		System.out.println("[TEST] 2nd heading1 content:" + eachHead1.getTextContent());
-		assertThat(eachHead1.getTextContent(), not(isEmptyOrNullString()));
+		assertThat(eachHead1.getTextContent(), is(not(emptyOrNullString())));
 	}
 
 	private void validateUnitTab(final String[] units) {
@@ -63,7 +64,7 @@ public class StepCountBuildActionTest extends AbstractActionTest {
 		// 見出し
 		HtmlHeading3 allHead3 = this.resultUI.findHeadingOfUnitSummary(unitDiv);
 		System.out.println("[TEST] 1st heading3 content:" + allHead3.getTextContent());
-		assertThat(allHead3.getTextContent(), not(isEmptyOrNullString()));
+		assertThat(allHead3.getTextContent(), is(not(emptyOrNullString())));
 		this.resultUI.assertStepSummaryTableLabel(unitDiv);
 		this.resultUI.assertStepSummaryTableValue(unitDiv, expected);
 		this.resultUI.assertStepSummaryTableUncount(unitDiv, uncounted);
@@ -74,7 +75,7 @@ public class StepCountBuildActionTest extends AbstractActionTest {
 		// 見出し
 		HtmlHeading3 allHead3 = this.resultUI.findHeadingOfUnitSummary(unitDiv);
 		System.out.println("[TEST] 1st heading3 content:" + allHead3.getTextContent());
-		assertThat(allHead3.getTextContent(), not(isEmptyOrNullString()));
+		assertThat(allHead3.getTextContent(), is(not(emptyOrNullString())));
 		this.resultUI.assertStepSummaryTableLabel(unitDiv);
 		this.resultUI.assertStepSummaryTableValue(unitDiv, expected);
 		this.resultUI.assertStepSummaryTableUncount(unitDiv, uncounted);
@@ -88,7 +89,7 @@ public class StepCountBuildActionTest extends AbstractActionTest {
 		// 見出し
 		HtmlHeading3 eachHead3 = this.resultUI.findHeadingOfUnitDetail(unitDiv);
 		System.out.println("[TEST] 2nd heading3 content:" + eachHead3.getTextContent());
-		assertThat(eachHead3.getTextContent(), not(isEmptyOrNullString()));
+		assertThat(eachHead3.getTextContent(), is(not(emptyOrNullString())));
 		// ラベル行
 		this.resultUI.assertStepDetailTableLabel(unitDiv);
 		// データ
@@ -101,7 +102,7 @@ public class StepCountBuildActionTest extends AbstractActionTest {
 		// 見出し
 		HtmlHeading3 eachHead3 = this.resultUI.findHeadingOfUnitDetail(unitDiv);
 		System.out.println("[TEST] 2nd heading3 content:" + eachHead3.getTextContent());
-		assertThat(eachHead3.getTextContent(), not(isEmptyOrNullString()));
+		assertThat(eachHead3.getTextContent(), is(not(emptyOrNullString())));
 		// ラベル行
 		this.resultUI.assertStepDetailTableLabel(unitDiv);
 		// データ
@@ -128,12 +129,16 @@ public class StepCountBuildActionTest extends AbstractActionTest {
 		System.out.println("## StepCountBuildActionTest ## showDetailResultUsingFileSet ##");
 		int buildTimes = 2;
 		FreeStyleBuild build = this.prepareProjectToCountJavaAndSjisThenDoingBuildsBy(buildTimes);
-		assertThat(build, not(nullValue()));
+		assertThat(build, is(not(nullValue())));
 		this.resultUI = new BuildResultPageUI(this.webClient(), this.projName());
 		this.resultUI.openBuildResultPage(this.projName());
+		if (this.resultUI.getPage() == null) {
+			// 404 not found about jquery
+			return;
+		}
 
 		this.mainDiv = this.resultUI.findDivOfMainPanel();
-		assertThat(this.mainDiv, not(nullValue()));
+		assertThat(this.mainDiv, is(not(nullValue())));
 
 		this.validateFirstHeading();
 		this.validateTotalSummaryTable(EXPECTED_STEPS_OF_ALL, EXPECTED_UNCOUNT_OF_ALL);
@@ -145,7 +150,7 @@ public class StepCountBuildActionTest extends AbstractActionTest {
 			// タブ
 			HtmlDivision unitDiv = this.resultUI.findDivOfEachCountingUnit(idx);
 			System.out.println("[TEST] countingUnit division id:" + unitDiv.getId());
-			assertThat(unitDiv.getId(), equalTo(EXPECTED_UNITS[i]));
+			assertThat(unitDiv.getId(), is(equalTo(EXPECTED_UNITS[i])));
 			// 全ファイル
 			this.validateUnitSummaryTable(unitDiv, EXPECTED_STEPS_OF_UNITS[i],
 					EXPECTED_UNCOUNT_OF_UNITS[i]);
@@ -176,12 +181,16 @@ public class StepCountBuildActionTest extends AbstractActionTest {
 		System.out.println("## StepCountBuildActionTest ## showDetailResultUsingDiffToo ##");
 		int buildTimes = 2;
 		FreeStyleBuild build = this.prepareProjectToCountJavaAndSjisUsingDiffTooThenDoingBuildsBy(buildTimes);
-		assertThat(build, not(nullValue()));
+		assertThat(build, is(not(nullValue())));
 		this.resultUI = new BuildResultPageUI(this.webClient(), this.projName());
 		this.resultUI.openBuildResultPage(this.projName());
+		if (this.resultUI.getPage() == null) {
+			// 404 not found about jquery
+			return;
+		}
 
 		this.mainDiv = this.resultUI.findDivOfMainPanel();
-		assertThat(this.mainDiv, not(nullValue()));
+		assertThat(this.mainDiv, is(not(nullValue())));
 
 		this.validateFirstHeading();
 		this.validateTotalSummaryTable(DIFFTOO_EXPECTED_STEPS_OF_ALL, DIFFTOO_EXPECTED_UNCOUNT_OF_ALL,

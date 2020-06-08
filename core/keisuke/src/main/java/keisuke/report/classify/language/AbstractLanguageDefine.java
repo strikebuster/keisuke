@@ -50,6 +50,7 @@ public abstract class AbstractLanguageDefine {
 
 	/**
 	 * Language定義をデフォルト定義ファイルの内容で初期化する
+	 * @throws RuntimeException 内部の初期化処理に失敗した時に発行する
 	 */
 	protected void initialize() {
 		if (this.langDefineFactory == null) {

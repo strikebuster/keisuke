@@ -4,6 +4,7 @@ import static keisuke.util.TestUtil.rawContentOf;
 import static keisuke.util.TestUtil.textContentOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -12,8 +13,6 @@ import java.net.URL;
 import org.jenkinsci.plugins.keisuke.setup.ProjectMaker;
 import org.junit.Before;
 import org.junit.Test;
-
-import hudson.model.FreeStyleBuild;
 
 /**
  * Testing KeisukePublisher in FreeStyleProject,
@@ -42,7 +41,7 @@ public class KeisukePublisherUsingDiffTooWithoutBaseDirTest extends AbstractProj
 		try {
 			this.setProject(this.projectMaker().createJobToCountJavaDiffToo(
 					"JavaCsvJob", outfile[0], "csv", false, outfile[1], "csv"));
-			FreeStyleBuild build = this.jenkinsRule.buildAndAssertSuccess(this.project());
+			this.jenkinsRule.buildAndAssertSuccess(this.project());
 			//System.out.println("[TEST] Workspace is " + this.workspace().getAbsolutePath());
 			for (int i = 0; i < 2; i++) {
 				actual[i] = new File(this.workspace(), outfile[i]);
@@ -56,7 +55,7 @@ public class KeisukePublisherUsingDiffTooWithoutBaseDirTest extends AbstractProj
 		for (int i = 0; i < 2; i++) {
 			System.out.println("[TEST] outfile[" + i + "] = " + actual[i].getAbsolutePath());
 			System.out.println(rawContentOf(actual[i]));
-			assertThat(rawContentOf(actual[i]), equalTo(textContentOf(expected[i])));
+			assertThat(rawContentOf(actual[i]), is(equalTo(textContentOf(expected[i]))));
 		}
 	}
 }

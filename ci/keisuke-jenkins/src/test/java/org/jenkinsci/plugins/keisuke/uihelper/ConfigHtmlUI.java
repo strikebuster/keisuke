@@ -2,10 +2,10 @@ package org.jenkinsci.plugins.keisuke.uihelper;
 
 import static keisuke.util.TestUtil.nameOfSystemOS;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.isEmptyString;
+import static org.hamcrest.Matchers.emptyString;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.jenkinsci.plugins.keisuke.util.HtmlTestUtil.WAITLONGTIME;
 import static org.jenkinsci.plugins.keisuke.util.HtmlTestUtil.WAITTIME;
@@ -51,6 +51,17 @@ public class ConfigHtmlUI {
 	 */
 	public ConfigHtmlUI(final ConfigUIClient client) {
 		this.uiClient = client;
+	}
+
+	/**
+	 * Inputs value into HtmlTextInput.
+	 * @param textbox instance of HtmlTextInput
+	 * @param value string to be filled
+	 */
+	public void inputValue(final HtmlTextInput textbox, final String value) {
+		textbox.focus();	// needed after plugin POM update to 3.55
+		textbox.setText(value);
+		textbox.blur();	// needed after plugin POM update to 3.55
 	}
 
 	/**
@@ -165,9 +176,9 @@ public class ConfigHtmlUI {
 		// エラー表示の検証
 		String errorMsg = this.getErrorContentOf(property, textbox);
 		if (check) {
-			assertThat(errorMsg, isEmptyString());
+			assertThat(errorMsg, is(emptyString()));
 		} else {
-			assertThat(errorMsg, not(isEmptyString()));
+			assertThat(errorMsg, is(not(emptyString())));
 		}
 		return textbox;
 	}
@@ -200,18 +211,22 @@ public class ConfigHtmlUI {
 		//System.out.println("[TEST DEBUG] Checkbox[" + property + "][" + Integer.toString(index)
 		//		+ "] XPath:" + checkbox.getCanonicalXPath());
 		//System.out.println("[TEST DEBUG] Checkbox[" + property + "][" + Integer.toString(index)
-		//		+ "].name:" + checkbox.getAttribute("name"));
+		//		+ "]:" + checkbox.toString());
+		//System.out.println("[TEST] Checkbox[" + property + "][" + Integer.toString(index)
+		//		+ "].value:" + checkbox.getAttribute("checked"));
 		System.out.println("[TEST] Checkbox[" + property + "][" + Integer.toString(index)
-				+ "].value:" + checkbox.getAttribute("checked"));
+				+ "].value:" + checkbox.isChecked());
 		// チェックの検証
 		if (check) {
-			assertThat(checkbox.getAttribute("checked"), anyOf(equalTo("true"), equalTo("checked")));
+			//assertThat(checkbox.getAttribute("checked"), anyOf(equalTo("true"), equalTo("checked")));
+			assertThat(checkbox.isChecked(), is(true));	// needed after plugin POM update to 3.55
 		} else {
-			assertThat(checkbox.getAttribute("checked"), not(anyOf(equalTo("true"), equalTo("checked"))));
+			//assertThat(checkbox.getAttribute("checked"), not(anyOf(equalTo("true"), equalTo("checked"))));
+			assertThat(checkbox.isChecked(), is(false));	// needed after plugin POM update to 3.55
 		}
 		// エラーなしの検証
 		String errorMsg = this.getErrorContentOf(property, checkbox);
-		assertThat(errorMsg, isEmptyString());
+		assertThat(errorMsg, is(emptyString()));
 		return checkbox;
 	}
 
@@ -257,9 +272,11 @@ public class ConfigHtmlUI {
 		// エラー表示を検証
 		String errorMsg = this.getErrorContentOf(property, selectbox);
 		if (check) {
-			assertThat(errorMsg, isEmptyString());
+			assertThat(errorMsg, is(emptyString()));
 		} else {
-			assertThat(errorMsg, not(isEmptyString()));
+			System.out.println("[TEST DEBUG] Selecttbox[" + property + "][" + Integer.toString(index)
+					+ "]'s error:" + errorMsg);
+			assertThat(errorMsg, is(not(emptyString())));
 		}
 		return selectbox;
 	}
@@ -571,9 +588,19 @@ public class ConfigHtmlUI {
 			ex.printStackTrace();
 			fail("Unexpected IOException is occured.");
 		}
-		String helpTextSet = helpTd.getTextContent();
+		String helpTextSet = null;
+		for (int retry = 0; retry < RETRY_FOR_YUI; retry++) {
+			helpTextSet = helpTd.getTextContent();
+			if (helpTextSet != null && !helpTextSet.equals(helpTextUnset)) {
+				break;
+			}
+			System.out.println("[TEST DEBUG] get help content(loading) retry : " + retry);
+			for (int j = 0; j < retry + 1 && retry < RETRY_FOR_YUI - 1; j++) {
+				this.waitForBackgroundProcess();
+			}
+		}
 		System.out.println("[TEST] HelpTd[" + property + "] Content(after):" + helpTextSet);
-		assertThat(helpTextSet, not(equalTo(helpTextUnset)));
+		assertThat(helpTextSet, is(not(equalTo(helpTextUnset))));
 		return helpTextSet;
 	}
 
@@ -610,6 +637,7 @@ public class ConfigHtmlUI {
 		this.uiClient.configPage().getWebClient().waitForBackgroundJavaScript(WAITLONGTIME);
 	}
 
+	@SuppressWarnings("unused")
 	private void debugElement(final HtmlElement element) {
 		System.out.println("[TEST DEBUG] element:" + element.toString());
 		System.out.println("[TEST DEBUG] element Content:" + element.getTextContent());

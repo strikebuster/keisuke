@@ -14,7 +14,7 @@ import org.fest.swing.fixture.JFileChooserFixture;
 import org.fest.swing.fixture.JListFixture;
 
 import static keisuke.count.util.FileNameUtil.compareInOsOrder;
-import static keisuke.count.util.FileNameUtil.getCanonicalOrAbsolutePath;
+//import static keisuke.count.util.FileNameUtil.getCanonicalOrAbsolutePath;
 import static keisuke.swing.GUITestUtil.*;
 import static keisuke.swing.stepcount.StepCountGUIConstant.HIDDEN_ADDING;
 
@@ -132,14 +132,14 @@ final class StepCountTestUtil {
 		}
 	}
 
-	/**
+	/*
 	 * ファイル配列に対しソートを実行した結果の配列を返す
 	 * OSの違いによる大文字小文字の扱いに対応したソートを行う
 	 * ソートはファイルの絶対パスに対して行う
 	 * cf. FileNameUtil#sortInOSOrder() はファイル名のみでソートする
 	 * @param filearray ファイル配列
 	 * @return ソート後のファイル配列
-	 */
+	 *
 	private static File[] sortPathInOSOrder(final File[] filearray) {
 		if (filearray == null) {
 			return null;
@@ -151,6 +151,7 @@ final class StepCountTestUtil {
 		});
 		return filearray;
 	}
+	*/
 
 	private static String[] sortInOSOrder(final String[] strarray) {
 		if (strarray == null) {

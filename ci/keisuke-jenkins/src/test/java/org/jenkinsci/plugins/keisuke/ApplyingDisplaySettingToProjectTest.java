@@ -2,6 +2,7 @@ package org.jenkinsci.plugins.keisuke;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.fail;
@@ -81,7 +82,7 @@ public class ApplyingDisplaySettingToProjectTest extends AbstractActionTest
 		int checkedIdx = 0;
 		String checkedValue = kindRadioList.get(checkedIdx).getAttribute("value");
 		String expectedBefore = beforeKind.getValue();
-		assertThat(checkedValue, equalTo(expectedBefore));
+		assertThat(checkedValue, is(equalTo(expectedBefore)));
 		// afterKindで指定されたRadioを選択
 		String expectedAfter = afterKind.getValue();
 		this.displayUI.setDisplayStepKind(afterKind);
@@ -105,7 +106,7 @@ public class ApplyingDisplaySettingToProjectTest extends AbstractActionTest
 		System.out.println("## ApplyingDisplaySettingToProjectTest ## applyDisplayStepKind ##");
 		int buildTimes = 2;
 		FreeStyleBuild build = this.prepareProjectToCountJavaAndSjisThenDoingBuildsBy(buildTimes);
-		assertThat(build, not(nullValue()));
+		assertThat(build, is(not(nullValue())));
 		StepCountBuildAction action = build.getAction(StepCountBuildAction.class);
 		this.mainUI = new ProjectMainPageUI(this.webClient(), this.projName());
 		// 右フローティンググラフ
@@ -134,7 +135,7 @@ public class ApplyingDisplaySettingToProjectTest extends AbstractActionTest
 					+ "]:posY(before)=" + Integer.toString(posB));
 			System.out.println("[TEST] unit[" + Integer.toString(i + 1)
 					+ "]:posY(after )=" + Integer.toString(posA));
-			assertThat(posA, equalTo(posB));
+			assertThat(posA, is(equalTo(posB)));
 		}
 
 		// 新たなビルドから変更後の設定が反映
@@ -147,7 +148,7 @@ public class ApplyingDisplaySettingToProjectTest extends AbstractActionTest
 		}
 		buildTimes++;
 		action = build.getAction(StepCountBuildAction.class);
-		assertThat(action.getDisplayStepKindEnum(), equalTo(expectedKindEnum));
+		assertThat(action.getDisplayStepKindEnum(), is(equalTo(expectedKindEnum)));
 		System.out.println("[TEST] === show project page after 3rd build done.");
 		this.mainUI.openProjectPage(this.projName());
 		// 右フローティンググラフ
@@ -164,9 +165,9 @@ public class ApplyingDisplaySettingToProjectTest extends AbstractActionTest
 			System.out.println("[TEST] unit[" + Integer.toString(i + 1)
 					+ "]:posY(after )=" + Integer.toString(posA));
 			if (i == afterPosY.length - 1) {
-				assertThat(posA, equalTo(posB));
+				assertThat(posA, is(equalTo(posB)));
 			} else {
-				assertThat(posA, not(equalTo(posB)));
+				assertThat(posA, is(not(equalTo(posB))));
 			}
 		}
 	}

@@ -1,0 +1,249 @@
+// build.gradle as a single project
+
+plugins {
+  id 'java'
+  id 'checkstyle'
+  id 'com.github.spotbugs' version '4.0.2'
+  id 'jacoco'
+  id 'com.github.johnrengelman.shadow' version '5.2.0'
+}
+
+group = 'keisuke'
+//name : 'keisuke-swing'
+version = '2.1.0'
+//@@version = '2.0.1-SNAPSHOT'
+
+description = """keisuke-swing : GUI constructed with Swing for keisuke.count"""
+
+def defaultEncoding = 'UTF-8'
+def jtstandDesktop = 'org.codehaus.jtstand:jtstand-desktop:1.2.1'
+def keisukeCore = 'keisuke:keisuke:2.1.0'
+
+repositories {
+    mavenCentral()
+    maven { // for org.jenkins-ci.dom4j
+        url 'https://repo.jenkins-ci.org/public/'
+    }
+    mavenLocal() // for keisuke
+}
+
+dependencies {
+    implementation keisukeCore
+    implementation jtstandDesktop
+    testImplementation keisukeCore + ':tests'
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.easytesting:fest-swing-junit-4.5:1.2.1'
+    testImplementation 'org.hamcrest:hamcrest:2.2'
+    testRuntimeOnly 'org.jacoco:org.jacoco.agent:0.8.5'
+    testRuntimeOnly 'org.jacoco:org.jacoco.ant:0.8.5'
+    checkstyle 'com.puppycrawl.tools:checkstyle:8.32'
+    spotbugs 'com.github.spotbugs:spotbugs:4.0.2'
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = defaultEncoding
+    options.compilerArgs << '-Xlint:deprecation'
+}
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+checkstyle {
+    toolVersion = '8.32'
+    configFile = file('config/checkstyle/sun_checks_custom.xml')
+    //reportsDir = file("${buildDir}/reports/checkstyle")
+    ignoreFailures = true
+}
+
+checkstyleTest {
+    //excludes = ['**/*']
+}
+
+spotbugs {
+    toolVersion = '4.0.2'
+    //reportsDir = file("${buildDir}/reports/spotbugs")
+    ignoreFailures = true
+}
+
+spotbugsMain {
+    reports {
+        html {
+            enabled = false
+            destination = file("$buildDir/reports/spotbugs/main/spotbugs.html")
+            stylesheet = 'fancy-hist.xsl'
+        }
+        xml {
+            enabled = true
+            destination = file("$buildDir/reports/spotbugs/main/spotbugsXml.xml")
+        }
+    }
+}
+
+def dirPathForOutputOfTestRun = 'test/out'
+
+task cleanAll(type: Delete) {
+    delete dirPathForOutputOfTestRun
+    dependsOn clean
+    doLast {
+        println("Delete ${dirPathForOutputOfTestRun}")
+    }
+}
+
+task makeDirForTest {
+    doLast {
+        def outDir = file(dirPathForOutputOfTestRun)
+        if (!outDir.exists()) {
+            outDir.mkdirs()
+            println("makeDir ${dirPathForOutputOfTestRun}")
+        }
+    }
+}
+
+// Definitions about test data 
+def dirPathOfTestDataZip = 'test/archive'
+def zipPathOfTestData = 'test/archive/data4gui.zip'
+def dirPathOfTestData = 'test/data'
+def dirPathDummy = 'build/test/dummy'
+
+sourceSets {
+    testdata {
+        java.srcDirs = []
+        resources.srcDirs = [dirPathOfTestData]
+        //output.classesDir = dirPathDummy
+        output.resourcesDir = 'build/test/data'
+    }
+}
+
+compileTestdataJava.setActions Arrays.asList()
+testdataClasses.setActions Arrays.asList()
+
+task makeZipOfTestData(dependsOn: processTestdataResources, type: Zip) {
+    archiveBaseName = 'data4gui'
+    archiveVersion = ''
+    destinationDirectory = file(dirPathOfTestDataZip)
+    from(dirPathOfTestData) {
+        include '**'
+        includeEmptyDirs = true
+    }
+    doFirst {
+        if (!file(dirPathOfTestData).exists()) {
+            println("Fail because it does not exist: ${dirPathOfTestData}")
+            throw new Exception("Not exist ${dirPathOfTestData}")
+        }
+        //if (file(zipPathOfTestData).exists()) {
+        //    println("Fail because it already exists: ${zipPathOfTestData}")
+        //    throw new Exception("Already exists ${zipPathOfTestData}")
+        //}
+    }
+    doLast {
+        println("Archive test data into zip file: ${zipPathOfTestData}")
+    }
+}
+
+sourceSets {
+    testzip {
+        java.srcDirs = []
+        resources.srcDirs = [dirPathOfTestDataZip]
+        //output.classesDir = dirPathDummy
+        output.resourcesDir = 'build/test/archive'
+    }
+}
+
+compileTestzipJava.setActions Arrays.asList()
+testzipClasses.setActions Arrays.asList()
+
+task extractTestData(dependsOn: processTestzipResources, type: Copy) {
+    from(zipTree(zipPathOfTestData)) {
+        include '**'
+        includeEmptyDirs = true
+    }
+    into dirPathOfTestData
+    def copyFiles = []
+    eachFile {
+        copyFiles << it
+    }
+    doLast {
+        copyFiles.each {
+            FileCopyDetails detail ->
+            def node = file("${dirPathOfTestData}/${detail.path}")
+            if (node.exists()) {
+                node.setLastModified(detail.lastModified)
+            }
+        }
+        println("Extract test data into dir: ${dirPathOfTestData}")
+    }
+}
+
+test {
+    // The files used as expected data for assertion are encoded with "ja_JP.UTF-8"
+    systemProperty 'file.encoding', "${defaultEncoding}"
+    systemProperty 'user.language', 'ja'
+    systemProperty 'user.country', 'JP'
+    //testLogging.showStandardStreams = true
+    ignoreFailures = true
+    jacoco {
+        //append = false
+        destinationFile = file("${buildDir}/jacoco/Test.exec")
+    }
+    dependsOn makeDirForTest, extractTestData
+}
+
+jacoco {
+    toolVersion = '0.8.5'
+    //reportsDir = file("${buildDir}/reports/jacoco")
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled = false
+        csv.enabled = false
+        html.enabled = true
+        html.destination = file("${buildDir}/reports/jacoco")
+    }
+    dependsOn test
+}
+
+jar {
+    archiveBaseName = project.name
+    archiveVersion = project.version
+    manifest {
+        attributes 'Implementation-Title':"${archiveBaseName}", 'Implementation-Version':"${archiveVersion}"
+    }
+}
+
+def suffixFatJar = 'jar-with-local-dependencies'
+//def suffixFatJar = 'jar-with-dependencies'
+
+shadowJar {
+    archiveBaseName = project.name
+    archiveVersion = project.version
+    archiveClassifier = suffixFatJar
+    manifest {
+        attributes 'Implementation-Title':"${archiveBaseName}-${archiveClassifier}", 'Implementation-Version':"${archiveVersion}"
+    }
+    dependencies {
+        include(dependency(jtstandDesktop))
+        exclude(dependency(keisukeCore))
+    }
+    dependsOn build
+}
+
+def suffixSrcJar = 'sources'
+
+task sourcesJar(type: Jar) {
+    archiveBaseName = project.name
+    archiveVersion = project.version
+    archiveClassifier = suffixSrcJar
+    from sourceSets.main.allSource
+    manifest {
+        attributes 'Implementation-Title':"${archiveBaseName}-${archiveClassifier}", 'Implementation-Version':"${archiveVersion}"
+    }
+    dependsOn build
+}
+
+task makeArtifacts(dependsOn: [sourcesJar, shadowJar]) {
+    doLast {
+        // do sourcesJar & shadowJar
+        println("Artifact = ${project.group}:${project.name}:${project.version}")
+    }
+}
+

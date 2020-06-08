@@ -21,7 +21,35 @@ public final class RendererFactory {
 	 * @return 差分計測結果の出力形式に応じたFormatterインスタンス
 	 */
 	public static Formatter<DiffFolderResult> getFormatter(final FormatEnum format) {
-		return getFormatter(format.value());
+		AbstractRenderer renderer = null;
+		if (format == null) {
+			renderer = new TextRenderer();
+			renderer.setSortOrder(SortOrderEnum.NODE);
+			return renderer;
+		}
+		if (format.equals(FormatEnum.TEXT)) {
+			renderer = new TextRenderer();
+			renderer.setSortOrder(SortOrderEnum.NODE);
+		} else if (format.equals(FormatEnum.CSV)) {
+			renderer = new CsvRenderer();
+			renderer.setSortOrder(SortOrderEnum.OS);
+		} else if (format.equals(FormatEnum.EXCEL)) {
+			renderer = new ExcelRenderer(FormatEnum.EXCEL);
+			renderer.setSortOrder(SortOrderEnum.OS);
+		//} else if (format.equals(FormatEnum.EXCEL97)) {
+		//	renderer = new ExcelRenderer(FormatEnum.EXCEL97);
+		//	renderer.setSortOrder(SortOrderEnum.OS);
+		} else if (format.equals(FormatEnum.JSON)) {
+			renderer = new JsonRenderer();
+			renderer.setSortOrder(SortOrderEnum.OS);
+		} else if (format.equals(FormatEnum.XML)) {
+			renderer = new XmlRenderer();
+			renderer.setSortOrder(SortOrderEnum.NODE);
+		} else if (format.equals(FormatEnum.HTML)) {
+			renderer = new HtmlRenderer();
+			renderer.setSortOrder(SortOrderEnum.NODE);
+		}
+		return renderer;
 	}
 
 	/**
@@ -29,6 +57,7 @@ public final class RendererFactory {
 	 * @param name 出力形式名称
 	 * @return 差分計測結果の出力形式に応じたFormatterインスタンス
 	 */
+	@Deprecated
 	public static Formatter<DiffFolderResult> getFormatter(final String name) {
 		AbstractRenderer renderer = null;
 		if (name != null && !name.isEmpty()) {
@@ -39,8 +68,11 @@ public final class RendererFactory {
 				renderer = new HtmlRenderer();
 				renderer.setSortOrder(SortOrderEnum.NODE);
 			} else if (name.equals(FormatEnum.EXCEL.value())) {
-				renderer = new ExcelRenderer();
+				renderer = new ExcelRenderer(FormatEnum.EXCEL);
 				renderer.setSortOrder(SortOrderEnum.OS);
+			//} else if (name.equals(FormatEnum.EXCEL97.value())) {
+			//	renderer = new ExcelRenderer(FormatEnum.EXCEL97);
+			//	renderer.setSortOrder(SortOrderEnum.OS);
 			} else if (name.equals(FormatEnum.CSV.value())) {
 				renderer = new CsvRenderer();
 				renderer.setSortOrder(SortOrderEnum.OS);

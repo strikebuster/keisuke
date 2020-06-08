@@ -6,7 +6,7 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isEmptyString;
+import static org.hamcrest.Matchers.emptyString;
 
 import java.io.File;
 import java.net.URL;
@@ -84,7 +84,7 @@ public class MatchMainProcPathTest {
 			capture.finish();
 		}
 
-		assertThat(mproc.reportText(), isEmptyString());
+		assertThat(mproc.reportText(), is(emptyString()));
 		assertThat(errMessage, is(allOf(containsString("not found"), containsString("no output"))));
 	}
 
@@ -107,7 +107,7 @@ public class MatchMainProcPathTest {
 			capture.finish();
 		}
 
-		assertThat(mproc.reportText(), isEmptyString());
+		assertThat(mproc.reportText(), is(emptyString()));
 		assertThat(errMessage, is(allOf(containsString("not found"), containsString("no output"))));
 	}
 
@@ -130,7 +130,7 @@ public class MatchMainProcPathTest {
 			capture.finish();
 		}
 
-		assertThat(mproc.reportText(), isEmptyString());
+		assertThat(mproc.reportText(), is(emptyString()));
 		assertThat(errMessage, is(allOf(containsString("not found"), containsString("no output"))));
 	}
 
@@ -154,7 +154,7 @@ public class MatchMainProcPathTest {
 			capture.finish();
 		}
 
-		assertThat(mproc.reportText(), isEmptyString());
+		assertThat(mproc.reportText(), is(emptyString()));
 		assertThat(errMessage, is(allOf(containsString("not found"), containsString("no output"))));
 	}
 
@@ -177,7 +177,7 @@ public class MatchMainProcPathTest {
 			capture.finish();
 		}
 
-		assertThat(mproc.reportText(), isEmptyString());
+		assertThat(mproc.reportText(), is(emptyString()));
 		assertThat(errMessage, is(allOf(containsString("not found"), containsString("no output"))));
 	}
 
@@ -201,7 +201,7 @@ public class MatchMainProcPathTest {
 			capture.finish();
 		}
 
-		assertThat(mproc.reportText(), isEmptyString());
+		assertThat(mproc.reportText(), is(emptyString()));
 		assertThat(errMessage, is(allOf(containsString("not found"), containsString("no output"))));
 	}
 
@@ -225,7 +225,7 @@ public class MatchMainProcPathTest {
 			capture.finish();
 		}
 
-		assertThat(mproc.reportText(), isEmptyString());
+		assertThat(mproc.reportText(), is(emptyString()));
 		assertThat(errMessage, is(allOf(containsString("not found"), containsString("no output"))));
 	}
 
@@ -249,7 +249,7 @@ public class MatchMainProcPathTest {
 			capture.finish();
 		}
 
-		assertThat(mproc.reportText(), isEmptyString());
+		assertThat(mproc.reportText(), is(emptyString()));
 		assertThat(errMessage, is(allOf(containsString("not found"), containsString("no output"))));
 	}
 
@@ -273,7 +273,7 @@ public class MatchMainProcPathTest {
 			capture.finish();
 		}
 
-		assertThat(mproc.reportText(), isEmptyString());
+		assertThat(mproc.reportText(), is(emptyString()));
 		assertThat(errMessage, is(allOf(containsString("not found"), containsString("no output"))));
 	}
 
@@ -297,7 +297,7 @@ public class MatchMainProcPathTest {
 			capture.finish();
 		}
 
-		assertThat(mproc.reportText(), isEmptyString());
+		assertThat(mproc.reportText(), is(emptyString()));
 		assertThat(errMessage, is(allOf(containsString("not found"), containsString("no output"))));
 	}
 
@@ -321,7 +321,7 @@ public class MatchMainProcPathTest {
 			capture.finish();
 		}
 
-		assertThat(mproc.reportText(), isEmptyString());
+		assertThat(mproc.reportText(), is(emptyString()));
 		assertThat(errMessage, is(allOf(containsString("not found"), containsString("no output"))));
 	}
 }

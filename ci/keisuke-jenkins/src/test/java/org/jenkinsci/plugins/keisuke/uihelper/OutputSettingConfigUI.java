@@ -1,9 +1,8 @@
 package org.jenkinsci.plugins.keisuke.uihelper;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.isEmptyString;
+import static org.hamcrest.Matchers.emptyString;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.jenkinsci.plugins.keisuke.uihelper.ConfigHtmlUI.RETRY_FOR_YUI;
 import static org.jenkinsci.plugins.keisuke.util.HtmlTestUtil.getXPathOfLabelFromCheckbox;
@@ -105,14 +104,17 @@ public class OutputSettingConfigUI {
 		}
 		//System.out.println("[TEST] checkboxLabel XPath:" + checkboxLabel.getCanonicalXPath());
 		System.out.println("[TEST] checkboxLabel Content:" + checkboxLabel.getTextContent());
-		assertThat(checkboxLabel.getTextContent(), not(isEmptyString()));
+		assertThat(checkboxLabel.getTextContent(), is(not(emptyString())));
 		// ファイル出力チェックボックスの初期状態は非選択
-		String checkedValue = outputCheckbox.getAttribute("checked");
-		System.out.println("[TEST] outputCheckbox checked:" + checkedValue);
+		//String checkedValue = outputCheckbox.getAttribute("checked");
+		//System.out.println("[TEST] outputCheckbox checked:" + checkedValue);
+		System.out.println("[TEST] outputCheckbox checked:" + outputCheckbox.isChecked());
 		if (check) {
-			assertThat(checkedValue, anyOf(equalTo("checked"), equalTo("true")));
+			//assertThat(checkedValue, anyOf(equalTo("checked"), equalTo("true")));
+			assertThat(outputCheckbox.isChecked(), is(true));	// after plugin POM update to 3.55
 		} else {
-			assertThat(checkedValue, not(anyOf(equalTo("checked"), equalTo("true"))));
+			//assertThat(checkedValue, not(anyOf(equalTo("checked"), equalTo("true"))));
+			assertThat(outputCheckbox.isChecked(), is(false));	// after plugin POM update to 3.55
 		}
 		return outputCheckbox;
 	}
@@ -130,6 +132,7 @@ public class OutputSettingConfigUI {
 	 */
 	public void checkOnOutputCheckbox(final int index) {
 		HtmlCheckBoxInput outputCheckbox = this.findOutputCheckbox(index);
+		//System.out.println("[TEST DEBUG] " + outputCheckbox.asXml());
 		if (outputCheckbox.isChecked()) {
 			// すでにON
 			return;
@@ -143,8 +146,10 @@ public class OutputSettingConfigUI {
 			ex.printStackTrace();
 			fail("Unexpected Exception is occured.");
 		}
-		String checked = outputCheckbox.getAttribute("checked");
-		assertThat(checked, anyOf(equalTo("checked"), equalTo("true")));
+		//System.out.println("[TEST DEBUG] " + outputCheckbox.asXml());
+		//String checked = outputCheckbox.getAttribute("checked");
+		//assertThat(checked, anyOf(equalTo("checked"), equalTo("true")));
+		assertThat(outputCheckbox.isChecked(), is(true));	// needed after plugin POM update to 3.55
 	}
 
 	/**
@@ -160,6 +165,7 @@ public class OutputSettingConfigUI {
 	 */
 	public void checkOffOutputCheckbox(final int index) {
 		HtmlCheckBoxInput outputCheckbox = this.findOutputCheckbox(index);
+		//System.out.println("[TEST DEBUG] " + outputCheckbox.asXml());
 		if (!outputCheckbox.isChecked()) {
 			// すでにOFF
 			return;
@@ -173,8 +179,19 @@ public class OutputSettingConfigUI {
 			ex.printStackTrace();
 			fail("Unexpected Exception is occured.");
 		}
-		String checked = outputCheckbox.getAttribute("checked");
-		assertThat(checked, not(anyOf(equalTo("checked"), equalTo("true"))));
+		//System.out.println("[TEST DEBUG] " + outputCheckbox.asXml());
+		//String checked = outputCheckbox.getAttribute("checked");
+		//assertThat(checked, not(anyOf(equalTo("checked"), equalTo("true"))));
+		assertThat(outputCheckbox.isChecked(), is(false));	// needed after plugin POM update to 3.55
+	}
+
+	/**
+	 * Inputs value into HtmlTextInput.
+	 * @param textbox instance of HtmlTextInput
+	 * @param value string to be filled
+	 */
+	public void inputValue(final HtmlTextInput textbox, final String value) {
+		this.testOwner.configHtmlUI().inputValue(textbox, value);
 	}
 
 	/**

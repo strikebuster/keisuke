@@ -69,4 +69,11 @@ public class DiffCountAdapter extends AbstractCountAdapter {
 		list.add(result.getDiffResult());
 		writer.write(list);
 	}
+
+	/**
+	 * dummy method for using this.newDirectory.
+	 */
+	void dummy() {
+		this.logger().println("[keisuke] source dir " + this.newDirectory);
+	}
 }

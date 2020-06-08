@@ -73,7 +73,6 @@ public final class StepCountGUIPathTest extends FestSwingJUnitTestCase {
 		this.frame.robot.waitForIdle();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void countJavaUsingDefault() {
 		System.out.println("## StepCountGUI ## countJavaUsingDefault ##");
@@ -96,7 +95,6 @@ public final class StepCountGUIPathTest extends FestSwingJUnitTestCase {
 		assertThat(text, is(equalTo(textContentOf(expected))));
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void countJavaUsingCsvFormatWithBasePath() {
 		System.out.println("## StepCountGUI ## countJavaUsingCsvFormatWithBasePath ##");
@@ -125,7 +123,6 @@ public final class StepCountGUIPathTest extends FestSwingJUnitTestCase {
 		assertThat(text, is(equalTo(textContentOf(expected))));
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void countJavaUsingCsvFormatAndSubPathWhenFilesAreGiven() {
 		System.out.println("## StepCountGUI ## countJavaUsingCsvFormatAndSubPathWhenFilesAreGiven ##");
@@ -151,7 +148,6 @@ public final class StepCountGUIPathTest extends FestSwingJUnitTestCase {
 		assertThat(text, is(equalTo(textContentOf(expected))));
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void countJavaUsingJsonFormatWithSubPath() {
 		System.out.println("## StepCountGUI ## countJavaUsingJsonFormatWithSubPath ##");

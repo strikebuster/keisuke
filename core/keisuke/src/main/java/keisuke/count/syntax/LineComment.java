@@ -20,6 +20,7 @@ public class LineComment {
 	/**
 	 * 引数なしのコンストラクタは不可
 	 */
+	@SuppressWarnings("unused")
 	private LineComment() { }
 
 	/**

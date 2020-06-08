@@ -64,12 +64,12 @@ public class KeisukePublisherUsingFileSetTest extends AbstractProjectTest {
 			//System.out.println("[TEST] unit : " + entry.getKey());
 			//System.out.println("[TEST] steps :\n" + entry.getValue().debug());
 			BuildResult result = entry.getValue();
-			assertThat(result, notNullValue());
-			assertThat(result.getFileSteps(), allOf(notNullValue(), not(empty())));
-			assertThat(result.getDiffResult(), nullValue());
+			assertThat(result, is(notNullValue()));
+			assertThat(result.getFileSteps(), is(allOf(notNullValue(), not(empty()))));
+			assertThat(result.getDiffResult(), is(nullValue()));
 		}
 		System.out.println(rawContentOf(actual));
-		assertThat(rawContentOf(actual), equalTo(textContentOf(expected)));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -88,7 +88,7 @@ public class KeisukePublisherUsingFileSetTest extends AbstractProjectTest {
 			fail("Unexpected Exception is occured." + ex);
 		}
 		System.out.println(rawContentOf(actual));
-		assertThat(rawContentOf(actual), equalTo(textContentOf(expected)));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -107,7 +107,7 @@ public class KeisukePublisherUsingFileSetTest extends AbstractProjectTest {
 			fail("Unexpected Exception is occured." + ex);
 		}
 		System.out.println(rawContentOf(actual));
-		assertThat(rawContentOf(actual), equalTo(textContentOf(expected)));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -133,7 +133,7 @@ public class KeisukePublisherUsingFileSetTest extends AbstractProjectTest {
 			fail("Unexpected Exception is occured." + ex);
 		}
 		System.out.println(rawContentOf(actual));
-		assertThat(rawContentOf(actual), equalTo(textContentOf(expected)));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -154,7 +154,7 @@ public class KeisukePublisherUsingFileSetTest extends AbstractProjectTest {
 			fail("Unexpected Exception is occured." + ex);
 		}
 		System.out.println(rawContentOf(actual));
-		assertThat(rawContentOf(actual), equalTo(textContentOf(expected)));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -175,7 +175,7 @@ public class KeisukePublisherUsingFileSetTest extends AbstractProjectTest {
 			fail("Unexpected Exception is occured." + ex);
 		}
 		System.out.println(rawContentOf(actual));
-		assertThat(rawContentOf(actual), equalTo(textContentOf(expected)));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -196,7 +196,7 @@ public class KeisukePublisherUsingFileSetTest extends AbstractProjectTest {
 			fail("Unexpected Exception is occured." + ex);
 		}
 		System.out.println(rawContentOf(actual));
-		assertThat(rawContentOf(actual), equalTo(textContentOf(expected)));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -228,7 +228,7 @@ public class KeisukePublisherUsingFileSetTest extends AbstractProjectTest {
 		}
 		for (int i = 0; i < actual.length; i++) {
 			System.out.println(rawContentOf(actual[i]));
-			assertThat(rawContentOf(actual[i]), equalTo(textContentOf(expected[i])));
+			assertThat(rawContentOf(actual[i]), is(equalTo(textContentOf(expected[i]))));
 		}
 	}
 
@@ -268,7 +268,7 @@ public class KeisukePublisherUsingFileSetTest extends AbstractProjectTest {
 		}
 		*/
 		for (int i = 0; i < actual.length; i++) {
-			assertThat(binaryContentOf(actual[i]), equalTo(binaryContentOf(expected[i])));
+			assertThat(binaryContentOf(actual[i]), is(equalTo(binaryContentOf(expected[i]))));
 		}
 	}
 
@@ -302,7 +302,7 @@ public class KeisukePublisherUsingFileSetTest extends AbstractProjectTest {
 		}
 		for (int i = 0; i < actual.length; i++) {
 			System.out.println(rawContentOf(actual[i]));
-			assertThat(rawContentOf(actual[i]), equalTo(textContentOf(expected[i])));
+			assertThat(rawContentOf(actual[i]), is(equalTo(textContentOf(expected[i]))));
 		}
 	}
 }

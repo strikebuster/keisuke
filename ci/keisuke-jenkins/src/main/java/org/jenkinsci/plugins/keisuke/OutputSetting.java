@@ -28,8 +28,9 @@ import keisuke.count.option.StepCountOption;
  * This has values of Output Setting
  */
 public class OutputSetting extends AbstractDescribableImpl<OutputSetting> implements Serializable {
-
 	private static final long serialVersionUID = 4L; // since ver.2.0.0
+
+	@SuppressWarnings("unused")
 	private transient PrintStream syslogger = System.out;
 
 	private static final String DEFAULT_FORMAT = "text";
@@ -55,6 +56,7 @@ public class OutputSetting extends AbstractDescribableImpl<OutputSetting> implem
 	 * Constructor.
 	 * @param outputFilePath input string of &lt;f:entry field="outputFilePath"&gt;.
 	 * @param outputFormat input string of &lt;f:entry field="outputFormat"&gt;.
+	 * @throws RuntimeException occurs when the parameter "outputFilePath" is null or empty.
 	 */
 	@DataBoundConstructor
 	public OutputSetting(final String outputFilePath, final String outputFormat) {

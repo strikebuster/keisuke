@@ -2,6 +2,7 @@ package org.jenkinsci.plugins.keisuke.uihelper;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.jenkinsci.plugins.keisuke.uihelper.ConfigHtmlUI.RETRY_FOR_YUI;
 import static org.jenkinsci.plugins.keisuke.util.HtmlTestUtil.getXpathOfAdvancedButtonFromTop;
@@ -85,6 +86,16 @@ public class InputSettingConfigUI {
 		}
 		return unitList;
 	}
+
+	/**
+	 * Inputs value into HtmlTextInput.
+	 * @param textbox instance of HtmlTextInput
+	 * @param value string to be filled
+	 */
+	public void inputValue(final HtmlTextInput textbox, final String value) {
+		this.testOwner.configHtmlUI().inputValue(textbox, value);
+	}
+
 	/**
 	 * Finds 1st &lt;input type="text" name="_.unitName"&gt;.
 	 * Then verifies it has expected value, and error checking is expected boolean value.
@@ -605,7 +616,7 @@ public class InputSettingConfigUI {
 				 assertThat(mode, equalTo(value));
 				 return radio;
 			 } else {
-				 assertThat(mode, not(equalTo(value)));
+				 assertThat(mode, is(not(equalTo(value))));
 			 }
 		 }
 		 return null;

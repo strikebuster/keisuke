@@ -15,7 +15,7 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isEmptyString;
+import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.fail;
 
@@ -129,7 +129,7 @@ public class MatchMainProcTest {
 			capture.finish();
 		}
 
-		assertThat(mproc.reportText(), isEmptyString());
+		assertThat(mproc.reportText(), is(emptyString()));
 		assertThat(errMessage, is(allOf(containsString("not found"), containsString("no output"))));
 	}
 

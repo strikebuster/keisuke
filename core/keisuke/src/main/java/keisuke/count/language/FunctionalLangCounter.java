@@ -18,6 +18,10 @@ public class FunctionalLangCounter extends GeneralStepCounter {
 	}
 
 	/* コメント化された式のチェックし、コメント部分除き有効な文字列を返す */
+	/**
+	 * 関数型言語用の処理.<br>
+	 * {@inheritDoc}
+	 */
 	@Override
 	protected String handleValidCode(final ProgramLangRule lang, final String line, final boolean validCodeFlag) {
 		// lineの内容はコメントの抜かれたソースコードのみからなる文字列
@@ -49,6 +53,10 @@ public class FunctionalLangCounter extends GeneralStepCounter {
 	}
 
 	/* 複数行ブロックコメントの開始から行末までの処理をする */
+	/**
+	 * 関数型言語用の処理.<br>
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String handleAreaCommentStart(final ProgramLangRule lang, final String line, final AreaComment area) {
 		if (area instanceof CommentExpr) {

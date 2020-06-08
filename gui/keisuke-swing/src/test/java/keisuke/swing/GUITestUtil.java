@@ -17,25 +17,26 @@ import org.fest.swing.fixture.JFileChooserFixture;
 import org.fest.swing.fixture.JTextComponentFixture;
 import org.fest.swing.timing.Timeout;
 
-import keisuke.count.CountTestUtil;
-
 import static keisuke.count.util.FileNameUtil.getCanonicalOrAbsolutePath;
+import static keisuke.util.TestUtil.nameOfSystemOS;
 
 /**
  * Swing画面テスト用ユーティリティ
  */
-public class GUITestUtil extends CountTestUtil {
+public class GUITestUtil {
 
 	public static final long SLEEPTIME = 500L;
 	public static final long SLEEPLONGTIME = 1500L;
 	public static final long SLEEPVERYLONGTIME = 2500L;
-	public  static final long WAITTIME = 3000L;
+	public static final long WAITTIME = 3000L;
 	public static final int RETRY_TIMES = 3;
 
 	private static final int HUNDRED_PERCENT = 100;
 	// FileChooserを使うか使わないか指定するフラグ
 	//   FileChooserが自動実行中に頻繁に不正状態になるため
 	private static boolean usingDialog = false;
+
+	protected GUITestUtil() { }
 
 	public static boolean usingDialog() {
 		return usingDialog;

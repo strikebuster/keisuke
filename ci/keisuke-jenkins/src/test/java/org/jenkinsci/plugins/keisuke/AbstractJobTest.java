@@ -34,4 +34,17 @@ public abstract class AbstractJobTest {
 	 * @throws IOException signal of error.
 	 */
 	abstract File workspace() throws InterruptedException, IOException;
+
+	private static final int THOUSAND = 1000;
+	/**
+	 * Sleep some seconds for waiting.
+	 * @param seconds sleep time
+	 */
+	protected void sleep(final int seconds) {
+		try {
+			Thread.sleep(seconds * THOUSAND);
+		} catch (InterruptedException e) {
+			//e.printStackTrace();
+		}
+	}
 }

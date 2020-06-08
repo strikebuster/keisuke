@@ -5,6 +5,8 @@ import keisuke.util.StdoutCapture;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Locale;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -306,6 +308,30 @@ public class DiffMainProcTest {
 	}
 
 	@Test
+	public void accountUsingDefaultWhenLocaleIsEnglishButInputIsNotEnglish() throws Exception {
+		System.out.println("## DiffProcTest ## error08 ## "
+				+ "accountUsingDefaultWhenLocaleIsEnglishButInputIsNotEnglish ##");
+		Locale org = Locale.getDefault();
+		Locale.setDefault(Locale.ENGLISH);
+		StderrCapture capture = new StderrCapture();
+		String errMessage = null;
+		String expectedMessage = "unknown status in";
+		URL expected = this.getClass().getResource("DiffTest_error08.csv");
+
+		DiffMainProc dproc = new DiffMainProc();
+		String[] args = {"test/data/diff01.txt"};
+		try {
+			dproc.main(args);
+		} finally {
+			errMessage = capture.getCapturedString();
+			capture.finish();
+			Locale.setDefault(org);
+		}
+		assertThat(errMessage, containsString(expectedMessage));
+		assertThat(dproc.reportText(), is(equalTo(textContentOf(expected))));
+	}
+
+	@Test
 	public void accountUsingDefault() throws Exception {
 		System.out.println("## DiffProcTest ## diff01 ## accountUsingDefault ##");
 		URL expected = this.getClass().getResource("DiffTest_diff01.csv");
@@ -415,6 +441,24 @@ public class DiffMainProcTest {
 		DiffMainProc dproc = new DiffMainProc();
 		String[] args = {"-x", "test/data/ktestl.xml", "-c", OPTVAL_LANGGROUP, "test/data/diff01.txt"};
 		dproc.main(args);
+
+		assertThat(dproc.reportText(), is(equalTo(textContentOf(expected))));
+	}
+
+	@Test
+	public void accountUsingDefaultWhenLocaleIsEnglish() throws Exception {
+		System.out.println("## DiffProcTest ## diff10 ## accountUsingDefaultWhenLocaleIsEnglish ##");
+		Locale org = Locale.getDefault();
+		Locale.setDefault(Locale.ENGLISH);
+		URL expected = this.getClass().getResource("DiffTest_diff10.csv");
+
+		DiffMainProc dproc = new DiffMainProc();
+		String[] args = {"test/data/diff01_en.txt"};
+		try {
+			dproc.main(args);
+		} finally {
+			Locale.setDefault(org);
+		}
 
 		assertThat(dproc.reportText(), is(equalTo(textContentOf(expected))));
 	}

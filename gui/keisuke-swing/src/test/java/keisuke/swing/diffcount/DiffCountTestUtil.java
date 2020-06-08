@@ -5,7 +5,7 @@ package keisuke.swing.diffcount;
  */
 final class DiffCountTestUtil {
 
-	private static final int IDX_NAME = 0;
+	//private static final int IDX_NAME = 0;
 	private static final int IDX_STATUS = 1;
 	private static final int IDX_ADDED = 2;
 	private static final int IDX_DELETED = 3;
@@ -18,7 +18,7 @@ final class DiffCountTestUtil {
 	 * @param ignoreLines 無視する先頭行数
 	 * @return 指定された行数を先頭から除去したテキスト文字列
 	 */
-	public static String actualTextOf(final String text, final int ignoreLines) {
+	static String actualTextOf(final String text, final int ignoreLines) {
 		if (text == null) {
 			return null;
 		}
@@ -42,7 +42,7 @@ final class DiffCountTestUtil {
 	 * @param table ２次元配列データ
 	 * @return 結果全体の変更ステータス文字列
 	 */
-	public static String deriveTotalStatusFrom(final String[][] table) {
+	static String deriveTotalStatusFrom(final String[][] table) {
 		if (table == null || table.length == 0) {
 			return "";
 		}
@@ -71,7 +71,7 @@ final class DiffCountTestUtil {
 	 * @param table ２次元配列データ
 	 * @return 結果全体の追加ステップ数
 	 */
-	public static long deriveTotalAddedStepsFrom(final String[][] table) {
+	static long deriveTotalAddedStepsFrom(final String[][] table) {
 		if (table == null || table.length == 0) {
 			return 0;
 		}
@@ -91,7 +91,7 @@ final class DiffCountTestUtil {
 	 * @param table ２次元配列データ
 	 * @return 結果全体の削除ステップ数
 	 */
-	public static long deriveTotalDeletedStepsFrom(final String[][] table) {
+	static long deriveTotalDeletedStepsFrom(final String[][] table) {
 		if (table == null || table.length == 0) {
 			return 0;
 		}

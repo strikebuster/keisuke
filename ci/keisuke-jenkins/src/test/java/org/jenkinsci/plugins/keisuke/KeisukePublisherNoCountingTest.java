@@ -2,6 +2,7 @@ package org.jenkinsci.plugins.keisuke;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.jenkinsci.plugins.keisuke.setup.ProjectMakingUtil.createProjectJobWithKeisukePublisher;
@@ -31,11 +32,11 @@ public class KeisukePublisherNoCountingTest extends AbstractProjectTest {
 			fail("Unexpected Exception is occured." + ex);
 		}
 		KeisukePublisher.DescriptorImpl descriptor
-			= Jenkins.getInstance().getDescriptorByType(KeisukePublisher.DescriptorImpl.class);
+			= Jenkins.get().getDescriptorByType(KeisukePublisher.DescriptorImpl.class);
 		descriptor.setGlobalSetting(new GlobalSetting(null, null));
 		KeisukePublisher publisher = (KeisukePublisher) this.project().getPublisher(descriptor);
 		String actual = publisher.getGlobalSetting().getEncoding();
-		assertThat(actual, equalTo(System.getProperty("file.encoding")));
+		assertThat(actual, is(equalTo(System.getProperty("file.encoding"))));
 	}
 
 	@Test
@@ -91,11 +92,12 @@ public class KeisukePublisherNoCountingTest extends AbstractProjectTest {
 			fail("Unexpected IOException is occured.");
 		}
 		KeisukePublisher.DescriptorImpl descriptor
-			= Jenkins.getInstance().getDescriptorByType(KeisukePublisher.DescriptorImpl.class);
+			= Jenkins.get().getDescriptorByType(KeisukePublisher.DescriptorImpl.class);
 		KeisukePublisher publisher = (KeisukePublisher) this.project().getPublisher(descriptor);
-		assertThat(publisher.getDisplaySetting(), not(nullValue()));
-		assertThat(publisher.getDisplaySetting().getDisplayStepKindEnum(), equalTo(DisplayStepKindEnum.CODE));
-		assertThat(publisher.getCountingUnits().get(0).getOutputSetting(), nullValue());
+		assertThat(publisher.getDisplaySetting(), is(not(nullValue())));
+		assertThat(publisher.getDisplaySetting().getDisplayStepKindEnum(),
+				is(equalTo(DisplayStepKindEnum.CODE)));
+		assertThat(publisher.getCountingUnits().get(0).getOutputSetting(), is(nullValue()));
 	}
 
 }

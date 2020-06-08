@@ -67,14 +67,14 @@ public class KeisukePublisherPipelineUsingDiffTooTest extends AbstractPipelineTe
 			//System.out.println("[TEST] unit : " + entry.getKey());
 			//System.out.println("[TEST] steps :\n" + entry.getValue().debug());
 			BuildResult result = entry.getValue();
-			assertThat(result, notNullValue());
-			assertThat(result.getFileSteps(), allOf(notNullValue(), not(empty())));
-			assertThat(result.getDiffResult(), notNullValue());
+			assertThat(result, is(notNullValue()));
+			assertThat(result.getFileSteps(), is(allOf(notNullValue(), not(empty()))));
+			assertThat(result.getDiffResult(), is(notNullValue()));
 		}
 		for (int i = 0; i < 2; i++) {
 			System.out.println("[TEST] outfile[" + i + "] = " + actual[i].getAbsolutePath());
 			System.out.println(rawContentOf(actual[i]));
-			assertThat(rawContentOf(actual[i]), equalTo(textContentOf(expected[i])));
+			assertThat(rawContentOf(actual[i]), is(equalTo(textContentOf(expected[i]))));
 		}
 	}
 }

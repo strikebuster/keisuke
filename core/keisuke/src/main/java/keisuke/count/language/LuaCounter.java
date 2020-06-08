@@ -28,6 +28,10 @@ public class LuaCounter extends GeneralStepCounter {
 	}
 
 	/* 複数行ブロックコメントの開始から行末までの処理をする */
+	/**
+	 * Lua用の処理.<br>
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String handleAreaCommentStart(
 			final ProgramLangRule lang, final String line, final AreaComment area) {
@@ -52,6 +56,10 @@ public class LuaCounter extends GeneralStepCounter {
 	}
 
 	/* リテラル文字列の開始から行末までの処理をする */
+	/**
+	 * Lua用の処理.<br>
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String handleLiteralStringStart(
 			final ProgramLangRule lang, final String line, final LiteralString literal) {

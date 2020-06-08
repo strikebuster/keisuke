@@ -184,7 +184,7 @@ public class StepCountProc extends AbstractCountMainProc {
 	 */
 	public void setShowDirectory(final boolean showDir) {
 		if (showDir) {
-			this.setPathStyle(OPTVAL_PATH_SHOWDIR);
+			this.setPathStyle(PathStyleEnum.SHOWDIR.value());
 		}
 	}
 

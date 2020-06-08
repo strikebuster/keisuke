@@ -161,7 +161,8 @@ public class DisplaySettingConfigUI {
 		List<HtmlRadioButtonInput> kindRadioList = this.getRadiosOfDisplayStepKind();
 		String kindValue = kind.getValue();
 		int selectIdx = this.getIndexOfRadioList(kindRadioList, kindValue);
-		System.out.println("[TEST] === click the radio button of '" + kindValue + "'.");
+		System.out.println("[TEST] === click the radio button of '" + kindValue
+				+ "' that is indexed at " + Integer.toString(selectIdx) + ".");
 		try {
 			kindRadioList.get(selectIdx).click();
 			this.testOwner.configHtmlUI().waitForBackgroundProcess();
@@ -169,6 +170,8 @@ public class DisplaySettingConfigUI {
 			ex.printStackTrace();
 			fail("Unexpected IOException is occured.");
 		}
+		//System.out.println("[TEST DEBUG] "	+ kindRadioList.get(selectIdx).asXml()
+		//		+ "' isChecked " + kindRadioList.get(selectIdx).isChecked());
 		return selectIdx;
 	}
 
@@ -204,8 +207,12 @@ public class DisplaySettingConfigUI {
 			System.out.println("[TEST] displayStepKind[radio](" + Integer.toString(idx)
 					+ "):value=" + value);
 			System.out.println("[TEST] displayStepKind[radio](" + Integer.toString(idx)
-					+ "):checked=" + checked);
-			if ("checked".equals(checked) || "true".equals(checked)) {
+					+ "):checked(initialized)=" + checked);
+			System.out.println("[TEST] displayStepKind[radio](" + Integer.toString(idx)
+					+ "):isChecked=" + radio.isChecked());
+			//System.out.println("[TEST DEBUG] "	+ kindRadioList.get(selectIdx).asXml());
+			//if ("checked".equals(checked) || "true".equals(checked)) {
+			if (radio.isChecked()) {	// changed after plugin POM update to 3.55
 				checkedIdx = idx;
 			}
 			idx++;

@@ -200,7 +200,6 @@ public class ProjectConfigUI implements ConfigUIClient {
 	 * @param menu 「ビルド後の処理を追加」で表示される選択リストメニュー
 	 * @return KeisukePublisherのアンカー
 	 */
-	@SuppressWarnings("unchecked")
 	private HtmlAnchor getAnchorOfKeisukeInMenu(final HtmlDivision menu) {
 		if (menu == null) {
 			return  null;
@@ -208,12 +207,12 @@ public class ProjectConfigUI implements ConfigUIClient {
 		HtmlPage page = menu.getHtmlPageOrNull();
 		String listXPath = menu.getCanonicalXPath() + "/div[1]/ul[1]/li";
 		for (int retry = 0; retry < RETRY_FOR_YUI; retry++) {
-			List<DomElement> nodes = (List<DomElement>) page.getByXPath(listXPath);
+			List<DomElement> nodes = page.getByXPath(listXPath);
 			for (int i = 1; i <= nodes.size(); i++) {
 				StringBuilder sb = new StringBuilder();
 				sb.append(listXPath).append('[').append(i).append("]/a");
 				String xpath = sb.toString();
-				List<DomElement> anchors = (List<DomElement>) page.getByXPath(xpath);
+				List<DomElement> anchors = page.getByXPath(xpath);
 				for (DomElement a : anchors) {
 					HtmlAnchor anchor = (HtmlAnchor) a;
 					String text = anchor.getTextContent();

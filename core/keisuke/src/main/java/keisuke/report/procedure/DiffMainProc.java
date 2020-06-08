@@ -211,9 +211,12 @@ public final class DiffMainProc extends AbstractReportMainProc {
 		}
 		StringBuilder sbaout = new StringBuilder();
 		StringBuilder sbmout = new StringBuilder();
+		@SuppressWarnings("unused")
 		int alinectr = 0;
+		@SuppressWarnings("unused")
 		int mlinectr = 0;
 
+		@SuppressWarnings("unused")
 		int linectr = skippedLines;
 		String line = null;
 		PathDepthList pathNodeList = new PathDepthList();
@@ -271,6 +274,7 @@ public final class DiffMainProc extends AbstractReportMainProc {
 						mlinectr++;
 					}
 				} else if (diffstat == DiffStatusEnum.DROPED) {
+					@SuppressWarnings("unused")
 					int nop = 0; // 処理なし
 				} else if (diffstat == DiffStatusEnum.UNCHANGED) { // 変更なし
 					this.unchangeFiles++;

@@ -48,6 +48,10 @@ public class RubyCounter extends LabelHereDocScriptCounter {
 	}
 
 	/* "<<"がヒアドキュメントではないケースのチェックメソッド */
+	/**
+	 * Ruby用の処理.<br>
+	 * {@inheritDoc}
+	 */
 	@Override
 	protected boolean checkExcludeLiteralStringStart(final String line, final LiteralString literal) {
 		String start = literal.getStartString();
@@ -71,6 +75,10 @@ public class RubyCounter extends LabelHereDocScriptCounter {
 	}
 
 	/* リテラル文字列の開始から行末までの処理をする */
+	/**
+	 * Ruby用の処理.<br>
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String handleLiteralStringStart(
 			final ProgramLangRule lang, final String line, final LiteralString literal) {

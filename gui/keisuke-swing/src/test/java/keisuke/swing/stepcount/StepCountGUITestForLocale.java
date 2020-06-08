@@ -1,11 +1,25 @@
 package keisuke.swing.stepcount;
 
-import static keisuke.swing.GUIConstant.*;
-import static keisuke.swing.GUITestUtil.*;
+import static keisuke.swing.GUIConstant.COUNT_BUTTON;
+import static keisuke.swing.GUIConstant.FORMAT_RADIO;
+import static keisuke.swing.GUIConstant.FORMAT_SELECT;
+import static keisuke.swing.GUIConstant.PATH_SELECT;
+import static keisuke.swing.GUIConstant.RESULT_TABLE;
+import static keisuke.swing.GUIConstant.RESULT_TEXT;
+import static keisuke.swing.GUIConstant.SAVE_BUTTON;
+import static keisuke.swing.GUIConstant.TABLE_RADIO;
+import static keisuke.swing.GUITestUtil.SLEEPLONGTIME;
+import static keisuke.swing.GUITestUtil.SLEEPTIME;
+import static keisuke.swing.GUITestUtil.WAITTIME;
+import static keisuke.swing.GUITestUtil.labelsOf;
+import static keisuke.swing.GUITestUtil.pathForLocalSystem;
+import static keisuke.swing.GUITestUtil.sleep;
 import static keisuke.swing.stepcount.StepCountGUIConstant.*;
 import static keisuke.swing.stepcount.StepCountGUITestConstant.*;
 import static keisuke.swing.stepcount.StepCountTestUtil.chooseSomeFiles;
 import static keisuke.swing.stepcount.StepCountTestUtil.parentPathOf;
+import static keisuke.util.TestUtil.contentOf;
+import static keisuke.util.TestUtil.textContentOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.array;
 import static org.hamcrest.Matchers.contains;
@@ -70,7 +84,6 @@ public final class StepCountGUITestForLocale extends FestSwingJUnitTestCase {
 		this.frame.robot.waitForIdle();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void countJavaUsingCsvFormatWithShowDirWhenLocaleIsEnglish() {
 		System.out.println("## StepCountGUI ## countJavaUsingCsvFormatWithShowDirWhenLocaleIsEnglish ##");
@@ -100,11 +113,10 @@ public final class StepCountGUITestForLocale extends FestSwingJUnitTestCase {
 		String text = frame.textBox(RESULT_TEXT).text();
 		//System.out.println(text);
 		URL expected = this.getClass()
-				.getResource("StepCount_java_showdir_en.csv");
+				.getResource("StepCount_java_showDir_en.csv");
 		assertThat(text, is(equalTo(textContentOf(expected))));
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void countJavaAndDisplayTableStyleWhenLocaleIsEnglish() {
 		System.out.println("## StepCountGUI ## countJavaAndDisplayTableStyleWhenLocaleIsEnglish ##");
@@ -147,7 +159,7 @@ public final class StepCountGUITestForLocale extends FestSwingJUnitTestCase {
 		JTableHeader header = table.tableHeader().target;
 		List<String> actualHead = labelsOf(header);
 		//System.out.println(actualHead);
-		String[] expectedHead = {"FileName", "Type", "Category", "Exec", "Blanc", "Cmnt", "Sum"};
+		String[] expectedHead = {"FileName", "Type", "Category", "Code", "Blank", "Comnt", "Sum"};
 		assertThat(actualHead, contains(expectedHead));
 		String[][] actualData = table.contents();
 		//System.out.println(contentOf(actualData));

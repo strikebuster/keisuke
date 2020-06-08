@@ -21,13 +21,17 @@ import keisuke.util.LogUtil;
  */
 public class ExcelFormatter extends AbstractFormatter {
 
+	//private static final String XLS_PREFIX = "StepExcelTemplate";
 	private static final String XLS_PREFIX = "ExcelFormatter";
-	private static final String XLS_EXTENSION = "." + FormatEnum.EXCEL.fileExtension();
 	private static final String XLS_DATA_RESULT = "results";
 	private static final String XLS_DATA_CATEGORY = "categories";
+	private String xlsExtension = "." + FormatEnum.EXCEL.fileExtension();
 
-	ExcelFormatter() {
-		super(FormatEnum.EXCEL);
+	ExcelFormatter(final FormatEnum formatEnum) {
+		super(formatEnum);
+		//if (formatEnum.equals(FormatEnum.EXCEL97)) {
+		//	this.xlsExtension = "." + FormatEnum.EXCEL97.fileExtension();
+		//}
 	}
 
 	/** {@inheritDoc} */
@@ -37,20 +41,20 @@ public class ExcelFormatter extends AbstractFormatter {
 		}
 		InputStream in = null;
 		try {
-			String xlsTemplate = XLS_PREFIX + LocaleUtil.getLocalePostfix() + XLS_EXTENSION;
+			String xlsTemplate = XLS_PREFIX + LocaleUtil.getLocalePostfix() + this.xlsExtension;
 			//LogUtil.debugLog("xlsTemplate = " + xlsTemplate);
 			URL url = this.getClass().getResource(xlsTemplate);
 			if (url == null) {
-				xlsTemplate = XLS_PREFIX + XLS_EXTENSION;
+				xlsTemplate = XLS_PREFIX + this.xlsExtension;
+				//LogUtil.debugLog("xlsTemplate = " + xlsTemplate);
 			}
-			//LogUtil.debugLog("xlsTemplate = " + xlsTemplate);
 			in = this.getClass().getResourceAsStream(xlsTemplate);
 			CountResultCompatible[] dtoArray = this.createResultDtoFrom(results);
 			CategoryStepDtoCompatible[] categories = this.createCategoryDtoFrom(results);
 			Map<String, Object> data = new HashMap<String, Object>();
 			data.put(XLS_DATA_RESULT, dtoArray);
 			data.put(XLS_DATA_CATEGORY, categories);
-			return ExcelUtil.makeExcelData(in, data);
+			return new ExcelUtil().makeExcelData(in, data);
 		} catch (Exception ex) {
 			LogUtil.errorLog("fail to make excel data");
 			throw new RuntimeException(ex);

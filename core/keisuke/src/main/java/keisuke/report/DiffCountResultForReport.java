@@ -12,6 +12,7 @@ import keisuke.util.NumberUtil;
  * Account element for result of DiffCount.
  */
 public class DiffCountResultForReport extends DiffCountResult implements CountResultForReport {
+	private static final long serialVersionUID = 1L; // since ver.2.0.1
 
 	private static final int DIFFCOUNT_COLUMN_NUM = DiffCountEnum.values().length;
 
@@ -103,7 +104,9 @@ public class DiffCountResultForReport extends DiffCountResult implements CountRe
 		int salen = strArray.length;
 		int skipcols = 0;
 		String strPath = "";
+		@SuppressWarnings("unused")
 		String strType = "";
+		@SuppressWarnings("unused")
 		String strCategory = "";
 		String strStatus = "";
 		String strAddStep = "0";

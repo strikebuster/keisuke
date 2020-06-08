@@ -66,12 +66,12 @@ public class KeisukePublisherPipelineUsingFileSetTest extends AbstractPipelineTe
 			//System.out.println("[TEST] unit : " + entry.getKey());
 			//System.out.println("[TEST] steps :\n" + entry.getValue().debug());
 			BuildResult result = entry.getValue();
-			assertThat(result, notNullValue());
-			assertThat(result.getFileSteps(), allOf(notNullValue(), not(empty())));
-			assertThat(result.getDiffResult(), nullValue());
+			assertThat(result, is(notNullValue()));
+			assertThat(result.getFileSteps(), is(allOf(notNullValue(), not(empty()))));
+			assertThat(result.getDiffResult(), is(nullValue()));
 		}
 		System.out.println(rawContentOf(actual));
-		assertThat(rawContentOf(actual), equalTo(textContentOf(expected)));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -85,14 +85,14 @@ public class KeisukePublisherPipelineUsingFileSetTest extends AbstractPipelineTe
 		try {
 			this.setWorkflowJob(this.pipelineJobMaker()
 					.createJobToCountJavaOnWorkspace("JavaCsvOnWsWfJob", outfile, "csv", false));
-			WorkflowRun run = this.jenkinsRule.buildAndAssertSuccess(this.workflowJob());
+			this.jenkinsRule.buildAndAssertSuccess(this.workflowJob());
 			actual = new File(this.workspace(), outfile);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			fail("Unexpected Exception is occured." + ex);
 		}
 		System.out.println(rawContentOf(actual));
-		assertThat(rawContentOf(actual), equalTo(textContentOf(expected)));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -106,14 +106,14 @@ public class KeisukePublisherPipelineUsingFileSetTest extends AbstractPipelineTe
 			this.setWorkflowJob(this.pipelineJobMaker()
 					.createJobToCountJavaOnAbsolutePath("JavaCsvOnAbsWfJob", outfile, "csv", true));
 			//prepareTestDataForAbsolutePath(this.jenkinsRule, this.workflowJob());
-			WorkflowRun run = this.jenkinsRule.buildAndAssertSuccess(this.workflowJob());
+			this.jenkinsRule.buildAndAssertSuccess(this.workflowJob());
 			actual = new File(this.workspace(), outfile);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			fail("Unexpected Exception is occured." + ex);
 		}
 		System.out.println(rawContentOf(actual));
-		assertThat(rawContentOf(actual), equalTo(textContentOf(expected)));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -127,7 +127,7 @@ public class KeisukePublisherPipelineUsingFileSetTest extends AbstractPipelineTe
 		try {
 			this.setWorkflowJob(this.pipelineJobMaker().createJobToCountJavaUsingCustomRule(
 					"JavaCsvRuleWfJob", outfile, "csv", false));
-			WorkflowRun run = this.jenkinsRule.buildAndAssertSuccess(this.workflowJob());
+			this.jenkinsRule.buildAndAssertSuccess(this.workflowJob());
 			//System.out.println("[TEST] Workspace is " + this.workspace().getAbsolutePath());
 			actual = new File(this.workspace(), outfile);
 			//System.out.println("[TEST] outfile = " + actual.getAbsolutePath());
@@ -136,7 +136,7 @@ public class KeisukePublisherPipelineUsingFileSetTest extends AbstractPipelineTe
 			fail("Unexpected Exception is occured." + ex);
 		}
 		System.out.println(rawContentOf(actual));
-		assertThat(rawContentOf(actual), equalTo(textContentOf(expected)));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -159,7 +159,7 @@ public class KeisukePublisherPipelineUsingFileSetTest extends AbstractPipelineTe
 		try {
 			this.setWorkflowJob(this.pipelineJobMaker()
 					.createJobToCountJavaAndSjis("JavaSjisExcelWfJob", outSettingArray));
-			WorkflowRun run = this.jenkinsRule.buildAndAssertSuccess(this.workflowJob());
+			this.jenkinsRule.buildAndAssertSuccess(this.workflowJob());
 			for (int i = 0; i < actual.length; i++) {
 				actual[i] = new File(this.workspace(), outfile[i]);
 			}
@@ -167,8 +167,9 @@ public class KeisukePublisherPipelineUsingFileSetTest extends AbstractPipelineTe
 			ex.printStackTrace();
 			fail("Unexpected Exception is occured." + ex);
 		}
+		//this.sleep(180);	// waiting to salvage output files from /tmp
 		for (int i = 0; i < actual.length; i++) {
-			assertThat(binaryContentOf(actual[i]), equalTo(binaryContentOf(expected[i])));
+			assertThat(binaryContentOf(actual[i]), is(equalTo(binaryContentOf(expected[i]))));
 		}
 	}
 
@@ -192,7 +193,7 @@ public class KeisukePublisherPipelineUsingFileSetTest extends AbstractPipelineTe
 		try {
 			this.setWorkflowJob(this.pipelineJobMaker()
 					.createJobToCountJavaAndSjis("JavaTextSjisJsonWfJob", outSettingArray));
-			WorkflowRun run = this.jenkinsRule.buildAndAssertSuccess(this.workflowJob());
+			this.jenkinsRule.buildAndAssertSuccess(this.workflowJob());
 			for (int i = 0; i < actual.length; i++) {
 				actual[i] = new File(this.workspace(), outfile[i]);
 			}
@@ -202,7 +203,7 @@ public class KeisukePublisherPipelineUsingFileSetTest extends AbstractPipelineTe
 		}
 		for (int i = 0; i < actual.length; i++) {
 			System.out.println(rawContentOf(actual[i]));
-			assertThat(rawContentOf(actual[i]), equalTo(textContentOf(expected[i])));
+			assertThat(rawContentOf(actual[i]), is(equalTo(textContentOf(expected[i]))));
 		}
 	}
 }

@@ -3,7 +3,8 @@ package org.jenkinsci.plugins.keisuke;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.isEmptyString;
+import static org.hamcrest.Matchers.emptyString;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.jenkinsci.plugins.keisuke.uihelper.OutputSettingConfigUI.DEFAULT_FORMAT;
 
@@ -73,13 +74,13 @@ public class OutputSettingUITest extends AbstractSettingUITest {
 		HtmlTextInput pathTextbox = this.outputUI.findOutputFilePathThenVerify("", false);
 		// ””を指定
 		System.out.println("[TEST] === input an empty value into outputFilePath.");
-		pathTextbox.setText(empty);
+		this.outputUI.inputValue(pathTextbox, empty);
 		this.waitForEventCallbackProcess();
 		this.outputUI.findOutputFilePathThenVerify(empty, false);
 		// 任意の値を指定
 		System.out.println("[TEST] === input a good value into outputFilePath.");
 		String pathGoodValue = "result.csv";
-		pathTextbox.setText(pathGoodValue);
+		this.outputUI.inputValue(pathTextbox, pathGoodValue);
 		this.waitForEventCallbackProcess();
 		this.outputUI.findOutputFilePathThenVerify(pathGoodValue, true);
 
@@ -122,7 +123,7 @@ public class OutputSettingUITest extends AbstractSettingUITest {
 		// 任意の値を指定
 		System.out.println("[TEST] === input a good value into outputFilePath.");
 		String pathGoodValue = "report/result.xml";
-		pathTextbox.setText(pathGoodValue);
+		this.outputUI.inputValue(pathTextbox, pathGoodValue);
 		this.waitForEventCallbackProcess();
 		this.outputUI.findOutputFilePathThenVerify(pathGoodValue, true);
 
@@ -177,7 +178,7 @@ public class OutputSettingUITest extends AbstractSettingUITest {
 		// ファイル出力チェックボックスのヘルプ
 		String helpTextSet = this.configHtmlUI().
 				getHelpContentOfOptionalCheckBox("outputSetting", outputCheckbox);
-		assertThat(helpTextSet, not(isEmptyString()));
+		assertThat(helpTextSet, is(not(emptyString())));
 
 		// チェックボックス選択
 		this.outputUI.checkOnOutputCheckbox();
@@ -188,7 +189,7 @@ public class OutputSettingUITest extends AbstractSettingUITest {
 		// フォーマットのヘルプ
 		HtmlSelect formatSelectbox = this.outputUI.findOutputFormat();
 		helpTextSet = this.configHtmlUI().getHelpContentOf("outputFormat", formatSelectbox);
-		assertThat(helpTextSet, not(isEmptyString()));
+		assertThat(helpTextSet, is(not(emptyString())));
 		// ディレクトリ名表記のヘルプ
 		HtmlCheckBoxInput dirCheckbox = this.outputUI.findBaseDirInclusion();
 		helpTextSet = this.configHtmlUI().getHelpContentOf("baseDirInclusion", dirCheckbox);

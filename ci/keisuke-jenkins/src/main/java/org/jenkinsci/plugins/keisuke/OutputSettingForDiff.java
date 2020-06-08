@@ -26,8 +26,9 @@ import keisuke.count.option.DiffCountOption;
  * This has values of Diff Output Setting
  */
 public class OutputSettingForDiff extends AbstractDescribableImpl<OutputSettingForDiff> implements Serializable {
-
 	private static final long serialVersionUID = 0L; // since ver.2.0.0
+
+	@SuppressWarnings("unused")
 	private transient PrintStream syslogger = System.out;
 
 	private static final String DEFAULT_FORMAT = "text";
@@ -50,6 +51,7 @@ public class OutputSettingForDiff extends AbstractDescribableImpl<OutputSettingF
 	 * Constructor.
 	 * @param diffOutputFilePath input string of &lt;f:entry field="diffOutputFilePath"&gt;.
 	 * @param diffOutputFormat input string of &lt;f:entry field="diffOutputFormat"&gt;.
+	 * @throws RuntimeException occurs when the parameter "diffOutputFilePath" is null or empty.
 	 */
 	@DataBoundConstructor
 	public OutputSettingForDiff(final String diffOutputFilePath, final String diffOutputFormat) {

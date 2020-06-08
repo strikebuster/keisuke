@@ -4,6 +4,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
@@ -11,13 +12,8 @@ import static org.jenkinsci.plugins.keisuke.util.BuildResultCountTestUtil.length
 import static org.jenkinsci.plugins.keisuke.util.BuildResultCountTestUtil.lengthOfSummaryStepLabelsForJobMain;
 import static org.jenkinsci.plugins.keisuke.util.BuildResultCountTestUtil.summaryLabelForJobMainOf;
 
-import static org.junit.Assert.fail;
-
-import java.io.IOException;
-
 import org.jenkinsci.plugins.keisuke.uihelper.ProjectMainPageUI;
 import org.junit.Test;
-import org.xml.sax.SAXException;
 
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlDivision;
@@ -43,7 +39,7 @@ public class StepCountProjectActionTest extends AbstractActionTest {
 		this.prepareProjectToCountJavaThenDoingBuildsBy(buildTimes);
 		this.mainUI = new ProjectMainPageUI(this.webClient(), this.projName());
 		HtmlDivision main = this.mainUI.findDivOfMainPanel();
-		assertThat(main, not(nullValue()));
+		assertThat(main, is(not(nullValue())));
 		String mainXpath = main.getCanonicalXPath();
 		System.out.println("[TEST] main-panel division xpath:" + mainXpath);
 
@@ -55,7 +51,7 @@ public class StepCountProjectActionTest extends AbstractActionTest {
 		HtmlAnchor anchor = this.mainUI.findAnchorOfKeisukeStepCountInMain(mainXpath);
 		String caption = anchor.getTextContent();
 		System.out.println("[TEST] caption anchor content:" + caption);
-		assertThat(caption, equalTo(Messages.steps()));
+		assertThat(caption, is(equalTo(Messages.steps())));
 		for (int i = 1; i < lengthOfSummaryStepLabelsForJobMain(); i++) {
 			HtmlTableDataCell labelCell = this.mainUI.findTdataOfStepLabelFrom(anchor, i);
 			HtmlTableDataCell valueCell = this.mainUI.findTdataOfStepValueFrom(anchor, i);
@@ -66,22 +62,17 @@ public class StepCountProjectActionTest extends AbstractActionTest {
 		}
 		// URL link to result page
 		System.out.println("[TEST] page title(before):" + this.mainUI.getPage().getTitleText());
-		HtmlPage anotherPage = null;
-		try {
-			String path = "job/" + this.projName() + "/" + anchor.getHrefAttribute();
-			System.out.println("[TEST] anchor goes to:" + path);
-			anotherPage = this.webClient().goTo(path);
-		} catch (IOException ex) {
-			ex.printStackTrace();
-			fail("Unexpected IOException is occured.");
-		} catch (SAXException ex) {
-			ex.printStackTrace();
-			fail("Unexpected SAXException is occured.");
+		String path = "job/" + this.projName() + "/" + anchor.getHrefAttribute();
+		System.out.println("[TEST] anchor goes to:" + path);
+		HtmlPage anotherPage = this.mainUI.openResultPage(path);
+		if (anotherPage == null) {
+			// 404 not found about jquery
+			return;
 		}
 		System.out.println("[TEST] === go to the anchor's result page.");
 		System.out.println("[TEST] page title(after):" + anotherPage.getTitleText());
 		String pageTitle = anotherPage.getTitleText();
-		assertThat(pageTitle, allOf(startsWith("Keisuke"), containsString("Build #")));
+		assertThat(pageTitle, is(allOf(startsWith("Keisuke"), containsString("Build #"))));
 	}
 
 	@Test
@@ -91,7 +82,7 @@ public class StepCountProjectActionTest extends AbstractActionTest {
 		this.prepareProjectToCountJavaUsingStepSimplyThenDoingBuildsBy(buildTimes);
 		this.mainUI = new ProjectMainPageUI(this.webClient(), this.projName());
 		HtmlDivision main = this.mainUI.findDivOfMainPanel();
-		assertThat(main, not(nullValue()));
+		assertThat(main, is(not(nullValue())));
 		String mainXpath = main.getCanonicalXPath();
 		System.out.println("[TEST] main-panel division xpath:" + mainXpath);
 
@@ -103,7 +94,7 @@ public class StepCountProjectActionTest extends AbstractActionTest {
 		HtmlAnchor anchor = this.mainUI.findAnchorOfKeisukeStepCountInMain(mainXpath);
 		String caption = anchor.getTextContent();
 		System.out.println("[TEST] caption anchor content:" + caption);
-		assertThat(caption, equalTo(Messages.steps()));
+		assertThat(caption, is(equalTo(Messages.steps())));
 		for (int i = 1; i < lengthOfSummaryStepLabelsForJobMain(); i++) {
 			HtmlTableDataCell labelCell = this.mainUI.findTdataOfStepLabelFrom(anchor, i);
 			HtmlTableDataCell valueCell = this.mainUI.findTdataOfStepValueFrom(anchor, i);
@@ -114,22 +105,17 @@ public class StepCountProjectActionTest extends AbstractActionTest {
 		}
 		// URL link to result page
 		System.out.println("[TEST] page title(before):" + this.mainUI.getPage().getTitleText());
-		HtmlPage anotherPage = null;
-		try {
-			String path = "job/" + this.projName() + "/" + anchor.getHrefAttribute();
-			System.out.println("[TEST] anchor goes to:" + path);
-			anotherPage = this.webClient().goTo(path);
-		} catch (IOException ex) {
-			ex.printStackTrace();
-			fail("Unexpected IOException is occured.");
-		} catch (SAXException ex) {
-			ex.printStackTrace();
-			fail("Unexpected SAXException is occured.");
+		String path = "job/" + this.projName() + "/" + anchor.getHrefAttribute();
+		System.out.println("[TEST] anchor goes to:" + path);
+		HtmlPage anotherPage = this.mainUI.openResultPage(path);
+		if (anotherPage == null) {
+			// 404 not found about jquery
+			return;
 		}
 		System.out.println("[TEST] === go to the anchor's result page.");
 		System.out.println("[TEST] page title(after):" + anotherPage.getTitleText());
 		String pageTitle = anotherPage.getTitleText();
-		assertThat(pageTitle, allOf(startsWith("Keisuke"), containsString("Build #")));
+		assertThat(pageTitle, is(allOf(startsWith("Keisuke"), containsString("Build #"))));
 	}
 
 	@Test
@@ -139,7 +125,7 @@ public class StepCountProjectActionTest extends AbstractActionTest {
 		this.prepareProjectToCountJavaUsingDiffTooThenDoingBuildsBy(buildTimes);
 		this.mainUI = new ProjectMainPageUI(this.webClient(), this.projName());
 		HtmlDivision main = this.mainUI.findDivOfMainPanel();
-		assertThat(main, not(nullValue()));
+		assertThat(main, is(not(nullValue())));
 		String mainXpath = main.getCanonicalXPath();
 		System.out.println("[TEST] main-panel division xpath:" + mainXpath);
 
@@ -151,7 +137,7 @@ public class StepCountProjectActionTest extends AbstractActionTest {
 		HtmlAnchor anchor = this.mainUI.findAnchorOfKeisukeStepCountInMain(mainXpath);
 		String caption = anchor.getTextContent();
 		System.out.println("[TEST] caption anchor content:" + caption);
-		assertThat(caption, equalTo(Messages.steps()));
+		assertThat(caption, is(equalTo(Messages.steps())));
 		for (int i = 1; i < lengthOfSummaryStepLabelsForJobMain(); i++) {
 			HtmlTableDataCell labelCell = this.mainUI.findTdataOfStepLabelFrom(anchor, i);
 			HtmlTableDataCell valueCell = this.mainUI.findTdataOfStepValueFrom(anchor, i);
@@ -171,22 +157,17 @@ public class StepCountProjectActionTest extends AbstractActionTest {
 		}
 		// URL link to result page
 		System.out.println("[TEST] page title(before):" + this.mainUI.getPage().getTitleText());
-		HtmlPage anotherPage = null;
-		try {
-			String path = "job/" + this.projName() + "/" + anchor.getHrefAttribute();
-			System.out.println("[TEST] anchor goes to:" + path);
-			anotherPage = this.webClient().goTo(path);
-		} catch (IOException ex) {
-			ex.printStackTrace();
-			fail("Unexpected IOException is occured.");
-		} catch (SAXException ex) {
-			ex.printStackTrace();
-			fail("Unexpected SAXException is occured.");
+		String path = "job/" + this.projName() + "/" + anchor.getHrefAttribute();
+		System.out.println("[TEST] anchor goes to:" + path);
+		HtmlPage anotherPage = this.mainUI.openResultPage(path);
+		if (anotherPage == null) {
+			// 404 not found about jquery
+			return;
 		}
 		System.out.println("[TEST] === go to the anchor's result page.");
 		System.out.println("[TEST] page title(after):" + anotherPage.getTitleText());
 		String pageTitle = anotherPage.getTitleText();
-		assertThat(pageTitle, allOf(startsWith("Keisuke"), containsString("Build #")));
+		assertThat(pageTitle, is(allOf(startsWith("Keisuke"), containsString("Build #"))));
 	}
 
 	private HtmlMap validateMapAboutJava(final HtmlImage image, final int times) {
@@ -204,7 +185,7 @@ public class StepCountProjectActionTest extends AbstractActionTest {
 		System.out.println("## StepCountProjectActionTest ## showFloatingGraph ##");
 		int buildTimes = 2;
 		FreeStyleBuild build = this.prepareProjectToCountJavaThenDoingBuildsBy(buildTimes);
-		assertThat(build, not(nullValue()));
+		assertThat(build, is(not(nullValue())));
 		StepCountBuildAction action = build.getAction(StepCountBuildAction.class);
 		this.mainUI = new ProjectMainPageUI(this.webClient(), this.projName());
 		// 右フローティンググラフ
@@ -220,7 +201,7 @@ public class StepCountProjectActionTest extends AbstractActionTest {
 		System.out.println("## StepCountProjectActionTest ## showFloatingGraphAboutJavaAndSjis ##");
 		int buildTimes = 2;
 		FreeStyleBuild build = this.prepareProjectToCountJavaAndSjisThenDoingBuildsBy(buildTimes);
-		assertThat(build, not(nullValue()));
+		assertThat(build, is(not(nullValue())));
 		StepCountBuildAction action = build.getAction(StepCountBuildAction.class);
 		this.mainUI = new ProjectMainPageUI(this.webClient(), this.projName());
 		// 右フローティンググラフ
@@ -236,7 +217,7 @@ public class StepCountProjectActionTest extends AbstractActionTest {
 		System.out.println("## StepCountProjectActionTest ## showFloatingGraphWhenOneBuild ##");
 		int buildTimes = 1;
 		FreeStyleBuild build = this.prepareProjectToCountJavaThenDoingBuildsBy(buildTimes);
-		assertThat(build, not(nullValue()));
+		assertThat(build, is(not(nullValue())));
 		StepCountBuildAction action = build.getAction(StepCountBuildAction.class);
 		this.mainUI = new ProjectMainPageUI(this.webClient(), this.projName());
 		// 右フローティンググラフ
@@ -252,7 +233,7 @@ public class StepCountProjectActionTest extends AbstractActionTest {
 		System.out.println("## StepCountProjectActionTest ## showFloatingGraphWhenNoBuild ##");
 		int buildTimes = 0;
 		FreeStyleBuild build = this.prepareProjectToCountJavaThenDoingBuildsBy(buildTimes);
-		assertThat(build, nullValue());
+		assertThat(build, is(nullValue()));
 		this.mainUI = new ProjectMainPageUI(this.webClient(), this.projName());
 		// 右フローティンググラフ
 		HtmlImage graph = this.mainUI.verifyFloatingGraphForStep(buildTimes, null);
@@ -267,7 +248,7 @@ public class StepCountProjectActionTest extends AbstractActionTest {
 		System.out.println("## StepCountProjectActionTest ## showFloatingGraphUsingStepSimply ##");
 		int buildTimes = 2;
 		FreeStyleBuild build = this.prepareProjectToCountJavaUsingStepSimplyThenDoingBuildsBy(buildTimes);
-		assertThat(build, not(nullValue()));
+		assertThat(build, is(not(nullValue())));
 		StepCountBuildAction action = build.getAction(StepCountBuildAction.class);
 		this.mainUI = new ProjectMainPageUI(this.webClient(), this.projName());
 		// 右フローティンググラフ
@@ -285,7 +266,7 @@ public class StepCountProjectActionTest extends AbstractActionTest {
 		int buildTimes = 2;
 		FreeStyleBuild build =
 				this.prepareProjectToCountJavaAndSjisUsingStepSimplyThenDoingBuildsBy(buildTimes);
-		assertThat(build, not(nullValue()));
+		assertThat(build, is(not(nullValue())));
 		StepCountBuildAction action = build.getAction(StepCountBuildAction.class);
 		this.mainUI = new ProjectMainPageUI(this.webClient(), this.projName());
 		// 右フローティンググラフ
@@ -311,7 +292,7 @@ public class StepCountProjectActionTest extends AbstractActionTest {
 		System.out.println("## StepCountProjectActionTest ## showFloatingGraphUsingDiffToo ##");
 		int buildTimes = 2;
 		FreeStyleBuild build = this.prepareProjectToCountJavaUsingDiffTooThenDoingBuildsBy(buildTimes);
-		assertThat(build, not(nullValue()));
+		assertThat(build, is(not(nullValue())));
 		StepCountBuildAction action = build.getAction(StepCountBuildAction.class);
 		this.mainUI = new ProjectMainPageUI(this.webClient(), this.projName());
 		// 右フローティンググラフ
@@ -331,7 +312,7 @@ public class StepCountProjectActionTest extends AbstractActionTest {
 		System.out.println("## StepCountProjectActionTest ## showFloatingGraphAboutJavaAndSjisUsingDiffToo ##");
 		int buildTimes = 2;
 		FreeStyleBuild build = this.prepareProjectToCountJavaAndSjisUsingDiffTooThenDoingBuildsBy(buildTimes);
-		assertThat(build, not(nullValue()));
+		assertThat(build, is(not(nullValue())));
 		StepCountBuildAction action = build.getAction(StepCountBuildAction.class);
 		this.mainUI = new ProjectMainPageUI(this.webClient(), this.projName());
 		// 右フローティンググラフ

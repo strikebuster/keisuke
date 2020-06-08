@@ -60,6 +60,7 @@ public class PerlCounter extends LabelHereDocScriptCounter {
 			if (line.length() > 0) {
 				return this.removeCommentFromLeft(lang, line, 0);
 			}
+			return "";
 		}
 		String end = area.getEndString();
 		if (end == null || end.isEmpty()) {

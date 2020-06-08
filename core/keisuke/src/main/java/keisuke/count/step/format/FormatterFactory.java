@@ -20,7 +20,38 @@ public final class FormatterFactory {
 	 * @return フォーマッタのインスタンス
 	 */
 	public static Formatter<StepCountResult[]> getFormatter(final FormatEnum format) {
-		return getFormatter(format.value());
+		// nullの場合はデフォルトフォーマット
+		if (format == null) {
+			return new TextFormatter();
+		}
+		// TEXTフォーマット
+		if (format.equals(FormatEnum.TEXT)) {
+			return new TextFormatter();
+
+		// CSVフォーマット
+		} else if (format.equals(FormatEnum.CSV)) {
+			return new CSVFormatter();
+
+		// XMLフォーマット
+		} else if (format.equals(FormatEnum.XML)) {
+			return new XmlFormatter();
+
+		// JSONフォーマット
+		} else if (format.equals(FormatEnum.JSON)) {
+			return new JsonFormatter();
+
+		// Excelフォーマット
+		} else if (format.equals(FormatEnum.EXCEL)) {
+			return new ExcelFormatter(FormatEnum.EXCEL);
+
+		// Excel97フォーマット
+		//} else if (format.equals(FormatEnum.EXCEL97)) {
+		//	return new ExcelFormatter(FormatEnum.EXCEL97);
+
+		// デフォルトフォーマット
+		} else {
+			return null;
+		}
 	}
 
 	/**
@@ -29,6 +60,7 @@ public final class FormatterFactory {
 	 * @param format フォーマット
 	 * @return フォーマッタのインスタンス
 	 */
+	@Deprecated
 	public static Formatter<StepCountResult[]> getFormatter(final String format) {
 		// nullの場合はデフォルトフォーマット
 		if (format == null || format.isEmpty()) {
@@ -53,7 +85,11 @@ public final class FormatterFactory {
 
 		// Excelフォーマット
 		} else if (name.equals(FormatEnum.EXCEL.value())) {
-			return new ExcelFormatter();
+			return new ExcelFormatter(FormatEnum.EXCEL);
+
+		// Excel97フォーマット
+		//} else if (name.equals(FormatEnum.EXCEL97.value())) {
+		//	return new ExcelFormatter(FormatEnum.EXCEL97);
 
 		// デフォルトフォーマット
 		} else {

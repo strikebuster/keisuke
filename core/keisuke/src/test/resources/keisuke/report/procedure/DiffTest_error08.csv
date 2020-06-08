@@ -1,0 +1,11 @@
+[ADDED Each_language_files, Added_steps]
+LANG , FILES , AMMOUNT , ADD , DEL
+[MODIFIED Each_language_files, Modified_steps]
+LANG , FILES , AMMOUNT , ADD , DEL
+[DROPED Each_language_files, Deleted_steps]
+LANG , FILES , AMMOUNT , ADD , DEL
+[UNCHANGED Each_language_files, these_steps]
+LANG , FILES
+[Unsupported_files]
+LANG , FILES
+ALL , 0

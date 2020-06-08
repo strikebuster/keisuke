@@ -2,6 +2,7 @@ package org.jenkinsci.plugins.keisuke;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.startsWith;
 
@@ -70,7 +71,7 @@ public class ProjectConfigUITest implements JenkinsUITester {
 		System.out.println("## ProjectConfigUI ## showHelpInProjectConfig ##");
 		// Pluginのヘルプの検証
 		HtmlAnchor helpAnchor = this.projectUI.findKeisukeHelpAnchor();
-		assertThat(helpAnchor, notNullValue());
+		assertThat(helpAnchor, is(notNullValue()));
 		//System.out.println("[TEST] helpAnchor[keisuke] XPath:" + helpAnchor.getCanonicalXPath());
 		String expected = "Keisuke";
 		String actual = this.projectUI.getHelpContentFrom(helpAnchor);

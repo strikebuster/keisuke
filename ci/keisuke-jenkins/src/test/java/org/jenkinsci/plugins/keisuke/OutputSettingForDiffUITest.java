@@ -2,7 +2,8 @@ package org.jenkinsci.plugins.keisuke;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.isEmptyString;
+import static org.hamcrest.Matchers.emptyString;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.jenkinsci.plugins.keisuke.uihelper.OutputSettingConfigUI.DEFAULT_FORMAT;
 
@@ -42,7 +43,7 @@ public class OutputSettingForDiffUITest extends AbstractSettingUITest {
 		HtmlTextInput pathTextbox = this.outputUI.findOutputFilePath();
 		// 任意の値を指定
 		String pathGoodValue = "report/result.xml";
-		pathTextbox.setText(pathGoodValue);
+		this.diffOutputUI.inputValue(pathTextbox, pathGoodValue);
 		this.waitForEventCallbackProcess();
 		//this.outputUI.findOutputFilePathThenVerify(pathGoodValue, true);
 	}
@@ -87,13 +88,13 @@ public class OutputSettingForDiffUITest extends AbstractSettingUITest {
 		HtmlTextInput pathTextbox = this.diffOutputUI.findDiffOutputFilePathThenVerify("", false);
 		// ””を指定
 		System.out.println("[TEST] === input an empty value into diffOutputFilePath.");
-		pathTextbox.setText(empty);
+		this.diffOutputUI.inputValue(pathTextbox, empty);
 		this.waitForEventCallbackProcess();
 		this.diffOutputUI.findDiffOutputFilePathThenVerify(empty, false);
 		// 任意の値を指定
 		System.out.println("[TEST] === input a good value into diffOutputFilePath.");
 		String pathGoodValue = "result.csv";
-		pathTextbox.setText(pathGoodValue);
+		this.diffOutputUI.inputValue(pathTextbox, pathGoodValue);
 		this.waitForEventCallbackProcess();
 		this.diffOutputUI.findDiffOutputFilePathThenVerify(pathGoodValue, true);
 
@@ -127,13 +128,13 @@ public class OutputSettingForDiffUITest extends AbstractSettingUITest {
 		HtmlTextInput pathTextbox = this.diffOutputUI.findDiffOutputFilePathThenVerify("", false);
 		// ””を指定
 		System.out.println("[TEST] === input an empty value into diffOutputFilePath.");
-		pathTextbox.setText(empty);
+		this.diffOutputUI.inputValue(pathTextbox, empty);
 		this.waitForEventCallbackProcess();
 		this.diffOutputUI.findDiffOutputFilePathThenVerify(empty, false);
 		// 任意の値を指定
 		System.out.println("[TEST] === input a good value into diffOutputFilePath.");
 		String pathGoodValue = "result.json";
-		pathTextbox.setText(pathGoodValue);
+		this.diffOutputUI.inputValue(pathTextbox, pathGoodValue);
 		this.waitForEventCallbackProcess();
 		this.diffOutputUI.findDiffOutputFilePathThenVerify(pathGoodValue, true);
 
@@ -175,7 +176,7 @@ public class OutputSettingForDiffUITest extends AbstractSettingUITest {
 		// Diff結果出力チェックボックスのヘルプ
 		String helpTextSet = this.configHtmlUI()
 				.getHelpContentOfOptionalCheckBox("diffOutputSetting", outputCheckbox);
-		assertThat(helpTextSet, not(isEmptyString()));
+		assertThat(helpTextSet, is(not(emptyString())));
 		// チェックボックス選択
 		this.diffOutputUI.checkOnDiffOutputCheckbox();
 		// ファイルパスのヘルプ
@@ -185,6 +186,6 @@ public class OutputSettingForDiffUITest extends AbstractSettingUITest {
 		// フォーマットのヘルプ
 		HtmlSelect formatSelectbox = this.diffOutputUI.findDiffOutputFormat();
 		helpTextSet = this.configHtmlUI().getHelpContentOf("diffOutputFormat", formatSelectbox);
-		assertThat(helpTextSet, not(isEmptyString()));
+		assertThat(helpTextSet, is(not(emptyString())));
 	}
 }

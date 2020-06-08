@@ -22,6 +22,10 @@ public class EmbeddedRubyCounter extends RubyCounter {
 	}
 
 	/* "%"が%記法ではないケースのチェックメソッド */
+	/**
+	 * EmbeddedRuby用の処理.<br>
+	 * {@inheritDoc}
+	 */
 	@Override
 	protected boolean checkExcludeLiteralStringStart(final String line, final LiteralString literal) {
 		String start = literal.getStartString();

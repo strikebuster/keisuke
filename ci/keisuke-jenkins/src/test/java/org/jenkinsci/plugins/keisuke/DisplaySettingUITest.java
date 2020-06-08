@@ -3,8 +3,9 @@ package org.jenkinsci.plugins.keisuke;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
-import static org.hamcrest.Matchers.isEmptyString;
+import static org.hamcrest.Matchers.emptyOrNullString;
+import static org.hamcrest.Matchers.emptyString;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
 import java.util.List;
@@ -40,7 +41,7 @@ public class DisplaySettingUITest extends AbstractSettingUITest {
 		int checkedIdx = 0;
 		String checkedValue = kindRadioList.get(checkedIdx).getAttribute("value");
 		String expected = "code_only";
-		assertThat(checkedValue, equalTo(expected));
+		assertThat(checkedValue, is(equalTo(expected)));
 
 		// kindを選択
 		expected = kind.getValue();
@@ -56,11 +57,11 @@ public class DisplaySettingUITest extends AbstractSettingUITest {
 		//HtmlTableRow trow = this.displayUI.findTrowOfDisplaySetting();
 		String title = this.displayUI.getTitleOfDisplaySetting();
 		System.out.println("[TEST] DisplaySetting title:" + title);
-		assertThat(title, not(isEmptyOrNullString()));
+		assertThat(title, is(not(emptyOrNullString())));
 		// 行数遷移グラフの表示設定のタイトル
 		String kindTitle = this.displayUI.getTitleOfDisplayStepKind();
 		System.out.println("[TEST] DisplayStepKind title:" + kindTitle);
-		assertThat(kindTitle, not(isEmptyOrNullString()));
+		assertThat(kindTitle, is(not(emptyOrNullString())));
 		// 表示設定のラジオボタン
 		String radioName = this.displayUI.getRadioNameOfDisplayStepKind();
 		System.out.println("[TEST] DisplayStepKind 1st radio name:" + radioName);
@@ -71,7 +72,7 @@ public class DisplaySettingUITest extends AbstractSettingUITest {
 		// エラー表示がないこと検証
 		String errmsg = this.displayUI.getErrorContentOfDisplayStepKind();
 		System.out.println("[TEST] ErrorTd[kind] Content:" + errmsg);
-		assertThat(errmsg, isEmptyString());
+		assertThat(errmsg, is(emptyString()));
 	}
 
 	@Test
@@ -95,6 +96,6 @@ public class DisplaySettingUITest extends AbstractSettingUITest {
 
 		// 行数遷移グラフ表示行数のヘルプ
 		String helpText = this.configHtmlUI().getHelpContentOf("displayStepKind", kindRadio);
-		assertThat(helpText, not(isEmptyString()));
+		assertThat(helpText, is(not(emptyString())));
 	}
 }

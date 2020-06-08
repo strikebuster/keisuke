@@ -47,6 +47,7 @@ public abstract class AbstractFwDefine {
 
 	/**
 	 * Framework定義をしたデフォルトXMLファイルを読んで、Framework定義を設定する
+	 * @throws RuntimeException 初期化処理に失敗した時に発行する
 	 */
 	protected void initialize() {
 		try {

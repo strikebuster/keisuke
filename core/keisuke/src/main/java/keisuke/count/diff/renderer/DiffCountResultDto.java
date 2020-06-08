@@ -10,6 +10,7 @@ import keisuke.count.diff.DiffFileResult;
  * jp.sf.amateras.stepcounter.diffcount.object.DiffFileResultとの互換性を持つ
  */
 public class DiffCountResultDto extends DiffFileResult implements DiffResultCompatible {
+	private static final long serialVersionUID = 1L; // since ver.2.0.1
 
 	private String statusText = null;
 	private PathStyleEnum pathStyle;

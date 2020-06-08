@@ -68,14 +68,14 @@ public class KeisukePublisherUsingDiffTooTest extends AbstractProjectTest {
 			//System.out.println("[TEST] unit : " + entry.getKey());
 			//System.out.println("[TEST] steps :\n" + entry.getValue().debug());
 			BuildResult result = entry.getValue();
-			assertThat(result, notNullValue());
-			assertThat(result.getFileSteps(), allOf(notNullValue(), not(empty())));
-			assertThat(result.getDiffResult(), notNullValue());
+			assertThat(result, is(notNullValue()));
+			assertThat(result.getFileSteps(), is(allOf(notNullValue(), not(empty()))));
+			assertThat(result.getDiffResult(), is(notNullValue()));
 		}
 		for (int i = 0; i < 2; i++) {
 			System.out.println("[TEST] outfile[" + i + "] = " + actual[i].getAbsolutePath());
 			System.out.println(rawContentOf(actual[i]));
-			assertThat(rawContentOf(actual[i]), equalTo(textContentOf(expected[i])));
+			assertThat(rawContentOf(actual[i]), is(equalTo(textContentOf(expected[i]))));
 		}
 	}
 
@@ -95,7 +95,7 @@ public class KeisukePublisherUsingDiffTooTest extends AbstractProjectTest {
 		try {
 			this.setProject(this.projectMaker().createJobToCountJavaUsingCustomRuleDiffToo(
 					"JavaCsvRuleDiffJob", outfile[0], "csv", true, outfile[1], "csv"));
-			FreeStyleBuild build = this.jenkinsRule.buildAndAssertSuccess(this.project());
+			this.jenkinsRule.buildAndAssertSuccess(this.project());
 			for (int i = 0; i < 2; i++) {
 				actual[i] = new File(this.workspace(), outfile[i]);
 				//System.out.println("[TEST] outfile[" + i + "] = " + actual[i].getAbsolutePath());
@@ -108,7 +108,7 @@ public class KeisukePublisherUsingDiffTooTest extends AbstractProjectTest {
 		for (int i = 0; i < 2; i++) {
 			System.out.println("[TEST] outfile[" + i + "] = " + actual[i].getAbsolutePath());
 			System.out.println(rawContentOf(actual[i]));
-			assertThat(rawContentOf(actual[i]), equalTo(textContentOf(expected[i])));
+			assertThat(rawContentOf(actual[i]), is(equalTo(textContentOf(expected[i]))));
 		}
 	}
 
@@ -165,7 +165,7 @@ public class KeisukePublisherUsingDiffTooTest extends AbstractProjectTest {
 				System.out.println("[TEST] outfile[" + i + "][" + j + "] = "
 						+ actual[i][j].getAbsolutePath());
 				System.out.println(rawContentOf(actual[i][j]));
-				assertThat(rawContentOf(actual[i][j]), equalTo(textContentOf(expected[i][j])));
+				assertThat(rawContentOf(actual[i][j]), is(equalTo(textContentOf(expected[i][j]))));
 			}
 		}
 	}

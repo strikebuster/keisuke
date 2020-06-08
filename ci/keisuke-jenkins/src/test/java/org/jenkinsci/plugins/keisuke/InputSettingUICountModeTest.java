@@ -3,6 +3,7 @@ package org.jenkinsci.plugins.keisuke;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.jenkinsci.plugins.keisuke.setup.TestDataConstant.CUSTOM_LANGUAGE_XML;
 
@@ -43,7 +44,7 @@ public class InputSettingUICountModeTest extends AbstractSettingUITest {
 		// 任意のカテゴリ名を指定
 		System.out.println("[TEST] === input a good value into unitName.");
 		String unitGoodValue = "default";
-		unitTextbox.setText(unitGoodValue);
+		this.inputUI.inputValue(unitTextbox, unitGoodValue);
 		this.waitForEventCallbackProcess();
 		this.inputUI.findUnitNameThenVerify(unitGoodValue, true); // 指定値, エラー表示なし
 
@@ -52,7 +53,7 @@ public class InputSettingUICountModeTest extends AbstractSettingUITest {
 		// 任意のパスを指定
 		System.out.println("[TEST] === input a good value into sourceDirectory.");
 		String srcdirGoodValue = "src/main/java";
-		srcdirTextbox.setText(srcdirGoodValue);
+		this.inputUI.inputValue(srcdirTextbox, srcdirGoodValue);
 		this.waitForEventCallbackProcess();
 		this.inputUI.findSourceDirectoryThenVerify(srcdirGoodValue, true); // 指定値, エラー表示なし
 
@@ -67,7 +68,7 @@ public class InputSettingUICountModeTest extends AbstractSettingUITest {
 		HtmlTextInput xmlpathTextbox = this.inputUI.findXmlPathThenVerify("", true); // 初期値"", エラー表示なし
 		// ""を指定
 		System.out.println("[TEST] === input a good value into xmlPath.");
-		xmlpathTextbox.setText(empty);
+		this.inputUI.inputValue(xmlpathTextbox, empty);
 		this.waitForEventCallbackProcess();
 		this.inputUI.findXmlPathThenVerify(empty, true); // 指定値"", エラー表示なし
 
@@ -87,7 +88,7 @@ public class InputSettingUICountModeTest extends AbstractSettingUITest {
 		HtmlTextInput includeTextbox = this.inputUI.findIncludePatternThenVerify("", true); // 初期値"", エラー表示なし
 		// ""を指定
 		System.out.println("[TEST] === input an empty value into includePattern.");
-		includeTextbox.setText(empty);
+		this.inputUI.inputValue(includeTextbox, empty);
 		this.waitForEventCallbackProcess();
 		this.inputUI.findIncludePatternThenVerify(empty, true); // 指定値"", エラー表示なし
 
@@ -95,7 +96,7 @@ public class InputSettingUICountModeTest extends AbstractSettingUITest {
 		HtmlTextInput excludeTextbox = this.inputUI.findExcludePatternThenVerify("", true); // 初期値"", エラー表示なし
 		// ""を指定
 		System.out.println("[TEST] === input an empty value into excludePattern.");
-		excludeTextbox.setText(empty);
+		this.inputUI.inputValue(excludeTextbox, empty);
 		this.waitForEventCallbackProcess();
 		this.inputUI.findExcludePatternThenVerify(empty, true); // 指定値"", エラー表示なし
 
@@ -137,7 +138,7 @@ public class InputSettingUICountModeTest extends AbstractSettingUITest {
 		// 任意のユニット名を指定
 		System.out.println("[TEST] === input a good value into unitName.");
 		String unitGoodValue = "java";
-		unitTextbox.setText(unitGoodValue);
+		this.inputUI.inputValue(unitTextbox, unitGoodValue);
 		this.waitForEventCallbackProcess();
 		this.inputUI.findUnitNameThenVerify(unitGoodValue, true); // 指定値, エラー表示なし
 
@@ -146,7 +147,7 @@ public class InputSettingUICountModeTest extends AbstractSettingUITest {
 		// 任意のパスを指定
 		System.out.println("[TEST] === input a good value into sourceDirectory.");
 		String srcdirGoodValue = "src/main/java";
-		srcdirTextbox.setText(srcdirGoodValue);
+		this.inputUI.inputValue(srcdirTextbox, srcdirGoodValue);
 		this.waitForEventCallbackProcess();
 		this.inputUI.findSourceDirectoryThenVerify(srcdirGoodValue, true); // 指定値, エラー表示なし
 
@@ -156,7 +157,7 @@ public class InputSettingUICountModeTest extends AbstractSettingUITest {
 		// 初期値file.encoding, エラー表示なし
 		System.out.println("[TEST] === input a good value into encoding.");
 		String encodingGoodValue = "Shift_JIS";
-		encodingTextbox.setText(encodingGoodValue);
+		this.inputUI.inputValue(encodingTextbox, encodingGoodValue);
 		this.waitForEventCallbackProcess();
 		this.inputUI.findEncodingThenVerify(encodingGoodValue, true); // 指定値, エラー表示なし
 
@@ -169,7 +170,7 @@ public class InputSettingUICountModeTest extends AbstractSettingUITest {
 		// 存在するXMLファイルを指定
 		System.out.println("[TEST] === input a good value into xmlPath.");
 		String xmlpathGoodValue = CUSTOM_LANGUAGE_XML;
-		xmlpathTextbox.setText(xmlpathGoodValue);
+		this.inputUI.inputValue(xmlpathTextbox, xmlpathGoodValue);
 		this.waitForEventCallbackProcess();
 		this.inputUI.findXmlPathThenVerify(xmlpathGoodValue, true); // 指定値, エラー表示なし
 
@@ -191,7 +192,7 @@ public class InputSettingUICountModeTest extends AbstractSettingUITest {
 		// 任意のパターンを指定
 		System.out.println("[TEST] === input a good value into includePattern.");
 		String includeGoodValue = "**/*.java";
-		includeTextbox.setText(includeGoodValue);
+		this.inputUI.inputValue(includeTextbox, includeGoodValue);
 		this.waitForEventCallbackProcess();
 		this.inputUI.findIncludePatternThenVerify(includeGoodValue, true); // 指定値, エラー表示なし
 
@@ -201,7 +202,7 @@ public class InputSettingUICountModeTest extends AbstractSettingUITest {
 		// 任意のパターンを指定
 		System.out.println("[TEST] === input a good value into excludePattern.");
 		String excludeGoodValue = "**/test/**/*.java";
-		excludeTextbox.setText(excludeGoodValue);
+		this.inputUI.inputValue(excludeTextbox, excludeGoodValue);
 		this.waitForEventCallbackProcess();
 		this.inputUI.findExcludePatternThenVerify(excludeGoodValue, true); // 指定値, エラー表示なし
 
@@ -220,7 +221,7 @@ public class InputSettingUICountModeTest extends AbstractSettingUITest {
 		this.inputUI.findEncodingThenVerify(encodingGoodValue, true); // 指定値, エラー表示なし
 		// 高度な設定の開始divを取得
 		HtmlDivision advancedDiv = this.inputUI.findAdvancedDivision();
-		assertThat(advancedDiv.getAttribute("class"), equalTo("advancedLink"));
+		assertThat(advancedDiv.getAttribute("class"), is(equalTo("advancedLink")));
 		System.out.println("[TEST] AdvancedDiv style(re-open):" + advancedDiv.getAttribute("style"));
 		assertThat(advancedDiv.getAttribute("style"), not(containsString("display: none")));
 		// 項目編集ありの表示の検証
@@ -249,7 +250,7 @@ public class InputSettingUICountModeTest extends AbstractSettingUITest {
 		// 任意のユニット名を指定
 		System.out.println("[TEST] === input a good value into unitName.");
 		String unitGoodValue = "java";
-		unitTextbox.setText(unitGoodValue);
+		this.inputUI.inputValue(unitTextbox, unitGoodValue);
 		this.waitForEventCallbackProcess();
 		this.inputUI.findUnitNameThenVerify(unitGoodValue, true); // 指定値, エラー表示なし
 
@@ -258,7 +259,7 @@ public class InputSettingUICountModeTest extends AbstractSettingUITest {
 		// 任意のパスを指定
 		System.out.println("[TEST] === input a good value into sourceDirectory.");
 		String srcdirGoodValue = "src/main/java";
-		srcdirTextbox.setText(srcdirGoodValue);
+		this.inputUI.inputValue(srcdirTextbox, srcdirGoodValue);
 		this.waitForEventCallbackProcess();
 		this.inputUI.findSourceDirectoryThenVerify(srcdirGoodValue, true); // 指定値, エラー表示なし
 
@@ -276,7 +277,7 @@ public class InputSettingUICountModeTest extends AbstractSettingUITest {
 		// 存在するXMLファイルを指定
 		System.out.println("[TEST] === input a good value into xmlPath.");
 		String xmlpathGoodValue = CUSTOM_LANGUAGE_XML;
-		xmlpathTextbox.setText(xmlpathGoodValue);
+		this.inputUI.inputValue(xmlpathTextbox, xmlpathGoodValue);
 		this.waitForEventCallbackProcess();
 		this.inputUI.findXmlPathThenVerify(xmlpathGoodValue, true); // 指定値, エラー表示なし
 
@@ -307,7 +308,7 @@ public class InputSettingUICountModeTest extends AbstractSettingUITest {
 		// 任意のパスを指定
 		System.out.println("[TEST] === input a good value into oldSourceDirectory.");
 		String olddirGoodValue = "/opt/base/project/src/main/java";
-		olddirTextbox.setText(olddirGoodValue);
+		this.inputUI.inputValue(olddirTextbox, olddirGoodValue);
 		this.waitForEventCallbackProcess();
 		this.inputUI.findOldSourceDirectoryThenVerify(olddirGoodValue, true); // 指定値, エラー表示なし
 

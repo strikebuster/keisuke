@@ -4,6 +4,7 @@ import static keisuke.util.TestUtil.rawContentOf;
 import static keisuke.util.TestUtil.textContentOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.stringContainsInOrder;
 import static org.junit.Assert.fail;
 
@@ -12,8 +13,6 @@ import java.net.URL;
 import java.util.Arrays;
 
 import org.junit.Test;
-
-import hudson.model.FreeStyleBuild;
 
 /**
  * Testing KeisukePublisher in FreeStyleProject,
@@ -32,7 +31,7 @@ public class KeisukePublisherUsingStepSimplyWithoutBaseDirTest extends AbstractP
 
 		try {
 			this.setProject(this.projectMaker().createJobToCountJava("JavaCsvJob", outfile, "csv", false));
-			FreeStyleBuild build = this.jenkinsRule.buildAndAssertSuccess(this.project());
+			this.jenkinsRule.buildAndAssertSuccess(this.project());
 			//System.out.println("[TEST] Workspace is " + this.workspace().getAbsolutePath());
 			actual = new File(this.workspace(), outfile);
 			//System.out.println("[TEST] outfile = " + actual.getAbsolutePath());
@@ -41,7 +40,7 @@ public class KeisukePublisherUsingStepSimplyWithoutBaseDirTest extends AbstractP
 			fail("Unexpected Exception is occured." + ex);
 		}
 		System.out.println(rawContentOf(actual));
-		assertThat(rawContentOf(actual), equalTo(textContentOf(expected)));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -62,7 +61,7 @@ public class KeisukePublisherUsingStepSimplyWithoutBaseDirTest extends AbstractP
 			fail("Unexpected Exception is occured." + ex);
 		}
 		System.out.println(rawContentOf(actual));
-		assertThat(rawContentOf(actual), equalTo(textContentOf(expected)));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -83,7 +82,7 @@ public class KeisukePublisherUsingStepSimplyWithoutBaseDirTest extends AbstractP
 			fail("Unexpected Exception is occured." + ex);
 		}
 		System.out.println(rawContentOf(actual));
-		assertThat(rawContentOf(actual), equalTo(textContentOf(expected)));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -152,7 +151,7 @@ public class KeisukePublisherUsingStepSimplyWithoutBaseDirTest extends AbstractP
 			fail("Unexpected Exception is occured." + ex);
 		}
 		System.out.println(rawContentOf(actual));
-		assertThat(rawContentOf(actual), equalTo(textContentOf(expected)));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -185,7 +184,7 @@ public class KeisukePublisherUsingStepSimplyWithoutBaseDirTest extends AbstractP
 		}
 		for (int i = 0; i < actual.length; i++) {
 			System.out.println(rawContentOf(actual[i]));
-			assertThat(rawContentOf(actual[i]), equalTo(textContentOf(expected[i])));
+			assertThat(rawContentOf(actual[i]), is(equalTo(textContentOf(expected[i]))));
 		}
 	}
 }

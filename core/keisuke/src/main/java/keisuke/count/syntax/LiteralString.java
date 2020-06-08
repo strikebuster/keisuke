@@ -89,7 +89,6 @@ public class LiteralString extends AbstractBlock {
 
 	/**
 	 * リテラルの開始記号を取得します
-	 * @param なし
 	 */
 	@Override
 	public String getStartString() {
@@ -106,7 +105,6 @@ public class LiteralString extends AbstractBlock {
 
 	/**
 	 * リテラルの終了記号を取得します
-	 * @param なし
 	 */
 	@Override
 	public String getEndString() {

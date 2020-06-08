@@ -22,8 +22,9 @@ import hudson.util.FormValidation;
  * This has values of Display Setting
  */
 public class DisplaySetting extends AbstractDescribableImpl<DisplaySetting> implements Serializable {
-
 	private static final long serialVersionUID = 2L; // since ver.2.0.0
+
+	@SuppressWarnings("unused")
 	private transient PrintStream syslogger = System.out;
 
 	private static final DisplayStepKindEnum DEFAULT_KIND = DisplayStepKindEnum.CODE;

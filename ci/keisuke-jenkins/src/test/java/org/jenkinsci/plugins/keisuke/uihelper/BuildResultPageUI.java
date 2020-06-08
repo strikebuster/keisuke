@@ -3,6 +3,7 @@ package org.jenkinsci.plugins.keisuke.uihelper;
 import static keisuke.util.TestUtil.contentOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.startsWith;
 import static org.jenkinsci.plugins.keisuke.util.BuildResultCountTestUtil.contentWithoutTypeAndCategoryOf;
 import static org.jenkinsci.plugins.keisuke.util.BuildResultCountTestUtil.convertToTableArrayFromDiffTableBody;
@@ -164,14 +165,14 @@ public class BuildResultPageUI extends AbstractReportPageUI {
 		HtmlTableDataCell valueCell = (HtmlTableDataCell) this.getPage().getFirstByXPath(tdXpath);
 		String label = valueCell.getTextContent();
 		System.out.println("[TEST] table Row Label:" + label);
-		assertThat(label, equalTo(expectedLabel));
+		assertThat(label, is(equalTo(expectedLabel)));
 		// data values
 		for (int i = 0; i < expected.length; i++) {
 			tdXpath = trow.getCanonicalXPath() + "/td[" + Integer.toString(i + 2) + "]";
 			valueCell = (HtmlTableDataCell) this.getPage().getFirstByXPath(tdXpath);
 			System.out.println("[TEST] table Data Value:" + valueCell.getTextContent());
 			int value = parseIntOrHyphen(valueCell.getTextContent());
-			assertThat(value, equalTo(expected[i]));
+			assertThat(value, is(equalTo(expected[i])));
 		}
 	}
 
@@ -444,7 +445,7 @@ public class BuildResultPageUI extends AbstractReportPageUI {
 			String aXpath = ul.getCanonicalXPath() + "/li[" + i + "]/a";
 			HtmlAnchor anchor = (HtmlAnchor) this.getPage().getFirstByXPath(aXpath);
 			System.out.println("[TEST] li[" + i + "] anchor content:" + anchor.getTextContent());
-			assertThat(anchor.getTextContent(), equalTo(expected[i - 1]));
+			assertThat(anchor.getTextContent(), is(equalTo(expected[i - 1])));
 		}
 	}
 
@@ -517,7 +518,7 @@ public class BuildResultPageUI extends AbstractReportPageUI {
 		String[][] actualData = convertToTableArrayFromStepTableBody(this.getPage(), tableBody);
 		System.out.println("[TEST] tBody contents:\n" + contentOf(actualData));
 		//System.out.println("[TEST] expected data file:" + expected.getPath());
-		assertThat(contentOf(actualData), equalTo(contentWithoutTypeAndCategoryOf(expected)));
+		assertThat(contentOf(actualData), is(equalTo(contentWithoutTypeAndCategoryOf(expected))));
 	}
 
 	private HtmlTableRow findTrowOfUnitDiffDetailTableLabel(final HtmlDivision unitDiv) {
@@ -559,6 +560,6 @@ public class BuildResultPageUI extends AbstractReportPageUI {
 		String[][] actualData = convertToTableArrayFromDiffTableBody(this.getPage(), tableBody);
 		System.out.println("[TEST] tBody contents:\n" + contentOf(actualData));
 		//System.out.println("[TEST] expected data file:" + expected.getPath());
-		assertThat(contentOf(actualData), equalTo(contentWithoutTypeAndCategoryOf(expected)));
+		assertThat(contentOf(actualData), is(equalTo(contentWithoutTypeAndCategoryOf(expected))));
 	}
 }

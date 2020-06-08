@@ -40,8 +40,8 @@ public class XmlFormatter extends AbstractFormatter {
 					.append(EncodeUtil.xmlEscape(result.sourceCategory())).append("\" ");
 			}
 			if (!result.isUnsupported()) {
-				sb.append("step=\"").append(Long.toString(result.execSteps())).append("\" ");
-				sb.append("none=\"").append(Long.toString(result.blancSteps())).append("\" ");
+				sb.append("code=\"").append(Long.toString(result.execSteps())).append("\" ");
+				sb.append("blank=\"").append(Long.toString(result.blancSteps())).append("\" ");
 				sb.append("comment=\"").append(Long.toString(result.commentSteps())).append("\" ");
 				sb.append("total=\"").append(Long.toString(result.sumSteps())).append("\" ");
 			}

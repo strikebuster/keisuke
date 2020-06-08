@@ -1,4 +1,4 @@
-FileName                                Type        Category            Exec  Blanc Cmnt  Sum   
+FileName                                Type        Category            Code  Blank Comnt Sum   
 ------------------------------------------------------------------------------------------------
 root1/src/JavaCutter.java               Java        Cutter                   8     5     7    20
 root1/src/StringUtil.java               Java                                42    11     9    62

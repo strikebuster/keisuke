@@ -26,8 +26,9 @@ import org.jenkinsci.plugins.keisuke.util.EncodeUtil;
  * This has values of Input Setting which means InputCategory
  */
 public class InputSetting extends AbstractDescribableImpl<InputSetting> implements Serializable {
-
 	private static final long serialVersionUID = 10L; // since ver.2.0.0
+
+	@SuppressWarnings("unused")
 	private transient PrintStream syslogger = System.out;
 
 	private static final CountingModeEnum DEFAULT_MODE = CountingModeEnum.ONLY_STEP_SIMPLY;
@@ -300,7 +301,7 @@ public class InputSetting extends AbstractDescribableImpl<InputSetting> implemen
     	 */
     	public String getDefaultEncoding() {
     		KeisukePublisher.DescriptorImpl descriptor
-    			= Jenkins.getInstance().getDescriptorByType(KeisukePublisher.DescriptorImpl.class);
+    			= Jenkins.get().getDescriptorByType(KeisukePublisher.DescriptorImpl.class);
     		if (descriptor == null || descriptor.getGlobalSetting() == null) {
     			return "";
     		}
@@ -313,7 +314,7 @@ public class InputSetting extends AbstractDescribableImpl<InputSetting> implemen
     	 */
     	public String getDefaultXmlPath() {
     		KeisukePublisher.DescriptorImpl descriptor
-    			= Jenkins.getInstance().getDescriptorByType(KeisukePublisher.DescriptorImpl.class);
+    			= Jenkins.get().getDescriptorByType(KeisukePublisher.DescriptorImpl.class);
     		if (descriptor == null || descriptor.getGlobalSetting() == null) {
     			return "";
     		}

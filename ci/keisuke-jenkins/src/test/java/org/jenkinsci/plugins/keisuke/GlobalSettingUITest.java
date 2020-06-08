@@ -3,6 +3,7 @@ package org.jenkinsci.plugins.keisuke;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
 import static org.jenkinsci.plugins.keisuke.util.PathUtil.getExistingFilePath;
 import static org.jenkinsci.plugins.keisuke.util.HtmlTestUtil.WAITLONGTIME;
 import static org.jenkinsci.plugins.keisuke.util.HtmlTestUtil.WAITTIME;
@@ -144,7 +145,7 @@ public class GlobalSettingUITest implements ConfigUIClient {
 		// 存在するエンコード名を指定
 		System.out.println("[TEST] === input a good value into encoding.");
 		String encodingGoodValue = "Shift_JIS";
-		encodingTextbox.setText(encodingGoodValue);
+		this.globalUI.inputValue(encodingTextbox, encodingGoodValue);
 		this.waitForEventCallbackProcess();
 		this.globalUI.findEncodingThenVerify(encodingGoodValue, true); // 指定値, エラー表示なし
 
@@ -153,7 +154,7 @@ public class GlobalSettingUITest implements ConfigUIClient {
 		// 存在するパスを指定
 		System.out.println("[TEST] === input a good value into xmlPath.");
 		String xmlpathGoodValue = getExistingFilePath();
-		xmlpathTextbox.setText(xmlpathGoodValue);
+		this.globalUI.inputValue(xmlpathTextbox, xmlpathGoodValue);
 		this.waitForEventCallbackProcess();
 		this.globalUI.findXmlPathThenVerify(xmlpathGoodValue, true); // 指定値, エラー表示なし
 		// 設定を保存
@@ -180,7 +181,7 @@ public class GlobalSettingUITest implements ConfigUIClient {
 		// 存在しないエンコード名を指定
 		System.out.println("[TEST] === input a bad value into encoding.");
 		String encodingBadValue = "WRONG-ENCODING";
-		encodingTextbox.setText(encodingBadValue);
+		this.globalUI.inputValue(encodingTextbox, encodingBadValue);
 		this.waitForEventCallbackProcess();
 		this.globalUI.findEncodingThenVerify(encodingBadValue, false); // 指定値, エラー表示あり
 
@@ -189,7 +190,7 @@ public class GlobalSettingUITest implements ConfigUIClient {
 		// 存在しないパスを指定
 		System.out.println("[TEST] === input a bad value into xmlPath.");
 		String xmlpathBadValue = "WRONG/XML/FILE/PATH";
-		xmlpathTextbox.setText(xmlpathBadValue);
+		this.globalUI.inputValue(xmlpathTextbox, xmlpathBadValue);
 		this.waitForEventCallbackProcess();
 		this.globalUI.findXmlPathThenVerify(xmlpathBadValue, false); // 指定値, エラー表示あり
 	}
@@ -201,12 +202,12 @@ public class GlobalSettingUITest implements ConfigUIClient {
 		String helpText;
 		// エンコード入力ボックスの検証
 		helpText = this.globalUI.getHelpContentOfEncoding();
-		assertThat(helpText, allOf(containsString("file.encoding"), containsString("(e.g. 'UTF-8')")));
+		assertThat(helpText, is(allOf(containsString("file.encoding"), containsString("(e.g. 'UTF-8')"))));
 
 		// XMLファイルパス入力ボックスの検証
 		helpText = this.globalUI.getHelpContentOfXmlPath();
-		assertThat(helpText, allOf(containsString("XML"),
-				containsString("(e.g. '/home/develop/conf/language.xml')")));
+		assertThat(helpText, is(allOf(containsString("XML"),
+				containsString("(e.g. '/home/develop/conf/language.xml')"))));
 	}
 
 }

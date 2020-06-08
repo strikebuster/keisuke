@@ -41,6 +41,7 @@ public abstract class AbstractXmlDefine {
 	 * XMLファイルのルートElementを返す
 	 * @param fname 解析対象のXMLファイル名
 	 * @return XMLのルートElement
+	 * @throws RuntimeException XMLの解析に失敗した場合に発行する
 	 */
 	protected Element getDocRoot(final String fname) {
 		try {

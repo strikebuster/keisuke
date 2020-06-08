@@ -8,7 +8,7 @@ StepCounterを模倣してソースコードの行数計測をする機能もあ
 計測可能な言語についてはdocディレクトリ内のlanguage.xmlを参照してください。
 主な言語を例示すると
 COBOL, Fortran, C/C++, Java, Scala, C#, Smalltalk, VB, Delphi,
-JavaScript, TypeScript, VBScript, JSP, ASP, PHP, Flex, XML, HTML,
+JavaScript, TypeScript, VBScript, JSP, ASP, PHP, Jelly, Flex, XML, HTML,
 BAT, Shell, Perl, Python, Ruby, Groovy, Lua, SQL, R, Lisp, Scheme, Clojure, Haskell
 などがあります。
 
@@ -98,6 +98,25 @@ Pipelineにも対応しています。
 
 - - -
 ### 更新履歴
+###### Version 2.1.0(2020/6/8)
+* 計測対象の追加(Jelly)  
+・language.xmlにJellyを追加  
+* 機能改修  
+・keisuke.CountReportの出力データのラベル文字列を一部変更  
+　"合計"→"全行数"、"有効"→"コード"  
+・keisuke.countの出力データのラベル文字列およびデータのキー文字列を一部変更  
+　TEXT("合計"→"全行数", "Exec"→"Code", "Blan"→"Blank", "Cmnt"→"Comnt")  
+　EXCEL("合計"→"全行数", "追加"→"追加行数", "削除"→"削除行数", "execut"→"Code", "blanc"→"Blank", "commen"→"Comment")  
+　JSON,XML("step"→"code", "none"→"blank")  
+・keisuke.countのExcelテンプレートのシート名を一部変更  
+* バグ修正  
+・message.propertiesのキー名に誤りがあったものを修正  
+* 内部的な改変  
+・coreモジュールの依存ライブラリのリビジョン更新  
+・Jenkinsプラグインの依存する親POMと jenkins-coreのリビジョン更新  
+・ビルド時のJavaコード解析をFindBugsからSpotBugsへ変更  
+・ビルドスクリプトの変更（Gradle6.x対応、SpotBugs対応、Gradleマルチプロジェクト解除など）  
+
 ###### Version 2.0.0(2020/4/29)
 * 機能追加  
 ・Jenkinsプラグインを追加  

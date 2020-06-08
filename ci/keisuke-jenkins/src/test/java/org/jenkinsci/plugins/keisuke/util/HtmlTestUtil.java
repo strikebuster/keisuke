@@ -502,6 +502,7 @@ public final class HtmlTestUtil {
 		return sb.toString();
 	}
 
+	@SuppressWarnings("unused")
 	private static String getBrotherNode(final String node, final int position) {
 		if (position < 0) {
 			throw new IllegalArgumentException("position is less than zero.");

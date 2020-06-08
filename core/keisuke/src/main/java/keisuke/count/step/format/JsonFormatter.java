@@ -46,8 +46,8 @@ public class JsonFormatter extends AbstractFormatter {
 					.append(EncodeUtil.unicodeEscape(result.sourceCategory())).append("\"");
 			}
 			if (!result.isUnsupported()) {
-				sb.append(", \"step\": ").append(Long.toString(result.execSteps()));
-				sb.append(", \"none\": ").append(Long.toString(result.blancSteps()));
+				sb.append(", \"code\": ").append(Long.toString(result.execSteps()));
+				sb.append(", \"blank\": ").append(Long.toString(result.blancSteps()));
 				sb.append(", \"comment\": ").append(Long.toString(result.commentSteps()));
 				sb.append(", \"total\": ").append(Long.toString(result.sumSteps()));
 			}

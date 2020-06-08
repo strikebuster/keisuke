@@ -22,11 +22,19 @@ import keisuke.util.LogUtil;
  */
 public class ExcelRenderer extends AbstractRenderer {
 
+	//private static final String XLS_PREFIX = "DiffExcelTemplate";
 	private static final String XLS_PREFIX = "DiffExcelFormat";
-	private static final String XLS_EXTENSION = "." + FormatEnum.EXCEL.fileExtension();
 	private static final String XLS_DATA_RESULT = "results";
 	private static final String XLS_DATA_TOTAL_ADD = "totalAdd";
 	private static final String XLS_DATA_TOTAL_DELETE = "totalDel";
+	private String xlsExtension = "." + FormatEnum.EXCEL.fileExtension();
+
+	ExcelRenderer(final FormatEnum formatEnum) {
+		super();
+		//if (formatEnum.equals(FormatEnum.EXCEL97)) {
+		//	this.xlsExtension = "." + FormatEnum.EXCEL97.fileExtension();
+		//}
+	}
 
 	/** {@inheritDoc} */
 	public byte[] format(final DiffFolderResult result) {
@@ -35,19 +43,19 @@ public class ExcelRenderer extends AbstractRenderer {
 		}
 		InputStream in = null;
 		try {
-			String xlsTemplate = XLS_PREFIX + LocaleUtil.getLocalePostfix() + XLS_EXTENSION;
+			String xlsTemplate = XLS_PREFIX + LocaleUtil.getLocalePostfix() + this.xlsExtension;
 			//LogUtil.debugLog("xlsTemplate = " + xlsTemplate);
 			URL url = this.getClass().getResource(xlsTemplate);
 			if (url == null) {
-				xlsTemplate = XLS_PREFIX + XLS_EXTENSION;
+				xlsTemplate = XLS_PREFIX + this.xlsExtension;
+				//LogUtil.debugLog("xlsTemplate = " + xlsTemplate);
 			}
-			//LogUtil.debugLog("xlsTemplate = " + xlsTemplate);
 			in = this.getClass().getResourceAsStream(xlsTemplate);
 			Map<String, Object> data = new HashMap<String, Object>();
 			data.put(XLS_DATA_RESULT, this.listConvertedFrom(result));
 			data.put(XLS_DATA_TOTAL_ADD, result.addedSteps());
 			data.put(XLS_DATA_TOTAL_DELETE, result.deletedSteps());
-			return ExcelUtil.makeExcelData(in, data);
+			return new ExcelUtil().makeExcelData(in, data);
 		} catch (Exception ex) {
 			LogUtil.errorLog("fail to make excel data");
 			throw new RuntimeException(ex);

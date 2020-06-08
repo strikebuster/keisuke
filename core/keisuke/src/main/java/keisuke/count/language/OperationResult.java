@@ -189,7 +189,7 @@ public class OperationResult {
 	/**
 	 * LogUtilのインポートを正当化するためのダミー
 	 */
-	static void noUsingDummy() {
-		LogUtil.warningLog("This must not be called, because dummy");
+	void noUsingDummy() {
+		LogUtil.warningLog("This must not be called, because dummy. " + this.sourceType);
 	}
 }

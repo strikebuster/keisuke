@@ -119,6 +119,7 @@ public class XmlFrameworkDefine extends AbstractXmlDefine {
 	/**
 	 * DEBUG用Framework定義マップの内容を表示する
 	 */
+	@SuppressWarnings("unused")
 	private void debugFwMap() {
 		for (Entry<String, FrameworkElement> entry : this.fwMap.entrySet()) {
 			String key = entry.getKey();

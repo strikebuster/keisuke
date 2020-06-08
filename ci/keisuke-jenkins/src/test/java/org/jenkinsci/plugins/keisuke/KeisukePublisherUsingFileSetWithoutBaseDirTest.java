@@ -6,6 +6,7 @@ import static keisuke.util.TestUtil.rawContentOf;
 import static keisuke.util.TestUtil.textContentOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -14,8 +15,6 @@ import java.net.URL;
 import org.jenkinsci.plugins.keisuke.setup.ProjectMaker;
 import org.junit.Before;
 import org.junit.Test;
-
-import hudson.model.FreeStyleBuild;
 
 /**
  * Testing KeisukePublisher in FreeStyleProject,
@@ -39,7 +38,7 @@ public class KeisukePublisherUsingFileSetWithoutBaseDirTest extends AbstractProj
 
 		try {
 			this.setProject(this.projectMaker().createJobToCountJava("JavaCsvJob", outfile, "csv", false));
-			FreeStyleBuild build = this.jenkinsRule.buildAndAssertSuccess(this.project());
+			this.jenkinsRule.buildAndAssertSuccess(this.project());
 			//System.out.println("[TEST] Workspace is " + this.workspace().getAbsolutePath());
 			actual = new File(this.workspace(), outfile);
 			//System.out.println("[TEST] outfile = " + actual.getAbsolutePath());
@@ -48,7 +47,7 @@ public class KeisukePublisherUsingFileSetWithoutBaseDirTest extends AbstractProj
 			fail("Unexpected Exception is occured." + ex);
 		}
 		System.out.println(rawContentOf(actual));
-		assertThat(rawContentOf(actual), equalTo(textContentOf(expected)));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -69,7 +68,7 @@ public class KeisukePublisherUsingFileSetWithoutBaseDirTest extends AbstractProj
 			fail("Unexpected Exception is occured." + ex);
 		}
 		System.out.println(rawContentOf(actual));
-		assertThat(rawContentOf(actual), equalTo(textContentOf(expected)));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -90,7 +89,7 @@ public class KeisukePublisherUsingFileSetWithoutBaseDirTest extends AbstractProj
 			fail("Unexpected Exception is occured." + ex);
 		}
 		System.out.println(rawContentOf(actual));
-		assertThat(rawContentOf(actual), equalTo(textContentOf(expected)));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -117,7 +116,7 @@ public class KeisukePublisherUsingFileSetWithoutBaseDirTest extends AbstractProj
 			fail("Unexpected Exception is occured." + ex);
 		}
 		System.out.println(rawContentOf(actual));
-		assertThat(rawContentOf(actual), equalTo(textContentOf(expected)));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -138,7 +137,7 @@ public class KeisukePublisherUsingFileSetWithoutBaseDirTest extends AbstractProj
 			fail("Unexpected Exception is occured." + ex);
 		}
 		System.out.println(rawContentOf(actual));
-		assertThat(rawContentOf(actual), equalTo(textContentOf(expected)));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -159,7 +158,7 @@ public class KeisukePublisherUsingFileSetWithoutBaseDirTest extends AbstractProj
 			fail("Unexpected Exception is occured." + ex);
 		}
 		System.out.println(rawContentOf(actual));
-		assertThat(rawContentOf(actual), equalTo(textContentOf(expected)));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -180,7 +179,7 @@ public class KeisukePublisherUsingFileSetWithoutBaseDirTest extends AbstractProj
 			fail("Unexpected Exception is occured." + ex);
 		}
 		System.out.println(rawContentOf(actual));
-		assertThat(rawContentOf(actual), equalTo(textContentOf(expected)));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
 	@Test
@@ -213,7 +212,7 @@ public class KeisukePublisherUsingFileSetWithoutBaseDirTest extends AbstractProj
 		}
 		for (int i = 0; i < actual.length; i++) {
 			System.out.println(rawContentOf(actual[i]));
-			assertThat(rawContentOf(actual[i]), equalTo(textContentOf(expected[i])));
+			assertThat(rawContentOf(actual[i]), is(equalTo(textContentOf(expected[i]))));
 		}
 	}
 
@@ -245,8 +244,9 @@ public class KeisukePublisherUsingFileSetWithoutBaseDirTest extends AbstractProj
 			ex.printStackTrace();
 			fail("Unexpected Exception is occured." + ex);
 		}
+		// this.sleep(180);	// waiting to salvage output files from /tmp
 		for (int i = 0; i < actual.length; i++) {
-			assertThat(binaryContentOf(actual[i]), equalTo(binaryContentOf(expected[i])));
+			assertThat(binaryContentOf(actual[i]), is(equalTo(binaryContentOf(expected[i]))));
 		}
 	}
 
@@ -280,7 +280,7 @@ public class KeisukePublisherUsingFileSetWithoutBaseDirTest extends AbstractProj
 		}
 		for (int i = 0; i < actual.length; i++) {
 			System.out.println(rawContentOf(actual[i]));
-			assertThat(rawContentOf(actual[i]), equalTo(textContentOf(expected[i])));
+			assertThat(rawContentOf(actual[i]), is(equalTo(textContentOf(expected[i]))));
 		}
 	}
 

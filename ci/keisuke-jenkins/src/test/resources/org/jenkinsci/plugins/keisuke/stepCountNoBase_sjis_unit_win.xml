@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="MS932"?>
 <stepcounter>
-	<file name="test/comment.bat" type="BAT" category="commentS" step="4" none="1" comment="4" total="9" />
-	<file name="test/comment.cbf" type="COBOL" category="commentS" step="13" none="3" comment="11" total="27" />
-	<file name="test/comment.cob" type="COBOL" category="commentS" step="6" none="4" comment="6" total="16" />
-	<file name="test/comment.vbs" type="VBScript" category="commentS" step="4" none="2" comment="2" total="8" />
+	<file name="test/comment.bat" type="BAT" category="commentS" code="4" blank="1" comment="4" total="9" />
+	<file name="test/comment.cbf" type="COBOL" category="commentS" code="13" blank="3" comment="11" total="27" />
+	<file name="test/comment.cob" type="COBOL" category="commentS" code="6" blank="4" comment="6" total="16" />
+	<file name="test/comment.vbs" type="VBScript" category="commentS" code="4" blank="2" comment="2" total="8" />
 </stepcounter>

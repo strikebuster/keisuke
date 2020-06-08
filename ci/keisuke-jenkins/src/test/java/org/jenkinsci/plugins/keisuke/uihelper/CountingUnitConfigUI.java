@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.keisuke.uihelper;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.jenkinsci.plugins.keisuke.uihelper.ConfigHtmlUI.RETRY_FOR_YUI;
@@ -166,7 +167,7 @@ public class CountingUnitConfigUI {
 		HtmlDivision countingUnitsDiv = this.findCountingUnitsDivision();
 		System.out.println("[TEST] countingUnits Div XPath:" + countingUnitsDiv.getCanonicalXPath());
 		HtmlButton addButton = this.findYuiAddButtonForCountingUnitAtDiv(countingUnitsDiv);
-		assertThat(addButton, not(nullValue()));
+		assertThat(addButton, is(not(nullValue())));
 		System.out.println("[TEST] Add button :" + addButton.toString());
 		System.out.println("[TEST] === click the add button.");
 		try {

@@ -108,6 +108,7 @@ public class BuildResult implements Serializable {
 	 * to list of FileSteps.
 	 * @param fileStep result of counting
 	 */
+	@SuppressWarnings("unused")
 	private void addFileStep(final StepCountResultForPublish fileStep) {
 		this.fileStepList.add(fileStep);
 		this.codeSum += fileStep.getCodes();

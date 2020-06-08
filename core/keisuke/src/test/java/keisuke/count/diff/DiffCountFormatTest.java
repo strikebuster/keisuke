@@ -1,13 +1,13 @@
 package keisuke.count.diff;
 
-//import static keisuke.count.CountTestUtil.binaryContentOf;
-import static keisuke.count.CountTestUtil.excelContentOf;
+import static keisuke.count.CountTestUtil.binaryContentOf;
+//import static keisuke.count.CountTestUtil.excelContentOf;
+import static keisuke.count.CountTestUtil.rawContentOf;
+import static keisuke.count.CountTestUtil.textContentOf;
 import static keisuke.count.CountTestUtil.htmlToRemoveMutableIdFrom;
 import static keisuke.count.CountTestUtil.withoutHeadLines;
 import static keisuke.count.diff.DiffCountTestConstant.HTML_IGNORE_LINES;
 import static keisuke.util.TestUtil.nameOfSystemOS;
-import static keisuke.util.TestUtil.rawContentOf;
-import static keisuke.util.TestUtil.textContentOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -207,21 +207,22 @@ public class DiffCountFormatTest {
 		assertThat(rawContentOf(actual, "UTF-8"), is(equalTo(textContentOf(expected))));
 	}
 
+	/*
 	@Test
 	public void countDiffJavaUsingExcelFormat() throws Exception {
 		System.out.println("## DiffCount ## countDiffJavaUsingExcelFormat ##");
 		String oldRoot = "test/data/java/root1";
 		String newRoot = "test/data/java/root2";
-		String outFileName = "test/out/diff_java.xls";
+		String outFileName = "test/out/diff_java.xlsx";
 		URL expected;
 
 		String[] args = {"-e", "UTF-8", "-f", "excel", "-o", outFileName, newRoot, oldRoot};
 		DiffCountProc diffcount = new DiffCountProc();
 		diffcount.main(args);
 		if (nameOfSystemOS().startsWith("Windows")) {
-			expected = this.getClass().getResource("diffCount_java_win.xls");
+			expected = this.getClass().getResource("diffCount_java_win.xlsx");
 		} else {
-			expected = this.getClass().getResource("diffCount_java.xls");
+			expected = this.getClass().getResource("diffCount_java.xlsx");
 		}
 		File actual = new File(outFileName);
 		//assertThat(binaryContentOf(actual), is(equalTo(binaryContentOf(expected))));
@@ -236,9 +237,60 @@ public class DiffCountFormatTest {
 
 		String oldRoot = "test/data/java/root1";
 		String newRoot = "test/data/java/root2";
+		String outFileName = "test/out/diff_java_en.xlsx";
+		URL expected;
+
+		String[] args = {"-e", "UTF-8", "-f", "excel", "-o", outFileName, newRoot, oldRoot};
+		DiffCountProc diffcount = new DiffCountProc();
+		try {
+			diffcount.main(args);
+		} finally {
+			Locale.setDefault(org);
+		}
+		File actual = new File(outFileName);
+		if (nameOfSystemOS().startsWith("Windows")) {
+			expected = this.getClass().getResource("diffCount_java_en_win.xlsx");
+		} else {
+			expected = this.getClass().getResource("diffCount_java_en.xlsx");
+		}
+		//assertThat(binaryContentOf(actual), is(equalTo(binaryContentOf(expected))));
+		assertThat(excelContentOf(actual), is(equalTo(excelContentOf(expected))));
+	}
+	*/
+
+	@Test
+	public void countDiffJavaUsingExcel97Format() throws Exception {
+		System.out.println("## DiffCount ## countDiffJavaUsingExcel97Format ##");
+		String oldRoot = "test/data/java/root1";
+		String newRoot = "test/data/java/root2";
+		String outFileName = "test/out/diff_java.xls";
+		URL expected;
+
+		//String[] args = {"-e", "UTF-8", "-f", "excel97", "-o", outFileName, newRoot, oldRoot};
+		String[] args = {"-e", "UTF-8", "-f", "excel", "-o", outFileName, newRoot, oldRoot};
+		DiffCountProc diffcount = new DiffCountProc();
+		diffcount.main(args);
+		if (nameOfSystemOS().startsWith("Windows")) {
+			expected = this.getClass().getResource("diffCount_java_win.xls");
+		} else {
+			expected = this.getClass().getResource("diffCount_java.xls");
+		}
+		File actual = new File(outFileName);
+		assertThat(binaryContentOf(actual), is(equalTo(binaryContentOf(expected))));
+	}
+
+	@Test
+	public void countDiffJavaUsingExcel97FormatWhenLocaleIsEnglish() throws Exception {
+		System.out.println("## DiffCount ## countDiffJavaUsingExcel97FormatWhenLocaleIsEnglish ##");
+		Locale org = Locale.getDefault();
+		Locale.setDefault(Locale.ENGLISH);
+
+		String oldRoot = "test/data/java/root1";
+		String newRoot = "test/data/java/root2";
 		String outFileName = "test/out/diff_java_en.xls";
 		URL expected;
 
+		//String[] args = {"-e", "UTF-8", "-f", "excel97", "-o", outFileName, newRoot, oldRoot};
 		String[] args = {"-e", "UTF-8", "-f", "excel", "-o", outFileName, newRoot, oldRoot};
 		DiffCountProc diffcount = new DiffCountProc();
 		try {
@@ -252,7 +304,6 @@ public class DiffCountFormatTest {
 		} else {
 			expected = this.getClass().getResource("diffCount_java_en.xls");
 		}
-		//assertThat(binaryContentOf(actual), is(equalTo(binaryContentOf(expected))));
-		assertThat(excelContentOf(actual), is(equalTo(excelContentOf(expected))));
+		assertThat(binaryContentOf(actual), is(equalTo(binaryContentOf(expected))));
 	}
 }

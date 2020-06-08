@@ -10,7 +10,10 @@ public enum FormatEnum {
 	/** CSV */
 	CSV("csv", "CSV", "csv"),
 	/** EXCEL */
+	//EXCEL("excel", "Excel", "xlsx", false, null),
 	EXCEL("excel", "Excel", "xls", false, null),
+	/** EXCEL97 */
+	//EXCEL97("excel97", "Excel97", "xls", false, null),
 	/** XML */
 	XML("xml", "XML", "xml"),
 	/** JSON */

@@ -1,0 +1,13 @@
+[Each_language_files, Sum_steps, Code_steps, Comment_steps, Blank_steps]
+LANG , FILES , SUM , CODE , COMMENT , BLANK
+html , 1 , 5 , 5 , 0 , 0
+java , 39 , 1987 , 1151 , 356 , 480
+js , 2 , 146 , 132 , 12 , 2
+jsp , 2 , 49 , 40 , 0 , 9
+properties , 8 , 39 , 38 , 1 , 0
+xhtml , 8 , 628 , 573 , 3 , 52
+xml , 33 , 4313 , 3221 , 739 , 353
+xsd , 1 , 57 , 49 , 0 , 8
+[Unsupported_files]
+LANG , FILES
+ALL , 6

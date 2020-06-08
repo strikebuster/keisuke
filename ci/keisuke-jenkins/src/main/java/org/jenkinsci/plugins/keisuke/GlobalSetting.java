@@ -21,8 +21,9 @@ import org.jenkinsci.plugins.keisuke.util.EncodeUtil;
  * This has values of Global Setting
  */
 public class GlobalSetting extends AbstractDescribableImpl<GlobalSetting> implements Serializable {
-
 	private static final long serialVersionUID = 3L; // since ver.2.0.0
+
+	@SuppressWarnings("unused")
 	private transient PrintStream syslogger = System.out;
 
 	private String sourceEncoding = System.getProperty("file.encoding");

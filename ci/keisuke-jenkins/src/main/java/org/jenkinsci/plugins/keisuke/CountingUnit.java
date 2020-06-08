@@ -18,8 +18,9 @@ import hudson.model.Descriptor;
  * This has values of Counting Unit.
  */
 public class CountingUnit extends AbstractDescribableImpl<CountingUnit> implements Serializable {
-
 	private static final long serialVersionUID = 2L; // since ver.2.0.0
+
+	@SuppressWarnings("unused")
 	private transient PrintStream syslogger = System.out;
 
 	private InputSetting inputSettingProp = null;
@@ -44,7 +45,8 @@ public class CountingUnit extends AbstractDescribableImpl<CountingUnit> implemen
 
 	/**
 	 * setter for &lt;f:property field="inputSetting"&gt; in config.jelly.
-	 * @param inputSetting InputSetting instance constructed from &lt;f:property&gt; .
+	 * @param inputSetting InputSetting instance constructed from &lt;f:property&gt;.
+	 * @throws RuntimeException occurs when the parameter "inputSetting" is null.
 	 */
 	//@DataBoundSetter
 	public void setInputSetting(final InputSetting inputSetting) {

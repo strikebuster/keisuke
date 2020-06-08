@@ -105,6 +105,10 @@ public class ASPCounter extends GeneralStepCounter {
 	}
 
 	/* Script開始記号が含まれるかどうかをチェックし、有効な文字列を返す */
+	/**
+	 * ASP用の処理.<br>
+	 * {@inheritDoc}
+	 */
 	@Override
 	protected String searchScriptStart(final String line) {
 		int sbidx = -1;

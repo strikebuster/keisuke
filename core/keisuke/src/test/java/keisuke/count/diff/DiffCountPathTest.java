@@ -1,14 +1,14 @@
 package keisuke.count.diff;
 
-//import static keisuke.count.CountTestUtil.binaryContentOf;
-import static keisuke.count.CountTestUtil.excelContentOf;
+import static keisuke.count.CountTestUtil.binaryContentOf;
+//import static keisuke.count.CountTestUtil.excelContentOf;
+import static keisuke.count.CountTestUtil.rawContentOf;
+import static keisuke.count.CountTestUtil.textContentOf;
 import static keisuke.count.CountTestUtil.htmlToRemoveMutableIdFrom;
 import static keisuke.count.CountTestUtil.withoutHeadLines;
 import static keisuke.count.diff.DiffCountTestConstant.HTML_IGNORE_LINES;
 import static keisuke.count.diff.DiffCountTestConstant.TEXT_IGNORE_LINES;
 import static keisuke.util.TestUtil.nameOfSystemOS;
-import static keisuke.util.TestUtil.rawContentOf;
-import static keisuke.util.TestUtil.textContentOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -187,14 +187,39 @@ public class DiffCountPathTest {
 		assertThat(rawContentOf(actual, "UTF-8"), is(equalTo(textContentOf(expected))));
 	}
 
+	/*
 	@Test
 	public void countDiffJavaUsingExcelFormatAndNoPath() throws Exception {
 		System.out.println("## DiffCount ## countDiffJavaUsingExcelFormatAndNoPath ##");
 		String oldRoot = "test/data/java/root1";
 		String newRoot = "test/data/java/root2";
+		String outFileName = "test/out/diff_java_noPath.xlsx";
+		URL expected;
+
+		String[] args = {"-e", "UTF-8", "-f", "excel", "-p", "no", "-o", outFileName, newRoot, oldRoot};
+		DiffCountProc diffcount = new DiffCountProc();
+		diffcount.main(args);
+
+		File actual = new File(outFileName);
+		if (nameOfSystemOS().startsWith("Windows")) {
+			expected = this.getClass().getResource("diffCount_java_noPath_win.xlsx");
+		} else {
+			expected = this.getClass().getResource("diffCount_java_noPath.xlsx");
+		}
+		//assertThat(binaryContentOf(actual), is(equalTo(binaryContentOf(expected))));
+		assertThat(excelContentOf(actual), is(equalTo(excelContentOf(expected))));
+	}
+	*/
+
+	@Test
+	public void countDiffJavaUsingExcel97FormatAndNoPath() throws Exception {
+		System.out.println("## DiffCount ## countDiffJavaUsingExcel97FormatAndNoPath ##");
+		String oldRoot = "test/data/java/root1";
+		String newRoot = "test/data/java/root2";
 		String outFileName = "test/out/diff_java_noPath.xls";
 		URL expected;
 
+		//String[] args = {"-e", "UTF-8", "-f", "excel97", "-p", "no", "-o", outFileName, newRoot, oldRoot};
 		String[] args = {"-e", "UTF-8", "-f", "excel", "-p", "no", "-o", outFileName, newRoot, oldRoot};
 		DiffCountProc diffcount = new DiffCountProc();
 		diffcount.main(args);
@@ -205,7 +230,6 @@ public class DiffCountPathTest {
 		} else {
 			expected = this.getClass().getResource("diffCount_java_noPath.xls");
 		}
-		//assertThat(binaryContentOf(actual), is(equalTo(binaryContentOf(expected))));
-		assertThat(excelContentOf(actual), is(equalTo(excelContentOf(expected))));
+		assertThat(binaryContentOf(actual), is(equalTo(binaryContentOf(expected))));
 	}
 }

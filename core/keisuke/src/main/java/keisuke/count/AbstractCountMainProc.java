@@ -161,6 +161,8 @@ public abstract class AbstractCountMainProc extends AbstractMainProc {
 			this.formatEnum = FormatEnum.CSV;
 		} else if (format.equals(FormatEnum.EXCEL.value())) {
 			this.formatEnum = FormatEnum.EXCEL;
+		//} else if (format.equals(FormatEnum.EXCEL97.value())) {
+		//	this.formatEnum = FormatEnum.EXCEL97;
 		} else if (format.equals(FormatEnum.HTML.value())) {
 			this.formatEnum = FormatEnum.HTML;
 		} else if (format.equals(FormatEnum.JSON.value())) {

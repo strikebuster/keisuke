@@ -180,6 +180,7 @@ public class GeneralStepCounter extends ProgramLangRule implements StepCounter, 
 	/**
 	 * Scriptletブロック定義を追加します
 	 * @param block Scriptletブロック定義
+	 * @throws RuntimeException Scriptlet形式の言語でない場合に発行する
 	 */
 	protected void addScriptBlock(final ScriptBlock block) {
 		if (this.isScriptletProgram()) {
@@ -200,6 +201,7 @@ public class GeneralStepCounter extends ProgramLangRule implements StepCounter, 
 	/**
 	 * Script言語を追加します
 	 * @param lang Script言語定義
+	 * @throws RuntimeException Scriptlet形式の言語でない場合に発行する
 	 */
 	protected void addScriptLang(final ProgramLangRule lang) {
 		if (this.isScriptletProgram()) {

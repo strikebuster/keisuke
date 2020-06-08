@@ -24,6 +24,7 @@ public class DiffCountOption extends AbstractCommandOption {
 			FormatEnum.TEXT,
 			FormatEnum.CSV,
 			FormatEnum.EXCEL,
+			//FormatEnum.EXCEL97,
 			FormatEnum.XML,
 			FormatEnum.JSON,
 			FormatEnum.HTML

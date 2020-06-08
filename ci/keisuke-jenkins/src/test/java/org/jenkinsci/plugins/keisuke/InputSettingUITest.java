@@ -3,6 +3,7 @@ package org.jenkinsci.plugins.keisuke;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.jenkinsci.plugins.keisuke.uihelper.InputSettingConfigUI.FIRST_COUNTING_MODE;
@@ -41,7 +42,7 @@ public class InputSettingUITest extends AbstractSettingUITest {
 		System.out.println("## InputSettingUI ## showInitialInputProperties ##");
 		// inputSettingの存在確認
 		HtmlTableRow inputSettingTr = this.inputUI.findTrowOfInputSetting();
-		assertThat(inputSettingTr, not(nullValue()));
+		assertThat(inputSettingTr, is(not(nullValue())));
 		System.out.println("[TEST] inputSetting:" + inputSettingTr.toString());
 
 		// ユニット入力ボックスの検証
@@ -55,7 +56,7 @@ public class InputSettingUITest extends AbstractSettingUITest {
 		// 高度な設定の検証
 		// 高度な設定の開始divを取得
 		HtmlDivision advancedDiv = this.inputUI.findAdvancedDivision();
-		assertThat(advancedDiv.getAttribute("class"), equalTo("advancedLink"));
+		assertThat(advancedDiv.getAttribute("class"), is(equalTo("advancedLink")));
 		System.out.println("[TEST] AdvancedDiv style(init):" + advancedDiv.getAttribute("style"));
 		assertThat(advancedDiv.getAttribute("style"), not(containsString("display: none")));
 		// 項目編集ありの非表示の検証
@@ -64,7 +65,7 @@ public class InputSettingUITest extends AbstractSettingUITest {
 		assertThat(advancedSpan.getAttribute("style"), containsString("display: none"));
 		// 高度な設定のTableの確認
 		HtmlTable advancedTable = this.inputUI.findAdvancedTableIn(advancedDiv);
-		assertThat(advancedTable.getAttribute("class"), equalTo("advancedBody"));
+		assertThat(advancedTable.getAttribute("class"), is(equalTo("advancedBody")));
 		// 高度な設定に隠れた項目の非表示検証
 		// XMLファイルパス入力ボックスの非表示検証
 		this.inputUI.verifyTrowStyleOfXmlPathAboutVisibility(false);
@@ -113,13 +114,13 @@ public class InputSettingUITest extends AbstractSettingUITest {
 		HtmlTextInput unitTextbox = this.inputUI.findUnitNameThenVerify("", false); // 初期値"", エラー表示あり
 		// ""を指定
 		System.out.println("[TEST] === input an empty value into unitName.");
-		unitTextbox.setText(empty);
+		this.inputUI.inputValue(unitTextbox, empty);
 		this.waitForEventCallbackProcess();
 		this.inputUI.findUnitNameThenVerify(empty, false); // 指定値, エラー表示あり
 		// 任意のカテゴリ名を指定
 		System.out.println("[TEST] === input a good value into unitName.");
 		String unitGoodValue = "default";
-		unitTextbox.setText(unitGoodValue);
+		this.inputUI.inputValue(unitTextbox, unitGoodValue);
 		this.waitForEventCallbackProcess();
 		this.inputUI.findUnitNameThenVerify(unitGoodValue, true); // 指定値, エラー表示なし
 
@@ -127,13 +128,13 @@ public class InputSettingUITest extends AbstractSettingUITest {
 		HtmlTextInput srcdirTextbox = this.inputUI.findSourceDirectoryThenVerify("", false); // 初期値"", エラー表示あり
 		// ””を指定
 		System.out.println("[TEST] === input an empty value into sourceDirectory.");
-		srcdirTextbox.setText(empty);
+		this.inputUI.inputValue(srcdirTextbox, empty);
 		this.waitForEventCallbackProcess();
 		this.inputUI.findSourceDirectoryThenVerify(empty, false); // 指定値, エラー表示あり
 		// 任意のパスを指定
 		System.out.println("[TEST] === input a good value into sourceDirectory.");
 		String srcdirGoodValue = "src/main/java";
-		srcdirTextbox.setText(srcdirGoodValue);
+		this.inputUI.inputValue(srcdirTextbox, srcdirGoodValue);
 		this.waitForEventCallbackProcess();
 		this.inputUI.findSourceDirectoryThenVerify(srcdirGoodValue, true); // 指定値, エラー表示なし
 
@@ -143,12 +144,12 @@ public class InputSettingUITest extends AbstractSettingUITest {
 		// 初期値file.encoding, エラー表示なし
 		// ""を指定
 		System.out.println("[TEST] === input an empty value into encoding.");
-		encodingTextbox.setText(empty);
+		this.inputUI.inputValue(encodingTextbox, empty);
 		this.waitForEventCallbackProcess();
 		this.inputUI.findEncodingThenVerify(empty, false); // 指定値, エラー表示あり
 		// 存在するエンコード名を指定
 		System.out.println("[TEST] === input a good value into encoding.");
-		encodingTextbox.setText(defaultEncoding);
+		this.inputUI.inputValue(encodingTextbox, defaultEncoding);
 		this.waitForEventCallbackProcess();
 		this.inputUI.findEncodingThenVerify(defaultEncoding, true); // 指定値, エラー表示なし
 
@@ -161,7 +162,7 @@ public class InputSettingUITest extends AbstractSettingUITest {
 		this.inputUI.findEncodingThenVerify(defaultEncoding, true); // 指定値, エラー表示なし
 		// 高度な設定の開始divを取得
 		HtmlDivision advancedDiv = this.inputUI.findAdvancedDivision();
-		assertThat(advancedDiv.getAttribute("class"), equalTo("advancedLink"));
+		assertThat(advancedDiv.getAttribute("class"), is(equalTo("advancedLink")));
 		System.out.println("[TEST] AdvancedDiv style(re-open):" + advancedDiv.getAttribute("style"));
 		assertThat(advancedDiv.getAttribute("style"), not(containsString("display: none")));
 		// 項目編集ありの非表示の検証
@@ -192,14 +193,14 @@ public class InputSettingUITest extends AbstractSettingUITest {
 		// 誤ったユニット名を指定
 		System.out.println("[TEST] === input a bad value into unitName.");
 		String unitBadValue = "===Bad-name===";
-		unitTextbox.setText(unitBadValue);
+		this.inputUI.inputValue(unitTextbox, unitBadValue);
 		this.waitForEventCallbackProcess();
 		this.inputUI.findUnitNameThenVerify(unitBadValue, false); // 指定値, エラー表示あり
 
 		// ユニット名に空文字列を指定
 		System.out.println("[TEST] === input an empty string into unitName.");
 		unitBadValue = "";
-		unitTextbox.setText(unitBadValue);
+		this.inputUI.inputValue(unitTextbox, unitBadValue);
 		this.waitForEventCallbackProcess();
 		this.inputUI.findUnitNameThenVerify(unitBadValue, false); // 指定値, エラー表示あり
 
@@ -208,13 +209,13 @@ public class InputSettingUITest extends AbstractSettingUITest {
 		// 空文字以外を指定
 		System.out.println("[TEST] === input some value into source directory.");
 		String srcdirBadValue = "dummy";
-		srcdirTextbox.setText(srcdirBadValue);
+		this.inputUI.inputValue(srcdirTextbox, srcdirBadValue);
 		this.waitForEventCallbackProcess();
 		this.inputUI.findSourceDirectoryThenVerify(srcdirBadValue, true); // 指定値, エラー表示なし
 		// 空文字を指定
 		System.out.println("[TEST] === input empty into source directory.");
 		srcdirBadValue = "";
-		srcdirTextbox.setText(srcdirBadValue);
+		this.inputUI.inputValue(srcdirTextbox, srcdirBadValue);
 		this.waitForEventCallbackProcess();
 		this.inputUI.findSourceDirectoryThenVerify(srcdirBadValue, false); // 指定値, エラー表示あり
 
@@ -226,14 +227,14 @@ public class InputSettingUITest extends AbstractSettingUITest {
 		// 存在しないエンコード名を指定
 		System.out.println("[TEST] === input a bad value into encoding.");
 		String encodingBadValue = "WRONG-ENCODING";
-		encodingTextbox.setText(encodingBadValue);
+		this.inputUI.inputValue(encodingTextbox, encodingBadValue);
 		this.waitForEventCallbackProcess();
 		this.inputUI.findEncodingThenVerify(encodingBadValue, false); // 指定値 エラー表示あり
 
 		// エンコード名に空文字列を指定
 		System.out.println("[TEST] === input empty into encoding.");
 		encodingBadValue = "";
-		encodingTextbox.setText(encodingBadValue);
+		this.inputUI.inputValue(encodingTextbox, encodingBadValue);
 		this.waitForEventCallbackProcess();
 		this.inputUI.findEncodingThenVerify(encodingBadValue, false); // 指定値 エラー表示あり
 
@@ -245,7 +246,7 @@ public class InputSettingUITest extends AbstractSettingUITest {
 		// 存在しないファイルパスを指定
 		System.out.println("[TEST] === input non-exist file path into xml file path.");
 		String xmlpathBadValue = "test/data/non-exist.xml";
-		xmlpathTextbox.setText(xmlpathBadValue);
+		this.inputUI.inputValue(xmlpathTextbox, xmlpathBadValue);
 		this.waitForEventCallbackProcess();
 		this.inputUI.findXmlPathThenVerify(xmlpathBadValue, false); // 指定値 エラー表示あり
 
@@ -266,13 +267,13 @@ public class InputSettingUITest extends AbstractSettingUITest {
 		// 空文字以外を指定
 		System.out.println("[TEST] === input empty into old source directory.");
 		String olddirBadValue = "dummy";
-		olddirTextbox.setText(olddirBadValue);
+		this.inputUI.inputValue(olddirTextbox, olddirBadValue);
 		this.waitForEventCallbackProcess();
 		this.inputUI.findOldSourceDirectoryThenVerify(olddirBadValue, true); // 指定値, エラー表示なし
 		// 空文字を指定
 		System.out.println("[TEST] === input empty into old source directory.");
 		olddirBadValue = "";
-		olddirTextbox.setText(olddirBadValue);
+		this.inputUI.inputValue(olddirTextbox, olddirBadValue);
 		this.waitForEventCallbackProcess();
 		this.inputUI.findOldSourceDirectoryThenVerify(olddirBadValue, false); // 指定値, エラー表示あり
 	}

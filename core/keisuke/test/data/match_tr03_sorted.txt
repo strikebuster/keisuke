@@ -1,5 +1,5 @@
-/src/ejb/src/main/java/jp/co/nri/trial/sample/custsearch/logic/impl/KokyakuSearchLogicImpl.java
-/src/ejb/src/main/java/jp/co/nri/trial/sample/custsearch/logic/impl/TradeSearchLogicImpl.java
+/src/ejb/src/main/java/jp/co/xxx/trial/sample/custsearch/logic/impl/KokyakuSearchLogicImpl.java
+/src/ejb/src/main/java/jp/co/xxx/trial/sample/custsearch/logic/impl/TradeSearchLogicImpl.java
 /src/ejb/src/main/resources/mybatis/components.xml
 /src/ejb/src/main/resources/mybatis/mybatis_mapper_configuration.xml
 /src/resources/sql/mybatis/phoneSqlClient.xml

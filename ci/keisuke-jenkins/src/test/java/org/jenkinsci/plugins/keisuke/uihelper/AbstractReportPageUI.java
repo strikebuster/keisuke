@@ -10,6 +10,7 @@ import java.io.IOException;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.xml.sax.SAXException;
 
+import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -61,15 +62,40 @@ public abstract class AbstractReportPageUI {
 	 * @param projectName project name
 	 */
 	protected void openPage(final String projectName) {
+		this.targetPage = this.openWebPage(this.getPageUrlPath(projectName));
+	}
+
+	/**
+	 * Open web page.
+	 * @param url url path string.
+	 * @return HtmlPage instance.
+	 */
+	protected HtmlPage openWebPage(final String url) {
+		HtmlPage page = null;
 		try {
-			this.targetPage = this.webClient.goTo(this.getPageUrlPath(projectName));
+			page = this.webClient.goTo(url);
 		} catch (IOException ex) {
 			ex.printStackTrace();
 			fail("Unexpected IOException is occured.");
 		}  catch (SAXException ex) {
 			ex.printStackTrace();
 			fail("Unexpected SAXException is occured.");
+		} catch (FailingHttpStatusCodeException ex) {
+			ex.printStackTrace();
+			/*
+			ビルド構成でwebaappの出力先をtarget/jenkins-for-testにしていない場合の問題だった
+			String exText = ex.getMessage();
+			if (exText != null && exText.contains("404 Not Found")
+					&& exText.contains("/jenkins/plugin/keisuke/jquery/jquery-1.6.2.min.js")) {
+				System.out.println(
+					"[TEST] fail to open result page caused by jenkins-test-harness perhaps.");
+				System.out.println("[TEST] so, this test should be terminated and normally ended.");
+				return page;
+			}
+			*/
+			fail("Unexpected FailingHttpStatusCodeException is occured.");
 		}
+		return page;
 	}
 
 	/**

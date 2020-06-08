@@ -129,6 +129,7 @@ public abstract class AbstractSettingUITest implements ProjectConfigUITester {
 	 */
 	protected void submitConfig() {
 		try {
+			@SuppressWarnings("unused")
 			String urlpath = this.configPage().getUrl().getPath();
 			//System.out.println("[TEST DEBUG] === submit the form of page:" + urlpath);
 			this.jenkinsRule.submit(this.configForm());
@@ -144,6 +145,7 @@ public abstract class AbstractSettingUITest implements ProjectConfigUITester {
 	 */
 	protected void submitConfigAndReopen() {
 		try {
+			@SuppressWarnings("unused")
 			String urlpath = this.configPage().getUrl().getPath();
 			//System.out.println("[TEST DEBUG] === submit the form of page:" + urlpath);
 			this.jenkinsRule.submit(this.configForm());

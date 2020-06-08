@@ -31,8 +31,9 @@ import net.sf.json.JSONObject;
  * this is a main class of a plugin.
  */
 public class KeisukePublisher extends Recorder implements SimpleBuildStep, Serializable {
-
 	private static final long serialVersionUID = 4L; // since ver.2.0.0
+
+	@SuppressWarnings("unused")
 	private transient PrintStream syslogger = System.out;
 
 	private static final DisplaySetting DEFAULT_DISPLAY_SETTING = new DisplaySetting("");
@@ -55,6 +56,7 @@ public class KeisukePublisher extends Recorder implements SimpleBuildStep, Seria
 	/**
 	 * setter for &lt;f:repeatableProperties field="countingUnits"&gt; in config.jelly.
 	 * @param countingUnits list of CountingUnit constructed from &lt;f:repeatableProperties&gt;.
+	 * @throws RuntimeException occurs when the parameter "countingUnits" is null or empty.
 	 */
 	//@DataBoundSetter
 	public void setCountingUnits(final List<CountingUnit> countingUnits) {

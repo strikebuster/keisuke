@@ -1,0 +1,43 @@
+[ADDED Each_language_files, Added_steps]
+LANG , FILES , AMMOUNT , ADD , DEL
+html , 0 , 0 , 0 , 0
+java , 0 , 0 , 0 , 0
+js , 0 , 0 , 0 , 0
+jsp , 2 , 40 , 40 , 0
+properties , 0 , 0 , 0 , 0
+xhtml , 4 , 240 , 240 , 0
+xml , 0 , 0 , 0 , 0
+xsd , 0 , 0 , 0 , 0
+[MODIFIED Each_language_files, Modified_steps]
+LANG , FILES , AMMOUNT , ADD , DEL
+html , 1 , 2 , 1 , -1
+java , 2 , 10 , 5 , -5
+js , 2 , 9 , 4 , -5
+jsp , 0 , 0 , 0 , 0
+properties , 0 , 0 , 0 , 0
+xhtml , 1 , 4 , 3 , -1
+xml , 3 , 14 , 7 , -7
+xsd , 0 , 0 , 0 , 0
+[DROPED Each_language_files, Deleted_steps]
+LANG , FILES , AMMOUNT , ADD , DEL
+html , 0 , 0 , 0 , 0
+java , 0 , 0 , 0 , 0
+js , 0 , 0 , 0 , 0
+jsp , 0 , 0 , 0 , 0
+properties , 0 , 0 , 0 , 0
+xhtml , 0 , 0 , 0 , 0
+xml , 0 , 0 , 0 , 0
+xsd , 0 , 0 , 0 , 0
+[UNCHANGED Each_language_files, these_steps]
+LANG , FILES
+html , 0
+java , 37
+js , 0
+jsp , 0
+properties , 8
+xhtml , 3
+xml , 30
+xsd , 1
+[Unsupported_files]
+LANG , FILES
+ALL , 6
