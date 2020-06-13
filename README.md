@@ -98,6 +98,12 @@ Pipelineにも対応しています。
 
 - - -
 ### 更新履歴
+###### Version 2.1.1(2020/6/13)
+* DiffReport機能のラベル表記の一部変更  
+・出力ラベルの"増加"と"減少"を"追加"と"削除"へ変更  
+* Report機能のバグ修正  
+・V2.0.0でStepCountとDiffCountのCSV出力で未対応ソースの行数を省略する変更をしたが、CountReportとDiffReportがその出力結果に対応漏れであったバグを修正  
+
 ###### Version 2.1.0(2020/6/8)
 * 計測対象の追加(Jelly)  
 ・language.xmlにJellyを追加  

@@ -28,7 +28,7 @@ properties , 0 , 0 , 0 , 0
 xhtml , 0 , 0 , 0 , 0
 xml , 0 , 0 , 0 , 0
 xsd , 0 , 0 , 0 , 0
-[UNCHANGED Each_language_files, these_steps]
+[UNCHANGED Each_language_files]
 LANG , FILES
 html , 0
 java , 37

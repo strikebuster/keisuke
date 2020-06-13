@@ -147,11 +147,20 @@ public class DiffCountResultForReport extends DiffCountResult implements CountRe
 	    long numadd = 0;
 	    long numdel = 0;
 	    try {
-	    	numadd = NumberUtil.parseLong(strAddStep);
-	    	numdel = NumberUtil.parseLong(strDelStep);
+	    	if (!strAddStep.trim().isEmpty()) {
+	    		numadd = NumberUtil.parseLong(strAddStep);
+	    	}
+	    	if (!strDelStep.trim().isEmpty()) {
+	    		numdel = NumberUtil.parseLong(strDelStep);
+	    	}
 	    } catch (NumberFormatException e) {
 	    	LogUtil.warningLog("NumberFormatException at " + line);
 	    	throw new IllegalFormattedLineException("fail to parse integer.");
+	    }
+	    // 数値が負の場合は異常値なのでスキップ
+	    if (numadd < 0 || numdel < 0) {
+	    	LogUtil.warningLog("unexpected minus integer, ignore line : " + line);
+	    	throw new IllegalFormattedLineException("unexpected minus integer.");
 	    }
 	    // 解析結果の数値を設定
 	    this.setSteps(numadd, numdel);

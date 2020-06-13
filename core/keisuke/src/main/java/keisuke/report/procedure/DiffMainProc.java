@@ -155,7 +155,8 @@ public final class DiffMainProc extends AbstractReportMainProc {
 		prepareResultMap();
 		aggregateDiff(infile);
 		reportDiff();
-		writeOutputDiff();
+		writeAddedListOutput();
+		writeModifiedListOutput();
 		writeOutput();
 	}
 
@@ -215,6 +216,8 @@ public final class DiffMainProc extends AbstractReportMainProc {
 		int alinectr = 0;
 		@SuppressWarnings("unused")
 		int mlinectr = 0;
+		@SuppressWarnings("unused")
+		int dlinectr = 0;
 
 		@SuppressWarnings("unused")
 		int linectr = skippedLines;
@@ -229,10 +232,11 @@ public final class DiffMainProc extends AbstractReportMainProc {
 			try {
 				result = new DiffCountResultForReport(line, this.formatType);
 			} catch (IllegalFormattedLineException e) {
+				this.ignoreFiles++;
 				continue;
 			}
-			if (!OPTVAL_CSV.equals(this.formatType)) {
-				// CSVではないテキスト形式の場合にノード名でパスリストを更新し、パスを設定する
+			if (OPTVAL_TEXT.equals(this.formatType)) {
+				// TEXT形式の場合にノード名でパスリストを更新し、パスを設定する
 				try {
 					pathNodeList.setNodeIntoDepth(result.nodeName(), result.depth());
 				} catch (Exception e) {
@@ -255,6 +259,7 @@ public final class DiffMainProc extends AbstractReportMainProc {
 					= this.statusText.whichDiffStatusIs(result.statusText());
 				result.setDiffStatus(diffstat);
 				if (diffstat == null) {
+					this.ignoreFiles++;
 					LogUtil.warningLog("unknown status in " + line);
 					continue;
 				} else if (diffstat == DiffStatusEnum.ADDED) {
@@ -274,8 +279,7 @@ public final class DiffMainProc extends AbstractReportMainProc {
 						mlinectr++;
 					}
 				} else if (diffstat == DiffStatusEnum.DROPED) {
-					@SuppressWarnings("unused")
-					int nop = 0; // 処理なし
+					dlinectr++;
 				} else if (diffstat == DiffStatusEnum.UNCHANGED) { // 変更なし
 					this.unchangeFiles++;
 					//LogUtil.debugLog("Unchange: " + line);
@@ -291,6 +295,7 @@ public final class DiffMainProc extends AbstractReportMainProc {
 					// サポート対象外ファイルをループ内スキップ
 					continue;
 				} else {
+					this.ignoreFiles++;
 					LogUtil.warningLog("unknown status in " + line);
 					continue;
 				}
@@ -401,36 +406,24 @@ public final class DiffMainProc extends AbstractReportMainProc {
 		this.setReportText(sb.toString());
 	}
 
-	private void writeOutputDiff() {
-		if (this.aoutfile != null) {
+	private void writeAddedListOutput() {
+		this.writeOutputPathList(this.aoutfile, this.aoutText);
+	}
+
+	private void writeModifiedListOutput() {
+		this.writeOutputPathList(this.moutfile, this.moutText);
+	}
+
+	private void writeOutputPathList(final String filePath, final String content) {
+		if (filePath != null) {
 			BufferedWriter writer = null;
 			try {
 				// デフォルトエンコーディングでファイルに出力
 				// 改行コードは既にシステム依存のもので作成済み
-				writer = new BufferedWriter(new FileWriter(new File(this.aoutfile)));
-				writer.write(this.aoutText);
+				writer = new BufferedWriter(new FileWriter(new File(filePath)));
+				writer.write(content);
 			} catch (IOException e) {
-				LogUtil.errorLog("Write error : " + this.aoutfile);
-				throw new RuntimeException(e);
-			} finally {
-				if (writer != null) {
-					try {
-						writer.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-		if (this.moutfile != null) {
-			BufferedWriter writer = null;
-			try {
-				// デフォルトエンコーディングでファイルに出力
-				// 改行コードは既にシステム依存のもので作成済み
-				writer = new BufferedWriter(new FileWriter(new File(this.moutfile)));
-				writer.write(this.moutText);
-			} catch (IOException e) {
-				LogUtil.errorLog("Write error : " + this.moutfile);
+				LogUtil.errorLog("Write error : " + filePath);
 				throw new RuntimeException(e);
 			} finally {
 				if (writer != null) {

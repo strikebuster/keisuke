@@ -93,6 +93,10 @@ public final class CountMainProc extends AbstractReportMainProc {
 					this.ignoreFiles++;
 					continue;
 				}
+				if (result.isUnsupported()) {
+					this.ignoreFiles++;
+					continue;
+				}
 				String strpath = result.filePath();
 			    // 対象言語分類の取得
 			    String classify = this.classifier().getClassifyName(strpath);

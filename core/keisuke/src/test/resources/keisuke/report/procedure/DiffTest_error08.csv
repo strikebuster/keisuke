@@ -4,8 +4,8 @@ LANG , FILES , AMMOUNT , ADD , DEL
 LANG , FILES , AMMOUNT , ADD , DEL
 [DROPED Each_language_files, Deleted_steps]
 LANG , FILES , AMMOUNT , ADD , DEL
-[UNCHANGED Each_language_files, these_steps]
+[UNCHANGED Each_language_files]
 LANG , FILES
 [Unsupported_files]
 LANG , FILES
-ALL , 0
+ALL , 100

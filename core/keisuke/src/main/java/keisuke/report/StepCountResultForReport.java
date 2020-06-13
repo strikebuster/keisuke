@@ -23,6 +23,7 @@ public class StepCountResultForReport extends StepCountResult implements CountRe
 	 * @param classname 集計分類のキー名
 	 */
 	public StepCountResultForReport(final String classname) {
+		super();
 		this.setClassify(classname);
 	}
 
@@ -33,6 +34,7 @@ public class StepCountResultForReport extends StepCountResult implements CountRe
 	 * @throws IllegalFormattedLineException 解析エラー時に返す
 	 */
 	public StepCountResultForReport(final String line, final String label) throws IllegalFormattedLineException {
+		super();
 		this.setUnsupportedLabel(label);
 		this.load(line);
 	}
@@ -113,38 +115,30 @@ public class StepCountResultForReport extends StepCountResult implements CountRe
 		}
 		// 解析結果の数値以外を設定
 	    this.setFilePath(strpath);
-	    this.setSourceType(strtype);
 	    this.setSourceCategory(strcategory);
-	    // 未対応であれば数値解析不要
 	    if (strtype.equals(this.unsupportedLabel)) {
-	    	//LogUtil.debugLog("unsupported, ignore line : " + line);
-	    	throw new IllegalFormattedLineException("unsupported target.");
+	    	// 未対応であればソースタイプを指定せずに、行数設定不要
+	    	return;
 	    }
+	    this.setSourceType(strtype);
 		// 行数の数値化
-		long numexe = -1;
-		long numemp = -1;
-		long numcom = -1;
-		long numall = -1;
+		long numexe = 0;
+		long numemp = 0;
+		long numcom = 0;
+		long numall = 0;
 		try {
-			if (!strexestep.isEmpty()) {
-				numexe = Long.parseLong(strexestep);
-			}
-			if (!strempstep.isEmpty()) {
-				numemp = Long.parseLong(strempstep);
-			}
-			if (!strcomstep.isEmpty()) {
-				numcom = Long.parseLong(strcomstep);
-			}
-			if (!strsumstep.isEmpty()) {
-				numall = Long.parseLong(strsumstep);
-			}
+			numexe = Long.parseLong(strexestep);
+			numemp = Long.parseLong(strempstep);
+			numcom = Long.parseLong(strcomstep);
+			numall = Long.parseLong(strsumstep);
 		} catch (NumberFormatException e) {
-			LogUtil.warningLog("illegal format for number in line : " + line);
-		}
-		// 数値のない解析対象外ファイルはスキップ
-	    if (numexe < 0 || numemp < 0 || numcom < 0 || numall < 0) {
-	    	LogUtil.warningLog("fail to parse integer, ignore line : " + line);
+			LogUtil.warningLog("fail to parse integer, ignore line : " + line);
 	    	throw new IllegalFormattedLineException("fail to parse integer.");
+		}
+		// 数値が負の場合は異常値なのでスキップ
+	    if (numexe < 0 || numemp < 0 || numcom < 0 || numall < 0) {
+	    	LogUtil.warningLog("unexpected minus integer, ignore line : " + line);
+	    	throw new IllegalFormattedLineException("unexpected minus integer.");
 	    }
 	    // 解析結果の数値を設定
 	    this.setValues(numexe, numemp, numcom, numall);
