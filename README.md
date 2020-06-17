@@ -7,9 +7,9 @@ StepCounterを模倣してソースコードの行数計測をする機能もあ
 コマンドラインI/FおよびAntタスクI/FおよびSwing画面I/FおよびJenkinsプラグインを提供していますが、StepCounterの用意しているEclipseプラグインはありません。  
 計測可能な言語についてはdocディレクトリ内のlanguage.xmlを参照してください。
 主な言語を例示すると
-COBOL, Fortran, C/C++, Java, Scala, C#, Smalltalk, VB, Delphi,
-JavaScript, TypeScript, VBScript, JSP, ASP, PHP, Jelly, Flex, XML, HTML,
-BAT, Shell, Perl, Python, Ruby, Groovy, Lua, SQL, R, Lisp, Scheme, Clojure, Haskell
+ASP, BAT, C/C++, C#, Clojure, COBOL, Delphi, Elixir, Erlnag, Flex, Fortran, Go, Groovy,
+Haskell, HTML, Io, Java, JavaScript, Jelly, JSP, Kotlin, Lisp, Lua, Perl, PHP, Prolog, Python, R, Ruby,
+Scala, Scheme, Shell, Smalltalk, SQL, TypeScript, VisualBasic, VBScript, XML
 などがあります。
 
 - - -
@@ -98,6 +98,13 @@ Pipelineにも対応しています。
 
 - - -
 ### 更新履歴
+###### Version 2.1.2(2020/6/17)
+* 計測対象の追加(Elixir,Erlang,Go,Io,Kotlin,Prolog)  
+・language.xmlにElixir,Erlang,Go,Io,Kotlin,Prologの定義を追加  
+* 言語定義のバグ修正  
+・Java等の言語で文字リテラルで引用符（'"'または'\\"'）があると計測を誤ることがあったので定義を修正  
+・Fortranで文字定数に引用符""を使っていた場合に正しく計測できていなかった定義誤りを修正  
+
 ###### Version 2.1.1(2020/6/13)
 * DiffReport機能のラベル表記の一部変更  
 ・出力ラベルの"増加"と"減少"を"追加"と"削除"へ変更  

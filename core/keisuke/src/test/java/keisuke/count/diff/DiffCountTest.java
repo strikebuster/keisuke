@@ -316,7 +316,6 @@ public class DiffCountTest {
 				is(equalTo(textContentOf(expected))));
 	}
 
-
 	@Test
 	public void countDiffMiscSourcesIncludingMiscCommentsInUtf2() throws Exception {
 		System.out.println("## DiffCount ## countDiffMiscSourcesIncludingMiscCommentsInUtf(2) ##");
@@ -329,6 +328,23 @@ public class DiffCountTest {
 		DiffCount.main(args);
 
 		File actual = new File(outFileName);
+		assertThat(rawContentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)),
+				is(equalTo(textContentOf(expected))));
+	}
+
+	@Test
+	public void countDiffMiscSourcesIncludingMiscCommentsInUtf3() throws Exception {
+		System.out.println("## DiffCount ## countDiffMiscSourcesIncludingMiscCommentsInUtf(3) ##");
+		String oldRoot = "test/data/commentU/root30";
+		String newRoot = "test/data/commentU/root40";
+		String outFileName = "test/out/diff_commentU3.txt";
+		URL expected = this.getClass().getResource("diffCount_commentU3.txt");
+
+		String[] args = {"-encoding", "UTF-8", "-output", outFileName, newRoot, oldRoot};
+		DiffCount.main(args);
+
+		File actual = new File(outFileName);
+		//System.out.println(rawContentOf(actual));
 		assertThat(rawContentOf(actual, withoutHeadLines(TEXT_IGNORE_LINES)),
 				is(equalTo(textContentOf(expected))));
 	}

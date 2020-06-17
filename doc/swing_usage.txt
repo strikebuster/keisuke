@@ -22,8 +22,13 @@ keisuke.count.DiffCountの引数およびオプションで指定する値は、
 # 備考
 #
 GUI画面用のJar（keisuke-swing-x.y.z-jar-with-local-dependencies.jar)から
-呼び出せるCLI用のJar（keisuke-x.y.z-jar-with-dependencies.jar）は、バージョン
-x.y.zのx.yが同じであること
+呼び出せるCLI用のJar（keisuke-x.y.z-jar-with-dependencies.jar）のバージョン
+#
+GUI Version	CLI Version
+2.1.x		2.1.x 以上
+2.0.x		2.0.x
+1.4.x		1.4.x
+1.3.x		1.3.x
 #
 GUI画面は計測機能(StepCount,DiffCount)のみ対応しています。
 集計機能（CountReport,DiffReport,MatchExtract)には対応していません。

@@ -14,9 +14,9 @@ plugins {
 
 group = 'keisuke'
 //name : 'keisuke' as single project
-version = '2.1.1'
+version = '2.1.2'
 def deployUrl = 'http://localhost:8081/repository/maven-releases'
-//@@version = '2.1.1-SNAPSHOT'
+//@@version = '2.1.2-SNAPSHOT'
 //@@def deployUrl = 'http://localhost:8081/repository/maven-snapshots'
 
 description = """keisuke : counts source code steps like as stepcounter"""

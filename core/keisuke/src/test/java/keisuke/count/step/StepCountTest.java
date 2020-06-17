@@ -600,6 +600,23 @@ public class StepCountTest {
 		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
 	}
 
+	@Test
+	public void countMiscSourcesIncludigMiscCommentsInUtf3UsingCsvFormatAndBasePath() throws Exception {
+		System.out.println("## StepCount ## "
+				+ "countMiscSourcesIncludigMiscCommentsInUtf(3)UsingCsvFormatAndBasePath ##");
+		String newRoot = "test/data/commentU/root30";
+		String outFileName = "test/out/count_commentU3_basePath.csv";
+		URL expected = this.getClass()
+				.getResource("stepCount_commentU3_basePath.csv");
+
+		String[] args = {"-path", "base", "-format", "csv", "-encoding", "UTF-8",
+				"-output", outFileName, newRoot};
+		StepCount.main(args);
+
+		File actual = new File(outFileName);
+		//System.out.println(rawContentOf(actual));
+		assertThat(rawContentOf(actual), is(equalTo(textContentOf(expected))));
+	}
 	// これ以下のテスト用のデータは未公開
 	@Test
 	public void countCobolUsingCsvFormatAndSubPath() throws Exception {

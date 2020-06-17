@@ -16,14 +16,20 @@
 				<keisuke:start>&quot;</keisuke:start>
 				<keisuke:end>&quot;</keisuke:end>
 				<keisuke:escape>\&quot;</keisuke:escape>
-			</keisuke:LiteralString></keisuke:CountRules>
+			</keisuke:LiteralString>
+			<keisuke:LiteralString>
+				<keisuke:start>&apos;</keisuke:start>
+				<keisuke:end>&apos;</keisuke:end>
+				<keisuke:escape>\&apos;</keisuke:escape>
+			</keisuke:LiteralString>
+		</keisuke:CountRules>
 	</keisuke:Language>
 	<keisuke:Language name="C" group="C">
 		<keisuke:FileExtension>.c</keisuke:FileExtension>
 		<keisuke:FileExtension>.m</keisuke:FileExtension>
 		<keisuke:FileExtension>.pc</keisuke:FileExtension>
 		<keisuke:CountRules sameAs="Java">
-		<keisuke:SkipPattern>^#include[ \\t].+$</keisuke:SkipPattern>
+			<keisuke:SkipPattern>^#include[ \\t].+$</keisuke:SkipPattern>
 		</keisuke:CountRules>
 	</keisuke:Language>
 	<keisuke:Language name="VB" group="VisualBasic">
@@ -171,10 +177,6 @@
 				<keisuke:needHead>true</keisuke:needHead>
 				<keisuke:needBlanc>true</keisuke:needBlanc>
 			</keisuke:LineComment>
-			<keisuke:BlockComment>
-				<keisuke:start>&quot;</keisuke:start>
-				<keisuke:end>&quot;</keisuke:end>
-			</keisuke:BlockComment>
 			<keisuke:LiteralString>
 				<keisuke:start>&quot;</keisuke:start>
 				<keisuke:end>&quot;</keisuke:end>

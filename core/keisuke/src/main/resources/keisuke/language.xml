@@ -31,6 +31,11 @@
 				<keisuke:end>&quot;</keisuke:end>
 				<keisuke:escape>\&quot;</keisuke:escape>
 			</keisuke:LiteralString>
+			<keisuke:LiteralString>
+				<keisuke:start>&apos;</keisuke:start>
+				<keisuke:end>&apos;</keisuke:end>
+				<keisuke:escape>\&apos;</keisuke:escape>
+			</keisuke:LiteralString>
 		</keisuke:CountRules>
 	</keisuke:Language>
 	<keisuke:Language name="properties" group="Java">
@@ -400,11 +405,6 @@
 				<keisuke:needHead>true</keisuke:needHead>
 			</keisuke:LineComment>
 			<keisuke:LiteralString>
-				<keisuke:start>&apos;</keisuke:start>
-				<keisuke:end>&apos;</keisuke:end>
-				<keisuke:escape>\&apos;</keisuke:escape>
-			</keisuke:LiteralString>
-			<keisuke:LiteralString>
 				<keisuke:start>&quot;&quot;&quot;</keisuke:start>
 				<keisuke:end>&quot;&quot;&quot;</keisuke:end>
 			</keisuke:LiteralString>
@@ -441,8 +441,55 @@
 				<keisuke:escape>\&quot;</keisuke:escape>
 			</keisuke:LiteralString>
 			<keisuke:LiteralString>
+				<keisuke:start>&apos;</keisuke:start>
+				<keisuke:end>&apos;</keisuke:end>
+				<keisuke:escape>\&apos;</keisuke:escape>
+			</keisuke:LiteralString>
+			<keisuke:LiteralString>
 				<keisuke:start>&quot;&quot;&quot;</keisuke:start>
 				<keisuke:end>&quot;&quot;&quot;</keisuke:end>
+			</keisuke:LiteralString>
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="Kotlin" group="Kotlin">
+		<keisuke:FileExtension>.kt</keisuke:FileExtension>
+		<keisuke:FileExtension>.kts</keisuke:FileExtension>
+		<keisuke:CountRules sameAs="Java">
+			<keisuke:LiteralString>
+				<keisuke:start>&quot;&quot;&quot;</keisuke:start>
+				<keisuke:end>&quot;&quot;&quot;</keisuke:end>
+			</keisuke:LiteralString>
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="Io" group="Io">
+		<keisuke:FileExtension>.io</keisuke:FileExtension>
+		<keisuke:CountRules>
+			<keisuke:LineComment>
+				<keisuke:start>//</keisuke:start>
+			</keisuke:LineComment>
+			<keisuke:LineComment>
+				<keisuke:start>#</keisuke:start>
+			</keisuke:LineComment>
+			<keisuke:BlockComment>
+				<keisuke:start>/*</keisuke:start>
+				<keisuke:end>*/</keisuke:end>
+			</keisuke:BlockComment>
+			<keisuke:LiteralString>
+				<keisuke:start>&quot;</keisuke:start>
+				<keisuke:end>&quot;</keisuke:end>
+			</keisuke:LiteralString>
+			<keisuke:LiteralString>
+				<keisuke:start>&quot;&quot;&quot;</keisuke:start>
+				<keisuke:end>&quot;&quot;&quot;</keisuke:end>
+			</keisuke:LiteralString>
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="Go" group="Go">
+		<keisuke:FileExtension>.go</keisuke:FileExtension>
+		<keisuke:CountRules sameAs="Java">
+			<keisuke:LiteralString>
+				<keisuke:start>`</keisuke:start>
+				<keisuke:end>`</keisuke:end>
 			</keisuke:LiteralString>
 		</keisuke:CountRules>
 	</keisuke:Language>
@@ -570,10 +617,6 @@
 				<keisuke:needHead>true</keisuke:needHead>
 				<keisuke:needBlanc>true</keisuke:needBlanc>
 			</keisuke:LineComment>
-			<keisuke:BlockComment>
-				<keisuke:start>&quot;</keisuke:start>
-				<keisuke:end>&quot;</keisuke:end>
-			</keisuke:BlockComment>
 			<keisuke:LiteralString>
 				<keisuke:start>&quot;</keisuke:start>
 				<keisuke:end>&quot;</keisuke:end>
@@ -593,10 +636,6 @@
 			<keisuke:LineComment>
 				<keisuke:start>!</keisuke:start>
 			</keisuke:LineComment>
-			<keisuke:BlockComment>
-				<keisuke:start>&quot;</keisuke:start>
-				<keisuke:end>&quot;</keisuke:end>
-			</keisuke:BlockComment>
 			<keisuke:LiteralString>
 				<keisuke:start>&quot;</keisuke:start>
 				<keisuke:end>&quot;</keisuke:end>
@@ -725,5 +764,48 @@
 	<keisuke:Language name="LiterateHaskell" group="Haskell">
 		<keisuke:FileExtension>.lhs</keisuke:FileExtension>
 		<keisuke:CountRules specialized="true"></keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="Erlang" group="Erlang">
+		<keisuke:FileExtension>.erl</keisuke:FileExtension>
+		<keisuke:CountRules>
+			<keisuke:LineComment>
+				<keisuke:start>%</keisuke:start>
+			</keisuke:LineComment>
+			<keisuke:LiteralString>
+				<keisuke:start>&quot;</keisuke:start>
+				<keisuke:end>&quot;</keisuke:end>
+				<keisuke:escape>\&quot;</keisuke:escape>
+			</keisuke:LiteralString>
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="Elixir" group="Elixir">
+		<keisuke:FileExtension>.ex</keisuke:FileExtension>
+		<keisuke:FileExtension>.exs</keisuke:FileExtension>
+		<keisuke:CountRules>
+			<keisuke:LineComment>
+				<keisuke:start>#</keisuke:start>
+			</keisuke:LineComment>
+			<keisuke:LiteralString>
+				<keisuke:start>&quot;</keisuke:start>
+				<keisuke:end>&quot;</keisuke:end>
+				<keisuke:escape>\&quot;</keisuke:escape>
+			</keisuke:LiteralString>
+			<keisuke:LiteralString>
+				<keisuke:start>&quot;&quot;&quot;</keisuke:start>
+				<keisuke:end>&quot;&quot;&quot;</keisuke:end>
+			</keisuke:LiteralString>
+		</keisuke:CountRules>
+	</keisuke:Language>
+	<keisuke:Language name="Prolog" group="Prolog">
+		<keisuke:FileExtension>.pro</keisuke:FileExtension>
+		<keisuke:CountRules>
+			<keisuke:LineComment>
+				<keisuke:start>%</keisuke:start>
+			</keisuke:LineComment>
+			<keisuke:LiteralString>
+				<keisuke:start>&apos;</keisuke:start>
+				<keisuke:end>&apos;</keisuke:end>
+			</keisuke:LiteralString>
+		</keisuke:CountRules>
 	</keisuke:Language>
 </keisuke:LanguageDefinitions>
